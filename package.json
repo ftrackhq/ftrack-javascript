@@ -4,8 +4,8 @@
   "description": "Produce universal library with webpack and es6",
   "main": "lib/ftrack-api.js",
   "scripts": {
-    "build": "webpack --mode=build",
-    "dev": "webpack --progress --colors --watch --mode=dev",
+    "dist": "webpack --env=dist",
+    "dev": "webpack --progress --colors --watch --env=dev",
     "test": "karma start",
     "test:watch": "karma start --autoWatch=true --singleRun=false"
   },
