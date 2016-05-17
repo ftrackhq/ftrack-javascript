@@ -5,7 +5,7 @@ import moment from 'moment';
 import loglevel from 'loglevel';
 
 import { EventHub } from './event';
-import { queryOperation } from './operation';
+import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
 import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
 
 
@@ -337,7 +337,7 @@ export class Session {
      * Returns a promise which will be resolved with an object containing data
      * and metadata.
      */
-    _query(expression) {
+    query(expression) {
         logger.debug('Query ', expression);
 
         const operation = queryOperation(expression);
@@ -349,6 +349,57 @@ export class Session {
                 return response;
             }
         );
+
+        return request;
+    }
+
+    /**
+     * Perform a single create operation with *type* and *data*.
+     *
+     * Returns a promise which will be resolved with the new object data.
+     */
+    create(type, data) {
+        logger.debug('Create', type, data);
+
+        let request = this._call([createOperation(type, data)]);
+        request = request.then((responses) => {
+            const response = responses[0];
+            return response;
+        });
+
+        return request;
+    }
+
+    /**
+     * Perform a single update operation on *type* with *id* and *data*.
+     *
+     * Returns a promise which will be resolved with the updated data.
+     */
+    update(type, id, data) {
+        logger.debug('Update', type, id, data);
+
+        let request = this._call([updateOperation(type, id, data)]);
+        request = request.then((responses) => {
+            const response = responses[0];
+            return response;
+        });
+
+        return request;
+    }
+
+    /**
+     * Perform a single delete operation on *type* with *id*.
+     *
+     * Returns a promise.
+     */
+    delete(type, id) {
+        logger.debug('Delete', type, id);
+
+        let request = this._call([deleteOperation(type, id)]);
+        request = request.then((responses) => {
+            const response = responses[0];
+            return response;
+        });
 
         return request;
     }
