@@ -7,7 +7,7 @@ const config = {
     output: {
         path: path.resolve('./lib'),
         filename: 'ftrack_api.min.js',
-        library: 'ftrack-api',
+        library: 'ftrack_api',
         libraryTarget: 'umd',
         umdNamedDefine: true,
     },
