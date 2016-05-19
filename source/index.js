@@ -7,7 +7,7 @@ export { Event, EventHub } from './event';
 export { Session } from './session';
 
 /** Shared API session instance. */
-export let session = null;
+export let session = null; // eslint-disable-line import/no-mutable-exports
 
 /**
  * Configure shared session instance.

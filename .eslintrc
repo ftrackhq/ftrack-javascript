@@ -1,34 +1,28 @@
 {
     "root": true,
-    "extends": "airbnb",
+    "extends": "airbnb-base",
     "rules": {
 
         // this option sets a specific tab width for your code
         // https://github.com/eslint/eslint/blob/master/docs/rules/indent.md
         "indent": [2, 4, { "SwitchCase": 1, "VariableDeclarator": 1 }],
 
-        // Validate indentation in JSX
-        "react/jsx-indent-props": [2, 4],
-        "react/jsx-indent": [2, 4],
+       // Allow modifying props of arguments.
+       "no-param-reassign": [2, {"props": false}],
 
-        // Require stateless functions when not using lifecycle methods, setState or ref
-        // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md
-        "react/prefer-stateless-function": 1,
+       // disallow certain syntax forms
+       // http://eslint.org/docs/rules/no-restricted-syntax
+       //
+       // Allow: "ForInStatement"
+       //
+       "no-restricted-syntax": [
+         2,
+         "DebuggerStatement",
+         "LabeledStatement",
+         "WithStatement",
+       ],
 
-        "no-param-reassign": [2, {"props": false}],
-
-        // disallow certain syntax forms
-        // http://eslint.org/docs/rules/no-restricted-syntax
-        //"ForInStatement",
-        "no-restricted-syntax": [
-          2,
-          "DebuggerStatement",
-          "LabeledStatement",
-          "WithStatement",
-        ],
-
-        "no-underscore-dangle": 0,
-
-        "import/no-unresolved": 0,
+       // Allow preceding underscores.
+       "no-underscore-dangle": 0,
     }
 }
