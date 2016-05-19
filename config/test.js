@@ -9,7 +9,7 @@ const config = {
                 test: /\.(js|jsx)$/,
                 loader: 'isparta-instrumenter-loader',
                 include: [
-                    path.resolve('./src'),
+                    path.resolve('./source'),
                 ],
             },
         ],
@@ -25,17 +25,24 @@ const config = {
                     presets: ['es2015'],
                 },
                 include: [
-                    path.resolve('./src'),
+                    path.resolve('./source'),
                     path.resolve('./test'),
                 ],
             },
         ],
     },
     resolve: {
-        root: path.resolve('./src'),
+        root: path.resolve('./source'),
         extensions: ['', '.js'],
     },
     plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                FTRACK_SERVER: JSON.stringify(process.env.FTRACK_SERVER),
+                FTRACK_API_USER: JSON.stringify(process.env.FTRACK_API_USER),
+                FTRACK_API_KEY: JSON.stringify(process.env.FTRACK_API_KEY),
+            },
+        }),
         new webpack.ProvidePlugin({
             Promise: 'imports?this=>global!exports?global.Promise!es6-promise',
             fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch',

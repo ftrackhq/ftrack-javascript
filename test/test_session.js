@@ -1,10 +1,9 @@
 import { Session } from 'session';
 import uuid from 'uuid';
 import loglevel from 'loglevel';
-
+import credentials from './api_credentials';
 
 const logger = loglevel.getLogger('test_session');
-
 
 describe('Session', () => {
     let session = null;
@@ -13,9 +12,7 @@ describe('Session', () => {
 
     before(() => {
         session = new Session(
-            'http://ftrack.dev:8090',
-            'jenkins',
-            '9736137d-1245-4859-9256-248f5a8acc25',
+            credentials.serverUrl, credentials.apiUser, credentials.apiKey,
             false
         );
     });

@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 const config = {
-    entry: path.resolve('./src/index.js'),
+    entry: path.resolve('./source/index.js'),
     devtool: 'source-map',
     output: {
         path: path.resolve('./lib'),
@@ -12,15 +12,6 @@ const config = {
         umdNamedDefine: true,
     },
     module: {
-        preLoaders: [
-            {
-                test: /\.(js|jsx)$/,
-                loader: 'isparta-instrumenter-loader',
-                include: [
-                    path.resolve('./src'),
-                ],
-            },
-        ],
         loaders: [
             {
                 test: /\.(png|jpg|gif|woff|woff2|css|sass|scss|less|styl)$/,
@@ -33,14 +24,14 @@ const config = {
                     presets: ['es2015'],
                 },
                 include: [
-                    path.resolve('./src'),
+                    path.resolve('./source'),
                     path.resolve('./test'),
                 ],
             },
         ],
     },
     resolve: {
-        root: path.resolve('./src'),
+        root: path.resolve('./source'),
         extensions: ['', '.js'],
     },
     plugins: [
