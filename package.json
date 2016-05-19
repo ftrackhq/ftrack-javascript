@@ -1,7 +1,7 @@
 {
-  "name": "webpack-library-starter",
-  "version": "0.1.3",
-  "description": "Produce universal library with webpack and es6",
+  "name": "ftrack-javascript-api",
+  "version": "0.1.0",
+  "description": "JavaScript API for ftrack.",
   "main": "lib/ftrack-api.js",
   "scripts": {
     "dist": "webpack --env=dist",
@@ -43,16 +43,13 @@
     "url": "https://bitbucket.org/ftrack/ftrack-javascript-api.git"
   },
   "keywords": [
-    "webpack",
-    "es6",
-    "starter",
+    "ftrack",
+    "api",
     "library",
-    "universal",
-    "umd",
-    "commonjs"
+    "umd"
   ],
   "author": "ftrack",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://bitbucket.org/ftrack/ftrack-javascript-api/issues"
   },
