@@ -16,14 +16,19 @@ export class Event {
      * *data* should be an object with the event payload.
      */
     constructor(topic, data, options = {}) {
-        this._data = Object.assign({
-            topic,
-            data,
-            id: uuid.v4(),
-            sent: null,
-            target: '',
-            inReplyToEvent: null,
-        }, options);
+        this._data = Object.assign(
+            {
+                topic,
+                data,
+                target: '',
+                inReplyToEvent: null,
+            },
+            options,
+            {
+                id: uuid.v4(),
+                sent: null,
+            }
+        );
     }
 
     /** Return event data. */
