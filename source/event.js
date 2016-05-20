@@ -187,7 +187,14 @@ export class EventHub {
         }
     }
 
-    /** Subscribe to *subscription* events. */
+    /**
+     * Register to *subscription* events.
+     *
+     * .. note::
+     *
+     *      Currently, it is not possible to register callbacks and only
+     *      reply events are handled.
+     */
     subscribe(subscription) {
         const subscribeEvent = new Event(
             'ftrack.meta.subscribe',
