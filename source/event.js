@@ -8,8 +8,13 @@ import { EventServerConnectionTimeoutError, EventServerReplyTimeoutError } from 
  * ftrack API Event class.
  */
 export class Event {
-
-    /** Construct EventHub instance with API credentials. */
+    /** 
+     * Construct Event instance with *topic*, *data* and additional *options*.
+     *
+     * *topic* should be a string representing the event.
+     * 
+     * *data* should be an object with the event payload.
+     */
     constructor(topic, data, options = {}) {
         this._data = Object.assign({
             topic,
@@ -26,7 +31,7 @@ export class Event {
         return this._data;
     }
 
-    /** Add source. */
+    /** Add source to event data. */
     addSource(source) {
         this._data.source = source;
     }
