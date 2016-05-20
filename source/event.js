@@ -8,11 +8,11 @@ import { EventServerConnectionTimeoutError, EventServerReplyTimeoutError } from 
  * ftrack API Event class.
  */
 export class Event {
-    /** 
+    /**
      * Construct Event instance with *topic*, *data* and additional *options*.
      *
      * *topic* should be a string representing the event.
-     * 
+     *
      * *data* should be an object with the event payload.
      */
     constructor(topic, data, options = {}) {
@@ -124,6 +124,9 @@ export class EventHub {
             }
         );
 
+        // Copy event data to avoid mutations before async callbacks.
+        const eventData = Object.assign({}, event.getData());
+
         const onConnected = new Promise((resolve, reject) => {
             this._runWhenConnected(resolve);
 
@@ -141,12 +144,8 @@ export class EventHub {
         });
 
         const onPublish = onConnected.then(() => {
-            this._socketIo.emit(
-                'ftrack.event',
-                event.getData()
-            );
-            this.logger.debug('Publishing event.', event.getData());
-
+            this._socketIo.emit('ftrack.event', eventData);
+            this.logger.debug('Publishing event.', eventData);
             return Promise.resolve();
         });
 
