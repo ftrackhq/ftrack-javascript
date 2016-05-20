@@ -26,4 +26,4 @@ export const ServerValidationError = _errorFactory('ServerValidationError');
 export const EventServerReplyTimeoutError = _errorFactory('EventServerReplyTimeoutError');
 
 // Throw when event server connection timeout occurs.
-export const EventServerConnectionTimeout = _errorFactory('EventServerConnectionTimeout');
+export const EventServerConnectionTimeoutError = _errorFactory('EventServerConnectionTimeoutError');

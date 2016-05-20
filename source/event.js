@@ -2,7 +2,7 @@
 import io from 'socket.io-client';
 import uuid from 'uuid';
 import loglevel from 'loglevel';
-import { EventServerConnectionTimeout, EventServerReplyTimeoutError } from './error';
+import { EventServerConnectionTimeoutError, EventServerReplyTimeoutError } from './error';
 
 /**
  * ftrack API Event class.
@@ -124,7 +124,7 @@ export class EventHub {
             if (timeout) {
                 setTimeout(
                     () => {
-                        const error = new EventServerConnectionTimeout(
+                        const error = new EventServerConnectionTimeoutError(
                             'Unable to connect to event server within timeout.'
                         );
                         reject(error);
