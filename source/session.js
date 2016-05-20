@@ -415,10 +415,15 @@ export class Session {
         return request;
     }
 
-    /** Return an URL where *componentId* can be downloaded. */
-    getComponent(componentId) {
+    /** 
+     * Return an URL where *componentId* can be downloaded.
+     *
+     * *componentId* is assumed to be present in the ftrack.server location.
+     * Returns null if component id is not specified. 
+     */
+    getComponentUrl(componentId) {
         if (!componentId) {
-            return `${this._serverUrl}/img/thumbnail2.png`;
+            return null;
         }
 
         return (
@@ -427,8 +432,17 @@ export class Session {
         );
     }
 
-    /** Return thumbnail URL for *componentId* with *size*. */
-    thumbnail(componentId, size = 300) {
+    /** 
+     * Return an URL where a thumbnail for *componentId* can be downloaded.
+     *
+     * *componentId* is assumed to be present in the ftrack.server location
+     * and be of a valid image file type.
+     *
+     * The image will be resized to fit within size x size pixels.
+     * 
+     * Returns the URL to a default thumbnail if component id is not specified. 
+     */
+    thumbnailUrl(componentId, { size = 300 } = {}) {
         if (!componentId) {
             return `${this._serverUrl}/img/thumbnail2.png`;
         }
