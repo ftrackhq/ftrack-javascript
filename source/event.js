@@ -114,7 +114,8 @@ export class EventHub {
      * event has been sent.
      *
      * If timeout is non-zero, the promise will be rejected if the timeout is
-     * reached before it is resolved.
+     * reached before it is resolved. Should be specified as seconds and will
+     * default to 10.
      */
     publish(event, { reply = false, timeout = 10 }) {
         event.addSource(
