@@ -126,7 +126,8 @@ export class Session {
     ) {
         if (!serverUrl || !apiUser || !apiKey) {
             throw new Error(
-                'Invalid arguments, please construct Session with *serverUrl*, *apiUser* and *apiKey*.'
+                'Invalid arguments, please construct Session with ' +
+                '*serverUrl*, *apiUser* and *apiKey*.'
             );
         }
 
