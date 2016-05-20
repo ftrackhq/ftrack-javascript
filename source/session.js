@@ -152,14 +152,14 @@ export class Session {
             { action: 'query_server_information' },
             { action: 'query_schemas' },
         ];
-        const request = this._call(operations);
-
-        request.then(
+        const request = this._call(operations).then(
             (responses) => {
                 this._serverInformation = responses[0];
                 this._schemas = responses[1];
                 this.serverVersion = this._serverInformation.version;
                 this.initialized = true;
+
+                return Promise.resolve(this);
             }
         );
 
