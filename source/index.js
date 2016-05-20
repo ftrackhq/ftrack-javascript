@@ -5,6 +5,7 @@ import Session from './session';
 
 export { Event, EventHub } from './event';
 export { Session } from './session';
+export * from './project_schema';
 
 /** Shared API session instance. */
 export let session = null; // eslint-disable-line import/no-mutable-exports
