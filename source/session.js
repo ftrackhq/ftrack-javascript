@@ -209,6 +209,13 @@ export class Session {
      *
      * Returns promise which will be resolved with an array of decoded
      * responses.
+     *
+     * The return promise may be rejected with one of several errors:
+     *
+     * ServerValidationError - Validation errors
+     * ServerPermissionDeniedError - Permission defined errors
+     * ServerError - Generic server errors or network issues
+     * 
      */
     _call(operations) {
         const url = `${this._serverUrl}/api`;
@@ -225,13 +232,32 @@ export class Session {
             body: JSON.stringify(operations),
         });
 
+        // Catch network errors
+        request = request.catch((reason) => {
+            logger.warn('Failed to perform request. ', reason);
+            return Promise.resolve({
+                exception: 'NetworkError',
+                content: reason.message,
+            });
+        });
+
         request = request.then(
-            (response) => response.json()
+            (response) => response.json && response.json() || response
         );
 
         request = request.then((data) => {
             const result = this.decode(data);
             return Promise.resolve(result);
+        });
+
+        // Catch badly formatted responses
+        request = request.catch((reason) => {
+            logger.warn('Server reported error in unexpected format. ', reason);
+            return Promise.resolve({
+                exception: 'MalformedResponseError',
+                content: reason.message,
+                error: reason,
+            });
         });
 
         // Reject promise on API exception.
