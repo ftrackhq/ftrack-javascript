@@ -68,9 +68,7 @@ export class EventHub {
             'reconnection limit': 10000,
             'reconnection delay': 5000,
             transports: ['websocket'],
-            query: ''.concat(
-                'api_user=', this._apiUser, '&api_key=', this._apiKey
-            ),
+            query: `api_user=${this._apiUser}&api_key=${this._apiKey}`,
         });
 
         this._socketIo.on('connect', this._onSocketConnected.bind(this));
