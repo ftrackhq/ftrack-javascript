@@ -81,7 +81,7 @@ export class EventHub {
 
     /** Return true if connected to event server. */
     isConnected() {
-        return this._socketIo && this._socketIo.socket.connected;
+        return this._socketIo && this._socketIo.socket.connected || false;
     }
 
     /**
