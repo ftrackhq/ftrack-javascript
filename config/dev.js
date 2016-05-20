@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 const config = {
-    entry: path.resolve('./source/index.js'),
+    entry: ['babel-polyfill', path.resolve('./source/index.js')],
     devtool: 'source-map',
     output: {
         path: path.resolve('./lib'),

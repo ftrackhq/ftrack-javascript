@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 const config = {
-    entry: path.resolve('./source/index.js'),
+    entry: ['babel-polyfill', path.resolve('./source/index.js')],
     devtool: 'source-map',
     output: {
         path: path.resolve('./lib'),
@@ -39,7 +39,7 @@ const config = {
             Promise: 'imports?this=>global!exports?global.Promise!es6-promise',
             fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch',
         }),
-        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
+        new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(en)$/),
         new webpack.optimize.DedupePlugin(),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': '"production"',
