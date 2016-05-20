@@ -122,6 +122,7 @@ export class Session {
     constructor(
         serverUrl, apiUser, apiKey, {
             autoConnectEventHub = false,
+            eventHubOptions = {},
         } = {}
     ) {
         if (!serverUrl || !apiUser || !apiKey) {
@@ -135,7 +136,7 @@ export class Session {
         this._apiKey = apiKey;
         this._serverUrl = serverUrl;
         this.initialized = false;
-        this.eventHub = new EventHub(serverUrl, apiUser, apiKey);
+        this.eventHub = new EventHub(serverUrl, apiUser, apiKey, eventHubOptions);
 
         if (autoConnectEventHub) {
             this.eventHub.connect();

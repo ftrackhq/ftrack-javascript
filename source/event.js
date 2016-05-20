@@ -39,8 +39,9 @@ export class Event {
 export class EventHub {
 
     /** Construct EventHub instance with API credentials. */
-    constructor(serverUrl, apiUser, apiKey) {
+    constructor(serverUrl, apiUser, apiKey, { applicationId = 'ftrack.api.javascript' } = {}) {
         this.logger = loglevel.getLogger('ftrack_api:EventHub');
+        this._applicationId = applicationId;
         this._apiUser = apiUser;
         this._apiKey = apiKey;
         this._serverUrl = serverUrl;
@@ -185,7 +186,7 @@ export class EventHub {
             {
                 subscriber: {
                     id: this._id,
-                    applicationId: 'ftrack.client.spark',
+                    applicationId: this._applicationId,
                 },
                 subscription,
             }
