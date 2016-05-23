@@ -37,3 +37,11 @@ export function deleteOperation(type, keys) {
     };
     return operation;
 }
+
+/** Return operation module. */
+export default {
+    query: queryOperation,
+    create: createOperation,
+    update: updateOperation,
+    delete: deleteOperation,
+};

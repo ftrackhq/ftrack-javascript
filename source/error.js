@@ -27,3 +27,11 @@ export const EventServerReplyTimeoutError = _errorFactory('EventServerReplyTimeo
 
 // Throw when event server connection timeout occurs.
 export const EventServerConnectionTimeoutError = _errorFactory('EventServerConnectionTimeoutError');
+
+export default {
+    ServerError,
+    ServerPermissionDeniedError,
+    ServerValidationError,
+    EventServerReplyTimeoutError,
+    EventServerConnectionTimeoutError,
+};

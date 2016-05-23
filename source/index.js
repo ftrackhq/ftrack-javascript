@@ -1,25 +1,14 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import Session from './session';
-
-
-export { Event, EventHub } from './event';
 export { Session } from './session';
-export * from './project_schema';
 
-/** Shared API session instance. */
-export let session = null; // eslint-disable-line import/no-mutable-exports
+// TODO: Export as underscored variables for now, since implementation is
+// incomplete. Unprefix once supported.
+export {
+    Event as _Event,
+    EventHub as _EventHub,
+} from './event';
 
-/**
- * Configure shared session instance.
- *
- * Returns promise which will be resolved once session is ready for use.
- */
-export function configureSharedApiSession(
-    serverUrl, apiUser, apiKey
-) {
-    session = new Session(
-        serverUrl, apiUser, apiKey, { autoConnectEventHub: true }
-    );
-    return session.initialize();
-}
+export { default as error } from './error';
+export { default as operation } from './operation';
+export { default as projectSchema } from './project_schema';
