@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 /** Return a new error class from *name*. */
-function _errorFactory(name) {
+function errorFactory(name) {
     function CustomError(message) {
         this.name = name;
         this.message = message;
@@ -14,19 +14,19 @@ function _errorFactory(name) {
 }
 
 // Throw when a unknown server error occurs.
-export const ServerError = _errorFactory('ServerError');
+export const ServerError = errorFactory('ServerError');
 
 // Throw when a permission denied error occurs.
-export const ServerPermissionDeniedError = _errorFactory('ServerPermissionDeniedError');
+export const ServerPermissionDeniedError = errorFactory('ServerPermissionDeniedError');
 
 // Throw when a validation error occurs.
-export const ServerValidationError = _errorFactory('ServerValidationError');
+export const ServerValidationError = errorFactory('ServerValidationError');
 
 // Throw when event reply timeout occurs.
-export const EventServerReplyTimeoutError = _errorFactory('EventServerReplyTimeoutError');
+export const EventServerReplyTimeoutError = errorFactory('EventServerReplyTimeoutError');
 
 // Throw when event server connection timeout occurs.
-export const EventServerConnectionTimeoutError = _errorFactory('EventServerConnectionTimeoutError');
+export const EventServerConnectionTimeoutError = errorFactory('EventServerConnectionTimeoutError');
 
 export default {
     ServerError,

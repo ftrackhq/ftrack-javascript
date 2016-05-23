@@ -46,7 +46,7 @@ function identity(item) {
 *       Where Task1, Task2 and Task3 is containing data for the same task.
 *
 */
-function _gatherEntityDuplicates(data, collection) {
+function gatherEntityDuplicates(data, collection) {
     data.forEach(
         (item) => {
             if (!item.__entity_type__) {
@@ -69,11 +69,11 @@ function _gatherEntityDuplicates(data, collection) {
                 item,
                 (value) => {
                     if (value && value.constructor === Array) {
-                        _gatherEntityDuplicates(value, collection);
+                        gatherEntityDuplicates(value, collection);
                     }
 
                     if (value && value.constructor === Object) {
-                        _gatherEntityDuplicates([value], collection);
+                        gatherEntityDuplicates([value], collection);
                     }
                 }
             );
@@ -91,7 +91,7 @@ function _gatherEntityDuplicates(data, collection) {
 function merge(data) {
     const collection = {};
 
-    _gatherEntityDuplicates(data, collection);
+    gatherEntityDuplicates(data, collection);
 
     // Now merge all objects with the same identifier.
     forIn(collection, (objects) => {
@@ -132,9 +132,9 @@ export class Session {
             );
         }
 
-        this._apiUser = apiUser;
-        this._apiKey = apiKey;
-        this._serverUrl = serverUrl;
+        this.apiUser = apiUser;
+        this.apiKey = apiKey;
+        this.serverUrl = serverUrl;
         this.initialized = false;
         this.eventHub = new EventHub(serverUrl, apiUser, apiKey, eventHubOptions);
 
@@ -152,11 +152,11 @@ export class Session {
             { action: 'query_server_information' },
             { action: 'query_schemas' },
         ];
-        const request = this._call(operations).then(
+        const request = this.call(operations).then(
             (responses) => {
-                this._serverInformation = responses[0];
-                this._schemas = responses[1];
-                this.serverVersion = this._serverInformation.version;
+                this.serverInformation = responses[0];
+                this.schemas = responses[1];
+                this.serverVersion = this.serverInformation.version;
                 this.initialized = true;
 
                 return Promise.resolve(this);
@@ -182,8 +182,8 @@ export class Session {
             if (data.__type__ === 'datetime') {
                 let adjustedMoment;
                 if (
-                    this._serverInformation &&
-                    this._serverInformation.is_timezone_support_enabled
+                    this.serverInformation &&
+                    this.serverInformation.is_timezone_support_enabled
                 ) {
                     adjustedMoment = moment.utc(data.value);
                 } else {
@@ -215,10 +215,10 @@ export class Session {
      * ServerValidationError - Validation errors
      * ServerPermissionDeniedError - Permission defined errors
      * ServerError - Generic server errors or network issues
-     * 
+     *
      */
-    _call(operations) {
-        const url = `${this._serverUrl}/api`;
+    call(operations) {
+        const url = `${this.serverUrl}/api`;
 
         let request = fetch(url, {
             method: 'post',
@@ -226,8 +226,8 @@ export class Session {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                'ftrack-api-key': this._apiKey,
-                'ftrack-user': this._apiUser,
+                'ftrack-api-key': this.apiKey,
+                'ftrack-user': this.apiUser,
             },
             body: JSON.stringify(operations),
         });
@@ -284,9 +284,9 @@ export class Session {
 
     /** Return schema with id or null if not existing. */
     getSchema(schemaId) {
-        for (const index in this._schemas) {
-            if (this._schemas[index].id === schemaId) {
-                return this._schemas[index];
+        for (const index in this.schemas) {
+            if (this.schemas[index].id === schemaId) {
+                return this.schemas[index];
             }
         }
 
@@ -303,7 +303,7 @@ export class Session {
         logger.debug('Query ', expression);
 
         const operation = queryOperation(expression);
-        let request = this._call([operation]);
+        let request = this.call([operation]);
         request = request.then(
             (responses) => {
                 const response = responses[0];
@@ -323,7 +323,7 @@ export class Session {
     create(type, data) {
         logger.debug('Create', type, data);
 
-        let request = this._call([createOperation(type, data)]);
+        let request = this.call([createOperation(type, data)]);
         request = request.then((responses) => {
             const response = responses[0];
             return response;
@@ -340,7 +340,7 @@ export class Session {
     update(type, id, data) {
         logger.debug('Update', type, id, data);
 
-        let request = this._call([updateOperation(type, id, data)]);
+        let request = this.call([updateOperation(type, id, data)]);
         request = request.then((responses) => {
             const response = responses[0];
             return response;
@@ -357,7 +357,7 @@ export class Session {
     delete(type, id) {
         logger.debug('Delete', type, id);
 
-        let request = this._call([deleteOperation(type, id)]);
+        let request = this.call([deleteOperation(type, id)]);
         request = request.then((responses) => {
             const response = responses[0];
             return response;
@@ -378,8 +378,8 @@ export class Session {
         }
 
         return (
-            `${this._serverUrl}/component/get?id=${componentId}` +
-            `&username=${this._apiUser}&apiKey=${this._apiKey}`
+            `${this.serverUrl}/component/get?id=${componentId}` +
+            `&username=${this.apiUser}&apiKey=${this.apiKey}`
         );
     }
 
@@ -395,12 +395,12 @@ export class Session {
      */
     thumbnailUrl(componentId, { size = 300 } = {}) {
         if (!componentId) {
-            return `${this._serverUrl}/img/thumbnail2.png`;
+            return `${this.serverUrl}/img/thumbnail2.png`;
         }
 
         return (
-            `${this._serverUrl}/component/thumbnail?id=${componentId}` +
-            `&size=${size}&username=${this._apiUser}&apiKey=${this._apiKey}`
+            `${this.serverUrl}/component/thumbnail?id=${componentId}` +
+            `&size=${size}&username=${this.apiUser}&apiKey=${this.apiKey}`
         );
     }
 }
