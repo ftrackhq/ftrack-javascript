@@ -135,35 +135,25 @@ export class Session {
         this.apiUser = apiUser;
         this.apiKey = apiKey;
         this.serverUrl = serverUrl;
-        this.initialized = false;
         this.eventHub = new EventHub(serverUrl, apiUser, apiKey, eventHubOptions);
 
         if (autoConnectEventHub) {
             this.eventHub.connect();
         }
-    }
 
-    /**
-     * Initialize session
-     * Returns promise which will be resolved once session is ready for use.
-     */
-    initialize() {
         const operations = [
             { action: 'query_server_information' },
             { action: 'query_schemas' },
         ];
-        const request = this.call(operations).then(
+        this.initialised = this.call(operations).then(
             (responses) => {
                 this.serverInformation = responses[0];
                 this.schemas = responses[1];
                 this.serverVersion = this.serverInformation.version;
-                this.initialized = true;
 
                 return Promise.resolve(this);
             }
         );
-
-        return request;
     }
 
     /** Iterate *data* and decode entities with special encoding logic.
@@ -220,16 +210,32 @@ export class Session {
     call(operations) {
         const url = `${this.serverUrl}/api`;
 
-        let request = fetch(url, {
-            method: 'post',
-            credentials: 'include',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                'ftrack-api-key': this.apiKey,
-                'ftrack-user': this.apiUser,
-            },
-            body: JSON.stringify(operations),
+        // Delay call until session is initialised if initialisation is in
+        // progress.
+        let request = new Promise((resolve) => {
+            if (this.initialised) {
+                this.initialised.then(() => {
+                    resolve();
+                });
+            } else {
+                resolve();
+            }
+        });
+
+        request = request.then(() => {
+            let request = fetch(url, {
+                method: 'post',
+                credentials: 'include',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'ftrack-api-key': this.apiKey,
+                    'ftrack-user': this.apiUser,
+                },
+                body: JSON.stringify(operations),
+            });
+
+            return request;
         });
 
         // Catch network errors
