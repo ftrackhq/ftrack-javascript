@@ -6,8 +6,8 @@ const config = {
     devtool: 'source-map',
     output: {
         path: path.resolve('./lib'),
-        filename: 'ftrack_api.min.js',
-        library: 'ftrack_api',
+        filename: 'ftrack.min.js',
+        library: 'ftrack',
         libraryTarget: 'umd',
         umdNamedDefine: true,
     },

@@ -2,7 +2,7 @@
   "name": "ftrack-javascript-api",
   "version": "0.1.0",
   "description": "JavaScript API for ftrack.",
-  "main": "lib/ftrack-api.js",
+  "main": "lib/ftrack.min.js",
   "scripts": {
     "dev": "webpack --progress --colors --watch --env=dev",
     "dist": "webpack --env=dist",
