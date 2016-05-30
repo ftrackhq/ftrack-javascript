@@ -1,3 +1,5 @@
+// :copyright: Copyright (c) 2016 ftrack
+
 import { Session } from 'session';
 import uuid from 'uuid';
 import loglevel from 'loglevel';
@@ -13,7 +15,7 @@ describe('Session', () => {
     before(() => {
         session = new Session(
             credentials.serverUrl, credentials.apiUser, credentials.apiKey,
-            false
+            { autoConnectEventHub: false }
         );
     });
 
