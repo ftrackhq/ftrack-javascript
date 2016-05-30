@@ -224,8 +224,8 @@ export class Session {
             }
         });
 
-        request = request.then(() => {
-            let request = fetch(url, {
+        request = request.then(() => 
+            fetch(url, {
                 method: 'post',
                 credentials: 'include',
                 headers: {
@@ -235,10 +235,8 @@ export class Session {
                     'ftrack-user': this.apiUser,
                 },
                 body: JSON.stringify(operations),
-            });
-
-            return request;
-        });
+            })
+        );
 
         // Catch network errors
         request = request.catch((reason) => {
