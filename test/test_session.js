@@ -19,6 +19,14 @@ describe('Session', () => {
         );
     });
 
+    it('Should initialize the session automatically', (done) => {
+        expect(session.initialized).to.be.false;
+        session.initializing.then(() => {
+            expect(session.initialized).to.be.true;
+            done();
+        });
+    });
+
     it('Should allow querying a Task', (done) => {
         const promise = session.query('select name from Task limit 1');
         promise.then((response) => {
