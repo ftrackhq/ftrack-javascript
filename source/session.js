@@ -145,11 +145,13 @@ export class Session {
             { action: 'query_server_information' },
             { action: 'query_schemas' },
         ];
-        this.initialised = this.call(operations).then(
+        this.initialized = false;
+        this.initializing = this.call(operations).then(
             (responses) => {
                 this.serverInformation = responses[0];
                 this.schemas = responses[1];
                 this.serverVersion = this.serverInformation.version;
+                this.initialized = true;
 
                 return Promise.resolve(this);
             }
@@ -210,11 +212,11 @@ export class Session {
     call(operations) {
         const url = `${this.serverUrl}/api`;
 
-        // Delay call until session is initialised if initialisation is in
+        // Delay call until session is initialized if initialization is in
         // progress.
         let request = new Promise((resolve) => {
-            if (this.initialised) {
-                this.initialised.then(() => {
+            if (this.initializing && !this.initialized) {
+                this.initializing.then(() => {
                     resolve();
                 });
             } else {
