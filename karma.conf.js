@@ -10,7 +10,6 @@ module.exports = function (config) {
         port: 9876,
         captureTimeout: 60000,
         frameworks: ['mocha', 'chai'],
-        logLevel: config.LOG_DEBUG,
         client: {
             captureConsole: true,
             mocha: {
