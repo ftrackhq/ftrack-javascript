@@ -6,6 +6,7 @@ import loglevel from 'loglevel';
 import credentials from './api_credentials';
 
 const logger = loglevel.getLogger('test_session');
+logger.setLevel("debug");
 
 describe('Session', () => {
     let session = null;
@@ -89,6 +90,123 @@ describe('Session', () => {
                 response.data.username.should.deep.equal(newUsername);
                 done();
             });
+        });
+    });
+
+    it('Should support merging 0-level nested data', (done) => {
+        const data = session.merge([
+            {
+                id: 1,
+                __entity_type__: 'Task',
+                name: 'foo',
+            }, {
+                id: 1,
+                __entity_type__: 'Task',
+            }, {
+                id: 2,
+                __entity_type__: 'Task',
+                name: 'bar',
+            },
+        ]);
+        data[0].name.should.deep.equal('foo');
+        data[1].name.should.deep.equal('foo');
+        data[2].name.should.deep.equal('bar');
+        done();
+    });
+
+    it('Should support merging 1-level nested data', (done) => {
+        const data = session.merge([
+            {
+                id: 1,
+                __entity_type__: 'Task',
+                name: 'foo',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 2,
+                    name: 'In progress',
+                },
+            }, {
+                id: 2,
+                __entity_type__: 'Task',
+                name: 'foo',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 1,
+                    name: 'Done',
+                },
+            }, {
+                id: 3,
+                __entity_type__: 'Task',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 1,
+                },
+            },
+        ]);
+        data[0].status.name.should.deep.equal('In progress');
+        data[1].status.name.should.deep.equal('Done');
+        data[2].status.name.should.deep.equal('Done');
+        done();
+    });
+
+    it('Should support merging 2-level nested data', (done) => {
+        const data = session.merge([
+            {
+                id: 1,
+                __entity_type__: 'Task',
+                name: 'foo',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 1,
+                    state: {
+                        __entity_type__: 'State',
+                        id: 1,
+                        short: 'DONE',
+                    },
+                },
+            }, {
+                id: 2,
+                __entity_type__: 'Task',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 2,
+                    state: {
+                        __entity_type__: 'State',
+                        id: 2,
+                        short: 'NOT_STARTED',
+                    },
+                },
+            }, {
+                id: 3,
+                __entity_type__: 'Task',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 1,
+                    state: {
+                        __entity_type__: 'State',
+                        id: 1,
+                    },
+                },
+            },
+        ]);
+        data[0].status.state.short.should.deep.equal('DONE');
+        data[1].status.state.short.should.deep.equal('NOT_STARTED');
+        data[2].status.state.short.should.deep.equal('DONE');
+        done();
+    });
+
+    it('Should support api query 2-level nested data', (done) => {
+        const promise = session.query(
+            'select status.state.short from Task where status.state.short is NOT_STARTED limit 2'
+        );
+        promise.then((response) => {
+            const data = response.data;
+            data[0].status.state.short.should.deep.equal('NOT_STARTED');
+            data[1].status.state.short.should.deep.equal('NOT_STARTED');
+
+            data[0].status.should.equal(data[1].status);
+
+            done();
         });
     });
 });

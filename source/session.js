@@ -31,87 +31,6 @@ function identity(item) {
     return item.id;
 }
 
-/** Recursively iterate *data* and gather duplicates in *collection*.
-*
-* Note that *collection* is assumed to be a object and is updated in place. The
-* result will be a dictionary with all entities mapped with their identity.
-*
-* .. example::
-*
-*       {
-*           <primary-key>,Task: [<Task1>, <Task2>, <Task3>],
-*           <primary-key>,Note: [<Note1>, <Note2>]
-*       }
-*
-*       Where Task1, Task2 and Task3 is containing data for the same task.
-*
-*/
-function gatherEntityDuplicates(data, collection) {
-    data.forEach(
-        (item) => {
-            if (!item.__entity_type__) {
-                // Only process API entity types.
-                return;
-            }
-
-            const primaryKey = identity(item);
-
-            if (!primaryKey) {
-                // This happens for combined primary keys if the do not exist
-                // in COMBINED_PRIMARY_KEY_MAP.
-                logger.warn('Key could not be determined for: ', item);
-                return;
-            }
-
-            const identifier = `${primaryKey},${item.__entity_type__}`;
-
-            forIn(
-                item,
-                (value) => {
-                    if (value && value.constructor === Array) {
-                        gatherEntityDuplicates(value, collection);
-                    }
-
-                    if (value && value.constructor === Object) {
-                        gatherEntityDuplicates([value], collection);
-                    }
-                }
-            );
-
-            if (!collection[identifier]) {
-                collection[identifier] = [];
-            }
-
-            collection[identifier].push(item);
-        }
-    );
-}
-
-/** Merge lazy loaded entities in *data*. */
-function merge(data) {
-    const collection = {};
-
-    gatherEntityDuplicates(data, collection);
-
-    // Now merge all objects with the same identifier.
-    forIn(collection, (objects) => {
-        const map = {};
-        forIn(objects, (item) => {
-            forIn(item, (value, key) => {
-                if (value && value.constructor !== Array && value.constructor !== Object) {
-                    map[key] = value;
-                }
-            });
-        });
-
-        forIn(objects, (item) => {
-            Object.assign(item, map);
-        });
-    });
-
-    return data;
-}
-
 
 /**
  * ftrack API session
@@ -196,6 +115,63 @@ export class Session {
         return data;
     }
 
+    /** Return merged lazy loaded entities in *data*. */
+    merge(data) {
+        return this._mergeCollection(data, {});
+    }
+
+    /** Return merged *collection* of entities using *identityMap*. */
+    _mergeCollection(collection, identityMap) {
+        const mergedCollection = collection.map(
+            (item) => {
+                if (!item.__entity_type__) {
+                    // Only process API entity types.
+                    return item;
+                }
+
+                return this._mergeEntity(item, identityMap);
+            }
+        );
+
+        return mergedCollection;
+    }
+
+    /** Return merged *entity* using *identityMap*. */
+    _mergeEntity(entity, identityMap) {
+        const primaryKey = identity(entity);
+
+        if (!primaryKey) {
+            // This happens for combined primary keys if the do not exist
+            // in COMBINED_PRIMARY_KEY_MAP.
+            logger.warn('Key could not be determined for: ', entity);
+            return entity;
+        }
+
+        const identifier = `${primaryKey},${entity.__entity_type__}`;
+        if (!identityMap[identifier]) {
+            identityMap[identifier] = {};
+        }
+
+        const mergedEntity = identityMap[identifier];
+
+        forIn(
+            entity,
+            (value, key) => {
+                if (value && value.constructor === Array) {
+                    mergedEntity[key] = this._mergeCollection(
+                        value, identityMap
+                    );
+                } else if (value && value.constructor === Object) {
+                    mergedEntity[key] = this._mergeEntity(value, identityMap);
+                } else {
+                    mergedEntity[key] = value;
+                }
+            }
+        );
+
+        return mergedEntity;
+    }
+
     /**
      * Call API with array of operation objects in *operations*.
      *
@@ -224,7 +200,7 @@ export class Session {
             }
         });
 
-        request = request.then(() => 
+        request = request.then(() =>
             fetch(url, {
                 method: 'post',
                 credentials: 'include',
@@ -306,14 +282,14 @@ export class Session {
      * and metadata.
      */
     query(expression) {
-        logger.debug('Query ', expression);
+        logger.debug('Query', expression);
 
         const operation = queryOperation(expression);
         let request = this.call([operation]);
         request = request.then(
             (responses) => {
                 const response = responses[0];
-                response.data = merge(response.data);
+                response.data = this.merge(response.data);
                 return response;
             }
         );
