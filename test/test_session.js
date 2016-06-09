@@ -1,0 +1,223 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+import { ServerError } from 'error';
+import { Session } from 'session';
+import uuid from 'uuid';
+import loglevel from 'loglevel';
+import credentials from './api_credentials';
+
+const logger = loglevel.getLogger('test_session');
+logger.setLevel("debug");
+
+describe('Session', () => {
+    let session = null;
+
+    logger.debug('Running session tests.');
+
+    before(() => {
+        session = new Session(
+            credentials.serverUrl, credentials.apiUser, credentials.apiKey,
+            { autoConnectEventHub: false }
+        );
+    });
+
+    it('Should reject invalid credentials', () => {
+        const badSession = new Session(
+            credentials.serverUrl, credentials.apiUser, 'INVALID_API_KEY',
+            { autoConnectEventHub: false }
+        );
+        return expect(badSession.initializing).to.be.rejectedWith(ServerError);
+    });
+
+    it('Should initialize the session automatically', () => {
+        expect(session.initialized).to.be.false;
+        return expect(
+            session.initializing.then((_session) => _session.initialized)
+        ).to.eventually.be.true;
+    });
+
+    it('Should allow querying a Task', () => {
+        return expect(
+            session.query('select name from Task limit 1').then(
+                (response) => response.data[0].__entity_type__
+            )
+        ).to.eventually.be.equal('Task');
+    });
+
+    it('Should allow creating a User', () => {
+        const promise = session.create('User', {
+            username: uuid.v4(),
+        });
+
+        return expect(
+            promise.then(
+                (response) => response.data.__entity_type__
+            )
+        ).to.eventually.be.equal('User');
+    });
+
+    it('Should allow deleting a User', () => {
+        const username = uuid.v4();
+        let promise = session.create('User', {
+            username,
+        });
+
+        promise = promise.then((newUserResponse) => {
+            const userId = newUserResponse.data.id;
+            const deletePromise = session.delete(
+                'User', userId
+            );
+            return deletePromise;
+        });
+
+        return expect(
+            promise.then(
+                (response) => response.data
+            )
+        ).to.eventually.be.true;
+    });
+
+    it('Should allow updating a User', () => {
+        const username = uuid.v4();
+        const newUsername = uuid.v4();
+        let promise = session.create('User', {
+            username,
+        });
+
+        promise = promise.then((newUserResponse) => {
+            const userId = newUserResponse.data.id;
+            const updatePromise = session.update(
+                'User',
+                userId,
+                {
+                    username: newUsername,
+                }
+            );
+
+            return updatePromise;
+        });
+
+        return expect(
+            promise.then(
+                (response) => response.data.username
+            )
+        ).to.eventually.be.equal(newUsername);
+    });
+
+    it('Should support merging 0-level nested data', (done) => {
+        const data = session.merge([
+            {
+                id: 1,
+                __entity_type__: 'Task',
+                name: 'foo',
+            }, {
+                id: 1,
+                __entity_type__: 'Task',
+            }, {
+                id: 2,
+                __entity_type__: 'Task',
+                name: 'bar',
+            },
+        ]);
+        data[0].name.should.deep.equal('foo');
+        data[1].name.should.deep.equal('foo');
+        data[2].name.should.deep.equal('bar');
+        done();
+    });
+
+    it('Should support merging 1-level nested data', (done) => {
+        const data = session.merge([
+            {
+                id: 1,
+                __entity_type__: 'Task',
+                name: 'foo',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 2,
+                    name: 'In progress',
+                },
+            }, {
+                id: 2,
+                __entity_type__: 'Task',
+                name: 'foo',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 1,
+                    name: 'Done',
+                },
+            }, {
+                id: 3,
+                __entity_type__: 'Task',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 1,
+                },
+            },
+        ]);
+        data[0].status.name.should.deep.equal('In progress');
+        data[1].status.name.should.deep.equal('Done');
+        data[2].status.name.should.deep.equal('Done');
+        done();
+    });
+
+    it('Should support merging 2-level nested data', (done) => {
+        const data = session.merge([
+            {
+                id: 1,
+                __entity_type__: 'Task',
+                name: 'foo',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 1,
+                    state: {
+                        __entity_type__: 'State',
+                        id: 1,
+                        short: 'DONE',
+                    },
+                },
+            }, {
+                id: 2,
+                __entity_type__: 'Task',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 2,
+                    state: {
+                        __entity_type__: 'State',
+                        id: 2,
+                        short: 'NOT_STARTED',
+                    },
+                },
+            }, {
+                id: 3,
+                __entity_type__: 'Task',
+                status: {
+                    __entity_type__: 'Status',
+                    id: 1,
+                    state: {
+                        __entity_type__: 'State',
+                        id: 1,
+                    },
+                },
+            },
+        ]);
+        data[0].status.state.short.should.deep.equal('DONE');
+        data[1].status.state.short.should.deep.equal('NOT_STARTED');
+        data[2].status.state.short.should.deep.equal('DONE');
+        done();
+    });
+
+    it('Should support api query 2-level nested data', (done) => {
+        const promise = session.query(
+            'select status.state.short from Task where status.state.short is NOT_STARTED limit 2'
+        );
+        promise.then((response) => {
+            const data = response.data;
+            data[0].status.state.short.should.deep.equal('NOT_STARTED');
+            data[1].status.state.short.should.deep.equal('NOT_STARTED');
+
+            data[0].status.should.equal(data[1].status);
+
+            done();
+        }, (rejection) => { done(rejection); });
+    });
+});
