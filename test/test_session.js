@@ -1,5 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
+import { ServerError } from 'error';
 import { Session } from 'session';
 import uuid from 'uuid';
 import loglevel from 'loglevel';
@@ -20,64 +21,71 @@ describe('Session', () => {
         );
     });
 
-    it('Should initialize the session automatically', (done) => {
+    it('Should reject invalid credentials', () => {
+        const badSession = new Session(
+            credentials.serverUrl, credentials.apiUser, 'INVALID_API_KEY',
+            { autoConnectEventHub: false }
+        );
+        return expect(badSession.initializing).to.be.rejectedWith(ServerError);
+    });
+
+    it('Should initialize the session automatically', () => {
         expect(session.initialized).to.be.false;
-        session.initializing.then(() => {
-            expect(session.initialized).to.be.true;
-            done();
-        });
+        return expect(
+            session.initializing.then((_session) => _session.initialized)
+        ).to.eventually.be.true;
     });
 
-    it('Should allow querying a Task', (done) => {
-        const promise = session.query('select name from Task limit 1');
-        promise.then((response) => {
-            const entityType = response.data[0].__entity_type__;
-            entityType.should.deep.equal('Task');
-            done();
-        });
+    it('Should allow querying a Task', () => {
+        return expect(
+            session.query('select name from Task limit 1').then(
+                (response) => response.data[0].__entity_type__
+            )
+        ).to.eventually.be.equal('Task');
     });
 
-    it('Should allow creating a User', (done) => {
+    it('Should allow creating a User', () => {
         const promise = session.create('User', {
             username: uuid.v4(),
         });
 
-        promise.then((response) => {
-            const entityType = response.data.__entity_type__;
-            entityType.should.deep.equal('User');
-            done();
-        });
+        return expect(
+            promise.then(
+                (response) => response.data.__entity_type__
+            )
+        ).to.eventually.be.equal('User');
     });
 
-    it('Should allow deleting a User', (done) => {
+    it('Should allow deleting a User', () => {
         const username = uuid.v4();
-        const promise = session.create('User', {
+        let promise = session.create('User', {
             username,
         });
 
-        promise.then((newUserResponse) => {
+        promise = promise.then((newUserResponse) => {
             const userId = newUserResponse.data.id;
-
             const deletePromise = session.delete(
                 'User', userId
             );
-
-            deletePromise.then(() => {
-                done();
-            });
+            return deletePromise;
         });
+
+        return expect(
+            promise.then(
+                (response) => response.data
+            )
+        ).to.eventually.be.true;
     });
 
-    it('Should allow updating a User', (done) => {
+    it('Should allow updating a User', () => {
         const username = uuid.v4();
-        const promise = session.create('User', {
+        const newUsername = uuid.v4();
+        let promise = session.create('User', {
             username,
         });
 
-        promise.then((newUserResponse) => {
+        promise = promise.then((newUserResponse) => {
             const userId = newUserResponse.data.id;
-            const newUsername = uuid.v4();
-
             const updatePromise = session.update(
                 'User',
                 userId,
@@ -86,11 +94,14 @@ describe('Session', () => {
                 }
             );
 
-            updatePromise.then((response) => {
-                response.data.username.should.deep.equal(newUsername);
-                done();
-            });
+            return updatePromise;
         });
+
+        return expect(
+            promise.then(
+                (response) => response.data.username
+            )
+        ).to.eventually.be.equal(newUsername);
     });
 
     it('Should support merging 0-level nested data', (done) => {
@@ -207,6 +218,6 @@ describe('Session', () => {
             data[0].status.should.equal(data[1].status);
 
             done();
-        });
+        }, (rejection) => { done(rejection); });
     });
 });

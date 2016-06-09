@@ -20,7 +20,17 @@ module.exports = function(config) {
             'test/load_tests.js': ['webpack', 'sourcemap'],
         },
 
-        frameworks: ['mocha', 'chai'],
+        frameworks: ['mocha', 'chai-as-promised', 'chai'],
+        plugins:  [
+            'karma-chai',
+            'karma-chai-as-promised',
+            'karma-coverage',
+            'karma-mocha',
+            'karma-mocha-reporter',
+            'karma-phantomjs-launcher',
+            'karma-sourcemap-loader',
+            'karma-webpack',
+        ],
         reporters: ['mocha', 'coverage'],
         mochaReporter: {
             showDiff: true,

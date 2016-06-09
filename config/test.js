@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 const config = {
-    devtool: 'eval',
+    devtool: 'inline-source-map',
     module: {
         preLoaders: [
             {
