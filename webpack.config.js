@@ -1,48 +1,37 @@
-var webpack = require('webpack');
-var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
-var path = require('path');
-var env = require('yargs').argv.mode;
+'use strict';
 
-var libraryName = 'ftrack-api';
+const path = require('path');
+const args = require('minimist')(process.argv.slice(2));
 
-var plugins = [], outputFile;
+// List of allowed environments
+const allowedEnvs = ['dev', 'dist', 'test'];
 
-if (env === 'build') {
-  plugins.push(new UglifyJsPlugin({ minimize: true }));
-  outputFile = libraryName + '.min.js';
+// Set the correct environment
+let env;
+if (args._.length > 0 && args._.indexOf('start') !== -1) {
+    env = 'test';
+} else if (args.env) {
+    env = args.env;
 } else {
-  outputFile = libraryName + '.js';
+    env = 'dev';
 }
 
-var config = {
-  entry: __dirname + '/src/index.js',
-  devtool: 'source-map',
-  output: {
-    path: __dirname + '/lib',
-    filename: outputFile,
-    library: libraryName,
-    libraryTarget: 'umd',
-    umdNamedDefine: true
-  },
-  module: {
-    loaders: [
-      {
-        test: /(\.jsx|\.js)$/,
-        loader: 'babel',
-        exclude: /(node_modules|bower_components)/
-      },
-      {
-        test: /(\.jsx|\.js)$/,
-        loader: "eslint-loader",
-        exclude: /node_modules/
-      }
-    ]
-  },
-  resolve: {
-    root: path.resolve('./src'),
-    extensions: ['', '.js']
-  },
-  plugins: plugins
+// Get available configurations
+const configs = {
+    dev: require(path.join(__dirname, 'config/dev')),
+    dist: require(path.join(__dirname, 'config/dist')),
+    test: require(path.join(__dirname, 'config/test')),
 };
 
-module.exports = config;
+/** Build the webpack configuration. */
+function buildConfig(wantedEnv) {
+    const isValid = (
+        wantedEnv &&
+        wantedEnv.length > 0 &&
+        allowedEnvs.indexOf(wantedEnv) !== -1
+    );
+    const validEnv = isValid ? wantedEnv : 'dev';
+    return configs[validEnv];
+}
+
+module.exports = buildConfig(env);
