@@ -6,6 +6,7 @@ import { EventServerConnectionTimeoutError, EventServerReplyTimeoutError } from 
 
 /**
  * ftrack API Event class.
+ * @private
  */
 export class Event {
     /**
@@ -45,6 +46,7 @@ export class Event {
 
 /**
  * ftrack API Event hub.
+ * @private
  */
 export class EventHub {
 
