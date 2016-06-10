@@ -10,8 +10,9 @@ Javascript api for ftrack.com
 .. toctree::
     :maxdepth: 1
 
+    introduction
     installing
-    using
+    tutorial
     api_reference/index
     release/index
     glossary

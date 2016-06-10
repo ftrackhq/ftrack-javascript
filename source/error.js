@@ -1,6 +1,17 @@
 // :copyright: Copyright (c) 2016 ftrack
+/**
+ * Error namespace
+ * @namespace error
+ */
 
-/** Return a new error class from *name*. */
+/**
+ * 
+ * Return a new error class from *name*.
+ * 
+ * @private
+ * @param  {string} name name of error class
+ * @return {CustomError}      Custom error object
+ */
 function errorFactory(name) {
     function CustomError(message) {
         this.name = name;
@@ -13,20 +24,41 @@ function errorFactory(name) {
     return CustomError;
 }
 
-// Throw when a unknown server error occurs.
-export const ServerError = errorFactory('ServerError');
+/**
+ * Throw when a unknown server error occurs.
+ * @class
+ * @memberof error
+ */
+const ServerError = errorFactory('ServerError');
 
-// Throw when a permission denied error occurs.
-export const ServerPermissionDeniedError = errorFactory('ServerPermissionDeniedError');
+/**
+ * Throw when a permission denied error occurs.
+ * @class
+ * @memberof error
+ */
+const ServerPermissionDeniedError = errorFactory('ServerPermissionDeniedError');
 
-// Throw when a validation error occurs.
-export const ServerValidationError = errorFactory('ServerValidationError');
+/**
+ * Throw when a validation error occurs.
+ * @class
+ * @memberof error
+ */
+const ServerValidationError = errorFactory('ServerValidationError');
 
-// Throw when event reply timeout occurs.
-export const EventServerReplyTimeoutError = errorFactory('EventServerReplyTimeoutError');
+/**
+ * Throw when event reply timeout occurs.
+ * @class
+ * @memberof error
+ */
+const EventServerReplyTimeoutError = errorFactory('EventServerReplyTimeoutError');
 
-// Throw when event server connection timeout occurs.
-export const EventServerConnectionTimeoutError = errorFactory('EventServerConnectionTimeoutError');
+/**
+ * Throw when event server connection timeout occurs.
+ * @class
+ * @memberof error
+ */
+const EventServerConnectionTimeoutError = errorFactory('EventServerConnectionTimeoutError');
+
 
 export default {
     ServerError,

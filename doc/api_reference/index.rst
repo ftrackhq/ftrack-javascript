@@ -7,14 +7,12 @@
 API reference
 *************
 
-ftrack_javascript_api
-===============================
-
-.. automodule:: ftrack_javascript_api
+ftrack
+======
 
 .. toctree::
-    :maxdepth: 1
-    :glob:
 
-    */index
-    *
+    session
+    operation
+    project_schema
+    error
