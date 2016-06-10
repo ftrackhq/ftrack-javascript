@@ -9,11 +9,6 @@ Installing
 
 .. highlight:: bash
 
-Using the pre-built package
-===========================
-
-TODO!
-
 Building from source
 ====================
 
