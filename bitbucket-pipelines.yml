@@ -1,0 +1,9 @@
+# Tests configuration file for bitbucket pipelines.
+image: node:5.6.0
+
+pipelines:
+  default:
+    - step:
+        script:
+          - npm install
+          - npm run test
