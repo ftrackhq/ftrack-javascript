@@ -59,33 +59,8 @@ Dependencies building docs
 Setting up node environment
 ===========================
 
-You will need a recent version of node (5+) with npm installed. It is highly
-recommended that you also install a version manager for node, such as
+You will need a recent version of :term:`nodejs` (5+) with npm installed. It is
+highly recommended that you also install a version manager for node, such as
 `n (Mac OS) <https://github.com/tj/n>`_ or
 `nodist (windows) <https://github.com/marcelklehr/nodist>`_. It enables you
-can use different node versions in different projects.
-
-Mac OS
-------
-
-1. Install `homebrew <http://brew.sh/>`_, unless already installed.
-2. Ensure homebrew is installed correctly::
-
-    brew doctor
-
-3. Install latest node and npm versions::
-
-    brew install node
-
-4. Install n globally::
-
-    npm install -g n
-
-5. Install latest stable version::
-
-    n stable
-
-Windows
--------
-
-TODO
+to use different node versions in different projects.
