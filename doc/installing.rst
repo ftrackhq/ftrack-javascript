@@ -29,8 +29,11 @@ cloning the public repository::
 Then you can build the package ::
 
     npm install
-    npm run build
+    npm run dist
 
+and run the tests with::
+
+    npm run test
 
 Building documentation from source
 ==================================
