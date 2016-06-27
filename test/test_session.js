@@ -220,4 +220,19 @@ describe('Session', () => {
             done();
         }, (rejection) => { done(rejection); });
     });
+
+    it('Should support uploading files', (done) => {
+        const data = { foo: 'bar' };
+        const blob = new Blob(
+            [JSON.stringify(data)], { type: 'application/json' }
+        );
+        blob.name = 'data.json';
+
+        const promise = session.uploadComponent(blob);
+        promise.then((response) => {
+            response[0].data.__entity_type__.should.equal('FileComponent');
+            // TODO: Read file back and verify the data.
+            done();
+        });
+    });
 });

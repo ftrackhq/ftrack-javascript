@@ -3,10 +3,12 @@
 import forIn from 'lodash/forIn';
 import moment from 'moment';
 import loglevel from 'loglevel';
+import uuid from 'uuid';
 
 import { EventHub } from './event';
 import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
 import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
+import { SERVER_LOCATION_ID } from './constant';
 
 
 const logger = loglevel.getLogger('ftrack_api');
@@ -474,6 +476,62 @@ export class Session {
             `&size=${size}&username=${this.apiUser}&apiKey=${this.apiKey}`
         );
     }
+
+    /**
+     * Upload *file* to server location and create Component and ComponentLocation.
+     *
+     * @param  {File} The file object to upload.
+     * @return {Promise} Promise resolved with the response when creating Component and ComponentLocation.
+     */
+    uploadComponent(file) {
+        const fileName = file.name || file.fileName;
+        const fileSize = file.size;
+        const componentId = uuid.v4();
+        const fileType = fileName.split('.').pop();
+
+        logger.debug('Fetching upload metadata.');
+        let request = this.call([{
+            action: 'get_upload_metadata',
+            file_name: fileName,
+            file_size: fileSize,
+            component_id: componentId,
+        }]);
+
+        request = request.then((response) => {
+            logger.debug(`Uploading file to: ${response[0].url}`);
+
+            return fetch(response[0].url, {
+                method: 'put',
+                headers: response[0].headers,
+                body: file,
+            });
+        });
+
+        request = request.then(() => {
+            logger.debug('Creating component and component location.');
+            const component = {
+                id: componentId,
+                name: fileName,
+                file_type: fileType,
+                size: fileSize,
+            };
+            const componentLocation = {
+                component_id: componentId,
+                resource_identifier: componentId,
+                location_id: SERVER_LOCATION_ID,
+            };
+
+            return this.call(
+                [
+                    createOperation('FileComponent', component),
+                    createOperation('ComponentLocation', componentLocation),
+                ]
+            );
+        });
+
+        return request;
+    }
+
 }
 
 export default Session;
