@@ -478,16 +478,19 @@ export class Session {
     }
 
     /**
-     * Upload *file* to server location and create Component and ComponentLocation.
+     * Create component from *file* and add to server location.
      *
      * @param  {File} The file object to upload.
+     * @param {?object} [options = {}] - Options
+     * @param {?number} options.data - Component data. Defaults to {}.
      * @return {Promise} Promise resolved with the response when creating Component and ComponentLocation.
      */
-    uploadComponent(file) {
-        const fileName = file.name || file.fileName;
-        const fileSize = file.size;
-        const componentId = uuid.v4();
-        const fileType = fileName.split('.').pop();
+    createComponent(file, { data = {} } = {}) {
+        const fileNameParts = file.name.split('.');
+        const fileType = data.file_type || `.${fileNameParts.pop()}`;
+        const fileName = data.name || fileNameParts[0];
+        const fileSize = data.size || file.size;
+        const componentId = data.id || uuid.v4();
 
         logger.debug('Fetching upload metadata.');
         let request = this.call([{
@@ -509,12 +512,12 @@ export class Session {
 
         request = request.then(() => {
             logger.debug('Creating component and component location.');
-            const component = {
+            const component = Object.assign(data, {
                 id: componentId,
                 name: fileName,
                 file_type: fileType,
                 size: fileSize,
-            };
+            });
             const componentLocation = {
                 component_id: componentId,
                 resource_identifier: componentId,

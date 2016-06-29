@@ -14,7 +14,7 @@ describe('Session', () => {
 
     logger.debug('Running session tests.');
 
-    before(() => {
+    beforeEach(() => {
         session = new Session(
             credentials.serverUrl, credentials.apiUser, credentials.apiKey,
             { autoConnectEventHub: false }
@@ -228,11 +228,31 @@ describe('Session', () => {
         );
         blob.name = 'data.json';
 
-        const promise = session.uploadComponent(blob);
+        const promise = session.createComponent(blob);
         promise.then((response) => {
+            logger.debug(response[0].data);
             response[0].data.__entity_type__.should.equal('FileComponent');
-            // TODO: Read file back and verify the data.
+            response[0].data.file_type.should.equal('.json');
+            response[0].data.name.should.equal('data');
+
+            // TODO: Read file back and verify the data. This is currently not
+            // possible due to being a cors request.
             done();
-        });
+        }, (rejection) => { done(rejection); });
+    });
+
+    it('Should support uploading files with custom component id', (done) => {
+        const componentId = uuid.v4();
+        const data = { foo: 'bar' };
+        const blob = new Blob(
+            [JSON.stringify(data)], { type: 'application/json' }
+        );
+        blob.name = 'data.json';
+
+        const promise = session.createComponent(blob, { data: { id: componentId } });
+        promise.then((response) => {
+            response[0].data.id.should.equal(componentId);
+            done();
+        }, (rejection) => { done(rejection); });
     });
 });
