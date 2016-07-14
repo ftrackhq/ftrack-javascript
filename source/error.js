@@ -29,35 +29,35 @@ function errorFactory(name) {
  * @class
  * @memberof error
  */
-const ServerError = errorFactory('ServerError');
+export const ServerError = errorFactory('ServerError');
 
 /**
  * Throw when a permission denied error occurs.
  * @class
  * @memberof error
  */
-const ServerPermissionDeniedError = errorFactory('ServerPermissionDeniedError');
+export const ServerPermissionDeniedError = errorFactory('ServerPermissionDeniedError');
 
 /**
  * Throw when a validation error occurs.
  * @class
  * @memberof error
  */
-const ServerValidationError = errorFactory('ServerValidationError');
+export const ServerValidationError = errorFactory('ServerValidationError');
 
 /**
  * Throw when event reply timeout occurs.
  * @class
  * @memberof error
  */
-const EventServerReplyTimeoutError = errorFactory('EventServerReplyTimeoutError');
+export const EventServerReplyTimeoutError = errorFactory('EventServerReplyTimeoutError');
 
 /**
  * Throw when event server connection timeout occurs.
  * @class
  * @memberof error
  */
-const EventServerConnectionTimeoutError = errorFactory('EventServerConnectionTimeoutError');
+export const EventServerConnectionTimeoutError = errorFactory('EventServerConnectionTimeoutError');
 
 
 export default {
