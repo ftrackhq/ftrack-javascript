@@ -1,6 +1,11 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 /**
+ * Project schema namespace
+ * @namespace project_schema
+ */
+
+/**
  * Return statuses from *projectSchemaId* for *entityType* and *typeId*.
  *
  * *entityType* should be a valid ftrack api schema id, .e.g. 'AssetVersion' or
@@ -8,6 +13,7 @@
  *
  * *typeId* can be used to get overridden statuses for a certain task type.
  *
+ * @memberof project_schema
  */
 export function getStatuses(session, projectSchemaId, entityType, typeId = null) {
     let response;

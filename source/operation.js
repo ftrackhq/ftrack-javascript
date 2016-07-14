@@ -1,6 +1,18 @@
 // :copyright: Copyright (c) 2016 ftrack
+/**
+ * Operations module
+ * @namespace operation
+ */
 
-/** Return create operation object for entity *type* and *data*. */
+/** 
+ * Return create operation object for entity *type* and *data*.
+ *
+ * @function operation.create
+ * @memberof operation
+ * @param  {string} type Entity type
+ * @param  {Object} data Entity data to use for creation
+ * @return {Object}      API operation
+ */
 export function createOperation(type, data) {
     const operation = { action: 'create', entity_type: type };
     operation.entity_data = Object.assign({}, data, { __entity_type__: type });
@@ -8,7 +20,14 @@ export function createOperation(type, data) {
 }
 
 
-/** Return query operation object for *expression*. */
+/** 
+ * Return query operation object for *expression*.
+ *
+ * @function operation.query
+ * @memberof operation
+ * @param  {string} expression API query expression
+ * @return {Object}            API operation
+ */
 export function queryOperation(expression) {
     return { action: 'query', expression };
 }
@@ -16,7 +35,12 @@ export function queryOperation(expression) {
 /**
  * Return update operation object for entity *type* identified by *keys*.
  *
- * *data* should be an object of values to update.
+ * @function operation.update
+ * @memberof operation
+ * @param  {string} type Entity type
+ * @param  {Array} keys Identifying keys, typically [<entity id>]
+ * @param  {Object} data values to update
+ * @return {Object}      API operation
  */
 export function updateOperation(type, keys, data) {
     const operation = {
@@ -28,7 +52,15 @@ export function updateOperation(type, keys, data) {
     return operation;
 }
 
-/** Return delete operation object for entity *type* identified by *keys*. */
+/** 
+ * Return delete operation object for entity *type* identified by *keys*.
+ *
+ * @function operation.delete
+ * @memberof operation
+ * @param  {string} type Entity type
+ * @param  {Array} keys Identifying keys, typically [<entity id>]
+ * @return {Object}      API operation
+ */
 export function deleteOperation(type, keys) {
     const operation = {
         action: 'delete',
@@ -38,7 +70,7 @@ export function deleteOperation(type, keys) {
     return operation;
 }
 
-/** Return operation module. */
+
 export default {
     query: queryOperation,
     create: createOperation,

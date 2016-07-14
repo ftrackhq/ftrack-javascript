@@ -34,10 +34,23 @@ function identity(item) {
 
 /**
  * ftrack API session
+ * @class  Session
+ * 
  */
 export class Session {
 
-    /** Construct Session instance with API credentials. */
+    /** 
+     * Construct Session instance with API credentials.
+     * 
+     * @param  {string}  serverUrl -                  ftrack server URL
+     * @param  {string}  apiUser -                    ftrack username for API user.
+     * @param  {string}  apiKey -                     User API Key
+     * @param  {Object}  options  -                   options
+     * @param  {Boolean} [options.autoConnectEventHub=false] - Automatically connect to event hub, 
+     * @param  {Object}  [options.eventHubOptions={}] - Options to configure event hub with.
+     * 
+     * @constructs Session
+     */
     constructor(
         serverUrl, apiUser, apiKey, {
             autoConnectEventHub = false,
@@ -51,9 +64,36 @@ export class Session {
             );
         }
 
+        /**
+         * Username of ftrack user used by API
+         * @memberof Session
+         * @instance
+         * @type {string}
+         */
         this.apiUser = apiUser;
+
+        /**
+         * API Key
+         * @memberof Session
+         * @instance
+         * @type {string}
+         */
         this.apiKey = apiKey;
+
+        /** 
+         * ftrack server URL
+         * @memberof Session
+         * @instance
+         * @type {string}
+         */
         this.serverUrl = serverUrl;
+
+        /** 
+         * session event hub
+         * @memberof Session
+         * @instance
+         * @type {EventHub}
+         */
         this.eventHub = new EventHub(serverUrl, apiUser, apiKey, eventHubOptions);
 
         if (autoConnectEventHub) {
@@ -64,7 +104,21 @@ export class Session {
             { action: 'query_server_information' },
             { action: 'query_schemas' },
         ];
+
+        /** 
+         * true if session is initialized
+         * @memberof Session
+         * @instance
+         * @type {Boolean}
+         */
         this.initialized = false;
+
+        /** 
+         * Resolved once session is initialized.
+         * @memberof Session
+         * @instance
+         * @type {Promise}
+         */
         this.initializing = this.call(operations).then(
             (responses) => {
                 this.serverInformation = responses[0];
@@ -77,12 +131,16 @@ export class Session {
         );
     }
 
-    /** Iterate *data* and decode entities with special encoding logic.
-    *
+   /**
+    * Iterate *data* and decode entities with special encoding logic.
+    * 
     * This will translate objects with __type__ equal to 'datetime' into moment
     * datetime objects. If time zone support is enabled on the server the date
     * will be assumed to be UTC and cast into the local time zone.
     *
+    * @private
+    * @param  {*} data  The data to decode.
+    * @return {*}      Decoded data
     */
     decode(data) {
         if (data && data.constructor === Array) {
@@ -115,12 +173,19 @@ export class Session {
         return data;
     }
 
-    /** Return merged lazy loaded entities in *data*. */
+    /** 
+     * Return merged lazy loaded entities in *data*.
+     *
+     * @private
+     */
     merge(data) {
         return this._mergeCollection(data, {});
     }
 
-    /** Return merged *collection* of entities using *identityMap*. */
+    /**
+     * Return merged *collection* of entities using *identityMap*.
+     * @private
+     */
     _mergeCollection(collection, identityMap) {
         const mergedCollection = collection.map(
             (item) => {
@@ -136,7 +201,10 @@ export class Session {
         return mergedCollection;
     }
 
-    /** Return merged *entity* using *identityMap*. */
+    /**
+     * Return merged *entity* using *identityMap*.
+     * @private
+     */
     _mergeEntity(entity, identityMap) {
         const primaryKey = identity(entity);
 
@@ -180,9 +248,14 @@ export class Session {
      *
      * The return promise may be rejected with one of several errors:
      *
-     * ServerValidationError - Validation errors
-     * ServerPermissionDeniedError - Permission defined errors
-     * ServerError - Generic server errors or network issues
+     * ServerValidationError
+     *     Validation errors
+     * ServerPermissionDeniedError
+     *     Permission defined errors
+     * ServerError
+     *     Generic server errors or network issues
+     *
+     * @param {Array} operations - API operations.
      *
      */
     call(operations) {
@@ -264,7 +337,11 @@ export class Session {
         return request;
     }
 
-    /** Return schema with id or null if not existing. */
+    /** 
+     * Return schema with id or null if not existing.
+     * @param  {string} schemaId Id of schema model, e.g. `AssetVersion`.
+     * @return {Object|null} Schema definition
+     */
     getSchema(schemaId) {
         for (const index in this.schemas) {
             if (this.schemas[index].id === schemaId) {
@@ -277,9 +354,10 @@ export class Session {
 
     /**
      * Perform a single query operation with *expression*.
-     *
-     * Returns a promise which will be resolved with an object containing data
-     * and metadata.
+     * 
+     * @param {string} expression - API query expression.
+     * @return {Promise} Promise which will be resolved with an object
+     * containing data and metadata
      */
     query(expression) {
         logger.debug('Query', expression);
@@ -299,8 +377,10 @@ export class Session {
 
     /**
      * Perform a single create operation with *type* and *data*.
-     *
-     * Returns a promise which will be resolved with the new object data.
+     * 
+     * @param {string} type entity type name.
+     * @param {Object} data data which should be used to populate attributes on the entity.
+     * @return {Promise} Promise which will be resolved with the response.
      */
     create(type, data) {
         logger.debug('Create', type, data);
@@ -315,14 +395,17 @@ export class Session {
     }
 
     /**
-     * Perform a single update operation on *type* with *id* and *data*.
+     * Perform a single update operation on *type* with *keys* and *data*.
      *
-     * Returns a promise which will be resolved with the updated data.
+     * @param  {string} type Entity type
+     * @param  {Array} keys Identifying keys, typically [<entity id>]
+     * @param  {Object} data 
+     * @return {Promise} Promise resolved with the response.
      */
-    update(type, id, data) {
-        logger.debug('Update', type, id, data);
+    update(type, keys, data) {
+        logger.debug('Update', type, keys, data);
 
-        let request = this.call([updateOperation(type, id, data)]);
+        let request = this.call([updateOperation(type, keys, data)]);
         request = request.then((responses) => {
             const response = responses[0];
             return response;
@@ -332,9 +415,11 @@ export class Session {
     }
 
     /**
-     * Perform a single delete operation on *type* with *id*.
+     * Perform a single delete operation.
      *
-     * Returns a promise.
+     * @param  {string} type Entity type
+     * @param  {Array} keys Identifying keys, typically [<entity id>]
+     * @return {Promise} Promise resolved with the response.
      */
     delete(type, id) {
         logger.debug('Delete', type, id);
@@ -350,9 +435,11 @@ export class Session {
 
     /**
      * Return an URL where *componentId* can be downloaded.
-     *
-     * *componentId* is assumed to be present in the ftrack.server location.
-     * Returns null if component id is not specified.
+     * 
+     * @param {?string} componentId Is assumed to be present in the
+     *                  ftrack.server location.
+     * @return {String|null} URL where *componentId* can be downloaded, null
+     *                       if component id is not specified.
      */
     getComponentUrl(componentId) {
         if (!componentId) {
@@ -367,13 +454,15 @@ export class Session {
 
     /**
      * Return an URL where a thumbnail for *componentId* can be downloaded.
-     *
-     * *componentId* is assumed to be present in the ftrack.server location
-     * and be of a valid image file type.
-     *
-     * The image will be resized to fit within size x size pixels.
-     *
-     * Returns the URL to a default thumbnail if component id is not specified.
+     * 
+     * @param {?string} componentId - Is assumed to be present in the
+     *                  ftrack.server location and be of a valid image file type.
+     * @param {?object} [options = {}] - Options
+     * @param {?number} options.size - The size of the thumbnail. The image will be resized to
+     *                  fit within size x size pixels. Defaults to 300.
+     * @return {string} URL where *componentId* can be downloaded. Returns the
+     *                  URL to a default thumbnail if component id is not
+     *                  specified.
      */
     thumbnailUrl(componentId, { size = 300 } = {}) {
         if (!componentId) {
