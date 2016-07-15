@@ -9,8 +9,44 @@ Installing
 
 .. highlight:: bash
 
-Building from source
-====================
+First, make sure you have node (v5+) installed, see :ref:`installing/node` for
+instructions.
+
+Usage with Webpack or Browserify
+================================
+
+Install the package using NPM::
+
+    npm install --save git+ssh://git@bitbucket.org:ftrack/ftrack-javascript-api.git
+
+You can then import or require the `ftrack-javascript-api` package::
+
+    var ftrack = require('ftrack-javascript-api');
+    var session = new ftrack.Session(...)
+
+Or, using ES2015-style imports::
+
+    import { Session } from 'ftrack-javascript-api';
+    var session = new Session(...);
+
+Usage with Node
+===============
+
+To use the API with node, you will need to install the a polyfill for the fetch
+API, `isomorphic-fetch <https://github.com/matthew-andrews/isomorphic-fetch>`_::
+
+    npm install --save isomorphic-fetch git+ssh://git@bitbucket.org:ftrack/ftrack-javascript-api.git
+
+Require `isomorphic-fetch` to add the polyfill, then require the API and 
+instantiate a Session.::
+
+    require('isomorphic-fetch');
+    var ftrack = require('ftrack-javascript-api');
+    var session = new ftrack.Session(...)
+
+
+Building distribution bundle from source
+========================================
 
 You can also build manually from the source for more control. First, make sure
 you have node (v5+) installed, see :ref:`installing/node` for instructions.

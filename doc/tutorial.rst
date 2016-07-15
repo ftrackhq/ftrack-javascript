@@ -10,6 +10,11 @@ Tutorial
 This tutorial provides a quick dive into using the API and the broad stroke
 concepts involved.
 
+.. note::
+
+    This tutorial uses the distribution bundle in a web page, but you can also
+    use the node REPL. See :ref:`installing` for instructions.
+
 Start of by creating a directory for the tutorial, download and place the
 pre-built JavaScript API file there. Create a new HTML file and include the
 following contents.
