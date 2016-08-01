@@ -33,24 +33,47 @@ function identity(item) {
     return item.id;
 }
 
+/**
+ * Create component from *file* and add to server location.
+ *
+ * @param  {fileName} The name of the file.
+ * @return {array} Array with [basename, extension] from filename.
+ */
+function splitFileExtension(fileName) {
+    let basename = fileName || '';
+    let extension = fileName.slice(
+        (
+            Math.max(
+                0, fileName.lastIndexOf('.')
+            ) || Infinity
+        ) + 1
+    ) || '';
+
+    if (extension.length) {
+        extension = `.${extension}`;
+        basename = fileName.slice(0, -1 * extension.length) || '';
+    }
+
+    return [basename, extension];
+}
 
 /**
  * ftrack API session
  * @class  Session
- * 
+ *
  */
 export class Session {
 
-    /** 
+    /**
      * Construct Session instance with API credentials.
-     * 
+     *
      * @param  {string}  serverUrl -                  ftrack server URL
      * @param  {string}  apiUser -                    ftrack username for API user.
      * @param  {string}  apiKey -                     User API Key
      * @param  {Object}  options  -                   options
-     * @param  {Boolean} [options.autoConnectEventHub=false] - Automatically connect to event hub, 
+     * @param  {Boolean} [options.autoConnectEventHub=false] - Automatically connect to event hub,
      * @param  {Object}  [options.eventHubOptions={}] - Options to configure event hub with.
-     * 
+     *
      * @constructs Session
      */
     constructor(
@@ -82,7 +105,7 @@ export class Session {
          */
         this.apiKey = apiKey;
 
-        /** 
+        /**
          * ftrack server URL
          * @memberof Session
          * @instance
@@ -90,7 +113,7 @@ export class Session {
          */
         this.serverUrl = serverUrl;
 
-        /** 
+        /**
          * session event hub
          * @memberof Session
          * @instance
@@ -107,7 +130,7 @@ export class Session {
             { action: 'query_schemas' },
         ];
 
-        /** 
+        /**
          * true if session is initialized
          * @memberof Session
          * @instance
@@ -115,7 +138,7 @@ export class Session {
          */
         this.initialized = false;
 
-        /** 
+        /**
          * Resolved once session is initialized.
          * @memberof Session
          * @instance
@@ -135,7 +158,7 @@ export class Session {
 
    /**
     * Iterate *data* and decode entities with special encoding logic.
-    * 
+    *
     * This will translate objects with __type__ equal to 'datetime' into moment
     * datetime objects. If time zone support is enabled on the server the date
     * will be assumed to be UTC and cast into the local time zone.
@@ -175,7 +198,7 @@ export class Session {
         return data;
     }
 
-    /** 
+    /**
      * Return merged lazy loaded entities in *data*.
      *
      * @private
@@ -339,7 +362,7 @@ export class Session {
         return request;
     }
 
-    /** 
+    /**
      * Return schema with id or null if not existing.
      * @param  {string} schemaId Id of schema model, e.g. `AssetVersion`.
      * @return {Object|null} Schema definition
@@ -356,7 +379,7 @@ export class Session {
 
     /**
      * Perform a single query operation with *expression*.
-     * 
+     *
      * @param {string} expression - API query expression.
      * @return {Promise} Promise which will be resolved with an object
      * containing data and metadata
@@ -379,7 +402,7 @@ export class Session {
 
     /**
      * Perform a single create operation with *type* and *data*.
-     * 
+     *
      * @param {string} type entity type name.
      * @param {Object} data data which should be used to populate attributes on the entity.
      * @return {Promise} Promise which will be resolved with the response.
@@ -401,7 +424,7 @@ export class Session {
      *
      * @param  {string} type Entity type
      * @param  {Array} keys Identifying keys, typically [<entity id>]
-     * @param  {Object} data 
+     * @param  {Object} data
      * @return {Promise} Promise resolved with the response.
      */
     update(type, keys, data) {
@@ -437,7 +460,7 @@ export class Session {
 
     /**
      * Return an URL where *componentId* can be downloaded.
-     * 
+     *
      * @param {?string} componentId Is assumed to be present in the
      *                  ftrack.server location.
      * @return {String|null} URL where *componentId* can be downloaded, null
@@ -456,7 +479,7 @@ export class Session {
 
     /**
      * Return an URL where a thumbnail for *componentId* can be downloaded.
-     * 
+     *
      * @param {?string} componentId - Is assumed to be present in the
      *                  ftrack.server location and be of a valid image file type.
      * @param {?object} [options = {}] - Options
@@ -483,11 +506,12 @@ export class Session {
      * @param  {File} The file object to upload.
      * @param {?object} [options = {}] - Options
      * @param {?number} options.data - Component data. Defaults to {}.
-     * @return {Promise} Promise resolved with the response when creating Component and ComponentLocation.
+     * @return {Promise} Promise resolved with the response when creating
+     * Component and ComponentLocation.
      */
     createComponent(file, { data = {} } = {}) {
-        const fileNameParts = file.name.split('.');
-        const fileType = data.file_type || `.${fileNameParts.pop()}`;
+        const fileNameParts = splitFileExtension(file.name);
+        const fileType = data.file_type || fileNameParts[1];
         const fileName = data.name || fileNameParts[0];
         const fileSize = data.size || file.size;
         const componentId = data.id || uuid.v4();

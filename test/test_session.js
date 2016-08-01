@@ -230,7 +230,6 @@ describe('Session', () => {
 
         const promise = session.createComponent(blob);
         promise.then((response) => {
-            logger.debug(response[0].data);
             response[0].data.__entity_type__.should.equal('FileComponent');
             response[0].data.file_type.should.equal('.json');
             response[0].data.name.should.equal('data');
