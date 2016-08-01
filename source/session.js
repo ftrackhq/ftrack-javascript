@@ -519,7 +519,7 @@ export class Session {
         logger.debug('Fetching upload metadata.');
         let request = this.call([{
             action: 'get_upload_metadata',
-            file_name: fileName,
+            file_name: `${fileName}${fileType}`,
             file_size: fileSize,
             component_id: componentId,
         }]);
