@@ -49,6 +49,9 @@ background. Once the API has been initialized, the `session.initializing`
     If session methods are used before the session is fully initialized, the
     execution will be delayed until the session is initialized.
 
+Query projects
+==============
+
 Now, let's start of using the API with an example. Let's list the names of all
 projects.
 
@@ -78,4 +81,13 @@ set to hidden, hiding the project from the UI.
 
     https://bitbucket.org/ftrack/ftrack-javascript-api-example-basic-widget
 
+.. _tutorial/create_component:
 
+Uploading files
+===============
+
+Files are stored as components in ftrack. Here is an example on how to create a
+component from a file in ftrack and upload it to the ftrack.server location.
+
+.. literalinclude:: /resource/create_component.js
+    :language: javascript
