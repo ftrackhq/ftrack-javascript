@@ -81,6 +81,8 @@ set to hidden, hiding the project from the UI.
 
     https://bitbucket.org/ftrack/ftrack-javascript-api-example-basic-widget
 
+.. _tutorial/create_component:
+
 Uploading files
 ===============
 
