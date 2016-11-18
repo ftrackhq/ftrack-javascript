@@ -10,7 +10,16 @@ Release Notes
 .. release:: Upcoming
 
     .. change:: new
+        :tags: Webpack, Node
 
+        Include a compiled lib folder, so that the package can be imported in
+        a webpack or node project.
+
+        .. seealso::
+
+            :ref:`installing`
+
+    .. change:: new
         Added helper method on session for creating and uploading a component
         from a file.
 
