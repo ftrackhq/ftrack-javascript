@@ -163,9 +163,9 @@ export class EventHub {
      *      Currently, it is not possible to register callbacks and only
      *      reply events are handled.
      */
-    subscribe(subscription, callback, metadata = {}, priority = 100) {
+    subscribe(subscription, callback, metadata = {}) {
         const subscriber = this._addSubscriber(
-            subscription, callback, metadata, priority
+            subscription, callback, metadata
         );
         this._notifyServerAboutSubscriber(subscriber);
         return subscriber.metadata.id;
@@ -199,7 +199,7 @@ export class EventHub {
      * Throws an NotUniqueError if a subscriber with
      * the same identifier already exists.
      */
-    _addSubscriber(subscription, callback, metadata = {}, priority = 100) {
+    _addSubscriber(subscription, callback, metadata = {}) {
         // Ensure subscription is on supported format.
         // TODO: Remove once subscription parsing is supported.
         this._getExpressionTopic(subscription);
@@ -223,7 +223,6 @@ export class EventHub {
             subscription,
             callback,
             metadata,
-            priority,
         };
         this._subscribers.push(subscriber);
         return subscriber;
@@ -257,7 +256,7 @@ export class EventHub {
         return null;
     }
 
-    /** 
+    /**
      * Return if *subscriber* is interested in *event*.
      *
      * Only expressions on the format topic=value is supported.
