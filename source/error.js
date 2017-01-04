@@ -59,6 +59,14 @@ export const EventServerReplyTimeoutError = errorFactory('EventServerReplyTimeou
  */
 export const EventServerConnectionTimeoutError = errorFactory('EventServerConnectionTimeoutError');
 
+/**
+ * Throw when event server connection timeout occurs.
+ * @class
+ * @memberof error
+ */
+export const NotUniqueError = errorFactory('NotUniqueError');
+
+
 
 export default {
     ServerError,
@@ -66,4 +74,5 @@ export default {
     ServerValidationError,
     EventServerReplyTimeoutError,
     EventServerConnectionTimeoutError,
+    NotUniqueError,
 };

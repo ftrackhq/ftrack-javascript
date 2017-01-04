@@ -5,7 +5,7 @@ import moment from 'moment';
 import loglevel from 'loglevel';
 import uuid from 'uuid';
 
-import { EventHub } from './event';
+import EventHub from './event_hub';
 import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
 import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
 import { SERVER_LOCATION_ID } from './constant';
