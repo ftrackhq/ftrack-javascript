@@ -26,7 +26,7 @@ export class EventHub {
         this._serverUrl = serverUrl;
         this._id = uuid.v4();
         this._replyCallbacks = {};
-        this._callbacks = [];
+        this._unsentEvents = [];
         this._subscribers = [];
         this._socketIo = null;
     }
@@ -64,9 +64,9 @@ export class EventHub {
         this.subscribe('topic=ftrack.meta.reply', this._handleReply);
 
         // Run any publish callbacks.
-        const callbacks = this._callbacks;
+        const callbacks = this._unsentEvents;
         if (callbacks.length) {
-            this._callbacks = [];
+            this._unsentEvents = [];
             this.logger.debug(`Publishing ${callbacks.length} unsent events.`);
             for (const callback of callbacks) {
                 this._runWhenConnected(callback);
@@ -149,7 +149,7 @@ export class EventHub {
             this.logger.debug(
                 'Event hub is not connected, event is delayed.'
             );
-            this._callbacks.push(callback);
+            this._unsentEvents.push(callback);
         } else {
             callback();
         }
