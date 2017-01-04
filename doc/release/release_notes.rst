@@ -7,6 +7,17 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: new
+        :tags: Event hub
+
+        Added the possibility to subscribe to events.
+
+        .. seealso::
+
+            :ref:`handling_events`
+
 .. release:: 0.2.0
     :date: 2016-11-18
 
@@ -21,6 +32,7 @@ Release Notes
             :ref:`installing`
 
     .. change:: new
+
         Added helper method on session for creating and uploading a component
         from a file.
 

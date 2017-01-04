@@ -13,11 +13,17 @@ import {
 
 /**
  * ftrack API Event hub.
- * @private
  */
 export class EventHub {
 
-    /** Construct EventHub instance with API credentials. */
+    /**
+     * Construct EventHub instance with API credentials.
+     * @param  {String} serverUrl             Server URL
+     * @param  {String} apiUser               API user
+     * @param  {String} apiKey                API key
+     * @param  {String} [options.applicationId] Application identifier, added to event source.
+     * @constructs EventHub
+     */
     constructor(serverUrl, apiUser, apiKey, { applicationId = 'ftrack.api.javascript' } = {}) {
         this.logger = loglevel.getLogger('ftrack_api:EventHub');
         this._applicationId = applicationId;
@@ -29,6 +35,10 @@ export class EventHub {
         this._unsentEvents = [];
         this._subscribers = [];
         this._socketIo = null;
+
+        this._handle = this._handle.bind(this);
+        this._handleReply = this._handleReply.bind(this);
+        this._onSocketConnected = this._onSocketConnected.bind(this);
     }
 
     /** Connect to the event server. */
@@ -41,13 +51,14 @@ export class EventHub {
             query: `api_user=${this._apiUser}&api_key=${this._apiKey}`,
         });
 
-        this._socketIo.on('connect', this._onSocketConnected.bind(this));
-        this._socketIo.on(
-            'ftrack.event', this._handle.bind(this)
-        );
+        this._socketIo.on('connect', this._onSocketConnected);
+        this._socketIo.on('ftrack.event', this._handle);
     }
 
-    /** Return true if connected to event server. */
+    /**
+     * Return true if connected to event server.
+     * @return {Boolean}
+     */
     isConnected() {
         return this._socketIo && this._socketIo.socket.connected || false;
     }
@@ -61,7 +72,7 @@ export class EventHub {
         this.logger.debug('Connected to event server.');
 
         // Subscribe to reply events.
-        this.subscribe('topic=ftrack.meta.reply', this._handleReply);
+        this.subscribe('topic=ftrack.meta.reply', this._handleReply, { id: this._id });
 
         // Run any publish callbacks.
         const callbacks = this._unsentEvents;
@@ -84,6 +95,11 @@ export class EventHub {
      * If timeout is non-zero, the promise will be rejected if the timeout is
      * reached before it is resolved. Should be specified as seconds and will
      * default to 10.
+     *
+     * @param  {Event}  event              Event instance to publish
+     * @param  {Boolean} [options.reply]
+     * @param  {Number}  [options.timeout] Timeout in seconds
+     * @return {Promise}
      */
     publish(event, { reply = false, timeout = 10 } = {}) {
         event.addSource(
@@ -143,7 +159,10 @@ export class EventHub {
         return onPublish;
     }
 
-    /** Run *callback* if event hub is connected to server. */
+    /**
+     * Run *callback* if event hub is connected to server.
+     * @param  {Function} callback
+     */
     _runWhenConnected(callback) {
         if (!this.isConnected()) {
             this.logger.debug(
@@ -158,10 +177,13 @@ export class EventHub {
     /**
      * Register to *subscription* events.
      *
-     * .. note::
-     *
-     *      Currently, it is not possible to register callbacks and only
-     *      reply events are handled.
+     * @param  {String}   subscription  Expression to subscribe on. Currently,
+     *                                  only "topic=value" expressions are
+     *                                  supported.
+     * @param  {Function} callback      Function to be called when an event
+     *                                  matching the subscription is returned.
+     * @param  {Object}   [metadata]    Optional information about subscriber.
+     * @return {String}                 Subscriber ID.
      */
     subscribe(subscription, callback, metadata = {}) {
         const subscriber = this._addSubscriber(
@@ -176,6 +198,9 @@ export class EventHub {
      *
      * Raises an error if expression is in an unsupported format. Currently,
      * only expressions on the format topic=value is supported.
+     *
+     * @param  {String} subscription    expression
+     * @return {String}                 topic
      */
     _getExpressionTopic(subscription) {
         // retreive the value of a topic on the format "topic=value"
@@ -192,12 +217,13 @@ export class EventHub {
     /**
      * Add subscriber locally.
      *
-     * See :meth:`subscribe` for argument descriptions.
-     *
-     * Return subscriber object.
-     *
      * Throws an NotUniqueError if a subscriber with
      * the same identifier already exists.
+     *
+     * @param {String}   subscription   expression
+     * @param {Function} callback       Function to be called when an event is received.
+     * @param {Object}   metadata       Optional information about subscriber.
+     * @return {Object}                 subscriber information.
      */
     _addSubscriber(subscription, callback, metadata = {}) {
         // Ensure subscription is on supported format.
@@ -230,6 +256,7 @@ export class EventHub {
 
     /**
      * Notify server of new *subscriber*.
+     * @param  {Object} subscriber      subscriber information
      */
     _notifyServerAboutSubscriber(subscriber) {
         const subscribeEvent = new Event(
@@ -246,6 +273,9 @@ export class EventHub {
      * Return subscriber with matching *identifier*.
      *
      * Return null if no subscriber with *identifier* found.
+     *
+     * @param  {String} identifier
+     * @return {String|null}
      */
     getSubscriberByIdentifier(identifier) {
         for (const subscriber of this._subscribers.slice()) {
@@ -262,6 +292,10 @@ export class EventHub {
      * Only expressions on the format topic=value is supported.
      *
      * TODO: Support the full event expression format.
+     *
+     * @param  {Object} subscriber
+     * @param  {Object} event
+     * @return {Boolean}
      */
     _IsSubscriberInterestedIn(subscriber, event) {
         const topic = this._getExpressionTopic(subscriber.subscription);
@@ -271,7 +305,10 @@ export class EventHub {
         return false;
     }
 
-    /** Handle Events. */
+    /**
+     * Handle Events.
+     * @param  {Object} event   Event payload
+     */
     _handle(event) {
         this.logger.debug('Event received', event);
 
@@ -287,7 +324,7 @@ export class EventHub {
             try {
                 response = subscriber.callback(event);
             } catch (error) {
-                this.logger.error('Error calling subscriber for event.', subscriber, event);
+                this.logger.error('Error calling subscriber for event.', error, subscriber, event);
             }
 
             // Publish reply if response isn't null or undefined.
@@ -297,16 +334,24 @@ export class EventHub {
         }
     }
 
-    /** Handle reply event. */
+    /**
+     * Handle reply event.
+     * @param  {Object} event  Event payload
+     */
     _handleReply(event) {
-        this.logger.debug('Event received', event);
+        this.logger.debug('Reply received', event);
         const resolve = this._replyCallbacks[event.inReplyToEvent];
         if (resolve) {
             resolve(event);
         }
     }
 
-    /** Publish reply event. */
+    /**
+     * Publish reply event.
+     * @param  {Object} sourceEvent Source event payload
+     * @param  {Object} data        Response event data
+     * @param  {Object} [source]    Response event source information
+     */
     publishReply(sourceEvent, data, source = null) {
         const replyEvent = new Event(
             'ftrack.meta.reply',
@@ -318,7 +363,7 @@ export class EventHub {
         if (source) {
             replyEvent._data.source = source;
         }
-        this.publish(replyEvent);
+        return this.publish(replyEvent);
     }
 }
 

@@ -57,6 +57,8 @@ modindex_common_prefix = [
     'ftrack_javascript_api.'
 ]
 
+highlight_language = 'javascript'
+
 # -- HTML output --------------------------------------------------------------
 
 # on_rtd is whether currently on readthedocs.org

@@ -3,7 +3,6 @@ import uuid from 'uuid';
 
 /**
  * ftrack API Event class.
- * @private
  */
 export class Event {
     /**
