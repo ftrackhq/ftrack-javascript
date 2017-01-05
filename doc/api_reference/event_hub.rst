@@ -53,39 +53,42 @@ Return true if connected to event server.
 Function: ``publish``
 =====================
 
-Publish event and return promise.
+Publish event and return promise resolved with event id when event has
+been sent.
 
-If *reply* is true, the promise will wait for a response and resolve
-with the reply event. Otherwise, the promise will be resolved once the
-event has been sent.
+If *onReply* is specified, it will be invoked when any replies are
+received.
 
-If timeout is non-zero, the promise will be rejected if the timeout is
-reached before it is resolved. Should be specified as seconds and will
-default to 10.
+If timeout is non-zero, the promise will be rejected if the event is not
+sent before the timeout is reached. Should be specified as seconds and
+will default to 10.
 
-.. js:function:: publish(event[, options.reply][, options.timeout])
+.. js:function:: publish(event[, options.onReply][, options.timeout])
 
     
     :param Event event: Event instance to publish
-    :param Boolean options.reply: Publish event and return promise.
-    
-    If *reply* is true, the promise will wait for a response and resolve
-    with the reply event. Otherwise, the promise will be resolved once the
-    event has been sent.
-    
-    If timeout is non-zero, the promise will be rejected if the timeout is
-    reached before it is resolved. Should be specified as seconds and will
-    default to 10.
+    :param function options.onReply: Function to be invoked when a reply
+                                         is received.
     :param Number options.timeout: Timeout in seconds
-    :return Promise: Publish event and return promise.
+    :return Promise:
     
-    If *reply* is true, the promise will wait for a response and resolve
-    with the reply event. Otherwise, the promise will be resolved once the
-    event has been sent.
+
+.. _EventHub.publishAndWaitForReply:
+
+
+Function: ``publishAndWaitForReply``
+====================================
+
+Publish event and wait for a single reply.
+
+Returns promise resolved with reply event if received within timeout.
+
+.. js:function:: publishAndWaitForReply(event[, options.timeout])
+
     
-    If timeout is non-zero, the promise will be rejected if the timeout is
-    reached before it is resolved. Should be specified as seconds and will
-    default to 10.
+    :param Event event: Event instance to publish
+    :param Number options.timeout: Timeout in seconds [30]
+    :return Promise: Promise resolved with reply event.
     
 
 .. _EventHub.subscribe:

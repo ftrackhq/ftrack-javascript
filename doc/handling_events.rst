@@ -38,11 +38,11 @@ Subscribing to events
 =====================
 
 To listen to events, you register a function against a subscription using
-:js:func:`Session.eventHub.subscribe`. The subscription expression should be on
-the format `topic=<topic value>` and will filter incoming events to determine if
-the registered function should receive that event. If the subscription matches,
-the registered function will be called with the event object as its sole
-argument.
+:ref:`Session.eventHub.subscribe <EventHub.subscribe>`. The subscription
+expression should be on the format `topic=<topic value>` and will filter
+incoming events to determine if the registered function should receive that
+event. If the subscription matches, the registered function will be called with
+the event object as its sole argument.
 
 The following example subscribes a function to receive all 'ftrack.update'
 events and then print out the entities that were updated::
@@ -69,8 +69,8 @@ When subscribing, you can also specify additional information about your
 subscriber. This contextual information can be useful when routing events,
 particularly when targeting events. By default, the event hub will set some
 default information, but it can be useful to enhance this. To do so, simply
-pass in *subscriber* as a object of data to the :js:func:`EventHub.subscribe`
-method::
+pass in *subscriber* as a object of data to the
+:ref:`EventHub.subscribe <EventHub.subscribe>` method::
 
     session.eventHub.subscribe(
         'topic=ftrack.update',
@@ -118,7 +118,7 @@ are also free to publish your own events (or even publish relevant ftrack
 events).
 
 To do this, simply construct an instance of :js:class:`ftrack.Event`
-and pass it to :js:func:`EventHub.publish` via the session::
+and pass it to :ref:`EventHub.publish <EventHub.publish>` via the session::
 
     var event = new ftrack.Event('my-company.some-topic', {
         foo: 'bar',
@@ -126,17 +126,28 @@ and pass it to :js:func:`EventHub.publish` via the session::
     })
     session.eventHub.publish(event)
 
-:js:func:`EventHub.publish` will return a :term:`promise` object, which will
-be resolved when the event has been published. If the event hub is not
-connected, the event will be queued until a connection can be established.
+:ref:`EventHub.publish <EventHub.publish>` will return a :term:`promise`
+object, which will be resolved when the event has been published. If the event
+hub is not connected, the event will be queued until a connection can be
+established.
 
 .. _handling_events/publishing/handling_replies:
 
 Handling replies
 ----------------
 
-When publishing an event you can specify the option `reply` to make the returned
-promise wait for a reply before being resolved with the response. You can test
+When publishing an event, you can specify `onReply` as a function which will
+be invoked whenever a reply event is received::
+
+    function onReply(event) {
+        console.info('Reply received', event.data)
+    }
+    session.eventHub.publish(event, { onReply: onReply });
+
+It is often the case that you want to wait for a single reply. In this case,
+you can use the convenience method
+:ref:`EventHub.publishAndWaitForReply <EventHub.publishAndWaitForReply>`.
+It will return a promise which will be resolved with the response. You can test
 this using two browser tabs or node interpreters. In the first, run the
 following to listen for event and reply::
 
@@ -152,13 +163,13 @@ response::
 
     // Publish event and wait for reply
     function onReply(event) {
-        console.info('Reply received', event.data)
+        console.info('Promise resolved with reply', event.data)
     }
     function onError(error) {
         console.error('Reply not received', error)
     }
     var event = new ftrack.Event('my-company.some-topic', { message: 'Hello world!' });
-    session.eventHub.publish(event, { reply: true, timeout: 10 }).then(onReply, onError);
+    session.eventHub.publishAndWaitForReply(event, { timeout: 5 }).then(onReply, onError);
 
 .. _handling_events/limitations:
 
