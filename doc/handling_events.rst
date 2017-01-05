@@ -10,7 +10,7 @@ Handling events
 Events are generated in ftrack when things happen such as a task being updated
 or an action is launched.
 
-Each API session is has an event hub instance which you can access as the
+Each API session has an event hub instance which you can access via the
 property `eventHub`. It allows you to subscribe to events and invoke a callback
 when something happens or publish new events.
 
