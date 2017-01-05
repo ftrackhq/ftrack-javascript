@@ -86,22 +86,23 @@ export class EventHub {
     }
 
     /**
-     * Publish event and return promise.
+     * Publish event and return promise resolved with event id when event has
+     * been sent.
      *
-     * If *reply* is true, the promise will wait for a response and resolve
-     * with the reply event. Otherwise, the promise will be resolved once the
-     * event has been sent.
+     * If *onReply* is specified, it will be invoked when any replies are
+     * received.
      *
-     * If timeout is non-zero, the promise will be rejected if the timeout is
-     * reached before it is resolved. Should be specified as seconds and will
-     * default to 10.
+     * If timeout is non-zero, the promise will be rejected if the event is not
+     * sent before the timeout is reached. Should be specified as seconds and
+     * will default to 10.
      *
-     * @param  {Event}  event              Event instance to publish
-     * @param  {Boolean} [options.reply]
-     * @param  {Number}  [options.timeout] Timeout in seconds
+     * @param  {Event}  event               Event instance to publish
+     * @param  {Function} [options.onReply] Function to be invoked when a reply
+     *                                      is received.
+     * @param  {Number}  [options.timeout]  Timeout in seconds
      * @return {Promise}
      */
-    publish(event, { reply = false, timeout = 10 } = {}) {
+    publish(event, { onReply = null, timeout = 10 } = {}) {
         event.addSource(
             {
                 id: this._id,
@@ -114,6 +115,7 @@ export class EventHub {
 
         // Copy event data to avoid mutations before async callbacks.
         const eventData = Object.assign({}, event.getData());
+        const eventId = eventData.id;
 
         const onConnected = new Promise((resolve, reject) => {
             this._runWhenConnected(resolve);
@@ -132,31 +134,53 @@ export class EventHub {
         });
 
         const onPublish = onConnected.then(() => {
-            this._socketIo.emit('ftrack.event', eventData);
+            if (onReply) {
+                this._replyCallbacks[eventId] = onReply;
+            }
+
             this.logger.debug('Publishing event.', eventData);
-            return Promise.resolve();
+            this._socketIo.emit('ftrack.event', eventData);
+            return Promise.resolve(eventId);
         });
 
-        if (reply) {
-            const onReply = new Promise((resolve, reject) => {
-                this._replyCallbacks[event.getData().id] = resolve;
-
-                if (timeout) {
-                    setTimeout(
-                        () => {
-                            const error = new EventServerReplyTimeoutError(
-                                'No reply event received within timeout.'
-                            );
-                            reject(error);
-                        }, timeout * 1000
-                    );
-                }
-            });
-
-            return onReply;
-        }
-
         return onPublish;
+    }
+
+    /**
+     * Publish event and wait for a single reply.
+     *
+     * Returns promise resolved with reply event if received within timeout.
+     *
+     * @param  {Event}  event               Event instance to publish
+     * @param  {Number}  [options.timeout]  Timeout in seconds [30]
+     * @return {Promise}
+     */
+    publishAndWaitForReply(event, { timeout = 30 }) {
+        const response = new Promise((resolve, reject) => {
+            const onReply = (replyEvent) => {
+                resolve(replyEvent);
+                this._removeReplyCallback(event.id);
+            };
+            this.publish(event, { timeout, onReply });
+
+            if (timeout) {
+                setTimeout(() => {
+                    const error = new EventServerReplyTimeoutError(
+                        'No reply event received within timeout.'
+                    );
+                    reject(error);
+                    this._removeReplyCallback(event.id);
+                }, timeout * 1000);
+            }
+        });
+
+        return response;
+    }
+
+    _removeReplyCallback(eventId) {
+        if (this._replyCallbacks[eventId]) {
+            delete this._replyCallbacks[eventId];
+        }
     }
 
     /**
@@ -340,9 +364,9 @@ export class EventHub {
      */
     _handleReply(event) {
         this.logger.debug('Reply received', event);
-        const resolve = this._replyCallbacks[event.inReplyToEvent];
-        if (resolve) {
-            resolve(event);
+        const onReplyCallback = this._replyCallbacks[event.inReplyToEvent];
+        if (onReplyCallback) {
+            onReplyCallback(event);
         }
     }
 
