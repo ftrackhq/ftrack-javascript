@@ -7,7 +7,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.3.0
+    :date: 2017-01-30
 
     .. change:: new
         :tags: Event hub
