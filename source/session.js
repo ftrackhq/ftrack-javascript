@@ -5,7 +5,7 @@ import moment from 'moment';
 import loglevel from 'loglevel';
 import uuid from 'uuid';
 
-import { EventHub } from './event';
+import EventHub from './event_hub';
 import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
 import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
 import { SERVER_LOCATION_ID } from './constant';
@@ -80,6 +80,7 @@ export class Session {
         serverUrl, apiUser, apiKey, {
             autoConnectEventHub = false,
             eventHubOptions = {},
+            clientToken = null,
         } = {}
     ) {
         if (!serverUrl || !apiUser || !apiKey) {
@@ -123,6 +124,12 @@ export class Session {
 
         if (autoConnectEventHub) {
             this.eventHub.connect();
+        }
+
+        if (clientToken) {
+            this.clientToken = clientToken;
+        } else {
+            this.clientToken = `ftrack-javascript-api--${uuid.v4()}`;
         }
 
         const operations = [
@@ -307,6 +314,7 @@ export class Session {
                     'Content-Type': 'application/json',
                     'ftrack-api-key': this.apiKey,
                     'ftrack-user': this.apiUser,
+                    'ftrack-Clienttoken': this.clientToken,
                 },
                 body: JSON.stringify(operations),
             })

@@ -19,8 +19,9 @@ Construct Session instance with API credentials.
     :param string apiUser: ftrack username for API user.
     :param string apiKey: User API Key
     :param Object options: options
-    :param Boolean options.autoConnectEventHub=false]: Automatically connect to event hub, 
+    :param Boolean [options.autoConnectEventHub=false]: Automatically connect to event hub, 
     :param Object [options.eventHubOptions={}]: Options to configure event hub with.
+    :param string [options.clientToken=null]: Client identifier included in update events caused by operations performed by this session.
 
 Function ``call``
 =================

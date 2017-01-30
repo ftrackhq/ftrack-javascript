@@ -7,6 +7,29 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: new
+        :tags: Event hub
+
+        Added the possibility to subscribe to events.
+
+        .. seealso::
+
+            :ref:`handling_events`
+
+    .. change:: changed
+        :tags: Event hub, backwards-incompatible
+
+        :ref:`EventHub.publish <EventHub.publish>` has changed to
+        support multiple replies. See :ref:`EventHub.publishAndWaitForReply <EventHub.publishAndWaitForReply>` for previous logic when reply=true.
+
+    .. change:: changed
+        :tags: Event, backwards-incompatible
+
+        `ftrack._Event` and `ftrack._EventHub` now exposed without underscore
+        prefix.
+
 .. release:: 0.2.0
     :date: 2016-11-18
 
@@ -21,6 +44,7 @@ Release Notes
             :ref:`installing`
 
     .. change:: new
+
         Added helper method on session for creating and uploading a component
         from a file.
 

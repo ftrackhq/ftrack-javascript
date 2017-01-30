@@ -13,6 +13,7 @@ Javascript api for ftrack.com
     introduction
     installing
     tutorial
+    handling_events
     api_reference/index
     release/index
     glossary

@@ -16,3 +16,5 @@ ftrack
     operation
     project_schema
     error
+    event
+    event_hub
