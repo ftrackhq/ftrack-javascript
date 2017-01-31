@@ -167,8 +167,7 @@ export class Session {
     * Iterate *data* and decode entities with special encoding logic.
     *
     * This will translate objects with __type__ equal to 'datetime' into moment
-    * datetime objects. If time zone support is enabled on the server the date
-    * will be assumed to be UTC and cast into the local time zone.
+    * datetime objects.
     *
     * @private
     * @param  {*} data  The data to decode.
@@ -181,17 +180,7 @@ export class Session {
 
         if (data && data.constructor === Object) {
             if (data.__type__ === 'datetime') {
-                let adjustedMoment;
-                if (
-                    this.serverInformation &&
-                    this.serverInformation.is_timezone_support_enabled
-                ) {
-                    adjustedMoment = moment.utc(data.value);
-                } else {
-                    adjustedMoment = moment(data.value);
-                }
-                adjustedMoment.local();
-                return adjustedMoment;
+                return moment(data.value);
             }
 
             const out = {};
