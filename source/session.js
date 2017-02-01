@@ -219,7 +219,7 @@ export class Session {
     */
     encode(data) {
         if (data && data.constructor === Array) {
-            return data.map(item => this._encode(item));
+            return data.map(item => this.encode(item));
         }
 
         if (data && data.constructor === Object) {
@@ -240,7 +240,7 @@ export class Session {
 
             const out = {};
             forIn(data, (value, key) => {
-                out[key] = this._encode(value);
+                out[key] = this.encode(value);
             });
 
             return out;
