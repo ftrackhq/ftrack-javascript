@@ -7,6 +7,24 @@
 Migration notes
 ***************
 
+.. _release/migration/upcoming:
+
+Migrate to Upcoming
+================
+
+Changes to session encoding
+---------------------------
+
+Previously all server dates were decoded and converted to the local
+:term:`momentjs` objects in the local timezone. Now :term:`momentjs` objects
+are in local timezone or UTC depending on the time zone setting on the ftrack
+server.
+
+To garantuee that a :term:`momentjs` objects are in your local timezone when
+displaying or operating on them you can call local::
+
+    myDate.local()
+
 .. _release/migration/0.3.0:
 
 Migrate to 0.3.0
