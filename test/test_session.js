@@ -4,6 +4,7 @@ import { ServerError } from 'error';
 import { Session } from 'session';
 import uuid from 'uuid';
 import loglevel from 'loglevel';
+import moment from 'moment';
 import credentials from './api_credentials';
 
 const logger = loglevel.getLogger('test_session');
@@ -253,5 +254,20 @@ describe('Session', () => {
             response[0].data.id.should.equal(componentId);
             done();
         }, (rejection) => { done(rejection); });
+    });
+
+    it('Should support encoding moment dates', (done) => {
+        const now = moment();
+        const output = session.encode([{ foo: now, bar: 'baz' }, 12321]);
+        output.should.deep.equal(
+            [
+                {
+                    foo: { __type__: 'datetime', value: now.format('YYYY-MM-DDTHH:mm:ss') },
+                    bar: 'baz',
+                },
+                12321,
+            ]
+        );
+        done();
     });
 });

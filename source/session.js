@@ -21,6 +21,8 @@ const COMBINED_PRIMARY_KEY_MAP = {
     SchemaStatus: ['status_id', 'schema_id'],
 };
 
+const ENCODE_DATETIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss';
+
 /* Return the identity of *item*. */
 function identity(item) {
     if (COMBINED_PRIMARY_KEY_MAP[item.__entity_type__]) {
@@ -168,7 +170,7 @@ export class Session {
     *
     * This will translate objects with __type__ equal to 'datetime' into moment
     * datetime objects. If time zone support is enabled on the server the date
-    * will be assumed to be UTC and cast into the local time zone.
+    * will be assumed to be UTC and the moment will be in utc.
     *
     * @private
     * @param  {*} data  The data to decode.
@@ -181,17 +183,16 @@ export class Session {
 
         if (data && data.constructor === Object) {
             if (data.__type__ === 'datetime') {
-                let adjustedMoment;
                 if (
                     this.serverInformation &&
                     this.serverInformation.is_timezone_support_enabled
                 ) {
-                    adjustedMoment = moment.utc(data.value);
-                } else {
-                    adjustedMoment = moment(data.value);
+                    // Return date as moment object with UTC set to true.
+                    return moment.utc(data.value);
                 }
-                adjustedMoment.local();
-                return adjustedMoment;
+
+                // Return date as local moment object.
+                return moment(data.value);
             }
 
             const out = {};
@@ -200,6 +201,55 @@ export class Session {
             });
 
             return out;
+        }
+
+        return data;
+    }
+
+   /**
+    * Return encoded *data* as JSON string.
+    *
+    * This will translate objects with type moment into string representation.
+    * If time zone support is enabled on the server the date
+    * will be sent as UTC, otherwise in local time.
+    *
+    * @private
+    * @param  {*} data  The data to encode.
+    * @return {*}      Encoded data
+    */
+    encode(data) {
+        if (data && data.constructor === Array) {
+            return data.map(item => this.encode(item));
+        }
+
+        if (data && data.constructor === Object) {
+            const out = {};
+            forIn(data, (value, key) => {
+                out[key] = this.encode(value);
+            });
+
+            return out;
+        }
+
+        if (data && data._isAMomentObject) {
+            if (
+                this.serverInformation &&
+                this.serverInformation.is_timezone_support_enabled
+            ) {
+                // Ensure that the moment object is in UTC and format
+                // to timezone naive string.
+                return {
+                    __type__: 'datetime',
+                    value: data.utc().format(ENCODE_DATETIME_FORMAT),
+                };
+            }
+
+            // Ensure that the moment object is in local time zone and format
+            // to timezone naive string.
+            return {
+                __type__: 'datetime',
+                value: data.local().format(ENCODE_DATETIME_FORMAT),
+            };
         }
 
         return data;
@@ -316,7 +366,7 @@ export class Session {
                     'ftrack-user': this.apiUser,
                     'ftrack-Clienttoken': this.clientToken,
                 },
-                body: JSON.stringify(operations),
+                body: JSON.stringify(this.encode(operations)),
             })
         );
 
