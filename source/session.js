@@ -223,27 +223,33 @@ export class Session {
         }
 
         if (data && data.constructor === Object) {
-            if (data._isAMomentObject) {
-                if (
-                    this.serverInformation &&
-                    this.serverInformation.is_timezone_support_enabled
-                ) {
-                    // Ensure that the moment object is in UTC and format
-                    // to timezone naive string.
-                    return data.utc().format(ENCODE_DATETIME_FORMAT);
-                }
-
-                // Ensure that the moment object is in local time zone and format
-                // to timezone naive string.
-                return data.local().format(ENCODE_DATETIME_FORMAT);
-            }
-
             const out = {};
             forIn(data, (value, key) => {
                 out[key] = this.encode(value);
             });
 
             return out;
+        }
+
+        if (data && data._isAMomentObject) {
+            if (
+                this.serverInformation &&
+                this.serverInformation.is_timezone_support_enabled
+            ) {
+                // Ensure that the moment object is in UTC and format
+                // to timezone naive string.
+                return {
+                    __type__: 'datetime',
+                    value: data.utc().format(ENCODE_DATETIME_FORMAT),
+                };
+            }
+
+            // Ensure that the moment object is in local time zone and format
+            // to timezone naive string.
+            return {
+                __type__: 'datetime',
+                value: data.local().format(ENCODE_DATETIME_FORMAT),
+            };
         }
 
         return data;
