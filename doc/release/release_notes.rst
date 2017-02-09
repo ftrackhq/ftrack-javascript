@@ -7,6 +7,25 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: new
+        :tags: Session, Encoding
+
+        :term:`momentjs` dates are now automatically encoded and converted to
+        the server timezone in all outgoing server operations.
+
+    .. change:: changed
+        :tags: Session
+
+        :term:`momentjs` dates are no longer automatically cast converted to
+        the local timezone but remains in the timezone of the ftrack server
+        instance.
+
+        .. seealso::
+
+            :ref:`release/migration/upcoming`
+
 .. release:: 0.3.0
     :date: 2017-01-30
 
