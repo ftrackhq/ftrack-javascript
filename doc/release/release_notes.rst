@@ -7,7 +7,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.4.0
+    :date: 2017-02-09
 
     .. change:: new
         :tags: Session, Encoding
@@ -24,7 +25,7 @@ Release Notes
 
         .. seealso::
 
-            :ref:`release/migration/upcoming`
+            :ref:`release/migration/0.4.0`
 
 .. release:: 0.3.0
     :date: 2017-01-30

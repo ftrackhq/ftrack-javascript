@@ -7,9 +7,9 @@
 Migration notes
 ***************
 
-.. _release/migration/upcoming:
+.. _release/migration/0.4.0:
 
-Migrate to Upcoming
+Migrate to 0.4.0
 ================
 
 Changes to session encoding
