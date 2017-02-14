@@ -7,6 +7,14 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+        :tags: Session
+
+        Session incorrectly raises ServerError instead of more specific
+        ServerPermissionError
+
 .. release:: 0.4.0
     :date: 2017-02-09
 

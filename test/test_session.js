@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { ServerError } from 'error';
+import { ServerPermissionDeniedError, ServerValidationError, ServerError } from 'error';
 import { Session } from 'session';
 import uuid from 'uuid';
 import loglevel from 'loglevel';
@@ -268,6 +268,35 @@ describe('Session', () => {
                 12321,
             ]
         );
+        done();
+    });
+
+    it('Should return correct error', (done) => {
+        expect(
+            session.getErrorFromResponse({
+                exception: 'PermissionError',
+                content: 'foo',
+            })
+        ).to.be.instanceof(ServerPermissionDeniedError);
+        expect(
+            session.getErrorFromResponse({
+                exception: 'FTAuthenticationError',
+                content: 'foo',
+            })
+        ).to.be.instanceof(ServerPermissionDeniedError);
+        expect(
+            session.getErrorFromResponse({
+                exception: 'ValidationError',
+                content: 'foo',
+            })
+        ).to.be.instanceof(ServerValidationError);
+        expect(
+            session.getErrorFromResponse({
+                exception: 'Foo',
+                content: 'foo',
+            })
+        ).to.be.instanceof(ServerError);
+
         done();
     });
 });

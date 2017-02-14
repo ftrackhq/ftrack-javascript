@@ -255,6 +255,29 @@ export class Session {
         return data;
     }
 
+    /** Return error instance from *response*.
+    *
+    * @private
+    * @param  {*} response  A server error response object.
+    * @return {*}      error instance.
+    */
+    getErrorFromResponse(response) {
+        const message = `${response.exception}: ${response.content}`;
+        let error;
+
+        if (response.exception === 'ValidationError') {
+            error = new ServerValidationError(message);
+        } else if (response.exception === 'FTAuthenticationError') {
+            error = new ServerPermissionDeniedError(message);
+        } else if (response.exception === 'PermissionError') {
+            error = new ServerPermissionDeniedError(message);
+        } else {
+            error = new ServerError(message);
+        }
+
+        return error;
+    }
+
     /**
      * Return merged lazy loaded entities in *data*.
      *
@@ -401,18 +424,7 @@ export class Session {
         // Reject promise on API exception.
         request = request.then((response) => {
             if (response.exception) {
-                const message = `${response.exception}: ${response.content}`;
-                let error;
-
-                if (response.exception === 'ValidationError') {
-                    error = new ServerValidationError(message);
-                } else if (response.exception === 'FTAuthenticationError') {
-                    error = new ServerPermissionDeniedError(message);
-                } else {
-                    error = new ServerError(message);
-                }
-
-                return Promise.reject(error);
+                return Promise.reject(this.getErrorFromResponse(response));
             }
             return Promise.resolve(response);
         });
