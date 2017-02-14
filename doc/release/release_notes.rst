@@ -7,7 +7,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.4.1
+    :date: 2017-02-14
 
     .. change:: fixed
         :tags: Session
