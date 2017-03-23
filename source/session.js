@@ -262,18 +262,20 @@ export class Session {
     * @return {*}      error instance.
     */
     getErrorFromResponse(response) {
-        const message = `${response.exception}: ${response.content}`;
-        let error;
+        let ErrorClass;
 
         if (response.exception === 'ValidationError') {
-            error = new ServerValidationError(message);
-        } else if (response.exception === 'FTAuthenticationError') {
-            error = new ServerPermissionDeniedError(message);
-        } else if (response.exception === 'PermissionError') {
-            error = new ServerPermissionDeniedError(message);
+            ErrorClass = ServerValidationError;
+        } else if (
+            response.exception === 'FTAuthenticationError' ||
+            response.exception === 'PermissionError'
+        ) {
+            ErrorClass = ServerPermissionDeniedError;
         } else {
-            error = new ServerError(message);
+            ErrorClass = ServerError;
         }
+
+        const error = new ErrorClass(response.content, response.error_code);
 
         return error;
     }

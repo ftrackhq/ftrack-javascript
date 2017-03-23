@@ -13,9 +13,10 @@
  * @return {CustomError}      Custom error object
  */
 function errorFactory(name) {
-    function CustomError(message) {
+    function CustomError(message, errorCode) {
         this.name = name;
         this.message = message;
+        this.errorCode = errorCode;
         this.stack = (new Error()).stack;
     }
 

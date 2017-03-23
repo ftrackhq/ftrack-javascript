@@ -7,6 +7,13 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+        :tags: Error
+
+        The CustomError class now handles server error codes.
+
 .. release:: 0.4.1
     :date: 2017-02-14
 
