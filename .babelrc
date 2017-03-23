@@ -1,4 +1,5 @@
 {
   "presets": ["es2015"],
-  "plugins": ["babel-plugin-add-module-exports"]
+  "plugins": ["babel-plugin-add-module-exports"],
+  "ignore": ["socket.io-websocket-only.js"]
 }
