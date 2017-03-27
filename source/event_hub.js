@@ -1,8 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
-import io from 'socket.io-client';
 import uuid from 'uuid';
 import loglevel from 'loglevel';
-
+import io from './socket.io-websocket-only';
 import Event from './event';
 import {
     EventServerConnectionTimeoutError,
