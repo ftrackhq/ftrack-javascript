@@ -9,10 +9,20 @@ Release Notes
 
 .. release:: Upcoming
 
+.. release:: 0.4.2
+    :date: 2017-03-27
+
     .. change:: changed
         :tags: Error
 
         The CustomError class now handles server error codes.
+
+    .. change:: fixed
+        :tags: Event Hub
+
+        Flash plug-in notification appears when loading the API in Google
+        Chrome.
+
 
 .. release:: 0.4.1
     :date: 2017-02-14
