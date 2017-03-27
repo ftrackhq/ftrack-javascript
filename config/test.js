@@ -11,6 +11,9 @@ const config = {
                 include: [
                     path.resolve('./source'),
                 ],
+                exclude: [
+                    path.resolve('./source/socket.io-websocket-only.js'),
+                ],
             },
         ],
         loaders: [
