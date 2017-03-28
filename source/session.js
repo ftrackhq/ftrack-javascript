@@ -256,9 +256,13 @@ export class Session {
    /**
     * Iterate *data* and decode entities with special encoding logic. Will
     * iterate recursively through objects and arrays.
+    * 
+    * Will merge ftrack entities multiple occurrences which have been
+    * de-duplicated in the back end and point them to a single object in 
+    * *identityMap*.
     *
-    * This will 
-    *
+    * datetime objects will be converted to timezone-aware moment objects.
+    * 
     * @private
     * @param  {*} data  The data to decode.
     * @return {*}      Decoded data
@@ -267,7 +271,7 @@ export class Session {
         if (data == null) {
             return data;
         } else if (isArray(data)) {
-            return this._decodeCollection(data, identityMap);
+            return this._decodeArray(data, identityMap);
         } else if (isPlainObject(data)) {
             if (data.__entity_type__) {
                 return this._mergeEntity(data, identityMap);
@@ -283,6 +287,7 @@ export class Session {
      * Translate objects with __type__ equal to 'datetime' into moment
      * datetime objects. If time zone support is enabled on the server the date
      * will be assumed to be UTC and the moment will be in utc.
+     * @private
      */
     _decodeDateTime(data) {
         if (
@@ -297,7 +302,10 @@ export class Session {
         return moment(data.value);
     }
 
-    /** [_decodePlainObject description] */
+    /**
+     * Return new object where all values have been decoded.
+     * @private
+     */
     _decodePlainObject(object, identityMap) {
         return Object.keys(object).reduce((previous, key) => {
             previous[key] = this.decode(object[key], identityMap);
@@ -306,10 +314,10 @@ export class Session {
     }
 
     /**
-     * Return merged *collection* of entities using *identityMap*.
+     * Return new Array where all items have been decoded.
      * @private
      */
-    _decodeCollection(collection, identityMap) {
+    _decodeArray(collection, identityMap) {
         return collection.map(item => this.decode(item, identityMap));
     }
 
@@ -331,6 +339,9 @@ export class Session {
         // Retrieve entity from identity map. Any instances which occur multiple
         // times in the encoded data will point to the same JavaScript object.
         // This means that output is not guaranteed to be JSON-serializable.
+        // 
+        // TODO: Should we duplicate the information between the instances
+        // instead of pointing them to the same instance?
         const mergedEntity = identityMap[identifier];
 
         forIn(
