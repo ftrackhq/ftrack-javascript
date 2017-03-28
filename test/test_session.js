@@ -2,6 +2,7 @@
 
 import { ServerPermissionDeniedError, ServerValidationError, ServerError } from 'error';
 import { Session } from 'session';
+import operation from 'operation';
 import uuid from 'uuid';
 import loglevel from 'loglevel';
 import moment from 'moment';
@@ -106,105 +107,111 @@ describe('Session', () => {
     });
 
     it('Should support merging 0-level nested data', (done) => {
-        const data = session.merge([
-            {
-                id: 1,
-                __entity_type__: 'Task',
-                name: 'foo',
-            }, {
-                id: 1,
-                __entity_type__: 'Task',
-            }, {
-                id: 2,
-                __entity_type__: 'Task',
-                name: 'bar',
-            },
-        ]);
-        data[0].name.should.deep.equal('foo');
-        data[1].name.should.deep.equal('foo');
-        data[2].name.should.deep.equal('bar');
-        done();
+        session.initializing.then(() => {
+            const data = session.decode([
+                {
+                    id: 1,
+                    __entity_type__: 'Task',
+                    name: 'foo',
+                }, {
+                    id: 1,
+                    __entity_type__: 'Task',
+                }, {
+                    id: 2,
+                    __entity_type__: 'Task',
+                    name: 'bar',
+                },
+            ]);
+            data[0].name.should.deep.equal('foo');
+            data[1].name.should.deep.equal('foo');
+            data[2].name.should.deep.equal('bar');
+            done();
+        });
     });
 
     it('Should support merging 1-level nested data', (done) => {
-        const data = session.merge([
-            {
-                id: 1,
-                __entity_type__: 'Task',
-                name: 'foo',
-                status: {
-                    __entity_type__: 'Status',
+        session.initializing.then(() => {
+            const data = session.decode([
+                {
+                    id: 1,
+                    __entity_type__: 'Task',
+                    name: 'foo',
+                    status: {
+                        __entity_type__: 'Status',
+                        id: 2,
+                        name: 'In progress',
+                    },
+                }, {
                     id: 2,
-                    name: 'In progress',
+                    __entity_type__: 'Task',
+                    name: 'foo',
+                    status: {
+                        __entity_type__: 'Status',
+                        id: 1,
+                        name: 'Done',
+                    },
+                }, {
+                    id: 3,
+                    __entity_type__: 'Task',
+                    status: {
+                        __entity_type__: 'Status',
+                        id: 1,
+                    },
                 },
-            }, {
-                id: 2,
-                __entity_type__: 'Task',
-                name: 'foo',
-                status: {
-                    __entity_type__: 'Status',
-                    id: 1,
-                    name: 'Done',
-                },
-            }, {
-                id: 3,
-                __entity_type__: 'Task',
-                status: {
-                    __entity_type__: 'Status',
-                    id: 1,
-                },
-            },
-        ]);
-        data[0].status.name.should.deep.equal('In progress');
-        data[1].status.name.should.deep.equal('Done');
-        data[2].status.name.should.deep.equal('Done');
-        done();
+            ]);
+            data[0].status.name.should.deep.equal('In progress');
+            data[1].status.name.should.deep.equal('Done');
+            data[2].status.name.should.deep.equal('Done');
+            done();
+        });
     });
 
     it('Should support merging 2-level nested data', (done) => {
-        const data = session.merge([
-            {
-                id: 1,
-                __entity_type__: 'Task',
-                name: 'foo',
-                status: {
-                    __entity_type__: 'Status',
+        session.initializing.then(() => {
+            const data = session.decode([
+                {
                     id: 1,
-                    state: {
-                        __entity_type__: 'State',
+                    __entity_type__: 'Task',
+                    name: 'foo',
+                    status: {
+                        __entity_type__: 'Status',
                         id: 1,
-                        short: 'DONE',
+                        state: {
+                            __entity_type__: 'State',
+                            id: 1,
+                            short: 'DONE',
+                        },
                     },
-                },
-            }, {
-                id: 2,
-                __entity_type__: 'Task',
-                status: {
-                    __entity_type__: 'Status',
+                }, {
                     id: 2,
-                    state: {
-                        __entity_type__: 'State',
+                    __entity_type__: 'Task',
+                    status: {
+                        __entity_type__: 'Status',
                         id: 2,
-                        short: 'NOT_STARTED',
+                        state: {
+                            __entity_type__: 'State',
+                            id: 2,
+                            short: 'NOT_STARTED',
+                        },
                     },
-                },
-            }, {
-                id: 3,
-                __entity_type__: 'Task',
-                status: {
-                    __entity_type__: 'Status',
-                    id: 1,
-                    state: {
-                        __entity_type__: 'State',
+                }, {
+                    id: 3,
+                    __entity_type__: 'Task',
+                    status: {
+                        __entity_type__: 'Status',
                         id: 1,
+                        state: {
+                            __entity_type__: 'State',
+                            id: 1,
+                        },
                     },
                 },
-            },
-        ]);
-        data[0].status.state.short.should.deep.equal('DONE');
-        data[1].status.state.short.should.deep.equal('NOT_STARTED');
-        data[2].status.state.short.should.deep.equal('DONE');
-        done();
+            ]);
+            data[0].status.state.short.should.deep.equal('DONE');
+            data[1].status.state.short.should.deep.equal('NOT_STARTED');
+            data[2].status.state.short.should.deep.equal('DONE');
+            done();
+        });
     });
 
     it('Should support api query 2-level nested data', (done) => {
@@ -220,6 +227,38 @@ describe('Session', () => {
 
             done();
         }, (rejection) => { done(rejection); });
+    });
+
+    it('Should decode batched query operations', () => {
+        const promise = session.call([
+            operation.query(
+                'select status.state.short from Task where status.state.short is NOT_STARTED limit 1'
+            ),
+            operation.query(
+                'select status.state.short from Task where status.state.short is NOT_STARTED limit 1'
+            ),
+        ]);
+        return promise.then((responses) => {
+            const status1 = responses[0].data[0].status;
+            const status2 = responses[1].data[0].status;
+            status1.state.short.should.deep.equal('NOT_STARTED');
+            status2.state.short.should.deep.equal('NOT_STARTED');
+            return status1.should.equal(status2);
+        });
+    });
+
+    it('Should decode self-referencing entities', () => {
+        const request = session.query(
+            'select version, asset.versions.version from AssetVersion where asset_id is_not None limit 1'
+        );
+
+        return request.then(response => {
+            const versionNumber = response.data[0].version;
+            const versionId = response.data[0].id;
+            const assetVersions = response.data[0].asset.versions;
+            const versionNumber2 = assetVersions.find(item => item.id === versionId).version;
+            return versionNumber.should.deep.equal(versionNumber2);
+        });
     });
 
     it('Should support uploading files', (done) => {
