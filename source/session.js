@@ -254,8 +254,9 @@ export class Session {
     }
 
    /**
-    * Iterate *data* and decode entities with special encoding logic. Will
-    * iterate recursively through objects and arrays.
+    * Iterate *data* and decode entities with special encoding logic. 
+    * 
+    * Iterates recursively through objects and arrays.
     * 
     * Will merge ftrack entities multiple occurrences which have been
     * de-duplicated in the back end and point them to a single object in 
@@ -284,6 +285,8 @@ export class Session {
     }
 
     /**
+     * Decode datetime *data* into moment objects.
+     * 
      * Translate objects with __type__ equal to 'datetime' into moment
      * datetime objects. If time zone support is enabled on the server the date
      * will be assumed to be UTC and the moment will be in utc.
