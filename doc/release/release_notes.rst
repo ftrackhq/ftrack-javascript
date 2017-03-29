@@ -7,7 +7,8 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.4.3
+    :date: 2017-03-29
 
     .. change:: changed
         :tags: Session, Encoding
