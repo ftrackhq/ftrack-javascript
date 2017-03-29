@@ -39,6 +39,7 @@
     "karma-sourcemap-loader": "^0.3.5",
     "karma-webpack": "^1.7.0",
     "mocha": "latest",
+    "phantomjs-polyfill-find": "github:ptim/phantomjs-polyfill-find",
     "phantomjs-prebuilt": "latest",
     "webpack": "^1.12.0",
     "webpack-dev-server": "^1.12.0",

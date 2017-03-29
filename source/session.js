@@ -1,6 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import forIn from 'lodash/forIn';
+import isArray from 'lodash/isArray';
+import isPlainObject from 'lodash/isPlainObject';
+import find from 'lodash/find';
 import moment from 'moment';
 import loglevel from 'loglevel';
 import uuid from 'uuid';
@@ -13,27 +16,7 @@ import { SERVER_LOCATION_ID } from './constant';
 
 const logger = loglevel.getLogger('ftrack_api');
 
-// A list of combined primary keys. If a entity type does not exist in this map
-// the primary key will be assumed to be id.
-const COMBINED_PRIMARY_KEY_MAP = {
-    NoteComponent: ['note_id', 'component_id'],
-    Metadata: ['parent_id', 'key'],
-    SchemaStatus: ['status_id', 'schema_id'],
-};
-
 const ENCODE_DATETIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss';
-
-/* Return the identity of *item*. */
-function identity(item) {
-    if (COMBINED_PRIMARY_KEY_MAP[item.__entity_type__]) {
-        const combinedKey = COMBINED_PRIMARY_KEY_MAP[item.__entity_type__].map(
-            key => item[key]
-        );
-        return combinedKey.join(',');
-    }
-
-    return item.id;
-}
 
 /**
  * Create component from *file* and add to server location.
@@ -165,46 +148,36 @@ export class Session {
         );
     }
 
-   /**
-    * Iterate *data* and decode entities with special encoding logic.
-    *
-    * This will translate objects with __type__ equal to 'datetime' into moment
-    * datetime objects. If time zone support is enabled on the server the date
-    * will be assumed to be UTC and the moment will be in utc.
-    *
-    * @private
-    * @param  {*} data  The data to decode.
-    * @return {*}      Decoded data
-    */
-    decode(data) {
-        if (data && data.constructor === Array) {
-            return data.map(item => this.decode(item));
+    /**
+     * Get primary key attributes from schema
+     *
+     * @return {Array|null} List of primary key attributes.
+     */
+    getPrimaryKeyAttributes(entityType) {
+        const schema = find(this.schemas, item => item.id === entityType);
+        if (!schema || !schema.primary_key) {
+            logger.warn('Primary key could not be found for: ', entityType);
+            return null;
         }
-
-        if (data && data.constructor === Object) {
-            if (data.__type__ === 'datetime') {
-                if (
-                    this.serverInformation &&
-                    this.serverInformation.is_timezone_support_enabled
-                ) {
-                    // Return date as moment object with UTC set to true.
-                    return moment.utc(data.value);
-                }
-
-                // Return date as local moment object.
-                return moment(data.value);
-            }
-
-            const out = {};
-            forIn(data, (value, key) => {
-                out[key] = this.decode(value);
-            });
-
-            return out;
-        }
-
-        return data;
+        return schema.primary_key;
     }
+
+    /**
+     * Get identifying key for *entity*
+     *
+     * @return {String|null} Identifying key for *entity*
+     */
+    getIdentifyingKey(entity) {
+        const primaryKeys = this.getPrimaryKeyAttributes(entity.__entity_type__);
+        if (primaryKeys) {
+            return [
+                entity.__entity_type__,
+                ...primaryKeys.map(attribute => entity[attribute]),
+            ].join(',');
+        }
+        return null;
+    }
+
 
    /**
     * Return encoded *data* as JSON string.
@@ -280,32 +253,72 @@ export class Session {
         return error;
     }
 
-    /**
-     * Return merged lazy loaded entities in *data*.
-     *
-     * @private
-     */
-    merge(data) {
-        return this._mergeCollection(data, {});
+   /**
+    * Iterate *data* and decode entities with special encoding logic. Will
+    * iterate recursively through objects and arrays.
+    * 
+    * Will merge ftrack entities multiple occurrences which have been
+    * de-duplicated in the back end and point them to a single object in 
+    * *identityMap*.
+    *
+    * datetime objects will be converted to timezone-aware moment objects.
+    * 
+    * @private
+    * @param  {*} data  The data to decode.
+    * @return {*}      Decoded data
+    */
+    decode(data, identityMap = {}) {
+        if (data == null) {
+            return data;
+        } else if (isArray(data)) {
+            return this._decodeArray(data, identityMap);
+        } else if (isPlainObject(data)) {
+            if (data.__entity_type__) {
+                return this._mergeEntity(data, identityMap);
+            } else if (data.__type__ === 'datetime') {
+                return this._decodeDateTime(data);
+            }
+            return this._decodePlainObject(data, identityMap);
+        }
+        return data;
     }
 
     /**
-     * Return merged *collection* of entities using *identityMap*.
+     * Translate objects with __type__ equal to 'datetime' into moment
+     * datetime objects. If time zone support is enabled on the server the date
+     * will be assumed to be UTC and the moment will be in utc.
      * @private
      */
-    _mergeCollection(collection, identityMap) {
-        const mergedCollection = collection.map(
-            (item) => {
-                if (!item.__entity_type__) {
-                    // Only process API entity types.
-                    return item;
-                }
+    _decodeDateTime(data) {
+        if (
+            this.serverInformation &&
+            this.serverInformation.is_timezone_support_enabled
+        ) {
+            // Return date as moment object with UTC set to true.
+            return moment.utc(data.value);
+        }
 
-                return this._mergeEntity(item, identityMap);
-            }
-        );
+        // Return date as local moment object.
+        return moment(data.value);
+    }
 
-        return mergedCollection;
+    /**
+     * Return new object where all values have been decoded.
+     * @private
+     */
+    _decodePlainObject(object, identityMap) {
+        return Object.keys(object).reduce((previous, key) => {
+            previous[key] = this.decode(object[key], identityMap);
+            return previous;
+        }, {});
+    }
+
+    /**
+     * Return new Array where all items have been decoded.
+     * @private
+     */
+    _decodeArray(collection, identityMap) {
+        return collection.map(item => this.decode(item, identityMap));
     }
 
     /**
@@ -313,34 +326,28 @@ export class Session {
      * @private
      */
     _mergeEntity(entity, identityMap) {
-        const primaryKey = identity(entity);
-
-        if (!primaryKey) {
-            // This happens for combined primary keys if the do not exist
-            // in COMBINED_PRIMARY_KEY_MAP.
-            logger.warn('Key could not be determined for: ', entity);
+        const identifier = this.getIdentifyingKey(entity);
+        if (!identifier) {
+            logger.warn('Identifier could not be determined for: ', identifier);
             return entity;
         }
 
-        const identifier = `${primaryKey},${entity.__entity_type__}`;
         if (!identityMap[identifier]) {
             identityMap[identifier] = {};
         }
 
+        // Retrieve entity from identity map. Any instances which occur multiple
+        // times in the encoded data will point to the same JavaScript object.
+        // This means that output is not guaranteed to be JSON-serializable.
+        // 
+        // TODO: Should we duplicate the information between the instances
+        // instead of pointing them to the same instance?
         const mergedEntity = identityMap[identifier];
 
         forIn(
             entity,
             (value, key) => {
-                if (value && value.constructor === Array) {
-                    mergedEntity[key] = this._mergeCollection(
-                        value, identityMap
-                    );
-                } else if (value && value.constructor === Object) {
-                    mergedEntity[key] = this._mergeEntity(value, identityMap);
-                } else {
-                    mergedEntity[key] = value;
-                }
+                mergedEntity[key] = this.decode(value, identityMap);
             }
         );
 
@@ -409,8 +416,11 @@ export class Session {
         );
 
         request = request.then((data) => {
-            const result = this.decode(data);
-            return Promise.resolve(result);
+            if (this.initialized) {
+                return this.decode(data);
+            }
+
+            return data;
         });
 
         // Catch badly formatted responses
@@ -464,7 +474,6 @@ export class Session {
         request = request.then(
             (responses) => {
                 const response = responses[0];
-                response.data = this.merge(response.data);
                 return response;
             }
         );

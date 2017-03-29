@@ -14,6 +14,7 @@ module.exports = function(config) {
         },
 
         files: [
+            './node_modules/phantomjs-polyfill-find/find-polyfill.js',
             'test/load_tests.js',
         ],
         preprocessors: {

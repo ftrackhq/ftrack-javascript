@@ -9,6 +9,12 @@ Release Notes
 
 .. release:: Upcoming
 
+    .. change:: changed
+        :tags: Session, Encoding
+
+        Multiple occurrences of an entity within the same payload are now
+        merged for all operation types and batched query operations.
+
 .. release:: 0.4.2
     :date: 2017-03-27
 
