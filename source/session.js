@@ -57,6 +57,7 @@ export class Session {
      * @param  {string}  apiKey -                     User API Key
      * @param  {Object}  options  -                   options
      * @param  {Boolean} [options.autoConnectEventHub=false] - Automatically connect to event hub,
+     * @param  {Array|null} [options.serverInformationValues=null] - List of server information values to retrieve.
      * @param  {Object}  [options.eventHubOptions={}] - Options to configure event hub with.
      *
      * @constructs Session
@@ -64,6 +65,7 @@ export class Session {
     constructor(
         serverUrl, apiUser, apiKey, {
             autoConnectEventHub = false,
+            serverInformationValues = null,
             eventHubOptions = {},
             clientToken = null,
         } = {}
@@ -118,7 +120,7 @@ export class Session {
         }
 
         const operations = [
-            { action: 'query_server_information' },
+            { action: 'query_server_information', values: serverInformationValues },
             { action: 'query_schemas' },
         ];
 
