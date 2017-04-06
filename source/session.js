@@ -119,6 +119,14 @@ export class Session {
             this.clientToken = `ftrack-javascript-api--${uuid.v4()}`;
         }
 
+        // Always include is_timezone_support_enabled as required by API.
+        if (
+            serverInformationValues &&
+            !serverInformationValues.includes('is_timezone_support_enabled')
+        ) {
+            serverInformationValues.push('is_timezone_support_enabled');
+        }
+
         const operations = [
             { action: 'query_server_information', values: serverInformationValues },
             { action: 'query_schemas' },
