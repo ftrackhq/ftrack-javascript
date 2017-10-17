@@ -192,6 +192,11 @@ export class EventHub {
                 'Event hub is not connected, event is delayed.'
             );
             this._unsentEvents.push(callback);
+
+            // Force reconnect socket if not automatically reconnected. This
+            // happens for example in Adobe After Effects when rendering a
+            // sequence takes longer than ~30s and the JS thread is blocked.
+            this._socketIo.socket.reconnect();
         } else {
             callback();
         }
