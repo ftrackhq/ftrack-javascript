@@ -7,6 +7,15 @@
 Release Notes
 *************
 
+.. release:: 0.4.4
+    :date: 2017-10-17
+
+    .. change:: fixed
+        :tags: Event Hub
+
+        Unable to publish events after event hub socket has been disconnected
+        and not automatically reconnected.
+
 .. release:: 0.4.3
     :date: 2017-03-29
 
