@@ -70,8 +70,22 @@ export class EventHub {
     _onSocketConnected() {
         this.logger.debug('Connected to event server.');
 
-        // Subscribe to reply events.
-        this.subscribe('topic=ftrack.meta.reply', this._handleReply, { id: this._id });
+        // Subscribe to reply events, if not already subscribed.
+        try {
+            this.subscribe('topic=ftrack.meta.reply', this._handleReply, { id: this._id });
+        } catch (error) {
+            if (error instanceof NotUniqueError) {
+                this.logger.debug('Already subscribed to replies.');
+            } else {
+                throw error;
+            }
+        }
+
+        // Now resubscribe any existing stored subscribers. This can happen when
+        // reconnecting automatically for example.
+        for (const subscriber of this._subscribers) {
+            this._notifyServerAboutSubscriber(subscriber);
+        }
 
         // Run any publish callbacks.
         const callbacks = this._unsentEvents;
