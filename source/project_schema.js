@@ -1,5 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
+import operation from './operation';
+
 /**
  * Project schema namespace
  * @namespace project_schema
@@ -18,30 +20,43 @@
 export function getStatuses(session, projectSchemaId, entityType, typeId = null) {
     let response;
 
-    const select = [
-        '_task_workflow.statuses.name',
-        '_task_workflow.statuses.color',
-        '_task_workflow.statuses.sort',
-        '_version_workflow.statuses.name',
-        '_version_workflow.statuses.color',
-        '_version_workflow.statuses.sort',
-        '_overrides.type_id',
-        '_overrides.workflow_schema.statuses.name',
-        '_overrides.workflow_schema.statuses.sort',
-        '_overrides.workflow_schema.statuses.color',
-        '_overrides.workflow_schema.statuses.sort',
-        '_schemas.type_id',
-        '_schemas.statuses.task_status.name',
-        '_schemas.statuses.task_status.color',
-        '_schemas.statuses.task_status.sort',
+    // Load multiple collections in separate queries to work around issue in
+    // backend, creating an unnecessary complex query when selecting multiple,
+    // unrelated things.
+    const groupedAttributes = [
+        [
+            '_task_workflow.statuses.name',
+            '_task_workflow.statuses.color',
+            '_task_workflow.statuses.sort',
+        ], [
+            '_version_workflow.statuses.name',
+            '_version_workflow.statuses.color',
+            '_version_workflow.statuses.sort',
+        ], [
+            '_overrides.type_id',
+            '_overrides.workflow_schema.statuses.name',
+            '_overrides.workflow_schema.statuses.sort',
+            '_overrides.workflow_schema.statuses.color',
+        ], [
+            '_schemas.type_id',
+            '_schemas.statuses.task_status.name',
+            '_schemas.statuses.task_status.color',
+            '_schemas.statuses.task_status.sort',
+        ],
     ];
-
-    response = session.query(
-        `select ${select.join(', ')} from ProjectSchema where id is ${projectSchemaId}`
+    const operations = groupedAttributes.map(
+        select => operation.query(
+            `select ${select.join(', ')} from ProjectSchema where id is ${projectSchemaId}`
+        )
     );
+
+    response = session.call(operations);
     response = response.then(
-        (result) => {
-            const data = result.data[0];
+        (results) => {
+            // Since the operations where performed in one batched call,
+            // the result will be merged into a single entity.
+            const data = results[0].data[0];
+
             let statuses = [];
             if (entityType === 'Task') {
                 statuses = null;
