@@ -23,27 +23,40 @@ export function getStatuses(session, projectSchemaId, entityType, typeId = null)
     // Load multiple collections in separate queries to work around issue in
     // backend, creating an unnecessary complex query when selecting multiple,
     // unrelated things.
-    const groupedAttributes = [
-        [
-            '_task_workflow.statuses.name',
-            '_task_workflow.statuses.color',
-            '_task_workflow.statuses.sort',
-        ], [
-            '_version_workflow.statuses.name',
-            '_version_workflow.statuses.color',
-            '_version_workflow.statuses.sort',
-        ], [
-            '_overrides.type_id',
-            '_overrides.workflow_schema.statuses.name',
-            '_overrides.workflow_schema.statuses.sort',
-            '_overrides.workflow_schema.statuses.color',
-        ], [
-            '_schemas.type_id',
-            '_schemas.statuses.task_status.name',
-            '_schemas.statuses.task_status.color',
-            '_schemas.statuses.task_status.sort',
-        ],
+    const taskWorkflowAttributes = [
+        '_task_workflow.statuses.name',
+        '_task_workflow.statuses.color',
+        '_task_workflow.statuses.sort',
     ];
+    const versionWorkflowAttributes = [
+        '_version_workflow.statuses.name',
+        '_version_workflow.statuses.color',
+        '_version_workflow.statuses.sort',
+    ];
+    const overridesAttributes = [
+        '_overrides.type_id',
+        '_overrides.workflow_schema.statuses.name',
+        '_overrides.workflow_schema.statuses.sort',
+        '_overrides.workflow_schema.statuses.color',
+    ];
+    const schemasAttributes = [
+        '_schemas.type_id',
+        '_schemas.statuses.task_status.name',
+        '_schemas.statuses.task_status.color',
+        '_schemas.statuses.task_status.sort',
+    ];
+
+    let groupedAttributes;
+    if (entityType === 'Task' && typeId !== null) {
+        groupedAttributes = [taskWorkflowAttributes, overridesAttributes];
+    } else if (entityType === 'Task') {
+        groupedAttributes = [taskWorkflowAttributes];
+    } else if (entityType === 'AssetVersion') {
+        groupedAttributes = [versionWorkflowAttributes];
+    } else {
+        groupedAttributes = [schemasAttributes];
+    }
+
     const operations = groupedAttributes.map(
         select => operation.query(
             `select ${select.join(', ')} from ProjectSchema where id is ${projectSchemaId}`
