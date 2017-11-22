@@ -7,13 +7,14 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.4.5
+    :date: 2017-11-22
 
     .. change:: fixed
         :tags: Project Schema
 
         `projectSchema.getStatuses()` may take a very long time to load for
-        complex workflow schemas.
+        complex project schemas.
 
 .. release:: 0.4.4
     :date: 2017-10-17
