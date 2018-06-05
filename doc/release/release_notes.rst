@@ -7,6 +7,15 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+        :tags: Event Hub
+
+        Not able to connect to event hub when using the API in a web page
+        hosted on a different port than the ftrack server, unless server URL
+        is specified with a port.
+
 .. release:: 0.4.5
     :date: 2017-11-22
 
