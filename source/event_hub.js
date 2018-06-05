@@ -28,7 +28,18 @@ export class EventHub {
         this._applicationId = applicationId;
         this._apiUser = apiUser;
         this._apiKey = apiKey;
-        this._serverUrl = serverUrl;
+
+        // Socket.IO guesses port based on the current web page instead of
+        // the server URL, which causes issues when using the API on a page
+        // hosted on a non-standard port.
+        const portRegex = new RegExp('\\:\\d+$');
+        if (serverUrl.match(portRegex)) {
+            this._serverUrl = serverUrl;
+        } else {
+            const port = serverUrl.lastIndexOf('https', 0) === 0 ? '443' : '80';
+            this._serverUrl = `${serverUrl}:${port}`;
+        }
+
         this._id = uuid.v4();
         this._replyCallbacks = {};
         this._unsentEvents = [];
