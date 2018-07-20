@@ -113,8 +113,39 @@ Perform a single delete operation.
     :param string type: Entity type
     :param Array keys: Identifying keys, typically [<entity id>]
     :return Promise: Promise resolved with the response.
-    
 
+.. _api_reference/session/ensure:
+
+Function: ``ensure``
+====================
+
+Return promise of *entityType* with *data*, create or update if necessary.
+
+  *data* should be a dictionary of the same form passed to `create`
+  method.
+
+  By default, check for an entity that has matching *data*. If
+  *identifyingKeys* is specified as a list of keys then only consider the
+  values from *data* for those keys when searching for existing entity.
+
+  If no *identifyingKeys* specified then use all of the keys from the
+  passed *data*.
+
+  Raise an Error if no *identifyingKeys* can be determined.
+
+  If no matching entity found then create entity using supplied *data*.
+
+  If a matching entity is found, then update it if necessary with *data*.
+
+  Return update or create promise.
+
+.. js:function:: ensureensure(entityType, data, identifyingKeys)
+
+    :param string entityType: Entity type
+    :param Object data: Entity data to create or update
+    :param Array identifyingKeys: Optional list of keys to consider when
+      checking for existing entities.
+    :return Promise: Promise resolved with the create or update response.
 
 Function ``getComponentUrl``
 ============================
