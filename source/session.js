@@ -479,7 +479,7 @@ export class Session {
     *
     *   Return update or create promise.
     */
-    ensure(entityType, data, identifyingKeys) {
+    ensure(entityType, data, identifyingKeys = []) {
         let keys = identifyingKeys;
 
         logger.info(
