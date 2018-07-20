@@ -280,6 +280,105 @@ describe('Session', () => {
         }, (rejection) => { done(rejection); });
     });
 
+    it('Should support ensure with create', (done) => {
+        const identifyingKeys = ['key', 'parent_id', 'parent_type'];
+        const key = uuid.v4();
+
+        let user;
+        const promise = session.initializing.then(
+            () => session.query(`select id from User where username is "${session.apiUser}"`)
+        ).then(
+            ({ data }) => {
+                user = data[0];
+                return session.ensure(
+                    'Metadata',
+                    {
+                        key, value: 'foo', parent_id: user.id, parent_type: 'User',
+                    },
+                    identifyingKeys
+                );
+            }
+        );
+        promise.then((data) => {
+            try {
+                data.__entity_type__.should.equal('Metadata');
+                data.key.should.equal(key);
+                data.value.should.equal('foo');
+                data.parent_id.should.equal(user.id);
+                data.parent_type.should.equal('User');
+            } catch (error) {
+                done(error);
+            }
+            done();
+        }, (rejection) => { done(rejection); });
+    });
+
+    it('Should support ensure with update', (done) => {
+        const identifyingKeys = ['key', 'parent_id', 'parent_type'];
+        const key = uuid.v4();
+
+        let user;
+        const promise = session.initializing.then(
+            () => session.query(`select id from User where username is "${session.apiUser}"`)
+        ).then(
+            ({ data }) => {
+                user = data[0];
+                return session.create('Metadata', {
+                    key, value: 'foo', parent_id: user.id, parent_type: 'User',
+                });
+            }
+        ).then(
+            () => session.ensure(
+                'Metadata',
+                {
+                    key, value: 'bar', parent_id: user.id, parent_type: 'User',
+                },
+                identifyingKeys
+            )
+        );
+        promise.then((data) => {
+            try {
+                data.__entity_type__.should.equal('Metadata');
+                data.key.should.equal(key);
+                data.value.should.equal('bar');
+                data.parent_id.should.equal(user.id);
+                data.parent_type.should.equal('User');
+            } catch (error) {
+                done(error);
+            }
+            done();
+        }, (rejection) => { done(rejection); });
+    });
+
+    it('Should support ensure with update moment object as criteria', (done) => {
+        const now = moment();
+
+        const name = uuid.v4();
+
+        const promise = session.initializing.then(
+            () => session.create('Project', {
+                start_date: now, end_date: now, name, full_name: 'foo',
+            })
+        ).then(
+            () => session.ensure(
+                'Project',
+                {
+                    start_date: now, end_date: now, name, full_name: 'bar',
+                },
+                ['start_date']
+            )
+        );
+        promise.then((data) => {
+            try {
+                data.__entity_type__.should.equal('Project');
+                data.full_name.should.equal('bar');
+            } catch (error) {
+                done(error);
+            }
+            done();
+        }, (rejection) => { done(rejection); });
+    });
+
     it('Should support uploading files with custom component id', (done) => {
         const componentId = uuid.v4();
         const data = { foo: 'bar' };
