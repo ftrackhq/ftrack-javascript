@@ -2,6 +2,7 @@
 
 import forIn from 'lodash/forIn';
 import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
 import isPlainObject from 'lodash/isPlainObject';
 import find from 'lodash/find';
 import moment from 'moment';
@@ -455,6 +456,119 @@ export class Session {
         });
 
         return request;
+    }
+
+    /**
+    * Return promise of *entityType* with *data*, create or update if necessary.
+    *
+    *   *data* should be a dictionary of the same form passed to `create`
+    *   method.
+    *
+    *   By default, check for an entity that has matching *data*. If
+    *   *identifyingKeys* is specified as a list of keys then only consider the
+    *   values from *data* for those keys when searching for existing entity.
+    *
+    *   If no *identifyingKeys* specified then use all of the keys from the
+    *   passed *data*.
+    *
+    *   Raise an Error if no *identifyingKeys* can be determined.
+    *
+    *   If no matching entity found then create entity using supplied *data*.
+    *
+    *   If a matching entity is found, then update it if necessary with *data*.
+    *
+    *   Return update or create promise.
+    */
+    ensure(entityType, data, identifyingKeys = []) {
+        let keys = identifyingKeys;
+
+        logger.info(
+            'Ensuring entity with data using identifying keys: ',
+            entityType, data, identifyingKeys
+        );
+
+        if (!keys.length) {
+            keys = Object.keys(data);
+        }
+
+        if (!keys.length) {
+            throw new Error(
+                'Could not determine any identifying data to check against ' +
+                `when ensuring ${entityType} with data ${data}. ` +
+                `Identifying keys: ${identifyingKeys}`
+            );
+        }
+
+        const primaryKeys = this.getPrimaryKeyAttributes(entityType);
+        let expression = `select ${primaryKeys.join(', ')} from ${entityType} where`;
+        const criteria = keys.map(
+            identifyingKey => {
+                let value = data[identifyingKey];
+
+                if (isString(value)) {
+                    value = `"${value}"`;
+                } else if (value && value._isAMomentObject) {
+                    // Server does not store microsecond or timezone currently so
+                    // need to strip from query.
+                    value = moment(value).utc().format(ENCODE_DATETIME_FORMAT);
+                    value = `"${value}"`;
+                }
+                return `${identifyingKey} is ${value}`;
+            }
+        );
+
+        expression = `${expression} ${criteria.join(' and ')}`;
+
+        return this.query(expression).then(
+            (response) => {
+                if (response.data.length === 0) {
+                    return this.create(entityType, data).then(
+                        ({ data: responseData }) => Promise.resolve(responseData)
+                    );
+                }
+
+                if (response.data.length !== 1) {
+                    throw new Error(
+                        'Expected single or no item to be found but got multiple ' +
+                        `when ensuring ${entityType} with data ${data}. ` +
+                        `Identifying keys: ${identifyingKeys}`
+                    );
+                }
+
+                const updateEntity = response.data[0];
+
+                // Update entity if required.
+                let updated = false;
+                Object.keys(data).forEach(
+                    (key) => {
+                        if (data[key] !== updateEntity[key]) {
+                            updateEntity[key] = data[key];
+                            updated = true;
+                        }
+                    }
+                );
+
+                if (updated) {
+                    return this.update(
+                        entityType,
+                        primaryKeys.map(key => updateEntity[key]),
+                        Object.keys(data).reduce(
+                            (accumulator, key) => {
+                                if (primaryKeys.indexOf(key) === -1) {
+                                    accumulator[key] = data[key];
+                                }
+                                return accumulator;
+                            },
+                            {}
+                        )
+                    ).then(
+                        ({ data: responseData }) => Promise.resolve(responseData)
+                    );
+                }
+
+                return Promise.resolve(response.data[0]);
+            }
+        );
     }
 
     /**

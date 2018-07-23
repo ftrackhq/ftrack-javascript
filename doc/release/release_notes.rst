@@ -9,6 +9,16 @@ Release Notes
 
 .. release:: Upcoming
 
+    .. change:: new
+        :tags: Session
+
+        Session now supports an `ensure` method that will if necessary update or
+        create an entity with the given data.
+
+        .. seealso::
+
+            :ref:`api_reference/session/ensure`
+
     .. change:: fixed
         :tags: Event Hub
 
