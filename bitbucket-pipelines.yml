@@ -1,4 +1,4 @@
-image: node:8
+image: rastasheep/alpine-node-chromium:8-alpine
 
 pipelines:
     default:

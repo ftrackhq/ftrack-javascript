@@ -1,17 +1,27 @@
-var webpackCfg = require('./webpack.config');
-const puppeteer = require('puppeteer');
-process.env.CHROME_BIN = puppeteer.executablePath();
+const webpackCfg = require('./webpack.config');
 
-module.exports = function(config) {
+module.exports = config => {
     config.set({
         basePath: '',
-        browsers: ['ChromeHeadless'],
+        browsers: ['ChromiumNoSandbox'],
         port: 9876,
         captureTimeout: 60000,
         singleRun: true,
         webpack: webpackCfg,
         webpackServer: {
             noInfo: true,
+        },
+        customLaunchers: {
+            ChromiumNoSandbox: {
+                base: 'ChromiumHeadless',
+                flags: [
+                    '--no-sandbox',
+                    '--headless',
+                    '--disable-gpu',
+                    '--disable-translate',
+                    '--disable-extensions',
+                ],
+            },
         },
         client: {
             args: process.argv,
