@@ -3,7 +3,7 @@ const webpackCfg = require('./webpack.config');
 module.exports = config => {
     config.set({
         basePath: '',
-        browsers: ['ChromiumNoSandbox'],
+        browsers: ['ChromeHeadless'],
         port: 9876,
         captureTimeout: 60000,
         singleRun: true,
@@ -12,7 +12,7 @@ module.exports = config => {
             noInfo: true,
         },
         customLaunchers: {
-            ChromiumNoSandbox: {
+            ChromiumPipelines: {
                 base: 'ChromiumHeadless',
                 flags: [
                     '--no-sandbox',
@@ -26,7 +26,7 @@ module.exports = config => {
         client: {
             args: process.argv,
             mocha: {
-                timeout: 10000,
+                timeout: 30000,
             },
         },
         files: ['test/load_tests.js'],

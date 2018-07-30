@@ -16,11 +16,19 @@ describe('Session', () => {
 
     logger.debug('Running session tests.');
 
-    beforeEach(() => {
+    before(() => {
         session = new Session(
             credentials.serverUrl, credentials.apiUser, credentials.apiKey,
             { autoConnectEventHub: false }
         );
+        return session;
+    });
+
+    it('Should initialize the session automatically', () => {
+        expect(session.initialized).to.be.false;
+        return expect(
+            session.initializing.then((_session) => _session.initialized)
+        ).to.eventually.be.true;
     });
 
     it('Should reject invalid credentials', () => {
@@ -29,13 +37,6 @@ describe('Session', () => {
             { autoConnectEventHub: false }
         );
         return expect(badSession.initializing).to.be.rejectedWith(ServerError);
-    });
-
-    it('Should initialize the session automatically', () => {
-        expect(session.initialized).to.be.false;
-        return expect(
-            session.initializing.then((_session) => _session.initialized)
-        ).to.eventually.be.true;
     });
 
     it('Should allow querying a Task', () => {
