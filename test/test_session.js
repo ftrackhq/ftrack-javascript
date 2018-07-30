@@ -125,8 +125,7 @@ describe('Session', () => {
             data[0].name.should.deep.equal('foo');
             data[1].name.should.deep.equal('foo');
             data[2].name.should.deep.equal('bar');
-            done();
-        });
+       }).then(done, done);
     });
 
     it('Should support merging 1-level nested data', (done) => {
@@ -163,7 +162,7 @@ describe('Session', () => {
             data[1].status.name.should.deep.equal('Done');
             data[2].status.name.should.deep.equal('Done');
             done();
-        });
+        }).then(done, done);
     });
 
     it('Should support merging 2-level nested data', (done) => {
@@ -210,8 +209,7 @@ describe('Session', () => {
             data[0].status.state.short.should.deep.equal('DONE');
             data[1].status.state.short.should.deep.equal('NOT_STARTED');
             data[2].status.state.short.should.deep.equal('DONE');
-            done();
-        });
+        }).then(done, done);
     });
 
     it('Should support api query 2-level nested data', (done) => {
@@ -226,10 +224,10 @@ describe('Session', () => {
             data[0].status.should.equal(data[1].status);
 
             done();
-        }, (rejection) => { done(rejection); });
+        }).then(done, done);
     });
 
-    it('Should decode batched query operations', () => {
+    it('Should decode batched query operations', (done) => {
         const promise = session.call([
             operation.query(
                 'select status.state.short from Task where status.state.short is NOT_STARTED limit 1'
@@ -238,27 +236,27 @@ describe('Session', () => {
                 'select status.state.short from Task where status.state.short is NOT_STARTED limit 1'
             ),
         ]);
-        return promise.then((responses) => {
+        promise.then((responses) => {
             const status1 = responses[0].data[0].status;
             const status2 = responses[1].data[0].status;
             status1.state.short.should.deep.equal('NOT_STARTED');
             status2.state.short.should.deep.equal('NOT_STARTED');
-            return status1.should.equal(status2);
-        });
+            status1.should.equal(status2);
+        }).then(done, done);
     });
 
-    it('Should decode self-referencing entities', () => {
+    it('Should decode self-referencing entities', (done) => {
         const request = session.query(
             'select version, asset.versions.version from AssetVersion where asset_id is_not None limit 1'
         );
 
-        return request.then(response => {
+        request.then(response => {
             const versionNumber = response.data[0].version;
             const versionId = response.data[0].id;
             const assetVersions = response.data[0].asset.versions;
             const versionNumber2 = assetVersions.find(item => item.id === versionId).version;
-            return versionNumber.should.deep.equal(versionNumber2);
-        });
+            versionNumber.should.deep.equal(versionNumber2);
+        }).then(done, done);
     });
 
     it('Should support uploading files', (done) => {
@@ -277,7 +275,7 @@ describe('Session', () => {
             // TODO: Read file back and verify the data. This is currently not
             // possible due to being a cors request.
             done();
-        }, (rejection) => { done(rejection); });
+        }).then(done, done);
     });
 
     it('Should support ensure with create', (done) => {
@@ -310,7 +308,7 @@ describe('Session', () => {
                 done(error);
             }
             done();
-        }, (rejection) => { done(rejection); });
+        }).then(done, done);
     });
 
     it('Should support ensure with update', (done) => {
@@ -347,7 +345,7 @@ describe('Session', () => {
                 done(error);
             }
             done();
-        }, (rejection) => { done(rejection); });
+        }).then(done, done);
     });
 
     it('Should support ensure with update moment object as criteria', (done) => {
@@ -376,7 +374,7 @@ describe('Session', () => {
                 done(error);
             }
             done();
-        }, (rejection) => { done(rejection); });
+        }).then(done, done);
     });
 
     it('Should support uploading files with custom component id', (done) => {
@@ -391,10 +389,10 @@ describe('Session', () => {
         promise.then((response) => {
             response[0].data.id.should.equal(componentId);
             done();
-        }, (rejection) => { done(rejection); });
+        }).then(done, done);
     });
 
-    it('Should support encoding moment dates', (done) => {
+    it('Should support encoding moment dates', () => {
         const now = moment();
         const output = session.encode([{ foo: now, bar: 'baz' }, 12321]);
         output.should.deep.equal(
@@ -406,10 +404,9 @@ describe('Session', () => {
                 12321,
             ]
         );
-        done();
     });
 
-    it('Should return correct error', (done) => {
+    it('Should return correct error', () => {
         expect(
             session.getErrorFromResponse({
                 exception: 'PermissionError',
@@ -434,7 +431,5 @@ describe('Session', () => {
                 content: 'foo',
             })
         ).to.be.instanceof(ServerError);
-
-        done();
     });
 });
