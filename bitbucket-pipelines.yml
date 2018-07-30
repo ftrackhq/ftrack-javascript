@@ -7,7 +7,6 @@ pipelines:
                 - node
             script:
                 - yarn install
-                - yarn add phantomjs-prebuilt --force # https://github.com/karma-runner/karma-phantomjs-launcher/issues/120
                 - yarn test
     branches:
         master:
@@ -16,7 +15,6 @@ pipelines:
                     - node
                 script:
                     - yarn install
-                    - yarn add phantomjs-prebuilt --force
                     - yarn test
                     - yarn dist
                     - npx s3-deploy@0.9 './lib/**' --cwd './lib/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/latest
@@ -27,7 +25,6 @@ pipelines:
                     - node
                 script:
                     - yarn install
-                    - yarn add phantomjs-prebuilt --force
                     - yarn test
                     - yarn dist
                     - npx s3-deploy@0.9 './lib/**' --cwd './lib/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/stable
