@@ -16,7 +16,7 @@ pipelines:
                 script:
                     - yarn install
                     - yarn dist
-                    - npx s3-deploy@0.9 './dist/**' --cwd './dist/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/latest
+                    - npx s3-deploy@0.9 './lib/**' --cwd './lib/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/latest
     tags:
         '[0-9].[0-9]*.[0-9]*':
             - step:
@@ -25,7 +25,7 @@ pipelines:
                 script:
                     - yarn install
                     - yarn dist
-                    - npx s3-deploy@0.9 './dist/**' --cwd './dist/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/stable
+                    - npx s3-deploy@0.9 './lib/**' --cwd './lib/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/stable
                     - export PACKAGE_VERSION=$(node -e "console.log(require('./package.json').version);")
                     - tar -zcvf $PACKAGE_VERSION.tar.gz -C dist .
                     - npx s3-deploy@0.9 ./$PACKAGE_VERSION.tar.gz --cwd './' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/builds
