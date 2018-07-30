@@ -15,6 +15,7 @@ pipelines:
                     - node
                 script:
                     - yarn install
+                    - yarn test
                     - yarn dist
                     - npx s3-deploy@0.9 './lib/**' --cwd './lib/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/latest
     tags:
@@ -24,6 +25,7 @@ pipelines:
                     - node
                 script:
                     - yarn install
+                    - yarn test
                     - yarn dist
                     - npx s3-deploy@0.9 './lib/**' --cwd './lib/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/stable
                     - export PACKAGE_VERSION=$(node -e "console.log(require('./package.json').version);")
