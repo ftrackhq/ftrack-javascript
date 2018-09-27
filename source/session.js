@@ -43,6 +43,12 @@ function splitFileExtension(fileName) {
     return [basename, extension];
 }
 
+function encodeUriParameters(data) {
+    return Object.keys(data)
+        .map(key => [key, data[key]].map(encodeURIComponent).join('='))
+        .join('&');
+}
+
 /**
  * ftrack API session
  * @class  Session
@@ -679,10 +685,13 @@ export class Session {
             return null;
         }
 
-        return (
-            `${this.serverUrl}/component/get?id=${componentId}` +
-            `&username=${this.apiUser}&apiKey=${this.apiKey}`
-        );
+        const params = {
+            id: componentId,
+            username: this.apiUser,
+            apiKey: this.apiKey,
+        };
+
+        return `${this.serverUrl}/component/get?${encodeUriParameters(params)}`;
     }
 
     /**
@@ -702,10 +711,14 @@ export class Session {
             return `${this.serverUrl}/img/thumbnail2.png`;
         }
 
-        return (
-            `${this.serverUrl}/component/thumbnail?id=${componentId}` +
-            `&size=${size}&username=${this.apiUser}&apiKey=${this.apiKey}`
-        );
+        const params = {
+            id: componentId,
+            size,
+            username: this.apiUser,
+            apiKey: this.apiKey,
+        };
+
+        return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(params)}`;
     }
 
     /**

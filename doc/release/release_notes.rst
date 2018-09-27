@@ -6,6 +6,13 @@
 *************
 Release Notes
 *************
+.. release:: Upcoming
+
+    .. change:: fixed
+        :tags: Session
+
+        The methods `getComponentUrl` and `thumbnailUrl` return an invalid URL
+        when the API user has characters that need to be encoded in URIs.
 
 .. release:: 0.5.0
     :date: 2018-07-23
