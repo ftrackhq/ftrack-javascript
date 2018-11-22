@@ -13,7 +13,7 @@ import EventHub from './event_hub';
 import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
 import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
 import { SERVER_LOCATION_ID } from './constant';
-
+import encodeUriParameters from './util/encode_uri_parameters';
 
 const logger = loglevel.getLogger('ftrack_api');
 
@@ -41,12 +41,6 @@ function splitFileExtension(fileName) {
     }
 
     return [basename, extension];
-}
-
-function encodeUriParameters(data) {
-    return Object.keys(data)
-        .map(key => [key, data[key]].map(encodeURIComponent).join('='))
-        .join('&');
 }
 
 /**
