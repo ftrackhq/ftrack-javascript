@@ -62,7 +62,6 @@ export class Session {
      * @param  {Object}  [options.eventHubOptions={}] - Options to configure event hub with.
      * @param  {string} [options.clientToken] - Client token for update events.
      * @param  {string} [options.apiEndpoint=/api] - API endpoint.
-     * @param  {Object} [options.operationMetadata] - Additional metadata to include in operations.
      *
      * @constructs Session
      */
@@ -73,7 +72,6 @@ export class Session {
             eventHubOptions = {},
             clientToken = null,
             apiEndpoint = '/api',
-            operationMetadata = null,
         } = {}
     ) {
         if (!serverUrl || !apiUser || !apiKey) {
@@ -115,14 +113,6 @@ export class Session {
          * @type {string}
          */
         this.apiEndpoint = apiEndpoint;
-
-        /**
-         * Metadata to add to all create, query, update operations.
-         * @memberof Session
-         * @instance
-         * @type {Object}
-         */
-        this.operationMetadata = operationMetadata;
 
         /**
          * session event hub
@@ -392,19 +382,6 @@ export class Session {
 
     /** Return encoded *operations*. */
     encodeOperations(operations) {
-        // Add thumbnail_url metadata to urls.
-        if (this.operationMetadata) {
-            operations.forEach(operation => {
-                if (['create', 'update', 'query'].includes(operation.action)) {
-                    operation.metadata = Object.assign(
-                        {},
-                        this.operationMetadata,
-                        operation.metadata
-                    );
-                }
-            });
-        }
-
         return JSON.stringify(this.encode(operations));
     }
 
