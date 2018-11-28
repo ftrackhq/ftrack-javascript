@@ -7,6 +7,20 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: fixed
+        :tags: Session
+
+        The methods `getComponentUrl` and `thumbnailUrl` return an invalid URL
+        when the API user contains characters that need to be encoded in URIs.
+
+    .. change:: fixed
+        :tags: Event hub
+
+        The event hub is not able to connect when the API user contains
+        characters that need to be encoded in URIs.
+
 .. release:: 0.5.0
     :date: 2018-07-23
 
