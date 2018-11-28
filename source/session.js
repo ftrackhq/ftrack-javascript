@@ -13,7 +13,7 @@ import EventHub from './event_hub';
 import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
 import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
 import { SERVER_LOCATION_ID } from './constant';
-
+import encodeUriParameters from './util/encode_uri_parameters';
 
 const logger = loglevel.getLogger('ftrack_api');
 
@@ -696,10 +696,13 @@ export class Session {
             return null;
         }
 
-        return (
-            `${this.serverUrl}/component/get?id=${componentId}` +
-            `&username=${this.apiUser}&apiKey=${this.apiKey}`
-        );
+        const params = {
+            id: componentId,
+            username: this.apiUser,
+            apiKey: this.apiKey,
+        };
+
+        return `${this.serverUrl}/component/get?${encodeUriParameters(params)}`;
     }
 
     /**
@@ -719,10 +722,14 @@ export class Session {
             return `${this.serverUrl}/img/thumbnail2.png`;
         }
 
-        return (
-            `${this.serverUrl}/component/thumbnail?id=${componentId}` +
-            `&size=${size}&username=${this.apiUser}&apiKey=${this.apiKey}`
-        );
+        const params = {
+            id: componentId,
+            size,
+            username: this.apiUser,
+            apiKey: this.apiKey,
+        };
+
+        return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(params)}`;
     }
 
     /**

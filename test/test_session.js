@@ -393,6 +393,20 @@ describe('Session', () => {
         }).then(done, done);
     });
 
+    it('Should support generating thumbnail URL with + in username', () => {
+        const componentId = uuid.v4();
+        const previousUser = session.apiUser;
+        session.apiUser = 'user+test@example.com'
+        const url = session.thumbnailUrl(componentId);
+        url.should.equal(
+            `${credentials.serverUrl}/component/thumbnail?` +
+            `id=${componentId}&size=300` +
+            `&username=${encodeURIComponent(session.apiUser)}` +
+            `&apiKey=${credentials.apiKey}`
+        );
+        session.apiUser = previousUser;
+    });
+
     it('Should support encoding moment dates', () => {
         const now = moment();
         const output = session.encode([{ foo: now, bar: 'baz' }, 12321]);
