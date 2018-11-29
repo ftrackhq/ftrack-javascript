@@ -9,6 +9,11 @@ Release Notes
 
 .. release:: Upcoming
 
+    .. change:: changed
+        :tags: Session
+
+        Added support for overriding the API endpoint.
+
     .. change:: fixed
         :tags: Session
 

@@ -60,6 +60,8 @@ export class Session {
      * @param  {Boolean} [options.autoConnectEventHub=false] - Automatically connect to event hub,
      * @param  {Array|null} [options.serverInformationValues=null] - List of server information values to retrieve.
      * @param  {Object}  [options.eventHubOptions={}] - Options to configure event hub with.
+     * @param  {string} [options.clientToken] - Client token for update events.
+     * @param  {string} [options.apiEndpoint=/api] - API endpoint.
      *
      * @constructs Session
      */
@@ -69,6 +71,7 @@ export class Session {
             serverInformationValues = null,
             eventHubOptions = {},
             clientToken = null,
+            apiEndpoint = '/api',
         } = {}
     ) {
         if (!serverUrl || !apiUser || !apiKey) {
@@ -101,6 +104,15 @@ export class Session {
          * @type {string}
          */
         this.serverUrl = serverUrl;
+
+
+        /**
+         * API Endpoint. Specified relative to server URL with leading slash.
+         * @memberof Session
+         * @instance
+         * @type {string}
+         */
+        this.apiEndpoint = apiEndpoint;
 
         /**
          * session event hub
@@ -368,6 +380,11 @@ export class Session {
         return mergedEntity;
     }
 
+    /** Return encoded *operations*. */
+    encodeOperations(operations) {
+        return JSON.stringify(this.encode(operations));
+    }
+
     /**
      * Call API with array of operation objects in *operations*.
      *
@@ -387,7 +404,7 @@ export class Session {
      *
      */
     call(operations) {
-        const url = `${this.serverUrl}/api`;
+        const url = `${this.serverUrl}${this.apiEndpoint}`;
 
         // Delay call until session is initialized if initialization is in
         // progress.
@@ -412,7 +429,7 @@ export class Session {
                     'ftrack-user': this.apiUser,
                     'ftrack-Clienttoken': this.clientToken,
                 },
-                body: JSON.stringify(this.encode(operations)),
+                body: this.encodeOperations(operations),
             })
         );
 
