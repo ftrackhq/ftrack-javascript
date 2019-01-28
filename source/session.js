@@ -277,16 +277,16 @@ export class Session {
     }
 
    /**
-    * Iterate *data* and decode entities with special encoding logic. 
-    * 
+    * Iterate *data* and decode entities with special encoding logic.
+    *
     * Iterates recursively through objects and arrays.
-    * 
+    *
     * Will merge ftrack entities multiple occurrences which have been
-    * de-duplicated in the back end and point them to a single object in 
+    * de-duplicated in the back end and point them to a single object in
     * *identityMap*.
     *
     * datetime objects will be converted to timezone-aware moment objects.
-    * 
+    *
     * @private
     * @param  {*} data  The data to decode.
     * @return {*}      Decoded data
@@ -309,7 +309,7 @@ export class Session {
 
     /**
      * Decode datetime *data* into moment objects.
-     * 
+     *
      * Translate objects with __type__ equal to 'datetime' into moment
      * datetime objects. If time zone support is enabled on the server the date
      * will be assumed to be UTC and the moment will be in utc.
@@ -741,7 +741,7 @@ export class Session {
      * @return {Promise} Promise resolved with the response when creating
      * Component and ComponentLocation.
      */
-    createComponent(file, { data = {} } = {}) {
+    createComponent(file, { data = {} } = {}, onProgressCallback = (x) => { console.log(x); } ) {
         const fileNameParts = splitFileExtension(file.name);
         const fileType = data.file_type || fileNameParts[1];
         const fileName = data.name || fileNameParts[0];
@@ -756,14 +756,26 @@ export class Session {
             component_id: componentId,
         }]);
 
+
+        const updatePercentProgress = oEvent => {
+            if (oEvent.lengthComputable) {
+                onProgressCallback(parseInt(oEvent.loaded / oEvent.total * 100, 10));
+            }
+        };
+
         request = request.then((response) => {
             logger.debug(`Uploading file to: ${response[0].url}`);
 
-            return fetch(response[0].url, {
-                method: 'put',
-                headers: response[0].headers,
-                body: file,
-            });
+            const xhr = new XMLHttpRequest();
+            xhr.upload.addEventListener('progress', updatePercentProgress);
+            xhr.open('PUT', response[0].url, true);
+            const headers = response[0].headers;
+            for (const key in headers) {
+                if (headers.hasOwnProperty(key) && key !== 'Content-Length') {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+            return xhr.send(file);
         });
 
         request = request.then(() => {
@@ -787,7 +799,6 @@ export class Session {
                 ]
             );
         });
-
         return request;
     }
 
