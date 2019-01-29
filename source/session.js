@@ -733,13 +733,11 @@ export class Session {
     }
 
     /**
-     * Create component from *file* and add to server location.
      *
-     * @param {?number} options.data - Component data. Defaults to {}.
-     * @return {Promise} Promise resolved with the response when creating
-     * Component and ComponentLocation.
-     * @param file
-     * @param onProgressCallback
+     * @param {File} file - The file object to upload.
+     * @param {?object}  options.data - Component data.
+     * @param {?function} onProgressCallback - callback function.
+     * @returns {Promise} return promise.
      */
     createComponent(file, { data = {} } = {}, onProgressCallback = (percent) => percent) {
         const fileNameParts = splitFileExtension(file.name);
