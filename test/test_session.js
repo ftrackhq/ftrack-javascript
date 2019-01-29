@@ -279,6 +279,19 @@ describe('Session', () => {
         }).then(done, done);
     });
 
+    it('Should support abort of uploading file', (done) => {
+        const data = { foo: 'bar' };
+        const blob = new Blob(
+            [JSON.stringify(data)], { type: 'application/json' }
+        );
+        blob.name = 'data.json';
+        const xhr = new XMLHttpRequest();
+        const onAborted = () => { done(); };
+
+        session.createComponent(blob, { xhr,
+            onProgressCallback: () => { xhr.abort(); }, onAborted });
+    });
+
     it('Should support ensure with create', (done) => {
         const identifyingKeys = ['key', 'parent_id', 'parent_type'];
         const key = uuid.v4();

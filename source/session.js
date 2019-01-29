@@ -741,13 +741,18 @@ export class Session {
     createComponent(file, options = {}) {
         const fileNameParts = splitFileExtension(file.name);
         const defaultProgress = (progress) => progress;
+        const defaultAbort = () => {};
+
         const data = options.data || {};
         const onProgressCallback = options.onProgressCallback || defaultProgress;
         const xhr = options.xhr || new XMLHttpRequest();
+        const onAborted = options.onAborted || defaultAbort;
+
         const fileType = data.file_type || fileNameParts[1];
         const fileName = data.name || fileNameParts[0];
         const fileSize = data.size || file.size;
         const componentId = data.id || uuid.v4();
+        const componentLocationId = uuid.v4();
         let url;
         let headers;
 
@@ -777,6 +782,7 @@ export class Session {
                 size: fileSize,
             });
             const componentLocation = {
+                id: componentLocationId,
                 component_id: componentId,
                 resource_identifier: componentId,
                 location_id: SERVER_LOCATION_ID,
@@ -796,6 +802,15 @@ export class Session {
 
             xhr.upload.addEventListener('progress', updateOnProgressCallback);
             xhr.open('PUT', url, true);
+            xhr.onabort = () => {
+                onAborted();
+                return this.call(
+                    [
+                        deleteOperation('FileComponent', [componentId]),
+                        deleteOperation('ComponentLocation', [componentLocationId]),
+                    ]);
+            };
+
             for (const key in headers) {
                 if (headers.hasOwnProperty(key) && key !== 'Content-Length') {
                     xhr.setRequestHeader(key, headers[key]);
@@ -803,7 +818,6 @@ export class Session {
             }
             return xhr.send(file);
         });
-
 
         return createComponentAndLocationPromise;
     }
