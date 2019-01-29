@@ -202,17 +202,17 @@ export class Session {
     }
 
 
-   /**
-    * Return encoded *data* as JSON string.
-    *
-    * This will translate objects with type moment into string representation.
-    * If time zone support is enabled on the server the date
-    * will be sent as UTC, otherwise in local time.
-    *
-    * @private
-    * @param  {*} data  The data to encode.
-    * @return {*}      Encoded data
-    */
+    /**
+     * Return encoded *data* as JSON string.
+     *
+     * This will translate objects with type moment into string representation.
+     * If time zone support is enabled on the server the date
+     * will be sent as UTC, otherwise in local time.
+     *
+     * @private
+     * @param  {*} data  The data to encode.
+     * @return {*}      Encoded data
+     */
     encode(data) {
         if (data && data.constructor === Array) {
             return data.map(item => this.encode(item));
@@ -252,11 +252,11 @@ export class Session {
     }
 
     /** Return error instance from *response*.
-    *
-    * @private
-    * @param  {*} response  A server error response object.
-    * @return {*}      error instance.
-    */
+     *
+     * @private
+     * @param  {*} response  A server error response object.
+     * @return {*}      error instance.
+     */
     getErrorFromResponse(response) {
         let ErrorClass;
 
@@ -276,21 +276,21 @@ export class Session {
         return error;
     }
 
-   /**
-    * Iterate *data* and decode entities with special encoding logic.
-    *
-    * Iterates recursively through objects and arrays.
-    *
-    * Will merge ftrack entities multiple occurrences which have been
-    * de-duplicated in the back end and point them to a single object in
-    * *identityMap*.
-    *
-    * datetime objects will be converted to timezone-aware moment objects.
-    *
-    * @private
-    * @param  {*} data  The data to decode.
-    * @return {*}      Decoded data
-    */
+    /**
+     * Iterate *data* and decode entities with special encoding logic.
+     *
+     * Iterates recursively through objects and arrays.
+     *
+     * Will merge ftrack entities multiple occurrences which have been
+     * de-duplicated in the back end and point them to a single object in
+     * *identityMap*.
+     *
+     * datetime objects will be converted to timezone-aware moment objects.
+     *
+     * @private
+     * @param  {*} data  The data to decode.
+     * @return {*}      Decoded data
+     */
     decode(data, identityMap = {}) {
         if (data == null) {
             return data;
@@ -365,7 +365,7 @@ export class Session {
         // Retrieve entity from identity map. Any instances which occur multiple
         // times in the encoded data will point to the same JavaScript object.
         // This means that output is not guaranteed to be JSON-serializable.
-        // 
+        //
         // TODO: Should we duplicate the information between the instances
         // instead of pointing them to the same instance?
         const mergedEntity = identityMap[identifier];
@@ -476,26 +476,26 @@ export class Session {
     }
 
     /**
-    * Return promise of *entityType* with *data*, create or update if necessary.
-    *
-    *   *data* should be a dictionary of the same form passed to `create`
-    *   method.
-    *
-    *   By default, check for an entity that has matching *data*. If
-    *   *identifyingKeys* is specified as a list of keys then only consider the
-    *   values from *data* for those keys when searching for existing entity.
-    *
-    *   If no *identifyingKeys* specified then use all of the keys from the
-    *   passed *data*.
-    *
-    *   Raise an Error if no *identifyingKeys* can be determined.
-    *
-    *   If no matching entity found then create entity using supplied *data*.
-    *
-    *   If a matching entity is found, then update it if necessary with *data*.
-    *
-    *   Return update or create promise.
-    */
+     * Return promise of *entityType* with *data*, create or update if necessary.
+     *
+     *   *data* should be a dictionary of the same form passed to `create`
+     *   method.
+     *
+     *   By default, check for an entity that has matching *data*. If
+     *   *identifyingKeys* is specified as a list of keys then only consider the
+     *   values from *data* for those keys when searching for existing entity.
+     *
+     *   If no *identifyingKeys* specified then use all of the keys from the
+     *   passed *data*.
+     *
+     *   Raise an Error if no *identifyingKeys* can be determined.
+     *
+     *   If no matching entity found then create entity using supplied *data*.
+     *
+     *   If a matching entity is found, then update it if necessary with *data*.
+     *
+     *   Return update or create promise.
+     */
     ensure(entityType, data, identifyingKeys = []) {
         let keys = identifyingKeys;
 
@@ -735,7 +735,6 @@ export class Session {
     /**
      * Create component from *file* and add to server location.
      *
-     * @param  {File} The file object to upload.
      * @param {?number} options.data - Component data. Defaults to {}.
      * @return {Promise} Promise resolved with the response when creating
      * Component and ComponentLocation.
@@ -748,37 +747,26 @@ export class Session {
         const fileName = data.name || fileNameParts[0];
         const fileSize = data.size || file.size;
         const componentId = data.id || uuid.v4();
-
-        logger.debug('Fetching upload metadata.');
-        let request = this.call([{
-            action: 'get_upload_metadata',
-            file_name: `${fileName}${fileType}`,
-            file_size: fileSize,
-            component_id: componentId,
-        }]);
-
+        let url;
+        let headers;
         const updateOnProgressCallback = oEvent => {
             if (oEvent.lengthComputable) {
                 onProgressCallback(parseInt(oEvent.loaded / oEvent.total * 100, 10));
             }
         };
 
-        request = request.then((response) => {
-            logger.debug(`Uploading file to: ${response[0].url}`);
+        logger.debug('Fetching upload metadata.');
 
-            const xhr = new XMLHttpRequest();
-            xhr.upload.addEventListener('progress', updateOnProgressCallback);
-            xhr.open('PUT', response[0].url, true);
-            const headers = response[0].headers;
-            for (const key in headers) {
-                if (headers.hasOwnProperty(key) && key !== 'Content-Length') {
-                    xhr.setRequestHeader(key, headers[key]);
-                }
-            }
-            return xhr.send(file);
-        });
+        const request = this.call([{
+            action: 'get_upload_metadata',
+            file_name: `${fileName}${fileType}`,
+            file_size: fileSize,
+            component_id: componentId,
+        }]);
 
-        request = request.then(() => {
+        const createComponentAndLocationPromise = request.then((response) => {
+            url = response[0].url;
+            headers = response[0].headers;
             logger.debug('Creating component and component location.');
             const component = Object.assign(data, {
                 id: componentId,
@@ -799,7 +787,24 @@ export class Session {
                 ]
             );
         });
-        return request;
+
+
+        createComponentAndLocationPromise.then(() => {
+            logger.debug(`Uploading file to: ${url}`);
+
+            const xhr = new XMLHttpRequest();
+            xhr.upload.addEventListener('progress', updateOnProgressCallback);
+            xhr.open('PUT', url, true);
+            for (const key in headers) {
+                if (headers.hasOwnProperty(key) && key !== 'Content-Length') {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+            return xhr.send(file);
+        });
+
+
+        return createComponentAndLocationPromise;
     }
 
 }
