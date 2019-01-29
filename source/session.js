@@ -736,12 +736,13 @@ export class Session {
      * Create component from *file* and add to server location.
      *
      * @param  {File} The file object to upload.
-     * @param {?object} [options = {}] - Options
      * @param {?number} options.data - Component data. Defaults to {}.
      * @return {Promise} Promise resolved with the response when creating
      * Component and ComponentLocation.
+     * @param file
+     * @param onProgressCallback
      */
-    createComponent(file, { data = {} } = {}, onProgressCallback = (x) => { console.log(x); } ) {
+    createComponent(file, { data = {} } = {}, onProgressCallback = (percent) => percent) {
         const fileNameParts = splitFileExtension(file.name);
         const fileType = data.file_type || fileNameParts[1];
         const fileName = data.name || fileNameParts[0];
@@ -756,8 +757,7 @@ export class Session {
             component_id: componentId,
         }]);
 
-
-        const updatePercentProgress = oEvent => {
+        const updateOnProgressCallback = oEvent => {
             if (oEvent.lengthComputable) {
                 onProgressCallback(parseInt(oEvent.loaded / oEvent.total * 100, 10));
             }
@@ -767,7 +767,7 @@ export class Session {
             logger.debug(`Uploading file to: ${response[0].url}`);
 
             const xhr = new XMLHttpRequest();
-            xhr.upload.addEventListener('progress', updatePercentProgress);
+            xhr.upload.addEventListener('progress', updateOnProgressCallback);
             xhr.open('PUT', response[0].url, true);
             const headers = response[0].headers;
             for (const key in headers) {
