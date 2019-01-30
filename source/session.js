@@ -771,7 +771,7 @@ export class Session {
             component_id: componentId,
         }]);
 
-        const createComponentAndLocationPromise = request.then((response) => {
+        const componentAndLocationPromise = request.then((response) => {
             url = response[0].url;
             headers = response[0].headers;
             logger.debug('Creating component and component location.');
@@ -797,7 +797,7 @@ export class Session {
         });
 
 
-        createComponentAndLocationPromise.then(() => {
+        return componentAndLocationPromise.then(() => {
             logger.debug(`Uploading file to: ${url}`);
 
             xhr.upload.addEventListener('progress', updateOnProgressCallback);
@@ -817,9 +817,7 @@ export class Session {
                 }
             }
             return xhr.send(file);
-        });
-
-        return createComponentAndLocationPromise;
+        }).then(() => componentAndLocationPromise);
     }
 
 }
