@@ -192,4 +192,4 @@ Create component from *file* and add to server location.
     :param Object file: the file object to upload.
     :param Object options: optional parameters.
     :return Promise: Promise resolved with the response when creating
-                    Component and ComponentLocation
+                    Component and ComponentLocation.
