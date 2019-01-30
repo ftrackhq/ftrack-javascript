@@ -178,3 +178,18 @@ Return an URL where a thumbnail for *componentId* can be downloaded.
     :return string: URL where *componentId* can be downloaded. Returns the
                      URL to a default thumbnail if component id is not
                      specified.
+
+
+
+Function ``createComponent``
+=========================
+
+Create component from *file* and add to server location.
+
+.. js:function:: createComponent(file, options)
+
+
+    :param Object file: the file object to upload.
+    :param Object options: optional parameters.
+    :return Promise: Promise resolved with the response when creating
+                    Component and ComponentLocation

@@ -733,10 +733,12 @@ export class Session {
     }
 
     /**
+     * Create component from *file* and add to server location.
      *
-     * @param file
-     * @param options
-     * @returns {Promise}
+     * @param file The file object to upload.
+     * @param {?object} options
+     * @return {Promise} Promise resolved with the response when creating
+     * Component and ComponentLocation
      */
     createComponent(file, options = {}) {
         const fileNameParts = splitFileExtension(file.name);
@@ -744,7 +746,7 @@ export class Session {
         const defaultAbort = () => {};
 
         const data = options.data || {};
-        const onProgressCallback = options.onProgressCallback || defaultProgress;
+        const onProgress = options.onProgress || defaultProgress;
         const xhr = options.xhr || new XMLHttpRequest();
         const onAborted = options.onAborted || defaultAbort;
 
@@ -758,7 +760,7 @@ export class Session {
 
         const updateOnProgressCallback = oEvent => {
             if (oEvent.lengthComputable) {
-                onProgressCallback(parseInt(oEvent.loaded / oEvent.total * 100, 10));
+                onProgress(parseInt(oEvent.loaded / oEvent.total * 100, 10));
             }
         };
 

@@ -289,7 +289,7 @@ describe('Session', () => {
         const onAborted = () => { done(); };
 
         session.createComponent(blob, { xhr,
-            onProgressCallback: () => { xhr.abort(); }, onAborted });
+            onProgress: () => { xhr.abort(); }, onAborted });
     });
 
     it('Should support ensure with create', (done) => {
