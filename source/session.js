@@ -802,24 +802,36 @@ export class Session {
         return componentAndLocationPromise.then(() => {
             logger.debug(`Uploading file to: ${url}`);
 
-            xhr.upload.addEventListener('progress', updateOnProgressCallback);
-            xhr.open('PUT', url, true);
-            xhr.onabort = () => {
-                onAborted();
-                return this.call(
-                    [
-                        deleteOperation('FileComponent', [componentId]),
-                        deleteOperation('ComponentLocation', [componentLocationId]),
-                    ]);
-            };
+            return new Promise((resolve, reject) => {
+                // wait until file is uploaded
+                xhr.upload.addEventListener('progress', updateOnProgressCallback);
+                xhr.open('PUT', url, true);
+                xhr.onabort = () => {
+                    onAborted();
+                    return this.call(
+                        [
+                            deleteOperation('FileComponent', [componentId]),
+                            deleteOperation('ComponentLocation', [componentLocationId]),
+                        ]);
+                };
 
-            for (const key in headers) {
-                if (headers.hasOwnProperty(key) && key !== 'Content-Length') {
-                    xhr.setRequestHeader(key, headers[key]);
+                for (const key in headers) {
+                    if (headers.hasOwnProperty(key) && key !== 'Content-Length') {
+                        xhr.setRequestHeader(key, headers[key]);
+                    }
                 }
-            }
-            return xhr.send(file);
-        }).then(() => componentAndLocationPromise);
+                xhr.onload = () => {
+                    resolve(xhr.response);
+                };
+                xhr.onerror = () => {
+                    reject({
+                        status: this.status,
+                        statusText: xhr.statusText,
+                    });
+                };
+                xhr.send(file);
+            }).then(() => componentAndLocationPromise);
+        });
     }
 
 }
