@@ -168,12 +168,13 @@ Function ``thumbnailUrl``
 
 Return an URL where a thumbnail for *componentId* can be downloaded.
 
-.. js:function:: thumbnailUrl(componentId, The)
+.. js:function:: thumbnailUrl(componentId, options)
 
-    
+
     :param string componentId: Is assumed to be present in the
                      ftrack.server location and be of a valid image file type.
-    :param number The: size of the thumbnail. The image will be resized to
+    :param Object options: optional parameters: size. The size of the thumbnail.
+                     The image will be resized to
                      fit within size x size pixels. Defaults to 300.
     :return string: URL where *componentId* can be downloaded. Returns the
                      URL to a default thumbnail if component id is not
@@ -182,7 +183,7 @@ Return an URL where a thumbnail for *componentId* can be downloaded.
 
 
 Function ``createComponent``
-=========================
+============================
 
 Create component from *file* and add to server location.
 
@@ -190,6 +191,6 @@ Create component from *file* and add to server location.
 
 
     :param Object file: the file object to upload.
-    :param Object options: optional parameters.
+    :param Object options: optional parameters: onProgress, xhr, onAborted.
     :return Promise: Promise resolved with the response when creating
                     Component and ComponentLocation.
