@@ -808,11 +808,13 @@ export class Session {
                 xhr.open('PUT', url, true);
                 xhr.onabort = () => {
                     onAborted();
-                    return this.call(
+                    this.call(
                         [
                             deleteOperation('FileComponent', [componentId]),
                             deleteOperation('ComponentLocation', [componentLocationId]),
-                        ]);
+                        ]).then(() => {
+                            reject();
+                        });
                 };
 
                 for (const key in headers) {
@@ -821,13 +823,13 @@ export class Session {
                     }
                 }
                 xhr.onload = () => {
+                    if (xhr.status > 500) {
+                        reject(new Error(`Failed to upload file: ${xhr.status}`));
+                    }
                     resolve(xhr.response);
                 };
                 xhr.onerror = () => {
-                    reject({
-                        status: this.status,
-                        statusText: xhr.statusText,
-                    });
+                    reject(new Error(`Failed to upload file: ${xhr.status}`));
                 };
                 xhr.send(file);
             }).then(() => componentAndLocationPromise);
