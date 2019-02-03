@@ -823,7 +823,7 @@ export class Session {
                     }
                 }
                 xhr.onload = () => {
-                    if (xhr.status > 500) {
+                    if (xhr.status > 400) {
                         reject(new Error(`Failed to upload file: ${xhr.status}`));
                     }
                     resolve(xhr.response);
