@@ -813,7 +813,7 @@ export class Session {
                             deleteOperation('FileComponent', [componentId]),
                             deleteOperation('ComponentLocation', [componentLocationId]),
                         ]).then(() => {
-                            reject();
+                            reject(new Error('Upload aborted by client'));
                         });
                 };
 
