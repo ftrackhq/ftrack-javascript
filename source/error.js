@@ -5,9 +5,9 @@
  */
 
 /**
- * 
+ *
  * Return a new error class from *name*.
- * 
+ *
  * @private
  * @param  {string} name name of error class
  * @return {CustomError}      Custom error object
@@ -67,6 +67,12 @@ export const EventServerConnectionTimeoutError = errorFactory('EventServerConnec
  */
 export const NotUniqueError = errorFactory('NotUniqueError');
 
+/**
+ * Throw when file upload to event server is aborted or does not succeed.
+ * @class
+ * @memberof error
+ */
+export const CreateComponentError = errorFactory('CreateComponentError');
 
 
 export default {
@@ -76,4 +82,5 @@ export default {
     EventServerReplyTimeoutError,
     EventServerConnectionTimeoutError,
     NotUniqueError,
+    CreateComponentError,
 };

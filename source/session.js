@@ -11,7 +11,7 @@ import uuid from 'uuid';
 
 import EventHub from './event_hub';
 import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
-import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
+import { ServerPermissionDeniedError, ServerValidationError, ServerError, CreateComponentError } from './error';
 import { SERVER_LOCATION_ID } from './constant';
 import encodeUriParameters from './util/encode_uri_parameters';
 
@@ -814,7 +814,9 @@ export class Session {
                             deleteOperation('FileComponent', [componentId]),
                             deleteOperation('ComponentLocation', [componentLocationId]),
                         ]).then(() => {
-                            reject(new Error('Upload aborted by client'));
+                        reject(
+                            new CreateComponentError('Upload aborted by client', 'UPLOAD_ABORTED')
+                        );
                         });
                 };
 
@@ -824,13 +826,13 @@ export class Session {
                     }
                 }
                 xhr.onload = () => {
-                    if (xhr.status > 400) {
-                        reject(new Error(`Failed to upload file: ${xhr.status}`));
+                    if (xhr.status >= 400) {
+                        reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
                     }
                     resolve(xhr.response);
                 };
                 xhr.onerror = () => {
-                    reject(new Error(`Failed to upload file: ${xhr.status}`));
+                    reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
                 };
                 xhr.send(file);
             }).then(() => componentAndLocationPromise);
