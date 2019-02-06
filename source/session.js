@@ -11,7 +11,7 @@ import uuid from 'uuid';
 
 import EventHub from './event_hub';
 import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
-import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
+import { ServerPermissionDeniedError, ServerValidationError, ServerError, CreateComponentError } from './error';
 import { SERVER_LOCATION_ID } from './constant';
 import encodeUriParameters from './util/encode_uri_parameters';
 
@@ -277,16 +277,16 @@ export class Session {
     }
 
    /**
-    * Iterate *data* and decode entities with special encoding logic. 
-    * 
+    * Iterate *data* and decode entities with special encoding logic.
+    *
     * Iterates recursively through objects and arrays.
-    * 
+    *
     * Will merge ftrack entities multiple occurrences which have been
-    * de-duplicated in the back end and point them to a single object in 
+    * de-duplicated in the back end and point them to a single object in
     * *identityMap*.
     *
     * datetime objects will be converted to timezone-aware moment objects.
-    * 
+    *
     * @private
     * @param  {*} data  The data to decode.
     * @return {*}      Decoded data
@@ -309,7 +309,7 @@ export class Session {
 
     /**
      * Decode datetime *data* into moment objects.
-     * 
+     *
      * Translate objects with __type__ equal to 'datetime' into moment
      * datetime objects. If time zone support is enabled on the server the date
      * will be assumed to be UTC and the moment will be in utc.
@@ -365,7 +365,7 @@ export class Session {
         // Retrieve entity from identity map. Any instances which occur multiple
         // times in the encoded data will point to the same JavaScript object.
         // This means that output is not guaranteed to be JSON-serializable.
-        // 
+        //
         // TODO: Should we duplicate the information between the instances
         // instead of pointing them to the same instance?
         const mergedEntity = identityMap[identifier];
@@ -741,32 +741,42 @@ export class Session {
      * @return {Promise} Promise resolved with the response when creating
      * Component and ComponentLocation.
      */
-    createComponent(file, { data = {} } = {}) {
+    createComponent(file, options = {}) {
         const fileNameParts = splitFileExtension(file.name);
+        const defaultProgress = (progress) => progress;
+        const defaultAbort = () => {};
+
+        const data = options.data || {};
+        const onProgress = options.onProgress || defaultProgress;
+        const xhr = options.xhr || new XMLHttpRequest();
+        const onAborted = options.onAborted || defaultAbort;
+
         const fileType = data.file_type || fileNameParts[1];
         const fileName = data.name || fileNameParts[0];
         const fileSize = data.size || file.size;
         const componentId = data.id || uuid.v4();
+        const componentLocationId = uuid.v4();
+        let url;
+        let headers;
+
+        const updateOnProgressCallback = oEvent => {
+            if (oEvent.lengthComputable) {
+                onProgress(parseInt(oEvent.loaded / oEvent.total * 100, 10));
+            }
+        };
 
         logger.debug('Fetching upload metadata.');
-        let request = this.call([{
+
+        const request = this.call([{
             action: 'get_upload_metadata',
             file_name: `${fileName}${fileType}`,
             file_size: fileSize,
             component_id: componentId,
         }]);
 
-        request = request.then((response) => {
-            logger.debug(`Uploading file to: ${response[0].url}`);
-
-            return fetch(response[0].url, {
-                method: 'put',
-                headers: response[0].headers,
-                body: file,
-            });
-        });
-
-        request = request.then(() => {
+        const componentAndLocationPromise = request.then((response) => {
+            url = response[0].url;
+            headers = response[0].headers;
             logger.debug('Creating component and component location.');
             const component = Object.assign(data, {
                 id: componentId,
@@ -775,6 +785,7 @@ export class Session {
                 size: fileSize,
             });
             const componentLocation = {
+                id: componentLocationId,
                 component_id: componentId,
                 resource_identifier: componentId,
                 location_id: SERVER_LOCATION_ID,
@@ -788,7 +799,44 @@ export class Session {
             );
         });
 
-        return request;
+
+        return componentAndLocationPromise.then(() => {
+            logger.debug(`Uploading file to: ${url}`);
+
+            return new Promise((resolve, reject) => {
+                // wait until file is uploaded
+                xhr.upload.addEventListener('progress', updateOnProgressCallback);
+                xhr.open('PUT', url, true);
+                xhr.onabort = () => {
+                    onAborted();
+                    this.call(
+                        [
+                            deleteOperation('FileComponent', [componentId]),
+                            deleteOperation('ComponentLocation', [componentLocationId]),
+                        ]).then(() => {
+                        reject(
+                            new CreateComponentError('Upload aborted by client', 'UPLOAD_ABORTED')
+                        );
+                        });
+                };
+
+                for (const key in headers) {
+                    if (headers.hasOwnProperty(key) && key !== 'Content-Length') {
+                        xhr.setRequestHeader(key, headers[key]);
+                    }
+                }
+                xhr.onload = () => {
+                    if (xhr.status >= 400) {
+                        reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+                    }
+                    resolve(xhr.response);
+                };
+                xhr.onerror = () => {
+                    reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+                };
+                xhr.send(file);
+            }).then(() => componentAndLocationPromise);
+        });
     }
 
 }

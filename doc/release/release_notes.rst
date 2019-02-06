@@ -7,6 +7,13 @@
 Release Notes
 *************
 
+.. release:: Upcomming
+
+    .. change:: changed
+        :tags: Session
+
+        Update Session.createComponent with optional parameters, onProgress, xhr and onAbort.
+
 .. release:: 0.6.0
     :date: 2018-11-29
 

@@ -9,7 +9,7 @@ import moment from 'moment';
 import credentials from './api_credentials';
 
 const logger = loglevel.getLogger('test_session');
-logger.setLevel("debug");
+logger.setLevel('debug');
 
 describe('Session', () => {
     let session = null;
@@ -126,7 +126,7 @@ describe('Session', () => {
             data[0].name.should.deep.equal('foo');
             data[1].name.should.deep.equal('foo');
             data[2].name.should.deep.equal('bar');
-       }).then(done, done);
+        }).then(done, done);
     });
 
     it('Should support merging 1-level nested data', (done) => {
@@ -222,7 +222,7 @@ describe('Session', () => {
             data[0].status.state.short.should.deep.equal('NOT_STARTED');
             data[1].status.state.short.should.deep.equal('NOT_STARTED');
 
-            data[0].status.should.equal(data[1].status);
+            data[0].status.state.should.equal(data[1].status.state);
 
             done();
         }).then(done, done);
@@ -277,6 +277,19 @@ describe('Session', () => {
             // possible due to being a cors request.
             done();
         }).then(done, done);
+    });
+
+    it('Should support abort of uploading file', (done) => {
+        const data = { foo: 'bar' };
+        const blob = new Blob(
+            [JSON.stringify(data)], { type: 'application/json' }
+        );
+        blob.name = 'data.json';
+        const xhr = new XMLHttpRequest();
+        const onAborted = () => { done(); };
+
+        session.createComponent(blob, { xhr,
+            onProgress: () => { xhr.abort(); }, onAborted });
     });
 
     it('Should support ensure with create', (done) => {
@@ -396,7 +409,7 @@ describe('Session', () => {
     it('Should support generating thumbnail URL with + in username', () => {
         const componentId = uuid.v4();
         const previousUser = session.apiUser;
-        session.apiUser = 'user+test@example.com'
+        session.apiUser = 'user+test@example.com';
         const url = session.thumbnailUrl(componentId);
         url.should.equal(
             `${credentials.serverUrl}/component/thumbnail?` +
