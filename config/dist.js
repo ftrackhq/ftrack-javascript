@@ -1,12 +1,13 @@
 const webpack = require('webpack');
 const path = require('path');
+const version = require('../package.json').version;
 
 const config = {
     entry: ['babel-polyfill', path.resolve('./source/index.js')],
     devtool: 'source-map',
     output: {
-        path: path.resolve('./lib'),
-        filename: 'ftrack.min.js',
+        path: path.resolve('./dist'),
+        filename: `ftrack.${version}.min..js`,
         library: 'ftrack',
         libraryTarget: 'umd',
         umdNamedDefine: true,
