@@ -7,6 +7,14 @@
 Release Notes
 *************
 
+.. release:: Upcoming
+
+    .. change:: changed
+        :tags: Session
+
+        Session.createComponent tries to normalize unicode file names using the
+        NFC form to avoid using e.g. combining diaeresis in component names.
+
 .. release:: 0.7.0
     :date: 2019-02-08
 

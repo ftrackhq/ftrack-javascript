@@ -14,6 +14,7 @@ import { queryOperation, createOperation, updateOperation, deleteOperation } fro
 import { ServerPermissionDeniedError, ServerValidationError, ServerError, CreateComponentError } from './error';
 import { SERVER_LOCATION_ID } from './constant';
 import encodeUriParameters from './util/encode_uri_parameters';
+import normalizeString from './util/normalize_string';
 
 const logger = loglevel.getLogger('ftrack_api');
 
@@ -742,7 +743,8 @@ export class Session {
      * Component and ComponentLocation.
      */
     createComponent(file, options = {}) {
-        const fileNameParts = splitFileExtension(file.name);
+        const normalizedFileName = normalizeString(file.name);
+        const fileNameParts = splitFileExtension(normalizedFileName);
         const defaultProgress = (progress) => progress;
         const defaultAbort = () => {};
 
