@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
-import uuid from 'uuid';
+import uuidV4 from 'uuid/v4';
 import loglevel from 'loglevel';
 import io from './socket.io-websocket-only';
 import Event from './event';
@@ -41,7 +41,7 @@ export class EventHub {
             this._serverUrl = `${serverUrl}:${port}`;
         }
 
-        this._id = uuid.v4();
+        this._id = uuidV4();
         this._replyCallbacks = {};
         this._unsentEvents = [];
         this._subscribers = [];
@@ -288,7 +288,7 @@ export class EventHub {
         this._getExpressionTopic(subscription);
 
         if (!metadata.id) {
-            metadata.id = uuid.v4();
+            metadata.id = uuidV4();
         }
 
         // Check subscriber not already subscribed.

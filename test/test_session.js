@@ -3,7 +3,7 @@
 import { ServerPermissionDeniedError, ServerValidationError, ServerError } from 'error';
 import { Session } from 'session';
 import operation from 'operation';
-import uuid from 'uuid';
+import uuidV4 from 'uuid/v4';
 import loglevel from 'loglevel';
 import moment from 'moment';
 import credentials from './api_credentials';
@@ -49,7 +49,7 @@ describe('Session', () => {
 
     it('Should allow creating a User', () => {
         const promise = session.create('User', {
-            username: uuid.v4(),
+            username: uuidV4(),
         });
 
         return expect(
@@ -60,7 +60,7 @@ describe('Session', () => {
     });
 
     it('Should allow deleting a User', () => {
-        const username = uuid.v4();
+        const username = uuidV4();
         let promise = session.create('User', {
             username,
         });
@@ -81,8 +81,8 @@ describe('Session', () => {
     });
 
     it('Should allow updating a User', () => {
-        const username = uuid.v4();
-        const newUsername = uuid.v4();
+        const username = uuidV4();
+        const newUsername = uuidV4();
         let promise = session.create('User', {
             username,
         });
@@ -294,7 +294,7 @@ describe('Session', () => {
 
     it('Should support ensure with create', (done) => {
         const identifyingKeys = ['key', 'parent_id', 'parent_type'];
-        const key = uuid.v4();
+        const key = uuidV4();
 
         let user;
         const promise = session.initializing.then(
@@ -327,7 +327,7 @@ describe('Session', () => {
 
     it('Should support ensure with update', (done) => {
         const identifyingKeys = ['key', 'parent_id', 'parent_type'];
-        const key = uuid.v4();
+        const key = uuidV4();
 
         let user;
         const promise = session.initializing.then(
@@ -365,7 +365,7 @@ describe('Session', () => {
     it('Should support ensure with update moment object as criteria', (done) => {
         const now = moment();
 
-        const name = uuid.v4();
+        const name = uuidV4();
 
         const promise = session.initializing.then(
             () => session.create('Project', {
@@ -392,7 +392,7 @@ describe('Session', () => {
     });
 
     it('Should support uploading files with custom component id', (done) => {
-        const componentId = uuid.v4();
+        const componentId = uuidV4();
         const data = { foo: 'bar' };
         const blob = new Blob(
             [JSON.stringify(data)], { type: 'application/json' }
@@ -407,7 +407,7 @@ describe('Session', () => {
     });
 
     it('Should support generating thumbnail URL with + in username', () => {
-        const componentId = uuid.v4();
+        const componentId = uuidV4();
         const previousUser = session.apiUser;
         session.apiUser = 'user+test@example.com';
         const url = session.thumbnailUrl(componentId);
