@@ -7,7 +7,7 @@ import isPlainObject from 'lodash/isPlainObject';
 import find from 'lodash/find';
 import moment from 'moment';
 import loglevel from 'loglevel';
-import uuid from 'uuid';
+import uuidV4 from 'uuid/v4';
 
 import EventHub from './event_hub';
 import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
@@ -130,7 +130,7 @@ export class Session {
         if (clientToken) {
             this.clientToken = clientToken;
         } else {
-            this.clientToken = `ftrack-javascript-api--${uuid.v4()}`;
+            this.clientToken = `ftrack-javascript-api--${uuidV4()}`;
         }
 
         // Always include is_timezone_support_enabled as required by API.
@@ -756,8 +756,8 @@ export class Session {
         const fileType = data.file_type || fileNameParts[1];
         const fileName = data.name || fileNameParts[0];
         const fileSize = data.size || file.size;
-        const componentId = data.id || uuid.v4();
-        const componentLocationId = uuid.v4();
+        const componentId = data.id || uuidV4();
+        const componentLocationId = uuidV4();
         let url;
         let headers;
 

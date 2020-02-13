@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
-import uuid from 'uuid';
+import uuidV4 from 'uuid/v4';
 
 /**
  * ftrack API Event class.
@@ -22,7 +22,7 @@ export class Event {
             },
             options,
             {
-                id: uuid.v4(),
+                id: uuidV4(),
                 sent: null,
             }
         );
