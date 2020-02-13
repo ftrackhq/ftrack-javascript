@@ -7,7 +7,16 @@
 Release Notes
 *************
 
-.. release:: Upcoming
+.. release:: 0.7.2
+    :date: 2020-02-13
+
+    .. change:: changed
+        :tags: dependencies
+
+        Update `uuid` dependency to version 3.4.0. 
+
+.. release:: 0.7.1
+    :date: 2019-06-12
 
     .. change:: changed
         :tags: Session
