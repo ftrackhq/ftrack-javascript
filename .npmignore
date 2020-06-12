@@ -1,0 +1,16 @@
+MANIFEST.in
+bitbucket-pipelines.yml
+build
+config
+coverage
+doc
+karma.conf.js
+node_modules
+setup.cfg
+setup.py
+source
+test
+webpack.config.js
+yarn-error.log
+yarn.lock
+*.map
