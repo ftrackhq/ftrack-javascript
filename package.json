@@ -1,17 +1,19 @@
 {
-  "name": "ftrack-javascript-api",
+  "name": "@ftrack/api",
   "version": "0.7.2",
   "description": "JavaScript API for ftrack.",
-  "main": "lib/index.js",
+  "main": "dist/ftrack.min.js",
+  "module": "lib/index.js",
   "scripts": {
     "dev": "webpack --progress --colors --watch --env=dev",
     "dist": "webpack --env=dist",
     "lint": "eslint ./source",
     "test": "karma start",
     "test:watch": "karma start --auto-watch --no-single-run",
-    "clean": "rimraf ./lib",
+    "clean": "rimraf ./lib ./dist",
     "babel": "babel ./source --out-dir ./lib",
-    "build": "cross-env NODE_ENV=production npm run babel"
+    "prebuild": "yarn clean",
+    "build": "cross-env NODE_ENV=production yarn babel && yarn dist"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",

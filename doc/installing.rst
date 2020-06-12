@@ -17,16 +17,16 @@ Usage with Webpack or Browserify
 
 Install the package using NPM::
 
-    npm install --save git+http://bitbucket.org/ftrack/ftrack-javascript-api.git
+    npm install --save @ftrack/api
 
-You can then import or require the `ftrack-javascript-api` package::
+You can then import or require the `@ftrack/api` package::
 
-    var ftrack = require('ftrack-javascript-api');
+    var ftrack = require('@ftrack/api');
     var session = new ftrack.Session(...)
 
 Or, using ES2015-style imports::
 
-    import { Session } from 'ftrack-javascript-api';
+    import { Session } from '@ftrack/api';
     var session = new Session(...);
 
 Usage with Node
@@ -35,13 +35,13 @@ Usage with Node
 To use the API with node, you will need to install the a polyfill for the fetch
 API, `isomorphic-fetch <https://github.com/matthew-andrews/isomorphic-fetch>`_::
 
-    npm install --save isomorphic-fetch git+http://bitbucket.org/ftrack/ftrack-javascript-api.git
+    npm install --save isomorphic-fetch @ftrack/api
 
 Require `isomorphic-fetch` to add the polyfill, then require the API and 
 instantiate a Session.::
 
     require('isomorphic-fetch');
-    var ftrack = require('ftrack-javascript-api');
+    var ftrack = require('@ftrack/api');
     var session = new ftrack.Session(...)
 
 

@@ -44,6 +44,7 @@ build/Release
 node_modules
 
 # Build
+lib/
 build/
 dist/
 .eggs/
