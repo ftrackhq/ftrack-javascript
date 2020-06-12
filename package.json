@@ -1,6 +1,6 @@
 {
   "name": "@ftrack/api",
-  "version": "0.7.2",
+  "version": "0.8.0-alpha.2",
   "description": "JavaScript API for ftrack.",
   "main": "dist/ftrack.min.js",
   "module": "lib/index.js",
@@ -11,7 +11,7 @@
     "test": "karma start",
     "test:watch": "karma start --auto-watch --no-single-run",
     "clean": "rimraf ./lib ./dist",
-    "babel": "babel ./source --out-dir ./lib",
+    "babel": "babel ./source --out-dir ./lib --copy-files",
     "prebuild": "yarn clean",
     "build": "cross-env NODE_ENV=production yarn babel && yarn dist"
   },

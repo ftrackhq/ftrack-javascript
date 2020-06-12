@@ -7,6 +7,13 @@
 Release Notes
 *************
 
+.. release:: 0.8.0-alpha.1
+    :date: 2020-06-12
+
+    .. change:: changed
+
+        Package renamed to `@ftrack/api`.
+
 .. release:: 0.7.2
     :date: 2020-02-13
 
