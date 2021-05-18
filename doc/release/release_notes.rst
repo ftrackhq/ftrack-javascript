@@ -7,6 +7,14 @@
 Release Notes
 *************
 
+.. release:: 0.7.3
+    :date: 2021-05-18
+
+    .. change:: fixed
+        :tags: documentation
+
+        Added requirements file to docs folder.
+
 .. release:: 0.7.2
     :date: 2020-02-13
 
