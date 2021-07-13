@@ -44,6 +44,10 @@ instantiate a Session.::
     var ftrack = require('ftrack-javascript-api');
     var session = new ftrack.Session(...)
 
+.. note::
+
+    Using the event hub from Node is currently not supported.
+
 
 Building distribution bundle from source
 ========================================

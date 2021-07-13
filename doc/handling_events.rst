@@ -148,8 +148,8 @@ It is often the case that you want to wait for a single reply. In this case,
 you can use the convenience method
 :ref:`EventHub.publishAndWaitForReply <EventHub.publishAndWaitForReply>`.
 It will return a promise which will be resolved with the response. You can test
-this using two browser tabs or node interpreters. In the first, run the
-following to listen for event and reply::
+this using two browser tabs. In the first, run the following to listen for
+event and reply::
 
     // Listen for events and reply
     function onEvent(event) {
@@ -198,3 +198,9 @@ Stopping events
 
 Subscription callback priorities and the ability to stop events is not
 supported at this point.
+
+Node support
+------------
+
+The event hub currently is dependent on browser APIs and will not work when
+run from Node.
