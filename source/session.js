@@ -10,7 +10,7 @@ import loglevel from 'loglevel';
 import uuidV4 from 'uuid/v4';
 
 import EventHub from './event_hub';
-import { queryOperation, createOperation, updateOperation, deleteOperation } from './operation';
+import { queryOperation, createOperation, updateOperation, deleteOperation, searchOperation } from './operation';
 import { ServerPermissionDeniedError, ServerValidationError, ServerError, CreateComponentError } from './error';
 import { SERVER_LOCATION_ID } from './constant';
 import encodeUriParameters from './util/encode_uri_parameters';
@@ -50,7 +50,6 @@ function splitFileExtension(fileName) {
  *
  */
 export class Session {
-
     /**
      * Construct Session instance with API credentials.
      *
@@ -67,7 +66,10 @@ export class Session {
      * @constructs Session
      */
     constructor(
-        serverUrl, apiUser, apiKey, {
+        serverUrl,
+        apiUser,
+        apiKey,
+        {
             autoConnectEventHub = false,
             serverInformationValues = null,
             eventHubOptions = {},
@@ -78,7 +80,7 @@ export class Session {
         if (!serverUrl || !apiUser || !apiKey) {
             throw new Error(
                 'Invalid arguments, please construct Session with ' +
-                '*serverUrl*, *apiUser* and *apiKey*.'
+                    '*serverUrl*, *apiUser* and *apiKey*.'
             );
         }
 
@@ -106,7 +108,6 @@ export class Session {
          */
         this.serverUrl = serverUrl;
 
-
         /**
          * API Endpoint. Specified relative to server URL with leading slash.
          * @memberof Session
@@ -121,7 +122,12 @@ export class Session {
          * @instance
          * @type {EventHub}
          */
-        this.eventHub = new EventHub(serverUrl, apiUser, apiKey, eventHubOptions);
+        this.eventHub = new EventHub(
+            serverUrl,
+            apiUser,
+            apiKey,
+            eventHubOptions
+        );
 
         if (autoConnectEventHub) {
             this.eventHub.connect();
@@ -142,7 +148,10 @@ export class Session {
         }
 
         const operations = [
-            { action: 'query_server_information', values: serverInformationValues },
+            {
+                action: 'query_server_information',
+                values: serverInformationValues,
+            },
             { action: 'query_schemas' },
         ];
 
@@ -160,16 +169,14 @@ export class Session {
          * @instance
          * @type {Promise}
          */
-        this.initializing = this.call(operations).then(
-            (responses) => {
-                this.serverInformation = responses[0];
-                this.schemas = responses[1];
-                this.serverVersion = this.serverInformation.version;
-                this.initialized = true;
+        this.initializing = this.call(operations).then(responses => {
+            this.serverInformation = responses[0];
+            this.schemas = responses[1];
+            this.serverVersion = this.serverInformation.version;
+            this.initialized = true;
 
-                return Promise.resolve(this);
-            }
-        );
+            return Promise.resolve(this);
+        });
     }
 
     /**
@@ -192,7 +199,9 @@ export class Session {
      * @return {String|null} Identifying key for *entity*
      */
     getIdentifyingKey(entity) {
-        const primaryKeys = this.getPrimaryKeyAttributes(entity.__entity_type__);
+        const primaryKeys = this.getPrimaryKeyAttributes(
+            entity.__entity_type__
+        );
         if (primaryKeys) {
             return [
                 entity.__entity_type__,
@@ -202,18 +211,17 @@ export class Session {
         return null;
     }
 
-
-   /**
-    * Return encoded *data* as JSON string.
-    *
-    * This will translate objects with type moment into string representation.
-    * If time zone support is enabled on the server the date
-    * will be sent as UTC, otherwise in local time.
-    *
-    * @private
-    * @param  {*} data  The data to encode.
-    * @return {*}      Encoded data
-    */
+    /**
+     * Return encoded *data* as JSON string.
+     *
+     * This will translate objects with type moment into string representation.
+     * If time zone support is enabled on the server the date
+     * will be sent as UTC, otherwise in local time.
+     *
+     * @private
+     * @param  {*} data  The data to encode.
+     * @return {*}      Encoded data
+     */
     encode(data) {
         if (data && data.constructor === Array) {
             return data.map(item => this.encode(item));
@@ -253,11 +261,11 @@ export class Session {
     }
 
     /** Return error instance from *response*.
-    *
-    * @private
-    * @param  {*} response  A server error response object.
-    * @return {*}      error instance.
-    */
+     *
+     * @private
+     * @param  {*} response  A server error response object.
+     * @return {*}      error instance.
+     */
     getErrorFromResponse(response) {
         let ErrorClass;
 
@@ -277,21 +285,21 @@ export class Session {
         return error;
     }
 
-   /**
-    * Iterate *data* and decode entities with special encoding logic.
-    *
-    * Iterates recursively through objects and arrays.
-    *
-    * Will merge ftrack entities multiple occurrences which have been
-    * de-duplicated in the back end and point them to a single object in
-    * *identityMap*.
-    *
-    * datetime objects will be converted to timezone-aware moment objects.
-    *
-    * @private
-    * @param  {*} data  The data to decode.
-    * @return {*}      Decoded data
-    */
+    /**
+     * Iterate *data* and decode entities with special encoding logic.
+     *
+     * Iterates recursively through objects and arrays.
+     *
+     * Will merge ftrack entities multiple occurrences which have been
+     * de-duplicated in the back end and point them to a single object in
+     * *identityMap*.
+     *
+     * datetime objects will be converted to timezone-aware moment objects.
+     *
+     * @private
+     * @param  {*} data  The data to decode.
+     * @return {*}      Decoded data
+     */
     decode(data, identityMap = {}) {
         if (data == null) {
             return data;
@@ -371,12 +379,9 @@ export class Session {
         // instead of pointing them to the same instance?
         const mergedEntity = identityMap[identifier];
 
-        forIn(
-            entity,
-            (value, key) => {
-                mergedEntity[key] = this.decode(value, identityMap);
-            }
-        );
+        forIn(entity, (value, key) => {
+            mergedEntity[key] = this.decode(value, identityMap);
+        });
 
         return mergedEntity;
     }
@@ -409,7 +414,7 @@ export class Session {
 
         // Delay call until session is initialized if initialization is in
         // progress.
-        let request = new Promise((resolve) => {
+        let request = new Promise(resolve => {
             if (this.initializing && !this.initialized) {
                 this.initializing.then(() => {
                     resolve();
@@ -435,7 +440,7 @@ export class Session {
         );
 
         // Catch network errors
-        request = request.catch((reason) => {
+        request = request.catch(reason => {
             logger.warn('Failed to perform request. ', reason);
             return Promise.resolve({
                 exception: 'NetworkError',
@@ -444,10 +449,10 @@ export class Session {
         });
 
         request = request.then(
-            (response) => response.json && response.json() || response
+            response => (response.json && response.json()) || response
         );
 
-        request = request.then((data) => {
+        request = request.then(data => {
             if (this.initialized) {
                 return this.decode(data);
             }
@@ -456,7 +461,7 @@ export class Session {
         });
 
         // Catch badly formatted responses
-        request = request.catch((reason) => {
+        request = request.catch(reason => {
             logger.warn('Server reported error in unexpected format. ', reason);
             return Promise.resolve({
                 exception: 'MalformedResponseError',
@@ -466,7 +471,7 @@ export class Session {
         });
 
         // Reject promise on API exception.
-        request = request.then((response) => {
+        request = request.then(response => {
             if (response.exception) {
                 return Promise.reject(this.getErrorFromResponse(response));
             }
@@ -477,32 +482,34 @@ export class Session {
     }
 
     /**
-    * Return promise of *entityType* with *data*, create or update if necessary.
-    *
-    *   *data* should be a dictionary of the same form passed to `create`
-    *   method.
-    *
-    *   By default, check for an entity that has matching *data*. If
-    *   *identifyingKeys* is specified as a list of keys then only consider the
-    *   values from *data* for those keys when searching for existing entity.
-    *
-    *   If no *identifyingKeys* specified then use all of the keys from the
-    *   passed *data*.
-    *
-    *   Raise an Error if no *identifyingKeys* can be determined.
-    *
-    *   If no matching entity found then create entity using supplied *data*.
-    *
-    *   If a matching entity is found, then update it if necessary with *data*.
-    *
-    *   Return update or create promise.
-    */
+     * Return promise of *entityType* with *data*, create or update if necessary.
+     *
+     *   *data* should be a dictionary of the same form passed to `create`
+     *   method.
+     *
+     *   By default, check for an entity that has matching *data*. If
+     *   *identifyingKeys* is specified as a list of keys then only consider the
+     *   values from *data* for those keys when searching for existing entity.
+     *
+     *   If no *identifyingKeys* specified then use all of the keys from the
+     *   passed *data*.
+     *
+     *   Raise an Error if no *identifyingKeys* can be determined.
+     *
+     *   If no matching entity found then create entity using supplied *data*.
+     *
+     *   If a matching entity is found, then update it if necessary with *data*.
+     *
+     *   Return update or create promise.
+     */
     ensure(entityType, data, identifyingKeys = []) {
         let keys = identifyingKeys;
 
         logger.info(
             'Ensuring entity with data using identifying keys: ',
-            entityType, data, identifyingKeys
+            entityType,
+            data,
+            identifyingKeys
         );
 
         if (!keys.length) {
@@ -512,81 +519,74 @@ export class Session {
         if (!keys.length) {
             throw new Error(
                 'Could not determine any identifying data to check against ' +
-                `when ensuring ${entityType} with data ${data}. ` +
-                `Identifying keys: ${identifyingKeys}`
+                    `when ensuring ${entityType} with data ${data}. ` +
+                    `Identifying keys: ${identifyingKeys}`
             );
         }
 
         const primaryKeys = this.getPrimaryKeyAttributes(entityType);
-        let expression = `select ${primaryKeys.join(', ')} from ${entityType} where`;
-        const criteria = keys.map(
-            identifyingKey => {
-                let value = data[identifyingKey];
+        let expression = `select ${primaryKeys.join(
+            ', '
+        )} from ${entityType} where`;
+        const criteria = keys.map(identifyingKey => {
+            let value = data[identifyingKey];
 
-                if (isString(value)) {
-                    value = `"${value}"`;
-                } else if (value && value._isAMomentObject) {
-                    // Server does not store microsecond or timezone currently so
-                    // need to strip from query.
-                    value = moment(value).utc().format(ENCODE_DATETIME_FORMAT);
-                    value = `"${value}"`;
-                }
-                return `${identifyingKey} is ${value}`;
+            if (isString(value)) {
+                value = `"${value}"`;
+            } else if (value && value._isAMomentObject) {
+                // Server does not store microsecond or timezone currently so
+                // need to strip from query.
+                value = moment(value).utc().format(ENCODE_DATETIME_FORMAT);
+                value = `"${value}"`;
             }
-        );
+            return `${identifyingKey} is ${value}`;
+        });
 
         expression = `${expression} ${criteria.join(' and ')}`;
 
-        return this.query(expression).then(
-            (response) => {
-                if (response.data.length === 0) {
-                    return this.create(entityType, data).then(
-                        ({ data: responseData }) => Promise.resolve(responseData)
-                    );
-                }
+        return this.query(expression).then(response => {
+            if (response.data.length === 0) {
+                return this.create(entityType, data).then(
+                    ({ data: responseData }) => Promise.resolve(responseData)
+                );
+            }
 
-                if (response.data.length !== 1) {
-                    throw new Error(
-                        'Expected single or no item to be found but got multiple ' +
+            if (response.data.length !== 1) {
+                throw new Error(
+                    'Expected single or no item to be found but got multiple ' +
                         `when ensuring ${entityType} with data ${data}. ` +
                         `Identifying keys: ${identifyingKeys}`
-                    );
-                }
-
-                const updateEntity = response.data[0];
-
-                // Update entity if required.
-                let updated = false;
-                Object.keys(data).forEach(
-                    (key) => {
-                        if (data[key] !== updateEntity[key]) {
-                            updateEntity[key] = data[key];
-                            updated = true;
-                        }
-                    }
                 );
-
-                if (updated) {
-                    return this.update(
-                        entityType,
-                        primaryKeys.map(key => updateEntity[key]),
-                        Object.keys(data).reduce(
-                            (accumulator, key) => {
-                                if (primaryKeys.indexOf(key) === -1) {
-                                    accumulator[key] = data[key];
-                                }
-                                return accumulator;
-                            },
-                            {}
-                        )
-                    ).then(
-                        ({ data: responseData }) => Promise.resolve(responseData)
-                    );
-                }
-
-                return Promise.resolve(response.data[0]);
             }
-        );
+
+            const updateEntity = response.data[0];
+
+            // Update entity if required.
+            let updated = false;
+            Object.keys(data).forEach(key => {
+                if (data[key] !== updateEntity[key]) {
+                    updateEntity[key] = data[key];
+                    updated = true;
+                }
+            });
+
+            if (updated) {
+                return this.update(
+                    entityType,
+                    primaryKeys.map(key => updateEntity[key]),
+                    Object.keys(data).reduce((accumulator, key) => {
+                        if (primaryKeys.indexOf(key) === -1) {
+                            accumulator[key] = data[key];
+                        }
+                        return accumulator;
+                    }, {})
+                ).then(({ data: responseData }) =>
+                    Promise.resolve(responseData)
+                );
+            }
+
+            return Promise.resolve(response.data[0]);
+        });
     }
 
     /**
@@ -616,12 +616,36 @@ export class Session {
 
         const operation = queryOperation(expression);
         let request = this.call([operation]);
-        request = request.then(
-            (responses) => {
-                const response = responses[0];
-                return response;
-            }
-        );
+        request = request.then(responses => {
+            const response = responses[0];
+            return response;
+        });
+
+        return request;
+    }
+
+    /**
+     * Perform a single search operation with *expression*.
+     *
+     * @param {string} expression - API query expression.
+     * @return {Promise} Promise which will be resolved with an object
+     * containing data and metadata
+     */
+    search({ expression, entityType, terms = [], projectId, objectTypeId }) {
+        logger.debug('Search', { expression, entityType, terms, projectId, objectTypeId });
+
+        const operation = searchOperation({
+            expression,
+            entityType,
+            terms,
+            projectId,
+            objectTypeId,
+        });
+        let request = this.call([operation]);
+        request = request.then(responses => {
+            const response = responses[0];
+            return response;
+        });
 
         return request;
     }
@@ -637,7 +661,7 @@ export class Session {
         logger.debug('Create', type, data);
 
         let request = this.call([createOperation(type, data)]);
-        request = request.then((responses) => {
+        request = request.then(responses => {
             const response = responses[0];
             return response;
         });
@@ -657,7 +681,7 @@ export class Session {
         logger.debug('Update', type, keys, data);
 
         let request = this.call([updateOperation(type, keys, data)]);
-        request = request.then((responses) => {
+        request = request.then(responses => {
             const response = responses[0];
             return response;
         });
@@ -676,7 +700,7 @@ export class Session {
         logger.debug('Delete', type, id);
 
         let request = this.call([deleteOperation(type, id)]);
-        request = request.then((responses) => {
+        request = request.then(responses => {
             const response = responses[0];
             return response;
         });
@@ -730,7 +754,9 @@ export class Session {
             apiKey: this.apiKey,
         };
 
-        return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(params)}`;
+        return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(
+            params
+        )}`;
     }
 
     /**
@@ -745,7 +771,7 @@ export class Session {
     createComponent(file, options = {}) {
         const normalizedFileName = normalizeString(file.name);
         const fileNameParts = splitFileExtension(normalizedFileName);
-        const defaultProgress = (progress) => progress;
+        const defaultProgress = progress => progress;
         const defaultAbort = () => {};
 
         const data = options.data || {};
@@ -763,20 +789,22 @@ export class Session {
 
         const updateOnProgressCallback = oEvent => {
             if (oEvent.lengthComputable) {
-                onProgress(parseInt(oEvent.loaded / oEvent.total * 100, 10));
+                onProgress(parseInt((oEvent.loaded / oEvent.total) * 100, 10));
             }
         };
 
         logger.debug('Fetching upload metadata.');
 
-        const request = this.call([{
-            action: 'get_upload_metadata',
-            file_name: `${fileName}${fileType}`,
-            file_size: fileSize,
-            component_id: componentId,
-        }]);
+        const request = this.call([
+            {
+                action: 'get_upload_metadata',
+                file_name: `${fileName}${fileType}`,
+                file_size: fileSize,
+                component_id: componentId,
+            },
+        ]);
 
-        const componentAndLocationPromise = request.then((response) => {
+        const componentAndLocationPromise = request.then(response => {
             url = response[0].url;
             headers = response[0].headers;
             logger.debug('Creating component and component location.');
@@ -793,54 +821,68 @@ export class Session {
                 location_id: SERVER_LOCATION_ID,
             };
 
-            return this.call(
-                [
-                    createOperation('FileComponent', component),
-                    createOperation('ComponentLocation', componentLocation),
-                ]
-            );
+            return this.call([
+                createOperation('FileComponent', component),
+                createOperation('ComponentLocation', componentLocation),
+            ]);
         });
-
 
         return componentAndLocationPromise.then(() => {
             logger.debug(`Uploading file to: ${url}`);
 
             return new Promise((resolve, reject) => {
                 // wait until file is uploaded
-                xhr.upload.addEventListener('progress', updateOnProgressCallback);
+                xhr.upload.addEventListener(
+                    'progress',
+                    updateOnProgressCallback
+                );
                 xhr.open('PUT', url, true);
                 xhr.onabort = () => {
                     onAborted();
-                    this.call(
-                        [
-                            deleteOperation('FileComponent', [componentId]),
-                            deleteOperation('ComponentLocation', [componentLocationId]),
-                        ]).then(() => {
+                    this.call([
+                        deleteOperation('FileComponent', [componentId]),
+                        deleteOperation('ComponentLocation', [
+                            componentLocationId,
+                        ]),
+                    ]).then(() => {
                         reject(
-                            new CreateComponentError('Upload aborted by client', 'UPLOAD_ABORTED')
+                            new CreateComponentError(
+                                'Upload aborted by client',
+                                'UPLOAD_ABORTED'
+                            )
                         );
-                        });
+                    });
                 };
 
                 for (const key in headers) {
-                    if (headers.hasOwnProperty(key) && key !== 'Content-Length') {
+                    if (
+                        headers.hasOwnProperty(key) &&
+                        key !== 'Content-Length'
+                    ) {
                         xhr.setRequestHeader(key, headers[key]);
                     }
                 }
                 xhr.onload = () => {
                     if (xhr.status >= 400) {
-                        reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+                        reject(
+                            new CreateComponentError(
+                                `Failed to upload file: ${xhr.status}`
+                            )
+                        );
                     }
                     resolve(xhr.response);
                 };
                 xhr.onerror = () => {
-                    reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+                    reject(
+                        new CreateComponentError(
+                            `Failed to upload file: ${xhr.status}`
+                        )
+                    );
                 };
                 xhr.send(file);
             }).then(() => componentAndLocationPromise);
         });
     }
-
 }
 
 export default Session;
