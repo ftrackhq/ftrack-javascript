@@ -407,9 +407,10 @@ export class Session {
      *     Generic server errors or network issues
      *
      * @param {Array} operations - API operations.
+     * @param {Object} abortController - Abort controller
      *
      */
-    call(operations) {
+    call(operations, abortController) {
         const url = `${this.serverUrl}${this.apiEndpoint}`;
 
         // Delay call until session is initialized if initialization is in
@@ -436,6 +437,7 @@ export class Session {
                     'ftrack-Clienttoken': this.clientToken,
                 },
                 body: this.encodeOperations(operations),
+                signal: abortController && abortController.signal,
             })
         );
 
@@ -608,14 +610,15 @@ export class Session {
      * Perform a single query operation with *expression*.
      *
      * @param {string} expression - API query expression.
+     * @param {object} abortController - abortController used for aborting requests prematurely
      * @return {Promise} Promise which will be resolved with an object
      * containing data and metadata
      */
-    query(expression) {
+    query(expression, abortController) {
         logger.debug('Query', expression);
 
         const operation = queryOperation(expression);
-        let request = this.call([operation]);
+        let request = this.call([operation], abortController);
         request = request.then(responses => {
             const response = responses[0];
             return response;
@@ -627,12 +630,22 @@ export class Session {
     /**
      * Perform a single search operation with *expression*.
      *
-     * @param {string} expression - API query expression.
+     * @param {object} { expression, entityType, terms = [], projectId, objectTypeId } - API query expression.
+     * @param {object} abortController - abortController used for aborting requests prematurely
      * @return {Promise} Promise which will be resolved with an object
      * containing data and metadata
      */
-    search({ expression, entityType, terms = [], projectId, objectTypeId }) {
-        logger.debug('Search', { expression, entityType, terms, projectId, objectTypeId });
+    search(
+        { expression, entityType, terms = [], projectId, objectTypeId },
+        abortController
+    ) {
+        logger.debug('Search', {
+            expression,
+            entityType,
+            terms,
+            projectId,
+            objectTypeId,
+        });
 
         const operation = searchOperation({
             expression,
@@ -641,7 +654,7 @@ export class Session {
             projectId,
             objectTypeId,
         });
-        let request = this.call([operation]);
+        let request = this.call([operation], abortController);
         request = request.then(responses => {
             const response = responses[0];
             return response;
