@@ -11,7 +11,13 @@ import uuidV4 from 'uuid/v4';
 
 import EventHub from './event_hub';
 import { queryOperation, createOperation, updateOperation, deleteOperation, searchOperation } from './operation';
-import { ServerPermissionDeniedError, ServerValidationError, ServerError, CreateComponentError } from './error';
+import {
+    ServerPermissionDeniedError,
+    ServerValidationError,
+    ServerError,
+    AbortError,
+    CreateComponentError,
+} from './error';
 import { SERVER_LOCATION_ID } from './constant';
 import encodeUriParameters from './util/encode_uri_parameters';
 import normalizeString from './util/normalize_string';
@@ -269,7 +275,9 @@ export class Session {
     getErrorFromResponse(response) {
         let ErrorClass;
 
-        if (response.exception === 'ValidationError') {
+        if (response.exception === 'AbortError') {
+            ErrorClass = AbortError;
+        } else if (response.exception === 'ValidationError') {
             ErrorClass = ServerValidationError;
         } else if (
             response.exception === 'FTAuthenticationError' ||
@@ -444,6 +452,12 @@ export class Session {
         // Catch network errors
         request = request.catch(reason => {
             logger.warn('Failed to perform request. ', reason);
+            if (reason.name === 'AbortError') {
+                return Promise.resolve({
+                    exception: 'AbortError',
+                    content: reason.message,
+                });
+            }
             return Promise.resolve({
                 exception: 'NetworkError',
                 content: reason.message,
@@ -475,6 +489,7 @@ export class Session {
         // Reject promise on API exception.
         request = request.then(response => {
             if (response.exception) {
+                console.log("response from exception", response);
                 return Promise.reject(this.getErrorFromResponse(response));
             }
             return Promise.resolve(response);
