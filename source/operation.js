@@ -40,14 +40,14 @@ export function queryOperation(expression) {
  * @param  {string} expression API query expression
  * @return {Object}            API operation
  */
-export function searchOperation({ expression, entityType, terms, projectId, objectTypeId }) {
+export function searchOperation({ expression, entityType, terms, contextId, objectTypeIds }) {
     return {
         action: 'search',
         expression,
         entity_type: entityType,
         terms,
-        project_id: projectId,
-        object_type_id: objectTypeId,
+        context_id: contextId,
+        object_type_ids: objectTypeIds,
     };
 }
 

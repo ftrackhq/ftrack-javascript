@@ -651,23 +651,23 @@ export class Session {
      * containing data and metadata
      */
     search(
-        { expression, entityType, terms = [], projectId, objectTypeId },
+        { expression, entityType, terms = [], contextId, objectTypeIds },
         abortController
     ) {
         logger.debug('Search', {
             expression,
             entityType,
             terms,
-            projectId,
-            objectTypeId,
+            contextId,
+            objectTypeIds,
         });
 
         const operation = searchOperation({
             expression,
             entityType,
             terms,
-            projectId,
-            objectTypeId,
+            contextId,
+            objectTypeIds,
         });
         let request = this.call([operation], abortController);
         request = request.then(responses => {
