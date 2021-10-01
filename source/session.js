@@ -419,7 +419,7 @@ export class Session {
      * @param {Object} options.abortController - Abort controller
      *
      */
-    call(operations, { abortController }) {
+    call(operations, { abortController } = {}) {
         const url = `${this.serverUrl}${this.apiEndpoint}`;
 
         // Delay call until session is initialized if initialization is in
@@ -631,7 +631,7 @@ export class Session {
      * @return {Promise} Promise which will be resolved with an object
      * containing data and metadata
      */
-    query(expression, { abortController }) {
+    query(expression, { abortController } = {}) {
         logger.debug('Query', expression);
 
         const operation = queryOperation(expression);
@@ -658,7 +658,7 @@ export class Session {
      */
     search(
         { expression, entityType, terms = [], contextId, objectTypeIds },
-        { abortController }
+        { abortController } = {}
     ) {
         logger.debug('Search', {
             expression,
