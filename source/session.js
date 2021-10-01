@@ -415,10 +415,11 @@ export class Session {
      *     Generic server errors or network issues
      *
      * @param {Array} operations - API operations.
-     * @param {Object} abortController - Abort controller
+     * @param {Object} options
+     * @param {Object} options.abortController - Abort controller
      *
      */
-    call(operations, abortController) {
+    call(operations, { abortController }) {
         const url = `${this.serverUrl}${this.apiEndpoint}`;
 
         // Delay call until session is initialized if initialization is in
@@ -489,7 +490,7 @@ export class Session {
         // Reject promise on API exception.
         request = request.then(response => {
             if (response.exception) {
-                console.log("response from exception", response);
+                console.log('response from exception', response);
                 return Promise.reject(this.getErrorFromResponse(response));
             }
             return Promise.resolve(response);
@@ -625,11 +626,12 @@ export class Session {
      * Perform a single query operation with *expression*.
      *
      * @param {string} expression - API query expression.
-     * @param {object} abortController - abortController used for aborting requests prematurely
+     * @param {object} options
+     * @param {object} options.abortController - abortController used for aborting requests prematurely
      * @return {Promise} Promise which will be resolved with an object
      * containing data and metadata
      */
-    query(expression, abortController) {
+    query(expression, { abortController }) {
         logger.debug('Query', expression);
 
         const operation = queryOperation(expression);
@@ -645,14 +647,18 @@ export class Session {
     /**
      * Perform a single search operation with *expression*.
      *
-     * @param {object} { expression, entityType, terms = [], projectId, objectTypeId } - API query expression.
-     * @param {object} abortController - abortController used for aborting requests prematurely
+     * @param {Object}   options
+     * @param {String}   options.expression     API query expression
+     * @param {String}   options.entityType     Entity type to search for
+     * @param {String[]} options.terms          Search terms
+     * @param {String}   [options.contextId]    Context id to limit the search result to
+     * @param {String[]} [options.objectTypeIds] Object type ids to limit the search result to
      * @return {Promise} Promise which will be resolved with an object
      * containing data and metadata
      */
     search(
         { expression, entityType, terms = [], contextId, objectTypeIds },
-        abortController
+        { abortController }
     ) {
         logger.debug('Search', {
             expression,
