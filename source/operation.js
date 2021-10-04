@@ -4,7 +4,7 @@
  * @namespace operation
  */
 
-/** 
+/**
  * Return create operation object for entity *type* and *data*.
  *
  * @function operation.create
@@ -20,7 +20,7 @@ export function createOperation(type, data) {
 }
 
 
-/** 
+/**
  * Return query operation object for *expression*.
  *
  * @function operation.query
@@ -30,6 +30,25 @@ export function createOperation(type, data) {
  */
 export function queryOperation(expression) {
     return { action: 'query', expression };
+}
+
+/**
+ * Return search operation object for *expression*.
+ *
+ * @function operation.query
+ * @memberof operation
+ * @param  {string} expression API query expression
+ * @return {Object}            API operation
+ */
+export function searchOperation({ expression, entityType, terms, contextId, objectTypeIds }) {
+    return {
+        action: 'search',
+        expression,
+        entity_type: entityType,
+        terms,
+        context_id: contextId,
+        object_type_ids: objectTypeIds,
+    };
 }
 
 /**
@@ -52,7 +71,7 @@ export function updateOperation(type, keys, data) {
     return operation;
 }
 
-/** 
+/**
  * Return delete operation object for entity *type* identified by *keys*.
  *
  * @function operation.delete
@@ -76,4 +95,5 @@ export default {
     create: createOperation,
     update: updateOperation,
     delete: deleteOperation,
+    search: searchOperation,
 };

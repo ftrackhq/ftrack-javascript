@@ -75,6 +75,8 @@ export const NotUniqueError = errorFactory('NotUniqueError');
 export const CreateComponentError = errorFactory('CreateComponentError');
 
 
+export const AbortError = errorFactory('AbortError');
+
 export default {
     ServerError,
     ServerPermissionDeniedError,
@@ -83,4 +85,5 @@ export default {
     EventServerConnectionTimeoutError,
     NotUniqueError,
     CreateComponentError,
+    AbortError,
 };
