@@ -2062,7 +2062,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
 })(
     'undefined' != typeof io ? io : module.exports
   , 'undefined' != typeof io ? io : module.parent.exports
-  , this
+  , window
 );
 /**
  * socket.io
