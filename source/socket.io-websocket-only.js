@@ -104,7 +104,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
     return socket.of(uri.path.length > 1 ? uri.path : '');
   };
 
-})('object' === typeof module ? module.exports : (this.io = {}), this);
+})('object' === typeof module ? module.exports : (this.io = {}), window);
 /**
  * socket.io
  * Copyright(c) 2011 LearnBoost <dev@learnboost.com>
@@ -465,7 +465,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
   util.ua.iDevice = 'undefined' != typeof navigator
       && /iPad|iPhone|iPod/i.test(navigator.userAgent);
 
-})('undefined' != typeof io ? io : module.exports, this);
+})('undefined' != typeof io ? io : module.exports, window);
 /**
  * socket.io
  * Copyright(c) 2011 LearnBoost <dev@learnboost.com>
@@ -2495,7 +2495,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
 })(
     'undefined' != typeof io ? io.Transport : module.exports
   , 'undefined' != typeof io ? io : module.parent.exports
-  , this
+  , window
 );
 
 if (typeof define === "function" && define.amd) {
