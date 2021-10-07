@@ -2,9 +2,9 @@ import loglevel from "loglevel";
 
 const logger = loglevel.getLogger("test:api_credentials");
 
-const FTRACK_SERVER = process.env.FTRACK_SERVER;
-const FTRACK_API_USER = process.env.FTRACK_API_USER;
-const FTRACK_API_KEY = process.env.FTRACK_API_KEY;
+const { FTRACK_SERVER } = process.env;
+const { FTRACK_API_USER } = process.env;
+const { FTRACK_API_KEY } = process.env;
 const credentials = {
   serverUrl: FTRACK_SERVER,
   apiUser: FTRACK_API_USER,

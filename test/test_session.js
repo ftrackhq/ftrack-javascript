@@ -1,5 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 
+import uuidV4 from "uuid/v4";
+import loglevel from "loglevel";
+import moment from "moment";
 import {
   ServerPermissionDeniedError,
   ServerValidationError,
@@ -7,9 +10,6 @@ import {
 } from "../source/error";
 import { Session } from "../source/session";
 import operation from "../source/operation";
-import uuidV4 from "uuid/v4";
-import loglevel from "loglevel";
-import moment from "moment";
 import { server } from "./server";
 
 const logger = loglevel.getLogger("test_session");
@@ -62,13 +62,12 @@ describe("Session", () => {
     return expect(badSession.initializing).to.be.rejectedWith(ServerError);
   });
 
-  it("Should allow querying a Task", () => {
-    return expect(
+  it("Should allow querying a Task", () =>
+    expect(
       session
         .query("select name from Task limit 1")
         .then((response) => response.data[0].__entity_type__)
-    ).to.eventually.be.equal("Task");
-  });
+    ).to.eventually.be.equal("Task"));
 
   it("Should allow creating a User", () => {
     const promise = session.create("User", {
@@ -240,7 +239,7 @@ describe("Session", () => {
     );
     promise
       .then((response) => {
-        const data = response.data;
+        const { data } = response;
         data[0].status.state.short.should.deep.equal("NOT_STARTED");
         data[1].status.state.short.should.deep.equal("NOT_STARTED");
 
