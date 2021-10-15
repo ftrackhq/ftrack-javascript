@@ -15,6 +15,18 @@ declare namespace M {
         __entity_type__: string;
     }
 
+    interface SearchOptions {
+        expression: string;
+        entityType: string;
+        terms?: string[];
+        contextId?: string;
+        objectTypeIds?: string[];
+    }
+
+    interface QueryOptions {
+        abortController?: AbortController;
+    }
+
     interface Response<T> {
         action: string;
         metadata: Data;
@@ -78,7 +90,8 @@ declare namespace M {
         schemas?: Data;
         serverVersion?: string;
 
-        query<T extends Entity>(query: string): Promise<Response<T[]>>;
+        query<T extends Entity>(query: string, options?: QueryOptions): Promise<Response<T[]>>;
+        search<T extends Entity>(searchOptions: SearchOptions, options?: QueryOptions): Promise<Response<T[]>>;
         create<T extends Entity>(type: string, data: Data): Promise<Response<T>>;
         update<T extends Entity>(type: string, keys: string[], data: Data): Promise<Response<T[]>>;
         delete(type: string, id: string): Promise<Response<void>>;
@@ -99,6 +112,7 @@ declare namespace M {
 
     namespace operation {
         function query(expression: string): Operation;
+        function search(searchOptions: SearchOptions): Operation;
         function create(type: string, data: Data): Operation;
         function update(type: string, keys: string[], data: Data): Operation;
         function _delete(type: string, keys: string[]): Operation;
@@ -106,6 +120,7 @@ declare namespace M {
         // noinspection ReservedWordAsName
         export {
             query,
+            search,
             create,
             update,
             _delete as delete,
@@ -120,6 +135,7 @@ declare namespace M {
         class EventServerConnectionTimeoutError extends CustomError{}
         class NotUniqueError extends CustomError{}
         class CreateComponentError extends CustomError{}
+        class AbortError extends CustomError{}
     }
 }
 
