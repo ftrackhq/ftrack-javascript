@@ -3,6 +3,7 @@
   "version": "0.8.0",
   "description": "JavaScript API for ftrack.",
   "main": "lib/index.js",
+  "types": "main.d.ts",
   "scripts": {
     "dev": "webpack --progress --colors --watch --env=dev",
     "dist": "webpack --env=dist",
