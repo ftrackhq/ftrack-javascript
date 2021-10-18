@@ -46,8 +46,7 @@ describe("Session", () => {
 
   it("Should initialize the session automatically", () => {
     expect(session.initialized).to.be.false;
-    return expect(session.initializing.then((_session) => _session.initialized))
-      .to.eventually.be.true;
+    return expect(session.initializing.then((_session) => _session.initialized)).to.eventually.be.true;
   });
 
   it("Should reject invalid credentials", () => {
@@ -95,10 +94,10 @@ describe("Session", () => {
       .true;
   });
 
-  it("Should allow updating a User", () => {
-    const username = uuidV4();
-    const newUsername = uuidV4();
-    let promise = session.create("User", {
+  it('Should allow updating a User', () => {
+    const username = "new user";
+    const newUsername = '3e21c60e-33ac-4242-aaf8-b04a089821c7';
+    let promise = session.create('User', {
       username,
     });
 
