@@ -6,12 +6,8 @@ declare class CustomError extends Error {
 }
 
 declare namespace M {
-    import {Moment} from 'moment';
-
     interface Entity {
         id: string;
-        name: string;
-
         __entity_type__: string;
     }
 
