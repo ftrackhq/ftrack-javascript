@@ -89,11 +89,12 @@ export function deleteOperation(type, keys) {
     return operation;
 }
 
-
-export default {
+const exports = {
     query: queryOperation,
     create: createOperation,
     update: updateOperation,
     delete: deleteOperation,
     search: searchOperation,
 };
+
+export default exports;

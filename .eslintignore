@@ -1,2 +1,3 @@
 lib/
-source/socket.io-websocket-only.js
+socket.io-websocket-only.js
+doc/resource

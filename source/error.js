@@ -77,7 +77,7 @@ export const CreateComponentError = errorFactory('CreateComponentError');
 
 export const AbortError = errorFactory('AbortError');
 
-export default {
+const exports = {
     ServerError,
     ServerPermissionDeniedError,
     ServerValidationError,
@@ -87,3 +87,5 @@ export default {
     CreateComponentError,
     AbortError,
 };
+
+export default exports;

@@ -111,6 +111,8 @@ export function getStatuses(session, projectSchemaId, entityType, typeId = null)
     return response;
 }
 
-export default {
+const exports = {
     getStatuses,
 };
+
+export default exports;
