@@ -1,28 +1,3 @@
 {
-    "root": true,
-    "extends": "airbnb-base",
-    "rules": {
-
-        // this option sets a specific tab width for your code
-        // https://github.com/eslint/eslint/blob/master/docs/rules/indent.md
-        "indent": [2, 4, { "SwitchCase": 1, "VariableDeclarator": 1 }],
-
-       // Allow modifying props of arguments.
-       "no-param-reassign": [2, {"props": false}],
-
-       // disallow certain syntax forms
-       // http://eslint.org/docs/rules/no-restricted-syntax
-       //
-       // Allow: "ForInStatement"
-       //
-       "no-restricted-syntax": [
-         2,
-         "DebuggerStatement",
-         "LabeledStatement",
-         "WithStatement",
-       ],
-
-       // Allow preceding underscores.
-       "no-underscore-dangle": 0,
-    }
+  "extends": "react-app"
 }
