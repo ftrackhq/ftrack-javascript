@@ -7,8 +7,7 @@
     "dev": "webpack --progress --colors --watch --env=dev",
     "dist": "webpack --env=dist",
     "lint": "eslint ./source",
-    "test": "karma start",
-    "test:watch": "karma start --auto-watch --no-single-run",
+    "test": "eslint . && prettier -c .",
     "clean": "rimraf ./lib",
     "babel": "babel ./source --out-dir ./lib",
     "build": "cross-env NODE_ENV=production npm run babel"
