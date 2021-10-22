@@ -26,9 +26,6 @@ const handlers = [
     }
     const body = await Promise.all(
       req.body.map(async ({ action, expression, entity_type: entityType }) => {
-        console.log("action", action, expression);
-        console.log("req.body", JSON.stringify(req.body, null, 2));
-
         switch (action) {
           case "query_server_information":
             return queryServerInformation;

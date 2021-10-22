@@ -485,7 +485,6 @@ export class Session {
     // Reject promise on API exception.
     request = request.then((response) => {
       if (response.exception) {
-        console.log("response from exception", response);
         return Promise.reject(this.getErrorFromResponse(response));
       }
       return Promise.resolve(response);
