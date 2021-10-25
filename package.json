@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "webpack --progress --colors --watch --env=dev",
     "dist": "webpack --env=dist",
-    "lint": "eslint ./source",
-    "test": "eslint . && prettier -c .",
+    "lint": "eslint . && prettier -c .",
+    "test": "yarn lint",
     "clean": "rimraf ./lib",
     "babel": "babel ./source --out-dir ./lib",
     "build": "cross-env NODE_ENV=production npm run babel"
