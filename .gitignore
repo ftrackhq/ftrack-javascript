@@ -6,6 +6,7 @@ pip-log.txt
 .tox
 
 # Caches
+.eslintcache
 Thumbs.db
 
 # Development
@@ -14,6 +15,7 @@ Thumbs.db
 .settings
 .idea/
 .editorconfig
+.vscode/
 
 # Logs
 logs

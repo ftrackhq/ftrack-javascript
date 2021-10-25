@@ -6,16 +6,18 @@
   "scripts": {
     "dev": "webpack --progress --colors --watch --env=dev",
     "dist": "webpack --env=dist",
-    "lint": "eslint ./source",
-    "test": "karma start",
-    "test:watch": "karma start --auto-watch --no-single-run",
+    "lint": "eslint . && prettier -c .",
+    "test": "yarn lint",
     "clean": "rimraf ./lib",
     "babel": "babel ./source --out-dir ./lib",
     "build": "cross-env NODE_ENV=production npm run babel"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.0.0",
+    "@typescript-eslint/parser": "^4.0.0",
     "babel-cli": "^6.10.1",
     "babel-core": "^6.1.18",
+    "babel-eslint": "^10.0.0",
     "babel-loader": "^6.1.0",
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-polyfill": "latest",
@@ -23,10 +25,15 @@
     "chai": "latest",
     "chai-as-promised": "^5.3.0",
     "cross-env": "^2.0.0",
-    "eslint": "^2.10.2",
-    "eslint-config-airbnb-base": "^3.0.1",
-    "eslint-plugin-import": "^1.8.0",
+    "eslint": "^7.5.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-hooks": "^4.0.8",
     "exports-loader": "latest",
+    "husky": ">=6",
     "imports-loader": "latest",
     "isparta-instrumenter-loader": "^1.0.0",
     "karma": "^0.13.9",
@@ -38,8 +45,11 @@
     "karma-mocha-reporter": "^1.1.1",
     "karma-sourcemap-loader": "^0.3.5",
     "karma-webpack": "^1.7.0",
+    "lint-staged": ">=10",
     "mocha": "latest",
+    "prettier": "^2.4.1",
     "puppeteer": "^1.6.1",
+    "typescript": "^4.4.4",
     "webpack": "^1.12.0",
     "webpack-dev-server": "^1.12.0",
     "yargs": "^3.32.0"
@@ -67,5 +77,9 @@
     "moment": "^2.13.0",
     "uuid": "^3.4.0",
     "whatwg-fetch": "^1.0.0"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md,json,jsx,scss,yml}": "prettier --write"
   }
 }

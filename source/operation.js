@@ -14,11 +14,10 @@
  * @return {Object}      API operation
  */
 export function createOperation(type, data) {
-    const operation = { action: 'create', entity_type: type };
-    operation.entity_data = Object.assign({}, data, { __entity_type__: type });
-    return operation;
+  const operation = { action: "create", entity_type: type };
+  operation.entity_data = Object.assign({}, data, { __entity_type__: type });
+  return operation;
 }
-
 
 /**
  * Return query operation object for *expression*.
@@ -29,7 +28,7 @@ export function createOperation(type, data) {
  * @return {Object}            API operation
  */
 export function queryOperation(expression) {
-    return { action: 'query', expression };
+  return { action: "query", expression };
 }
 
 /**
@@ -40,15 +39,21 @@ export function queryOperation(expression) {
  * @param  {string} expression API query expression
  * @return {Object}            API operation
  */
-export function searchOperation({ expression, entityType, terms, contextId, objectTypeIds }) {
-    return {
-        action: 'search',
-        expression,
-        entity_type: entityType,
-        terms,
-        context_id: contextId,
-        object_type_ids: objectTypeIds,
-    };
+export function searchOperation({
+  expression,
+  entityType,
+  terms,
+  contextId,
+  objectTypeIds,
+}) {
+  return {
+    action: "search",
+    expression,
+    entity_type: entityType,
+    terms,
+    context_id: contextId,
+    object_type_ids: objectTypeIds,
+  };
 }
 
 /**
@@ -62,13 +67,13 @@ export function searchOperation({ expression, entityType, terms, contextId, obje
  * @return {Object}      API operation
  */
 export function updateOperation(type, keys, data) {
-    const operation = {
-        action: 'update',
-        entity_type: type,
-        entity_key: keys,
-    };
-    operation.entity_data = Object.assign({}, data, { __entity_type__: type });
-    return operation;
+  const operation = {
+    action: "update",
+    entity_type: type,
+    entity_key: keys,
+  };
+  operation.entity_data = Object.assign({}, data, { __entity_type__: type });
+  return operation;
 }
 
 /**
@@ -81,19 +86,20 @@ export function updateOperation(type, keys, data) {
  * @return {Object}      API operation
  */
 export function deleteOperation(type, keys) {
-    const operation = {
-        action: 'delete',
-        entity_type: type,
-        entity_key: keys,
-    };
-    return operation;
+  const operation = {
+    action: "delete",
+    entity_type: type,
+    entity_key: keys,
+  };
+  return operation;
 }
 
-
-export default {
-    query: queryOperation,
-    create: createOperation,
-    update: updateOperation,
-    delete: deleteOperation,
-    search: searchOperation,
+const exports = {
+  query: queryOperation,
+  create: createOperation,
+  update: updateOperation,
+  delete: deleteOperation,
+  search: searchOperation,
 };
+
+export default exports;
