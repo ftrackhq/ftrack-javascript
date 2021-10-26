@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "webpack --progress --colors --watch --env=dev",
     "dist": "webpack --env=dist",
-    "lint": "eslint . && prettier -c .",
+    "lint": "mocha test && eslint . && prettier -c .",
     "test": "yarn lint",
     "clean": "rimraf ./lib",
     "babel": "babel ./source --out-dir ./lib",
