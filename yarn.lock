@@ -1821,10 +1821,6 @@ es-to-primitive@^1.2.1:
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
 
-es6-promise@^3.1.2:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.3.1.tgz#a08cdde84ccdbf34d027a1451bc91d4bcd28a613"
-
 escalade@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/escalade/-/escalade-3.1.1.tgz#d8cfdc7000965c5a0174b4a82eaa5c0552742e40"
@@ -4073,10 +4069,6 @@ whatwg-encoding@^1.0.5:
   integrity sha512-b5lim54JOPN9HtzvK9HFXvBma/rnfFeqsic0hSpjtDbVxR3dJKLc+KB4V6GgiGOvl7CY/KNh8rxSo9DKQrnUEw==
   dependencies:
     iconv-lite "0.4.24"
-
-whatwg-fetch@^1.0.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-1.1.1.tgz#ac3c9d39f320c6dce5339969d054ef43dd333319"
 
 whatwg-fetch@^3.4.1:
   version "3.6.2"

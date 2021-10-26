@@ -54,12 +54,10 @@
   },
   "homepage": "http://ftrack.com",
   "dependencies": {
-    "es6-promise": "^3.1.2",
     "lodash": "^4.12.0",
     "loglevel": "^1.4.0",
     "moment": "^2.13.0",
-    "uuid": "^3.4.0",
-    "whatwg-fetch": "^1.0.0"
+    "uuid": "^3.4.0"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
