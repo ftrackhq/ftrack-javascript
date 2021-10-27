@@ -24,7 +24,7 @@ import {
   AbortError,
   CreateComponentError,
 } from "./error";
-import { SERVER_LOCATION_ID } from './constant';
+import { SERVER_LOCATION_ID } from "./constant";
 
 import encodeUriParameters from "./util/encode_uri_parameters";
 import normalizeString from "./util/normalize_string";
