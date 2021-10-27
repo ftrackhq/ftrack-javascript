@@ -24,7 +24,8 @@ import {
   AbortError,
   CreateComponentError,
 } from "./error";
-import { SERVER_LOCATION_ID } from "./constant";
+import { SERVER_LOCATION_ID } from './constant';
+
 import encodeUriParameters from "./util/encode_uri_parameters";
 import normalizeString from "./util/normalize_string";
 
@@ -821,37 +822,34 @@ export class Session {
     };
 
     logger.debug("Fetching upload metadata.");
+    logger.debug("Creating component and component location.");
 
-    const request = this.call([
+    const component = Object.assign(data, {
+      id: componentId,
+      name: fileName,
+      file_type: fileType,
+      size: fileSize,
+    });
+    const componentLocation = {
+      id: componentLocationId,
+      component_id: componentId,
+      resource_identifier: componentId,
+      location_id: SERVER_LOCATION_ID,
+    };
+
+    const componentAndLocationPromise = this.call([
+      createOperation("FileComponent", component),
+      createOperation("ComponentLocation", componentLocation),
       {
         action: "get_upload_metadata",
         file_name: `${fileName}${fileType}`,
         file_size: fileSize,
         component_id: componentId,
       },
-    ]);
-
-    const componentAndLocationPromise = request.then((response) => {
-      url = response[0].url;
-      headers = response[0].headers;
-      logger.debug("Creating component and component location.");
-      const component = Object.assign(data, {
-        id: componentId,
-        name: fileName,
-        file_type: fileType,
-        size: fileSize,
-      });
-      const componentLocation = {
-        id: componentLocationId,
-        component_id: componentId,
-        resource_identifier: componentId,
-        location_id: SERVER_LOCATION_ID,
-      };
-
-      return this.call([
-        createOperation("FileComponent", component),
-        createOperation("ComponentLocation", componentLocation),
-      ]);
+    ]).then((response) => {
+      url = response[2].url;
+      headers = response[2].headers;
+      return response;
     });
 
     return componentAndLocationPromise.then(() => {
