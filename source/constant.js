@@ -4,9 +4,10 @@
  * @namespace constant
  */
 
-const SERVER_LOCATION_ID = '3a372bde-05bc-11e4-8908-20c9d081909b';
+export const SERVER_LOCATION_ID = "3a372bde-05bc-11e4-8908-20c9d081909b";
 
-
-export default {
-    SERVER_LOCATION_ID,
+const exports = {
+  SERVER_LOCATION_ID,
 };
+
+export default exports;
