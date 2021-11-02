@@ -9,7 +9,7 @@
     "lint": "eslint . && prettier -c .",
     "test": "yarn lint",
     "clean": "rimraf ./lib",
-    "babel": "babel ./source --out-dir ./lib",
+    "babel": "babel ./source --out-dir ./lib --copy-files",
     "build": "cross-env NODE_ENV=production npm run babel"
   },
   "devDependencies": {
