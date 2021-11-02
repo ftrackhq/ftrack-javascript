@@ -821,8 +821,7 @@ export class Session {
       }
     };
 
-    logger.debug("Creating component and component location.");
-    logger.debug("Fetching upload metadata.");
+    logger.debug("Registering component and fetching upload metadata.");
 
     const component = Object.assign(data, {
       id: componentId,
