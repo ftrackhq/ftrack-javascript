@@ -8,6 +8,14 @@ Release Notes
 *************
 
 
+.. release:: 0.8.2
+    :date: 2021-11-03
+
+    .. change:: new
+        :tags: TypeScript
+
+        TypeScript Declaration file added.
+
 .. release:: 0.8.1
     :date: 2021-11-03
 
