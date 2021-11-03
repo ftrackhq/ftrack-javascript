@@ -38,7 +38,7 @@ describe("Session", () => {
         autoConnectEventHub: false,
       }
     );
-    console.log("cred", credentials);
+
     session = new Session(
       credentials.serverUrl,
       credentials.apiUser,
