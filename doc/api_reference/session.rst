@@ -74,6 +74,21 @@ Perform a single query operation with *expression*.
                      data and metadata.
 
 
+Function ``search``
+==================
+
+Perform a single search operation with *expression*.
+
+.. js:function:: search(options, fetchOptions)
+
+    :param Object   options:
+    :param String   options.expression:     API query expression
+    :param String   options.entityType:     Entity type to search for
+    :param Array options.terms:          Search terms
+    :param String   [options.contextId]:    Context id to limit the search result to
+    :param Array [options.objectTypeIds]: Object type ids to limit the search result to
+    :return Promise: Promise which will be resolved with an object containing data and metadata
+
 Function ``create``
 ===================
 

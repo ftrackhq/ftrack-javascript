@@ -7,6 +7,32 @@
 Release Notes
 *************
 
+
+.. release:: 0.8.1
+    :date: 2021-11-03
+
+    .. change:: fixed
+        :tags: Session
+
+        Uncaught exception is thrown when aborting file uploads.
+
+    .. change:: fixed
+        :tags: Session
+
+        Components are not registered before files are uploaded.
+
+.. release:: 0.8.0
+    :date: 2021-10-15
+
+    .. change:: new
+        :tags: Session
+
+        Add support for Session.search.
+
+        .. seealso::
+
+            :ref:`api_reference/session/search`
+
 .. release:: 0.7.3
     :date: 2021-05-18
 
