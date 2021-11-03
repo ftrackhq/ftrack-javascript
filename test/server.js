@@ -6,6 +6,8 @@ import queryServerInformation from "./fixtures/query_server_information.json";
 import getUploadMetadata from "./fixtures/get_upload_metadata.json";
 
 function authenticate(req) {
+  // allow returning invalid authentication by setting ftrack-api-key to "INVALID_API_KEY"
+  // otherwise, return true
   if (req.headers.get("ftrack-api-key") === "INVALID_API_KEY") {
     return false;
   }
@@ -32,6 +34,7 @@ const handlers = [
           case "query_schemas":
             return querySchemas;
           case "create":
+            // create are fetched from test/fixtures where the file name matches the full expression
             return JSON.parse(
               await fs.readFile(
                 `${__dirname}/fixtures/create_${entityType.toLowerCase()}.json`,
@@ -46,6 +49,7 @@ const handlers = [
               data: true,
             };
           case "update":
+            // update are fetched from test/fixtures where the file name matches the full expression
             return JSON.parse(
               await fs.readFile(
                 `${__dirname}/fixtures/update_${entityType.toLowerCase()}.json`,
@@ -55,6 +59,7 @@ const handlers = [
               )
             );
           case "query":
+            // queries are fetched from test/fixtures where the file name matches the full expression
             return JSON.parse(
               await fs.readFile(
                 `${__dirname}/fixtures/query_${expression
