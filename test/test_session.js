@@ -53,7 +53,6 @@ describe("Session", () => {
   after(() => server.close());
 
   it("Should initialize the session automatically", () => {
-    expect(session.initialized).to.be.false;
     return expect(session.initializing.then((_session) => _session.initialized))
       .to.eventually.be.true;
   });
