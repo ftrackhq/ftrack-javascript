@@ -860,10 +860,7 @@ export class Session {
         xhr.open("PUT", url, true);
         xhr.onabort = () => {
           onAborted();
-          this.call([
-            deleteOperation("FileComponent", [componentId]),
-            deleteOperation("ComponentLocation", [componentLocationId]),
-          ]).then(() => {
+          this.delete("FileComponent", [componentId]).then(() => {
             reject(
               new CreateComponentError(
                 "Upload aborted by client",
@@ -887,9 +884,11 @@ export class Session {
           resolve(xhr.response);
         };
         xhr.onerror = () => {
-          reject(
-            new CreateComponentError(`Failed to upload file: ${xhr.status}`)
-          );
+          this.delete("FileComponent", [componentId]).then(() => {
+            reject(
+              new CreateComponentError(`Failed to upload file: ${xhr.status}`)
+            );
+          });
         };
         xhr.send(file);
       }).then(() => componentAndLocationPromise);
