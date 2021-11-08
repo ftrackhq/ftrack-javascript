@@ -7,8 +7,8 @@
     "test": "mocha test && yarn lint",
     "build": "vite build"
   },
-  "main": "./dist/my-lib.umd.js",
-  "module": "./dist/my-lib.es.js",
+  "main": "./dist/ftrack.umd.js",
+  "module": "./dist/ftrack.es.js",
   "types": "main.d.ts",
   "exports": {
     ".": {
