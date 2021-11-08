@@ -1,8 +1,9 @@
 {
   "name": "ftrack-javascript-api",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "JavaScript API for ftrack.",
   "main": "lib/index.js",
+  "types": "main.d.ts",
   "scripts": {
     "lint": "eslint . && prettier -c .",
     "test": "mocha test && yarn lint",
