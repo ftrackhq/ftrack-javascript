@@ -8,6 +8,24 @@ Release Notes
 *************
 
 
+.. release:: 0.9.0
+    :date: 2021-11-03
+
+    .. change:: new
+        :tags: Babel
+
+        Bumped Babel to version 7.16.
+
+        Bumped core-js to version 3.
+
+
+        Removed support for UMD bundles.
+            This only affects those who have used the library by importing
+            the library using a HTML script tag from our CDN, something which we
+            never publicly exposed how to do.
+
+
+
 .. release:: 0.8.2
     :date: 2021-11-03
 
@@ -55,7 +73,7 @@ Release Notes
     .. change:: changed
         :tags: dependencies
 
-        Update `uuid` dependency to version 3.4.0. 
+        Update `uuid` dependency to version 3.4.0.
 
 .. release:: 0.7.1
     :date: 2019-06-12
