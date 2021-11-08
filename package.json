@@ -7,13 +7,13 @@
     "test": "mocha test && yarn lint",
     "build": "vite build"
   },
-  "main": "./dist/ftrack.umd.js",
-  "module": "./dist/ftrack.es.js",
+  "main": "./dist/ftrack-javascript-api.umd.js",
+  "module": "./dist/ftrack-javascript-api.es.js",
   "types": "main.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/ftrack.es.js",
-      "require": "./dist/ftrack.umd.js"
+      "import": "./dist/ftrack-javascript-api.es.js",
+      "require": "./dist/ftrack-javascript-api.umd.js"
     }
   },
   "files": [

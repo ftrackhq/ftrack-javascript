@@ -5,8 +5,8 @@ module.exports = defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, "source/index.js"),
-      name: "ftrack",
-      fileName: (format) => `ftrack.${format}.js`,
+      name: "ftrack-javascript-api",
+      fileName: (format) => `ftrack-javascript-api.${format}.js`,
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
