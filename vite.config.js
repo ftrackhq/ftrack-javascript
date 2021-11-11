@@ -4,6 +4,7 @@ const commonjs = require("@rollup/plugin-commonjs");
 
 module.exports = defineConfig({
   build: {
+    minify: false,
     sourcemap: true,
     lib: {
       entry: path.resolve(__dirname, "source/index.js"),

@@ -1,8 +1,3401 @@
-(function(e,t){typeof exports=="object"&&typeof module!="undefined"?t(exports,require("moment"),require("loglevel")):typeof define=="function"&&define.amd?define(["exports","moment","loglevel"],t):(e=typeof globalThis!="undefined"?globalThis:e||self,t(e["ftrack-javascript-api"]={},e.moment,e.loglevel))})(this,function(exports,moment,loglevel){"use strict";function _interopDefaultLegacy(e){return e&&typeof e=="object"&&"default"in e?e:{default:e}}var moment__default=_interopDefaultLegacy(moment),loglevel__default=_interopDefaultLegacy(loglevel),commonjsGlobal=typeof globalThis!="undefined"?globalThis:typeof window!="undefined"?window:typeof global!="undefined"?global:typeof self!="undefined"?self:{};function createBaseFor$1(e){return function(t,r,n){for(var s=-1,a=Object(t),o=n(t),c=o.length;c--;){var p=o[e?c:++s];if(r(a[p],p,a)===!1)break}return t}}var _createBaseFor=createBaseFor$1,createBaseFor=_createBaseFor,baseFor$1=createBaseFor(),_baseFor=baseFor$1;function identity$2(e){return e}var identity_1=identity$2,identity$1=identity_1;function castFunction$1(e){return typeof e=="function"?e:identity$1}var _castFunction=castFunction$1;function baseTimes$1(e,t){for(var r=-1,n=Array(e);++r<e;)n[r]=t(r);return n}var _baseTimes=baseTimes$1,freeGlobal$1=typeof commonjsGlobal=="object"&&commonjsGlobal&&commonjsGlobal.Object===Object&&commonjsGlobal,_freeGlobal=freeGlobal$1,freeGlobal=_freeGlobal,freeSelf=typeof self=="object"&&self&&self.Object===Object&&self,root$8=freeGlobal||freeSelf||Function("return this")(),_root=root$8,root$7=_root,Symbol$5=root$7.Symbol,_Symbol=Symbol$5,Symbol$4=_Symbol,objectProto$d=Object.prototype,hasOwnProperty$a=objectProto$d.hasOwnProperty,nativeObjectToString$1=objectProto$d.toString,symToStringTag$1=Symbol$4?Symbol$4.toStringTag:void 0;function getRawTag$1(e){var t=hasOwnProperty$a.call(e,symToStringTag$1),r=e[symToStringTag$1];try{e[symToStringTag$1]=void 0;var n=!0}catch{}var s=nativeObjectToString$1.call(e);return n&&(t?e[symToStringTag$1]=r:delete e[symToStringTag$1]),s}var _getRawTag=getRawTag$1,objectProto$c=Object.prototype,nativeObjectToString=objectProto$c.toString;function objectToString$1(e){return nativeObjectToString.call(e)}var _objectToString=objectToString$1,Symbol$3=_Symbol,getRawTag=_getRawTag,objectToString=_objectToString,nullTag="[object Null]",undefinedTag="[object Undefined]",symToStringTag=Symbol$3?Symbol$3.toStringTag:void 0;function baseGetTag$7(e){return e==null?e===void 0?undefinedTag:nullTag:symToStringTag&&symToStringTag in Object(e)?getRawTag(e):objectToString(e)}var _baseGetTag=baseGetTag$7;function isObjectLike$7(e){return e!=null&&typeof e=="object"}var isObjectLike_1=isObjectLike$7,baseGetTag$6=_baseGetTag,isObjectLike$6=isObjectLike_1,argsTag$2="[object Arguments]";function baseIsArguments$1(e){return isObjectLike$6(e)&&baseGetTag$6(e)==argsTag$2}var _baseIsArguments=baseIsArguments$1,baseIsArguments=_baseIsArguments,isObjectLike$5=isObjectLike_1,objectProto$b=Object.prototype,hasOwnProperty$9=objectProto$b.hasOwnProperty,propertyIsEnumerable$1=objectProto$b.propertyIsEnumerable,isArguments$2=baseIsArguments(function(){return arguments}())?baseIsArguments:function(e){return isObjectLike$5(e)&&hasOwnProperty$9.call(e,"callee")&&!propertyIsEnumerable$1.call(e,"callee")},isArguments_1=isArguments$2,isArray$9=Array.isArray,isArray_1=isArray$9,isBuffer$2={exports:{}};function stubFalse(){return!1}var stubFalse_1=stubFalse;(function(e,t){var r=_root,n=stubFalse_1,s=t&&!t.nodeType&&t,a=s&&!0&&e&&!e.nodeType&&e,o=a&&a.exports===s,c=o?r.Buffer:void 0,p=c?c.isBuffer:void 0,u=p||n;e.exports=u})(isBuffer$2,isBuffer$2.exports);var MAX_SAFE_INTEGER$1=9007199254740991,reIsUint=/^(?:0|[1-9]\d*)$/;function isIndex$2(e,t){return t=t==null?MAX_SAFE_INTEGER$1:t,!!t&&(typeof e=="number"||reIsUint.test(e))&&e>-1&&e%1==0&&e<t}var _isIndex=isIndex$2,MAX_SAFE_INTEGER=9007199254740991;function isLength$3(e){return typeof e=="number"&&e>-1&&e%1==0&&e<=MAX_SAFE_INTEGER}var isLength_1=isLength$3,baseGetTag$5=_baseGetTag,isLength$2=isLength_1,isObjectLike$4=isObjectLike_1,argsTag$1="[object Arguments]",arrayTag$1="[object Array]",boolTag$1="[object Boolean]",dateTag$1="[object Date]",errorTag$1="[object Error]",funcTag$1="[object Function]",mapTag$2="[object Map]",numberTag$1="[object Number]",objectTag$3="[object Object]",regexpTag$1="[object RegExp]",setTag$2="[object Set]",stringTag$2="[object String]",weakMapTag$1="[object WeakMap]",arrayBufferTag$1="[object ArrayBuffer]",dataViewTag$2="[object DataView]",float32Tag="[object Float32Array]",float64Tag="[object Float64Array]",int8Tag="[object Int8Array]",int16Tag="[object Int16Array]",int32Tag="[object Int32Array]",uint8Tag="[object Uint8Array]",uint8ClampedTag="[object Uint8ClampedArray]",uint16Tag="[object Uint16Array]",uint32Tag="[object Uint32Array]",typedArrayTags={};typedArrayTags[float32Tag]=typedArrayTags[float64Tag]=typedArrayTags[int8Tag]=typedArrayTags[int16Tag]=typedArrayTags[int32Tag]=typedArrayTags[uint8Tag]=typedArrayTags[uint8ClampedTag]=typedArrayTags[uint16Tag]=typedArrayTags[uint32Tag]=!0,typedArrayTags[argsTag$1]=typedArrayTags[arrayTag$1]=typedArrayTags[arrayBufferTag$1]=typedArrayTags[boolTag$1]=typedArrayTags[dataViewTag$2]=typedArrayTags[dateTag$1]=typedArrayTags[errorTag$1]=typedArrayTags[funcTag$1]=typedArrayTags[mapTag$2]=typedArrayTags[numberTag$1]=typedArrayTags[objectTag$3]=typedArrayTags[regexpTag$1]=typedArrayTags[setTag$2]=typedArrayTags[stringTag$2]=typedArrayTags[weakMapTag$1]=!1;function baseIsTypedArray$1(e){return isObjectLike$4(e)&&isLength$2(e.length)&&!!typedArrayTags[baseGetTag$5(e)]}var _baseIsTypedArray=baseIsTypedArray$1;function baseUnary$1(e){return function(t){return e(t)}}var _baseUnary=baseUnary$1,_nodeUtil={exports:{}};(function(e,t){var r=_freeGlobal,n=t&&!t.nodeType&&t,s=n&&!0&&e&&!e.nodeType&&e,a=s&&s.exports===n,o=a&&r.process,c=function(){try{return o&&o.binding&&o.binding("util")}catch{}}();e.exports=c})(_nodeUtil,_nodeUtil.exports);var baseIsTypedArray=_baseIsTypedArray,baseUnary=_baseUnary,nodeUtil=_nodeUtil.exports,nodeIsTypedArray=nodeUtil&&nodeUtil.isTypedArray,isTypedArray$2=nodeIsTypedArray?baseUnary(nodeIsTypedArray):baseIsTypedArray,isTypedArray_1=isTypedArray$2,baseTimes=_baseTimes,isArguments$1=isArguments_1,isArray$8=isArray_1,isBuffer$1=isBuffer$2.exports,isIndex$1=_isIndex,isTypedArray$1=isTypedArray_1,objectProto$a=Object.prototype,hasOwnProperty$8=objectProto$a.hasOwnProperty;function arrayLikeKeys$2(e,t){var r=isArray$8(e),n=!r&&isArguments$1(e),s=!r&&!n&&isBuffer$1(e),a=!r&&!n&&!s&&isTypedArray$1(e),o=r||n||s||a,c=o?baseTimes(e.length,String):[],p=c.length;for(var u in e)(t||hasOwnProperty$8.call(e,u))&&!(o&&(u=="length"||s&&(u=="offset"||u=="parent")||a&&(u=="buffer"||u=="byteLength"||u=="byteOffset")||isIndex$1(u,p)))&&c.push(u);return c}var _arrayLikeKeys=arrayLikeKeys$2;function isObject$5(e){var t=typeof e;return e!=null&&(t=="object"||t=="function")}var isObject_1=isObject$5,objectProto$9=Object.prototype;function isPrototype$2(e){var t=e&&e.constructor,r=typeof t=="function"&&t.prototype||objectProto$9;return e===r}var _isPrototype=isPrototype$2;function nativeKeysIn$1(e){var t=[];if(e!=null)for(var r in Object(e))t.push(r);return t}var _nativeKeysIn=nativeKeysIn$1,isObject$4=isObject_1,isPrototype$1=_isPrototype,nativeKeysIn=_nativeKeysIn,objectProto$8=Object.prototype,hasOwnProperty$7=objectProto$8.hasOwnProperty;function baseKeysIn$1(e){if(!isObject$4(e))return nativeKeysIn(e);var t=isPrototype$1(e),r=[];for(var n in e)n=="constructor"&&(t||!hasOwnProperty$7.call(e,n))||r.push(n);return r}var _baseKeysIn=baseKeysIn$1,baseGetTag$4=_baseGetTag,isObject$3=isObject_1,asyncTag="[object AsyncFunction]",funcTag="[object Function]",genTag="[object GeneratorFunction]",proxyTag="[object Proxy]";function isFunction$2(e){if(!isObject$3(e))return!1;var t=baseGetTag$4(e);return t==funcTag||t==genTag||t==asyncTag||t==proxyTag}var isFunction_1=isFunction$2,isFunction$1=isFunction_1,isLength$1=isLength_1;function isArrayLike$3(e){return e!=null&&isLength$1(e.length)&&!isFunction$1(e)}var isArrayLike_1=isArrayLike$3,arrayLikeKeys$1=_arrayLikeKeys,baseKeysIn=_baseKeysIn,isArrayLike$2=isArrayLike_1;function keysIn$1(e){return isArrayLike$2(e)?arrayLikeKeys$1(e,!0):baseKeysIn(e)}var keysIn_1=keysIn$1,baseFor=_baseFor,castFunction=_castFunction,keysIn=keysIn_1;function forIn(e,t){return e==null?e:baseFor(e,castFunction(t),keysIn)}var forIn_1=forIn,baseGetTag$3=_baseGetTag,isArray$7=isArray_1,isObjectLike$3=isObjectLike_1,stringTag$1="[object String]";function isString(e){return typeof e=="string"||!isArray$7(e)&&isObjectLike$3(e)&&baseGetTag$3(e)==stringTag$1}var isString_1=isString;function overArg$2(e,t){return function(r){return e(t(r))}}var _overArg=overArg$2,overArg$1=_overArg,getPrototype$1=overArg$1(Object.getPrototypeOf,Object),_getPrototype=getPrototype$1,baseGetTag$2=_baseGetTag,getPrototype=_getPrototype,isObjectLike$2=isObjectLike_1,objectTag$2="[object Object]",funcProto$2=Function.prototype,objectProto$7=Object.prototype,funcToString$2=funcProto$2.toString,hasOwnProperty$6=objectProto$7.hasOwnProperty,objectCtorString=funcToString$2.call(Object);function isPlainObject(e){if(!isObjectLike$2(e)||baseGetTag$2(e)!=objectTag$2)return!1;var t=getPrototype(e);if(t===null)return!0;var r=hasOwnProperty$6.call(t,"constructor")&&t.constructor;return typeof r=="function"&&r instanceof r&&funcToString$2.call(r)==objectCtorString}var isPlainObject_1=isPlainObject;function listCacheClear$1(){this.__data__=[],this.size=0}var _listCacheClear=listCacheClear$1;function eq$2(e,t){return e===t||e!==e&&t!==t}var eq_1=eq$2,eq$1=eq_1;function assocIndexOf$4(e,t){for(var r=e.length;r--;)if(eq$1(e[r][0],t))return r;return-1}var _assocIndexOf=assocIndexOf$4,assocIndexOf$3=_assocIndexOf,arrayProto=Array.prototype,splice=arrayProto.splice;function listCacheDelete$1(e){var t=this.__data__,r=assocIndexOf$3(t,e);if(r<0)return!1;var n=t.length-1;return r==n?t.pop():splice.call(t,r,1),--this.size,!0}var _listCacheDelete=listCacheDelete$1,assocIndexOf$2=_assocIndexOf;function listCacheGet$1(e){var t=this.__data__,r=assocIndexOf$2(t,e);return r<0?void 0:t[r][1]}var _listCacheGet=listCacheGet$1,assocIndexOf$1=_assocIndexOf;function listCacheHas$1(e){return assocIndexOf$1(this.__data__,e)>-1}var _listCacheHas=listCacheHas$1,assocIndexOf=_assocIndexOf;function listCacheSet$1(e,t){var r=this.__data__,n=assocIndexOf(r,e);return n<0?(++this.size,r.push([e,t])):r[n][1]=t,this}var _listCacheSet=listCacheSet$1,listCacheClear=_listCacheClear,listCacheDelete=_listCacheDelete,listCacheGet=_listCacheGet,listCacheHas=_listCacheHas,listCacheSet=_listCacheSet;function ListCache$4(e){var t=-1,r=e==null?0:e.length;for(this.clear();++t<r;){var n=e[t];this.set(n[0],n[1])}}ListCache$4.prototype.clear=listCacheClear,ListCache$4.prototype.delete=listCacheDelete,ListCache$4.prototype.get=listCacheGet,ListCache$4.prototype.has=listCacheHas,ListCache$4.prototype.set=listCacheSet;var _ListCache=ListCache$4,ListCache$3=_ListCache;function stackClear$1(){this.__data__=new ListCache$3,this.size=0}var _stackClear=stackClear$1;function stackDelete$1(e){var t=this.__data__,r=t.delete(e);return this.size=t.size,r}var _stackDelete=stackDelete$1;function stackGet$1(e){return this.__data__.get(e)}var _stackGet=stackGet$1;function stackHas$1(e){return this.__data__.has(e)}var _stackHas=stackHas$1,root$6=_root,coreJsData$1=root$6["__core-js_shared__"],_coreJsData=coreJsData$1,coreJsData=_coreJsData,maskSrcKey=function(){var e=/[^.]+$/.exec(coreJsData&&coreJsData.keys&&coreJsData.keys.IE_PROTO||"");return e?"Symbol(src)_1."+e:""}();function isMasked$1(e){return!!maskSrcKey&&maskSrcKey in e}var _isMasked=isMasked$1,funcProto$1=Function.prototype,funcToString$1=funcProto$1.toString;function toSource$2(e){if(e!=null){try{return funcToString$1.call(e)}catch{}try{return e+""}catch{}}return""}var _toSource=toSource$2,isFunction=isFunction_1,isMasked=_isMasked,isObject$2=isObject_1,toSource$1=_toSource,reRegExpChar=/[\\^$.*+?()[\]{}|]/g,reIsHostCtor=/^\[object .+?Constructor\]$/,funcProto=Function.prototype,objectProto$6=Object.prototype,funcToString=funcProto.toString,hasOwnProperty$5=objectProto$6.hasOwnProperty,reIsNative=RegExp("^"+funcToString.call(hasOwnProperty$5).replace(reRegExpChar,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$");function baseIsNative$1(e){if(!isObject$2(e)||isMasked(e))return!1;var t=isFunction(e)?reIsNative:reIsHostCtor;return t.test(toSource$1(e))}var _baseIsNative=baseIsNative$1;function getValue$1(e,t){return e==null?void 0:e[t]}var _getValue=getValue$1,baseIsNative=_baseIsNative,getValue=_getValue;function getNative$6(e,t){var r=getValue(e,t);return baseIsNative(r)?r:void 0}var _getNative=getNative$6,getNative$5=_getNative,root$5=_root,Map$3=getNative$5(root$5,"Map"),_Map=Map$3,getNative$4=_getNative,nativeCreate$4=getNative$4(Object,"create"),_nativeCreate=nativeCreate$4,nativeCreate$3=_nativeCreate;function hashClear$1(){this.__data__=nativeCreate$3?nativeCreate$3(null):{},this.size=0}var _hashClear=hashClear$1;function hashDelete$1(e){var t=this.has(e)&&delete this.__data__[e];return this.size-=t?1:0,t}var _hashDelete=hashDelete$1,nativeCreate$2=_nativeCreate,HASH_UNDEFINED$2="__lodash_hash_undefined__",objectProto$5=Object.prototype,hasOwnProperty$4=objectProto$5.hasOwnProperty;function hashGet$1(e){var t=this.__data__;if(nativeCreate$2){var r=t[e];return r===HASH_UNDEFINED$2?void 0:r}return hasOwnProperty$4.call(t,e)?t[e]:void 0}var _hashGet=hashGet$1,nativeCreate$1=_nativeCreate,objectProto$4=Object.prototype,hasOwnProperty$3=objectProto$4.hasOwnProperty;function hashHas$1(e){var t=this.__data__;return nativeCreate$1?t[e]!==void 0:hasOwnProperty$3.call(t,e)}var _hashHas=hashHas$1,nativeCreate=_nativeCreate,HASH_UNDEFINED$1="__lodash_hash_undefined__";function hashSet$1(e,t){var r=this.__data__;return this.size+=this.has(e)?0:1,r[e]=nativeCreate&&t===void 0?HASH_UNDEFINED$1:t,this}var _hashSet=hashSet$1,hashClear=_hashClear,hashDelete=_hashDelete,hashGet=_hashGet,hashHas=_hashHas,hashSet=_hashSet;function Hash$1(e){var t=-1,r=e==null?0:e.length;for(this.clear();++t<r;){var n=e[t];this.set(n[0],n[1])}}Hash$1.prototype.clear=hashClear,Hash$1.prototype.delete=hashDelete,Hash$1.prototype.get=hashGet,Hash$1.prototype.has=hashHas,Hash$1.prototype.set=hashSet;var _Hash=Hash$1,Hash=_Hash,ListCache$2=_ListCache,Map$2=_Map;function mapCacheClear$1(){this.size=0,this.__data__={hash:new Hash,map:new(Map$2||ListCache$2),string:new Hash}}var _mapCacheClear=mapCacheClear$1;function isKeyable$1(e){var t=typeof e;return t=="string"||t=="number"||t=="symbol"||t=="boolean"?e!=="__proto__":e===null}var _isKeyable=isKeyable$1,isKeyable=_isKeyable;function getMapData$4(e,t){var r=e.__data__;return isKeyable(t)?r[typeof t=="string"?"string":"hash"]:r.map}var _getMapData=getMapData$4,getMapData$3=_getMapData;function mapCacheDelete$1(e){var t=getMapData$3(this,e).delete(e);return this.size-=t?1:0,t}var _mapCacheDelete=mapCacheDelete$1,getMapData$2=_getMapData;function mapCacheGet$1(e){return getMapData$2(this,e).get(e)}var _mapCacheGet=mapCacheGet$1,getMapData$1=_getMapData;function mapCacheHas$1(e){return getMapData$1(this,e).has(e)}var _mapCacheHas=mapCacheHas$1,getMapData=_getMapData;function mapCacheSet$1(e,t){var r=getMapData(this,e),n=r.size;return r.set(e,t),this.size+=r.size==n?0:1,this}var _mapCacheSet=mapCacheSet$1,mapCacheClear=_mapCacheClear,mapCacheDelete=_mapCacheDelete,mapCacheGet=_mapCacheGet,mapCacheHas=_mapCacheHas,mapCacheSet=_mapCacheSet;function MapCache$3(e){var t=-1,r=e==null?0:e.length;for(this.clear();++t<r;){var n=e[t];this.set(n[0],n[1])}}MapCache$3.prototype.clear=mapCacheClear,MapCache$3.prototype.delete=mapCacheDelete,MapCache$3.prototype.get=mapCacheGet,MapCache$3.prototype.has=mapCacheHas,MapCache$3.prototype.set=mapCacheSet;var _MapCache=MapCache$3,ListCache$1=_ListCache,Map$1=_Map,MapCache$2=_MapCache,LARGE_ARRAY_SIZE=200;function stackSet$1(e,t){var r=this.__data__;if(r instanceof ListCache$1){var n=r.__data__;if(!Map$1||n.length<LARGE_ARRAY_SIZE-1)return n.push([e,t]),this.size=++r.size,this;r=this.__data__=new MapCache$2(n)}return r.set(e,t),this.size=r.size,this}var _stackSet=stackSet$1,ListCache=_ListCache,stackClear=_stackClear,stackDelete=_stackDelete,stackGet=_stackGet,stackHas=_stackHas,stackSet=_stackSet;function Stack$2(e){var t=this.__data__=new ListCache(e);this.size=t.size}Stack$2.prototype.clear=stackClear,Stack$2.prototype.delete=stackDelete,Stack$2.prototype.get=stackGet,Stack$2.prototype.has=stackHas,Stack$2.prototype.set=stackSet;var _Stack=Stack$2,HASH_UNDEFINED="__lodash_hash_undefined__";function setCacheAdd$1(e){return this.__data__.set(e,HASH_UNDEFINED),this}var _setCacheAdd=setCacheAdd$1;function setCacheHas$1(e){return this.__data__.has(e)}var _setCacheHas=setCacheHas$1,MapCache$1=_MapCache,setCacheAdd=_setCacheAdd,setCacheHas=_setCacheHas;function SetCache$1(e){var t=-1,r=e==null?0:e.length;for(this.__data__=new MapCache$1;++t<r;)this.add(e[t])}SetCache$1.prototype.add=SetCache$1.prototype.push=setCacheAdd,SetCache$1.prototype.has=setCacheHas;var _SetCache=SetCache$1;function arraySome$1(e,t){for(var r=-1,n=e==null?0:e.length;++r<n;)if(t(e[r],r,e))return!0;return!1}var _arraySome=arraySome$1;function cacheHas$1(e,t){return e.has(t)}var _cacheHas=cacheHas$1,SetCache=_SetCache,arraySome=_arraySome,cacheHas=_cacheHas,COMPARE_PARTIAL_FLAG$5=1,COMPARE_UNORDERED_FLAG$3=2;function equalArrays$2(e,t,r,n,s,a){var o=r&COMPARE_PARTIAL_FLAG$5,c=e.length,p=t.length;if(c!=p&&!(o&&p>c))return!1;var u=a.get(e);if(u&&a.get(t))return u==t;var h=-1,y=!0,l=r&COMPARE_UNORDERED_FLAG$3?new SetCache:void 0;for(a.set(e,t),a.set(t,e);++h<c;){var d=e[h],g=t[h];if(n)var $=o?n(g,d,h,t,e,a):n(d,g,h,e,t,a);if($!==void 0){if($)continue;y=!1;break}if(l){if(!arraySome(t,function(_,v){if(!cacheHas(l,v)&&(d===_||s(d,_,r,n,a)))return l.push(v)})){y=!1;break}}else if(!(d===g||s(d,g,r,n,a))){y=!1;break}}return a.delete(e),a.delete(t),y}var _equalArrays=equalArrays$2,root$4=_root,Uint8Array$2=root$4.Uint8Array,_Uint8Array=Uint8Array$2;function mapToArray$1(e){var t=-1,r=Array(e.size);return e.forEach(function(n,s){r[++t]=[s,n]}),r}var _mapToArray=mapToArray$1;function setToArray$1(e){var t=-1,r=Array(e.size);return e.forEach(function(n){r[++t]=n}),r}var _setToArray=setToArray$1,Symbol$2=_Symbol,Uint8Array$1=_Uint8Array,eq=eq_1,equalArrays$1=_equalArrays,mapToArray=_mapToArray,setToArray=_setToArray,COMPARE_PARTIAL_FLAG$4=1,COMPARE_UNORDERED_FLAG$2=2,boolTag="[object Boolean]",dateTag="[object Date]",errorTag="[object Error]",mapTag$1="[object Map]",numberTag="[object Number]",regexpTag="[object RegExp]",setTag$1="[object Set]",stringTag="[object String]",symbolTag$1="[object Symbol]",arrayBufferTag="[object ArrayBuffer]",dataViewTag$1="[object DataView]",symbolProto$1=Symbol$2?Symbol$2.prototype:void 0,symbolValueOf=symbolProto$1?symbolProto$1.valueOf:void 0;function equalByTag$1(e,t,r,n,s,a,o){switch(r){case dataViewTag$1:if(e.byteLength!=t.byteLength||e.byteOffset!=t.byteOffset)return!1;e=e.buffer,t=t.buffer;case arrayBufferTag:return!(e.byteLength!=t.byteLength||!a(new Uint8Array$1(e),new Uint8Array$1(t)));case boolTag:case dateTag:case numberTag:return eq(+e,+t);case errorTag:return e.name==t.name&&e.message==t.message;case regexpTag:case stringTag:return e==t+"";case mapTag$1:var c=mapToArray;case setTag$1:var p=n&COMPARE_PARTIAL_FLAG$4;if(c||(c=setToArray),e.size!=t.size&&!p)return!1;var u=o.get(e);if(u)return u==t;n|=COMPARE_UNORDERED_FLAG$2,o.set(e,t);var h=equalArrays$1(c(e),c(t),n,s,a,o);return o.delete(e),h;case symbolTag$1:if(symbolValueOf)return symbolValueOf.call(e)==symbolValueOf.call(t)}return!1}var _equalByTag=equalByTag$1;function arrayPush$1(e,t){for(var r=-1,n=t.length,s=e.length;++r<n;)e[s+r]=t[r];return e}var _arrayPush=arrayPush$1,arrayPush=_arrayPush,isArray$6=isArray_1;function baseGetAllKeys$1(e,t,r){var n=t(e);return isArray$6(e)?n:arrayPush(n,r(e))}var _baseGetAllKeys=baseGetAllKeys$1;function arrayFilter$1(e,t){for(var r=-1,n=e==null?0:e.length,s=0,a=[];++r<n;){var o=e[r];t(o,r,e)&&(a[s++]=o)}return a}var _arrayFilter=arrayFilter$1;function stubArray$1(){return[]}var stubArray_1=stubArray$1,arrayFilter=_arrayFilter,stubArray=stubArray_1,objectProto$3=Object.prototype,propertyIsEnumerable=objectProto$3.propertyIsEnumerable,nativeGetSymbols=Object.getOwnPropertySymbols,getSymbols$1=nativeGetSymbols?function(e){return e==null?[]:(e=Object(e),arrayFilter(nativeGetSymbols(e),function(t){return propertyIsEnumerable.call(e,t)}))}:stubArray,_getSymbols=getSymbols$1,overArg=_overArg,nativeKeys$1=overArg(Object.keys,Object),_nativeKeys=nativeKeys$1,isPrototype=_isPrototype,nativeKeys=_nativeKeys,objectProto$2=Object.prototype,hasOwnProperty$2=objectProto$2.hasOwnProperty;function baseKeys$1(e){if(!isPrototype(e))return nativeKeys(e);var t=[];for(var r in Object(e))hasOwnProperty$2.call(e,r)&&r!="constructor"&&t.push(r);return t}var _baseKeys=baseKeys$1,arrayLikeKeys=_arrayLikeKeys,baseKeys=_baseKeys,isArrayLike$1=isArrayLike_1;function keys$3(e){return isArrayLike$1(e)?arrayLikeKeys(e):baseKeys(e)}var keys_1=keys$3,baseGetAllKeys=_baseGetAllKeys,getSymbols=_getSymbols,keys$2=keys_1;function getAllKeys$1(e){return baseGetAllKeys(e,keys$2,getSymbols)}var _getAllKeys=getAllKeys$1,getAllKeys=_getAllKeys,COMPARE_PARTIAL_FLAG$3=1,objectProto$1=Object.prototype,hasOwnProperty$1=objectProto$1.hasOwnProperty;function equalObjects$1(e,t,r,n,s,a){var o=r&COMPARE_PARTIAL_FLAG$3,c=getAllKeys(e),p=c.length,u=getAllKeys(t),h=u.length;if(p!=h&&!o)return!1;for(var y=p;y--;){var l=c[y];if(!(o?l in t:hasOwnProperty$1.call(t,l)))return!1}var d=a.get(e);if(d&&a.get(t))return d==t;var g=!0;a.set(e,t),a.set(t,e);for(var $=o;++y<p;){l=c[y];var _=e[l],v=t[l];if(n)var m=o?n(v,_,l,t,e,a):n(_,v,l,e,t,a);if(!(m===void 0?_===v||s(_,v,r,n,a):m)){g=!1;break}$||($=l=="constructor")}if(g&&!$){var T=e.constructor,A=t.constructor;T!=A&&"constructor"in e&&"constructor"in t&&!(typeof T=="function"&&T instanceof T&&typeof A=="function"&&A instanceof A)&&(g=!1)}return a.delete(e),a.delete(t),g}var _equalObjects=equalObjects$1,getNative$3=_getNative,root$3=_root,DataView$1=getNative$3(root$3,"DataView"),_DataView=DataView$1,getNative$2=_getNative,root$2=_root,Promise$2=getNative$2(root$2,"Promise"),_Promise=Promise$2,getNative$1=_getNative,root$1=_root,Set$1=getNative$1(root$1,"Set"),_Set=Set$1,getNative=_getNative,root=_root,WeakMap$1=getNative(root,"WeakMap"),_WeakMap=WeakMap$1,DataView=_DataView,Map=_Map,Promise$1=_Promise,Set=_Set,WeakMap=_WeakMap,baseGetTag$1=_baseGetTag,toSource=_toSource,mapTag="[object Map]",objectTag$1="[object Object]",promiseTag="[object Promise]",setTag="[object Set]",weakMapTag="[object WeakMap]",dataViewTag="[object DataView]",dataViewCtorString=toSource(DataView),mapCtorString=toSource(Map),promiseCtorString=toSource(Promise$1),setCtorString=toSource(Set),weakMapCtorString=toSource(WeakMap),getTag$1=baseGetTag$1;(DataView&&getTag$1(new DataView(new ArrayBuffer(1)))!=dataViewTag||Map&&getTag$1(new Map)!=mapTag||Promise$1&&getTag$1(Promise$1.resolve())!=promiseTag||Set&&getTag$1(new Set)!=setTag||WeakMap&&getTag$1(new WeakMap)!=weakMapTag)&&(getTag$1=function(e){var t=baseGetTag$1(e),r=t==objectTag$1?e.constructor:void 0,n=r?toSource(r):"";if(n)switch(n){case dataViewCtorString:return dataViewTag;case mapCtorString:return mapTag;case promiseCtorString:return promiseTag;case setCtorString:return setTag;case weakMapCtorString:return weakMapTag}return t});var _getTag=getTag$1,Stack$1=_Stack,equalArrays=_equalArrays,equalByTag=_equalByTag,equalObjects=_equalObjects,getTag=_getTag,isArray$5=isArray_1,isBuffer=isBuffer$2.exports,isTypedArray=isTypedArray_1,COMPARE_PARTIAL_FLAG$2=1,argsTag="[object Arguments]",arrayTag="[object Array]",objectTag="[object Object]",objectProto=Object.prototype,hasOwnProperty=objectProto.hasOwnProperty;function baseIsEqualDeep$1(e,t,r,n,s,a){var o=isArray$5(e),c=isArray$5(t),p=o?arrayTag:getTag(e),u=c?arrayTag:getTag(t);p=p==argsTag?objectTag:p,u=u==argsTag?objectTag:u;var h=p==objectTag,y=u==objectTag,l=p==u;if(l&&isBuffer(e)){if(!isBuffer(t))return!1;o=!0,h=!1}if(l&&!h)return a||(a=new Stack$1),o||isTypedArray(e)?equalArrays(e,t,r,n,s,a):equalByTag(e,t,p,r,n,s,a);if(!(r&COMPARE_PARTIAL_FLAG$2)){var d=h&&hasOwnProperty.call(e,"__wrapped__"),g=y&&hasOwnProperty.call(t,"__wrapped__");if(d||g){var $=d?e.value():e,_=g?t.value():t;return a||(a=new Stack$1),s($,_,r,n,a)}}return l?(a||(a=new Stack$1),equalObjects(e,t,r,n,s,a)):!1}var _baseIsEqualDeep=baseIsEqualDeep$1,baseIsEqualDeep=_baseIsEqualDeep,isObjectLike$1=isObjectLike_1;function baseIsEqual$2(e,t,r,n,s){return e===t?!0:e==null||t==null||!isObjectLike$1(e)&&!isObjectLike$1(t)?e!==e&&t!==t:baseIsEqualDeep(e,t,r,n,baseIsEqual$2,s)}var _baseIsEqual=baseIsEqual$2,Stack=_Stack,baseIsEqual$1=_baseIsEqual,COMPARE_PARTIAL_FLAG$1=1,COMPARE_UNORDERED_FLAG$1=2;function baseIsMatch$1(e,t,r,n){var s=r.length,a=s,o=!n;if(e==null)return!a;for(e=Object(e);s--;){var c=r[s];if(o&&c[2]?c[1]!==e[c[0]]:!(c[0]in e))return!1}for(;++s<a;){c=r[s];var p=c[0],u=e[p],h=c[1];if(o&&c[2]){if(u===void 0&&!(p in e))return!1}else{var y=new Stack;if(n)var l=n(u,h,p,e,t,y);if(!(l===void 0?baseIsEqual$1(h,u,COMPARE_PARTIAL_FLAG$1|COMPARE_UNORDERED_FLAG$1,n,y):l))return!1}}return!0}var _baseIsMatch=baseIsMatch$1,isObject$1=isObject_1;function isStrictComparable$2(e){return e===e&&!isObject$1(e)}var _isStrictComparable=isStrictComparable$2,isStrictComparable$1=_isStrictComparable,keys$1=keys_1;function getMatchData$1(e){for(var t=keys$1(e),r=t.length;r--;){var n=t[r],s=e[n];t[r]=[n,s,isStrictComparable$1(s)]}return t}var _getMatchData=getMatchData$1;function matchesStrictComparable$2(e,t){return function(r){return r==null?!1:r[e]===t&&(t!==void 0||e in Object(r))}}var _matchesStrictComparable=matchesStrictComparable$2,baseIsMatch=_baseIsMatch,getMatchData=_getMatchData,matchesStrictComparable$1=_matchesStrictComparable;function baseMatches$1(e){var t=getMatchData(e);return t.length==1&&t[0][2]?matchesStrictComparable$1(t[0][0],t[0][1]):function(r){return r===e||baseIsMatch(r,e,t)}}var _baseMatches=baseMatches$1,baseGetTag=_baseGetTag,isObjectLike=isObjectLike_1,symbolTag="[object Symbol]";function isSymbol$4(e){return typeof e=="symbol"||isObjectLike(e)&&baseGetTag(e)==symbolTag}var isSymbol_1=isSymbol$4,isArray$4=isArray_1,isSymbol$3=isSymbol_1,reIsDeepProp=/\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,reIsPlainProp=/^\w*$/;function isKey$3(e,t){if(isArray$4(e))return!1;var r=typeof e;return r=="number"||r=="symbol"||r=="boolean"||e==null||isSymbol$3(e)?!0:reIsPlainProp.test(e)||!reIsDeepProp.test(e)||t!=null&&e in Object(t)}var _isKey=isKey$3,MapCache=_MapCache,FUNC_ERROR_TEXT="Expected a function";function memoize$1(e,t){if(typeof e!="function"||t!=null&&typeof t!="function")throw new TypeError(FUNC_ERROR_TEXT);var r=function(){var n=arguments,s=t?t.apply(this,n):n[0],a=r.cache;if(a.has(s))return a.get(s);var o=e.apply(this,n);return r.cache=a.set(s,o)||a,o};return r.cache=new(memoize$1.Cache||MapCache),r}memoize$1.Cache=MapCache;var memoize_1=memoize$1,memoize=memoize_1,MAX_MEMOIZE_SIZE=500;function memoizeCapped$1(e){var t=memoize(e,function(n){return r.size===MAX_MEMOIZE_SIZE&&r.clear(),n}),r=t.cache;return t}var _memoizeCapped=memoizeCapped$1,memoizeCapped=_memoizeCapped,reLeadingDot=/^\./,rePropName=/[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g,reEscapeChar=/\\(\\)?/g,stringToPath$1=memoizeCapped(function(e){var t=[];return reLeadingDot.test(e)&&t.push(""),e.replace(rePropName,function(r,n,s,a){t.push(s?a.replace(reEscapeChar,"$1"):n||r)}),t}),_stringToPath=stringToPath$1;function arrayMap$1(e,t){for(var r=-1,n=e==null?0:e.length,s=Array(n);++r<n;)s[r]=t(e[r],r,e);return s}var _arrayMap=arrayMap$1,Symbol$1=_Symbol,arrayMap=_arrayMap,isArray$3=isArray_1,isSymbol$2=isSymbol_1,INFINITY$2=1/0,symbolProto=Symbol$1?Symbol$1.prototype:void 0,symbolToString=symbolProto?symbolProto.toString:void 0;function baseToString$1(e){if(typeof e=="string")return e;if(isArray$3(e))return arrayMap(e,baseToString$1)+"";if(isSymbol$2(e))return symbolToString?symbolToString.call(e):"";var t=e+"";return t=="0"&&1/e==-INFINITY$2?"-0":t}var _baseToString=baseToString$1,baseToString=_baseToString;function toString$1(e){return e==null?"":baseToString(e)}var toString_1=toString$1,isArray$2=isArray_1,isKey$2=_isKey,stringToPath=_stringToPath,toString=toString_1;function castPath$2(e,t){return isArray$2(e)?e:isKey$2(e,t)?[e]:stringToPath(toString(e))}var _castPath=castPath$2,isSymbol$1=isSymbol_1,INFINITY$1=1/0;function toKey$4(e){if(typeof e=="string"||isSymbol$1(e))return e;var t=e+"";return t=="0"&&1/e==-INFINITY$1?"-0":t}var _toKey=toKey$4,castPath$1=_castPath,toKey$3=_toKey;function baseGet$2(e,t){t=castPath$1(t,e);for(var r=0,n=t.length;e!=null&&r<n;)e=e[toKey$3(t[r++])];return r&&r==n?e:void 0}var _baseGet=baseGet$2,baseGet$1=_baseGet;function get$1(e,t,r){var n=e==null?void 0:baseGet$1(e,t);return n===void 0?r:n}var get_1=get$1;function baseHasIn$1(e,t){return e!=null&&t in Object(e)}var _baseHasIn=baseHasIn$1,castPath=_castPath,isArguments=isArguments_1,isArray$1=isArray_1,isIndex=_isIndex,isLength=isLength_1,toKey$2=_toKey;function hasPath$1(e,t,r){t=castPath(t,e);for(var n=-1,s=t.length,a=!1;++n<s;){var o=toKey$2(t[n]);if(!(a=e!=null&&r(e,o)))break;e=e[o]}return a||++n!=s?a:(s=e==null?0:e.length,!!s&&isLength(s)&&isIndex(o,s)&&(isArray$1(e)||isArguments(e)))}var _hasPath=hasPath$1,baseHasIn=_baseHasIn,hasPath=_hasPath;function hasIn$1(e,t){return e!=null&&hasPath(e,t,baseHasIn)}var hasIn_1=hasIn$1,baseIsEqual=_baseIsEqual,get=get_1,hasIn=hasIn_1,isKey$1=_isKey,isStrictComparable=_isStrictComparable,matchesStrictComparable=_matchesStrictComparable,toKey$1=_toKey,COMPARE_PARTIAL_FLAG=1,COMPARE_UNORDERED_FLAG=2;function baseMatchesProperty$1(e,t){return isKey$1(e)&&isStrictComparable(t)?matchesStrictComparable(toKey$1(e),t):function(r){var n=get(r,e);return n===void 0&&n===t?hasIn(r,e):baseIsEqual(t,n,COMPARE_PARTIAL_FLAG|COMPARE_UNORDERED_FLAG)}}var _baseMatchesProperty=baseMatchesProperty$1;function baseProperty$1(e){return function(t){return t==null?void 0:t[e]}}var _baseProperty=baseProperty$1,baseGet=_baseGet;function basePropertyDeep$1(e){return function(t){return baseGet(t,e)}}var _basePropertyDeep=basePropertyDeep$1,baseProperty=_baseProperty,basePropertyDeep=_basePropertyDeep,isKey=_isKey,toKey=_toKey;function property$1(e){return isKey(e)?baseProperty(toKey(e)):basePropertyDeep(e)}var property_1=property$1,baseMatches=_baseMatches,baseMatchesProperty=_baseMatchesProperty,identity=identity_1,isArray=isArray_1,property=property_1;function baseIteratee$2(e){return typeof e=="function"?e:e==null?identity:typeof e=="object"?isArray(e)?baseMatchesProperty(e[0],e[1]):baseMatches(e):property(e)}var _baseIteratee=baseIteratee$2,baseIteratee$1=_baseIteratee,isArrayLike=isArrayLike_1,keys=keys_1;function createFind$1(e){return function(t,r,n){var s=Object(t);if(!isArrayLike(t)){var a=baseIteratee$1(r);t=keys(t),r=function(c){return a(s[c],c,s)}}var o=e(t,r,n);return o>-1?s[a?t[o]:o]:void 0}}var _createFind=createFind$1;function baseFindIndex$1(e,t,r,n){for(var s=e.length,a=r+(n?1:-1);n?a--:++a<s;)if(t(e[a],a,e))return a;return-1}var _baseFindIndex=baseFindIndex$1,isObject=isObject_1,isSymbol=isSymbol_1,NAN=0/0,reTrim=/^\s+|\s+$/g,reIsBadHex=/^[-+]0x[0-9a-f]+$/i,reIsBinary=/^0b[01]+$/i,reIsOctal=/^0o[0-7]+$/i,freeParseInt=parseInt;function toNumber$1(e){if(typeof e=="number")return e;if(isSymbol(e))return NAN;if(isObject(e)){var t=typeof e.valueOf=="function"?e.valueOf():e;e=isObject(t)?t+"":t}if(typeof e!="string")return e===0?e:+e;e=e.replace(reTrim,"");var r=reIsBinary.test(e);return r||reIsOctal.test(e)?freeParseInt(e.slice(2),r?2:8):reIsBadHex.test(e)?NAN:+e}var toNumber_1=toNumber$1,toNumber=toNumber_1,INFINITY=1/0,MAX_INTEGER=17976931348623157e292;function toFinite$1(e){if(!e)return e===0?e:0;if(e=toNumber(e),e===INFINITY||e===-INFINITY){var t=e<0?-1:1;return t*MAX_INTEGER}return e===e?e:0}var toFinite_1=toFinite$1,toFinite=toFinite_1;function toInteger$1(e){var t=toFinite(e),r=t%1;return t===t?r?t-r:t:0}var toInteger_1=toInteger$1,baseFindIndex=_baseFindIndex,baseIteratee=_baseIteratee,toInteger=toInteger_1,nativeMax=Math.max;function findIndex$1(e,t,r){var n=e==null?0:e.length;if(!n)return-1;var s=r==null?0:toInteger(r);return s<0&&(s=nativeMax(n+s,0)),baseFindIndex(e,baseIteratee(t),s)}var findIndex_1=findIndex$1,createFind=_createFind,findIndex=findIndex_1,find=createFind(findIndex),find_1=find,rngBrowser={exports:{}},getRandomValues=typeof crypto!="undefined"&&crypto.getRandomValues&&crypto.getRandomValues.bind(crypto)||typeof msCrypto!="undefined"&&typeof window.msCrypto.getRandomValues=="function"&&msCrypto.getRandomValues.bind(msCrypto);if(getRandomValues){var rnds8=new Uint8Array(16);rngBrowser.exports=function(){return getRandomValues(rnds8),rnds8}}else{var rnds=new Array(16);rngBrowser.exports=function(){for(var t=0,r;t<16;t++)(t&3)==0&&(r=Math.random()*4294967296),rnds[t]=r>>>((t&3)<<3)&255;return rnds}}for(var byteToHex=[],i=0;i<256;++i)byteToHex[i]=(i+256).toString(16).substr(1);function bytesToUuid$1(e,t){var r=t||0,n=byteToHex;return[n[e[r++]],n[e[r++]],n[e[r++]],n[e[r++]],"-",n[e[r++]],n[e[r++]],"-",n[e[r++]],n[e[r++]],"-",n[e[r++]],n[e[r++]],"-",n[e[r++]],n[e[r++]],n[e[r++]],n[e[r++]],n[e[r++]],n[e[r++]]].join("")}var bytesToUuid_1=bytesToUuid$1,rng=rngBrowser.exports,bytesToUuid=bytesToUuid_1;function v4(e,t,r){var n=t&&r||0;typeof e=="string"&&(t=e==="binary"?new Array(16):null,e=null),e=e||{};var s=e.random||(e.rng||rng)();if(s[6]=s[6]&15|64,s[8]=s[8]&63|128,t)for(var a=0;a<16;++a)t[n+a]=s[a];return t||bytesToUuid(s)}var v4_1=v4,socket_ioWebsocketOnly={exports:{}};/*! Socket.IO.js build:0.9.17, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */(function(module){const that=typeof window=="undefined"?{}:window;var io=module.exports;(function(){(function(e,t){var r=e;r.version="0.9.17",r.protocol=1,r.transports=[],r.j=[],r.sockets={},r.connect=function(n,s){var a=r.util.parseUri(n),o,c;t&&t.location&&(a.protocol=a.protocol||t.location.protocol.slice(0,-1),a.host=a.host||(t.document?t.document.domain:t.location.hostname),a.port=a.port||t.location.port),o=r.util.uniqueUri(a);var p={host:a.host,secure:a.protocol=="https",port:a.port||(a.protocol=="https"?443:80),query:a.query||""};return r.util.merge(p,s),(p["force new connection"]||!r.sockets[o])&&(c=new r.Socket(p)),!p["force new connection"]&&c&&(r.sockets[o]=c),c=c||r.sockets[o],c.of(a.path.length>1?a.path:"")}})(module.exports,that),function(e,t){var r=e.util={},n=/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/,s=["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"];r.parseUri=function(o){for(var c=n.exec(o||""),p={},u=14;u--;)p[s[u]]=c[u]||"";return p},r.uniqueUri=function(o){var c=o.protocol,p=o.host,u=o.port;return"document"in t?(p=p||document.domain,u=u||(c=="https"&&document.location.protocol!=="https:"?443:document.location.port)):(p=p||"localhost",!u&&c=="https"&&(u=443)),(c||"http")+"://"+p+":"+(u||80)},r.query=function(o,c){var p=r.chunkQuery(o||""),u=[];r.merge(p,r.chunkQuery(c||""));for(var h in p)p.hasOwnProperty(h)&&u.push(h+"="+p[h]);return u.length?"?"+u.join("&"):""},r.chunkQuery=function(o){for(var c={},p=o.split("&"),u=0,h=p.length,y;u<h;++u)y=p[u].split("="),y[0]&&(c[y[0]]=y[1]);return c};var a=!1;r.load=function(o){if("document"in t&&document.readyState==="complete"||a)return o();r.on(t,"load",o,!1)},r.on=function(o,c,p,u){o.attachEvent?o.attachEvent("on"+c,p):o.addEventListener&&o.addEventListener(c,p,u)},r.request=function(o){if(o&&typeof XDomainRequest!="undefined"&&!r.ua.hasCORS)return new XDomainRequest;if(typeof XMLHttpRequest!="undefined"&&(!o||r.ua.hasCORS))return new XMLHttpRequest;if(!o)try{return new window[["Active"].concat("Object").join("X")]("Microsoft.XMLHTTP")}catch{}return null},typeof window!="undefined"&&r.load(function(){a=!0}),r.defer=function(o){if(!r.ua.webkit||typeof importScripts!="undefined")return o();r.load(function(){setTimeout(o,100)})},r.merge=function(c,p,u,h){var y=h||[],l=typeof u=="undefined"?2:u,d;for(d in p)p.hasOwnProperty(d)&&r.indexOf(y,d)<0&&(typeof c[d]!="object"||!l?(c[d]=p[d],y.push(p[d])):r.merge(c[d],p[d],l-1,y));return c},r.mixin=function(o,c){r.merge(o.prototype,c.prototype)},r.inherit=function(o,c){function p(){}p.prototype=c.prototype,o.prototype=new p},r.isArray=Array.isArray||function(o){return Object.prototype.toString.call(o)==="[object Array]"},r.intersect=function(o,c){for(var p=[],u=o.length>c.length?o:c,h=o.length>c.length?c:o,y=0,l=h.length;y<l;y++)~r.indexOf(u,h[y])&&p.push(h[y]);return p},r.indexOf=function(o,c,p){for(var u=o.length,p=p<0?p+u<0?0:p+u:p||0;p<u&&o[p]!==c;p++);return u<=p?-1:p},r.toArray=function(o){for(var c=[],p=0,u=o.length;p<u;p++)c.push(o[p]);return c},r.ua={},r.ua.hasCORS=typeof XMLHttpRequest!="undefined"&&function(){try{var o=new XMLHttpRequest}catch{return!1}return o.withCredentials!=null}(),r.ua.webkit=typeof navigator!="undefined"&&/webkit/i.test(navigator.userAgent),r.ua.iDevice=typeof navigator!="undefined"&&/iPad|iPhone|iPod/i.test(navigator.userAgent)}(typeof io!="undefined"?io:module.exports,that),function(e,t){e.EventEmitter=r;function r(){}r.prototype.on=function(n,s){return this.$events||(this.$events={}),this.$events[n]?t.util.isArray(this.$events[n])?this.$events[n].push(s):this.$events[n]=[this.$events[n],s]:this.$events[n]=s,this},r.prototype.addListener=r.prototype.on,r.prototype.once=function(n,s){var a=this;function o(){a.removeListener(n,o),s.apply(this,arguments)}return o.listener=s,this.on(n,o),this},r.prototype.removeListener=function(n,s){if(this.$events&&this.$events[n]){var a=this.$events[n];if(t.util.isArray(a)){for(var o=-1,c=0,p=a.length;c<p;c++)if(a[c]===s||a[c].listener&&a[c].listener===s){o=c;break}if(o<0)return this;a.splice(o,1),a.length||delete this.$events[n]}else(a===s||a.listener&&a.listener===s)&&delete this.$events[n]}return this},r.prototype.removeAllListeners=function(n){return n===void 0?(this.$events={},this):(this.$events&&this.$events[n]&&(this.$events[n]=null),this)},r.prototype.listeners=function(n){return this.$events||(this.$events={}),this.$events[n]||(this.$events[n]=[]),t.util.isArray(this.$events[n])||(this.$events[n]=[this.$events[n]]),this.$events[n]},r.prototype.emit=function(n){if(!this.$events)return!1;var s=this.$events[n];if(!s)return!1;var a=Array.prototype.slice.call(arguments,1);if(typeof s=="function")s.apply(this,a);else if(t.util.isArray(s))for(var o=s.slice(),c=0,p=o.length;c<p;c++)o[c].apply(this,a);else return!1;return!0}}(typeof io!="undefined"?io:module.exports,typeof io!="undefined"?io:module.parent.exports),function(exports,nativeJSON){if(nativeJSON&&nativeJSON.parse)return exports.JSON={parse:nativeJSON.parse,stringify:nativeJSON.stringify};var JSON=exports.JSON={};function f(e){return e<10?"0"+e:e}function date(e,t){return isFinite(e.valueOf())?e.getUTCFullYear()+"-"+f(e.getUTCMonth()+1)+"-"+f(e.getUTCDate())+"T"+f(e.getUTCHours())+":"+f(e.getUTCMinutes())+":"+f(e.getUTCSeconds())+"Z":null}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={"\b":"\\b","	":"\\t","\n":"\\n","\f":"\\f","\r":"\\r",'"':'\\"',"\\":"\\\\"},rep;function quote(e){return escapable.lastIndex=0,escapable.test(e)?'"'+e.replace(escapable,function(t){var r=meta[t];return typeof r=="string"?r:"\\u"+("0000"+t.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+e+'"'}function str(e,t){var r,n,s,a,o=gap,c,p=t[e];switch(p instanceof Date&&(p=date(e)),typeof rep=="function"&&(p=rep.call(t,e,p)),typeof p){case"string":return quote(p);case"number":return isFinite(p)?String(p):"null";case"boolean":case"null":return String(p);case"object":if(!p)return"null";if(gap+=indent,c=[],Object.prototype.toString.apply(p)==="[object Array]"){for(a=p.length,r=0;r<a;r+=1)c[r]=str(r,p)||"null";return s=c.length===0?"[]":gap?`[
-`+gap+c.join(`,
-`+gap)+`
-`+o+"]":"["+c.join(",")+"]",gap=o,s}if(rep&&typeof rep=="object")for(a=rep.length,r=0;r<a;r+=1)typeof rep[r]=="string"&&(n=rep[r],s=str(n,p),s&&c.push(quote(n)+(gap?": ":":")+s));else for(n in p)Object.prototype.hasOwnProperty.call(p,n)&&(s=str(n,p),s&&c.push(quote(n)+(gap?": ":":")+s));return s=c.length===0?"{}":gap?`{
-`+gap+c.join(`,
-`+gap)+`
-`+o+"}":"{"+c.join(",")+"}",gap=o,s}}JSON.stringify=function(e,t,r){var n;if(gap="",indent="",typeof r=="number")for(n=0;n<r;n+=1)indent+=" ";else typeof r=="string"&&(indent=r);if(rep=t,t&&typeof t!="function"&&(typeof t!="object"||typeof t.length!="number"))throw new Error("JSON.stringify");return str("",{"":e})},JSON.parse=function(text,reviver){var j;function walk(e,t){var r,n,s=e[t];if(s&&typeof s=="object")for(r in s)Object.prototype.hasOwnProperty.call(s,r)&&(n=walk(s,r),n!==void 0?s[r]=n:delete s[r]);return reviver.call(e,t,s)}if(text=String(text),cx.lastIndex=0,cx.test(text)&&(text=text.replace(cx,function(e){return"\\u"+("0000"+e.charCodeAt(0).toString(16)).slice(-4)})),/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,"@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,"]").replace(/(?:^|:|,)(?:\s*\[)+/g,"")))return j=eval("("+text+")"),typeof reviver=="function"?walk({"":j},""):j;throw new SyntaxError("JSON.parse")}}(typeof io!="undefined"?io:module.exports,typeof JSON!="undefined"?JSON:void 0),function(e,t){var r=e.parser={},n=r.packets=["disconnect","connect","heartbeat","message","json","event","ack","error","noop"],s=r.reasons=["transport not supported","client not handshaken","unauthorized"],a=r.advice=["reconnect"],o=t.JSON,c=t.util.indexOf;r.encodePacket=function(u){var h=c(n,u.type),y=u.id||"",l=u.endpoint||"",d=u.ack,g=null;switch(u.type){case"error":var $=u.reason?c(s,u.reason):"",_=u.advice?c(a,u.advice):"";($!==""||_!=="")&&(g=$+(_!==""?"+"+_:""));break;case"message":u.data!==""&&(g=u.data);break;case"event":var v={name:u.name};u.args&&u.args.length&&(v.args=u.args),g=o.stringify(v);break;case"json":g=o.stringify(u.data);break;case"connect":u.qs&&(g=u.qs);break;case"ack":g=u.ackId+(u.args&&u.args.length?"+"+o.stringify(u.args):"");break}var m=[h,y+(d=="data"?"+":""),l];return g!=null&&m.push(g),m.join(":")},r.encodePayload=function(u){var h="";if(u.length==1)return u[0];for(var y=0,l=u.length;y<l;y++){var d=u[y];h+="\uFFFD"+d.length+"\uFFFD"+u[y]}return h};var p=/([^:]+):([0-9]+)?(\+)?:([^:]+)?:?([\s\S]*)?/;r.decodePacket=function(u){var h=u.match(p);if(!h)return{};var y=h[2]||"",u=h[5]||"",l={type:n[h[1]],endpoint:h[4]||""};switch(y&&(l.id=y,h[3]?l.ack="data":l.ack=!0),l.type){case"error":var h=u.split("+");l.reason=s[h[0]]||"",l.advice=a[h[1]]||"";break;case"message":l.data=u||"";break;case"event":try{var d=o.parse(u);l.name=d.name,l.args=d.args}catch{}l.args=l.args||[];break;case"json":try{l.data=o.parse(u)}catch{}break;case"connect":l.qs=u||"";break;case"ack":var h=u.match(/^([0-9]+)(\+)?(.*)/);if(h&&(l.ackId=h[1],l.args=[],h[3]))try{l.args=h[3]?o.parse(h[3]):[]}catch{}break}return l},r.decodePayload=function(u){if(u.charAt(0)=="\uFFFD"){for(var h=[],y=1,l="";y<u.length;y++)u.charAt(y)=="\uFFFD"?(h.push(r.decodePacket(u.substr(y+1).substr(0,l))),y+=Number(l)+1,l=""):l+=u.charAt(y);return h}else return[r.decodePacket(u)]}}(typeof io!="undefined"?io:module.exports,typeof io!="undefined"?io:module.parent.exports),function(e,t){e.Transport=r;function r(n,s){this.socket=n,this.sessid=s}t.util.mixin(r,t.EventEmitter),r.prototype.heartbeats=function(){return!0},r.prototype.onData=function(n){if(this.clearCloseTimeout(),(this.socket.connected||this.socket.connecting||this.socket.reconnecting)&&this.setCloseTimeout(),n!==""){var s=t.parser.decodePayload(n);if(s&&s.length)for(var a=0,o=s.length;a<o;a++)this.onPacket(s[a])}return this},r.prototype.onPacket=function(n){return this.socket.setHeartbeatTimeout(),n.type=="heartbeat"?this.onHeartbeat():(n.type=="connect"&&n.endpoint==""&&this.onConnect(),n.type=="error"&&n.advice=="reconnect"&&(this.isOpen=!1),this.socket.onPacket(n),this)},r.prototype.setCloseTimeout=function(){if(!this.closeTimeout){var n=this;this.closeTimeout=setTimeout(function(){n.onDisconnect()},this.socket.closeTimeout)}},r.prototype.onDisconnect=function(){return this.isOpen&&this.close(),this.clearTimeouts(),this.socket.onDisconnect(),this},r.prototype.onConnect=function(){return this.socket.onConnect(),this},r.prototype.clearCloseTimeout=function(){this.closeTimeout&&(clearTimeout(this.closeTimeout),this.closeTimeout=null)},r.prototype.clearTimeouts=function(){this.clearCloseTimeout(),this.reopenTimeout&&clearTimeout(this.reopenTimeout)},r.prototype.packet=function(n){this.send(t.parser.encodePacket(n))},r.prototype.onHeartbeat=function(n){this.packet({type:"heartbeat"})},r.prototype.onOpen=function(){this.isOpen=!0,this.clearCloseTimeout(),this.socket.onOpen()},r.prototype.onClose=function(){this.isOpen=!1,this.socket.onClose(),this.onDisconnect()},r.prototype.prepareUrl=function(){var n=this.socket.options;return this.scheme()+"://"+n.host+":"+n.port+"/"+n.resource+"/"+t.protocol+"/"+this.name+"/"+this.sessid},r.prototype.ready=function(n,s){s.call(this)}}(typeof io!="undefined"?io:module.exports,typeof io!="undefined"?io:module.parent.exports),function(e,t,r){e.Socket=n;function n(a){if(this.options={port:80,secure:!1,document:"document"in r?document:!1,resource:"socket.io",transports:t.transports,"connect timeout":1e4,"try multiple transports":!0,reconnect:!0,"reconnection delay":500,"reconnection limit":1/0,"reopen delay":3e3,"max reconnection attempts":10,"sync disconnect on unload":!1,"auto connect":!0,"flash policy port":10843,manualFlush:!1},t.util.merge(this.options,a),this.connected=!1,this.open=!1,this.connecting=!1,this.reconnecting=!1,this.namespaces={},this.buffer=[],this.doBuffer=!1,this.options["sync disconnect on unload"]&&(!this.isXDomain()||t.util.ua.hasCORS)){var o=this;t.util.on(r,"beforeunload",function(){o.disconnectSync()},!1)}this.options["auto connect"]&&this.connect()}t.util.mixin(n,t.EventEmitter),n.prototype.of=function(a){return this.namespaces[a]||(this.namespaces[a]=new t.SocketNamespace(this,a),a!==""&&this.namespaces[a].packet({type:"connect"})),this.namespaces[a]},n.prototype.publish=function(){this.emit.apply(this,arguments);var a;for(var o in this.namespaces)this.namespaces.hasOwnProperty(o)&&(a=this.of(o),a.$emit.apply(a,arguments))};function s(){}n.prototype.handshake=function(a){var o=this,c=this.options;function p(d){d instanceof Error?(o.connecting=!1,o.onError(d.message)):a.apply(null,d.split(":"))}var u=["http"+(c.secure?"s":"")+":/",c.host+":"+c.port,c.resource,t.protocol,t.util.query(this.options.query,"t="+ +new Date)].join("/");if(this.isXDomain()&&!t.util.ua.hasCORS){var h=document.getElementsByTagName("script")[0],y=document.createElement("script");y.src=u+"&jsonp="+t.j.length,h.parentNode.insertBefore(y,h),t.j.push(function(d){p(d),y.parentNode.removeChild(y)})}else{var l=t.util.request();l.open("GET",u,!0),this.isXDomain()&&(l.withCredentials=!0),l.onreadystatechange=function(){l.readyState==4&&(l.onreadystatechange=s,l.status==200?p(l.responseText):l.status==403?o.onError(l.responseText):(o.connecting=!1,!o.reconnecting&&o.onError(l.responseText)))},l.send(null)}},n.prototype.getTransport=function(a){for(var o=a||this.transports,c=0,p;p=o[c];c++)if(t.Transport[p]&&t.Transport[p].check(this)&&(!this.isXDomain()||t.Transport[p].xdomainCheck(this)))return new t.Transport[p](this,this.sessionid);return null},n.prototype.connect=function(a){if(this.connecting)return this;var o=this;return o.connecting=!0,this.handshake(function(c,p,u,h){o.sessionid=c,o.closeTimeout=u*1e3,o.heartbeatTimeout=p*1e3,o.transports||(o.transports=o.origTransports=h?t.util.intersect(h.split(","),o.options.transports):o.options.transports),o.setHeartbeatTimeout();function y(l){if(o.transport&&o.transport.clearTimeouts(),o.transport=o.getTransport(l),!o.transport)return o.publish("connect_failed");o.transport.ready(o,function(){o.connecting=!0,o.publish("connecting",o.transport.name),o.transport.open(),o.options["connect timeout"]&&(o.connectTimeoutTimer=setTimeout(function(){if(!o.connected&&(o.connecting=!1,o.options["try multiple transports"])){for(var d=o.transports;d.length>0&&d.splice(0,1)[0]!=o.transport.name;);d.length?y(d):o.publish("connect_failed")}},o.options["connect timeout"]))})}y(o.transports),o.once("connect",function(){clearTimeout(o.connectTimeoutTimer),a&&typeof a=="function"&&a()})}),this},n.prototype.setHeartbeatTimeout=function(){if(clearTimeout(this.heartbeatTimeoutTimer),!(this.transport&&!this.transport.heartbeats())){var a=this;this.heartbeatTimeoutTimer=setTimeout(function(){a.transport.onClose()},this.heartbeatTimeout)}},n.prototype.packet=function(a){return this.connected&&!this.doBuffer?this.transport.packet(a):this.buffer.push(a),this},n.prototype.setBuffer=function(a){this.doBuffer=a,!a&&this.connected&&this.buffer.length&&(this.options.manualFlush||this.flushBuffer())},n.prototype.flushBuffer=function(){this.transport.payload(this.buffer),this.buffer=[]},n.prototype.disconnect=function(){return(this.connected||this.connecting)&&(this.open&&this.of("").packet({type:"disconnect"}),this.onDisconnect("booted")),this},n.prototype.disconnectSync=function(){var a=t.util.request(),o=["http"+(this.options.secure?"s":"")+":/",this.options.host+":"+this.options.port,this.options.resource,t.protocol,"",this.sessionid].join("/")+"/?disconnect=1";a.open("GET",o,!1),a.send(null),this.onDisconnect("booted")},n.prototype.isXDomain=function(){var a=r.location.port||(r.location.protocol=="https:"?443:80);return this.options.host!==r.location.hostname||this.options.port!=a},n.prototype.onConnect=function(){this.connected||(this.connected=!0,this.connecting=!1,this.doBuffer||this.setBuffer(!1),this.emit("connect"))},n.prototype.onOpen=function(){this.open=!0},n.prototype.onClose=function(){this.open=!1,clearTimeout(this.heartbeatTimeoutTimer)},n.prototype.onPacket=function(a){this.of(a.endpoint).onPacket(a)},n.prototype.onError=function(a){a&&a.advice&&a.advice==="reconnect"&&(this.connected||this.connecting)&&(this.disconnect(),this.options.reconnect&&this.reconnect()),this.publish("error",a&&a.reason?a.reason:a)},n.prototype.onDisconnect=function(a){var o=this.connected,c=this.connecting;this.connected=!1,this.connecting=!1,this.open=!1,(o||c)&&(this.transport.close(),this.transport.clearTimeouts(),o&&(this.publish("disconnect",a),a!="booted"&&this.options.reconnect&&!this.reconnecting&&this.reconnect()))},n.prototype.reconnect=function(){this.reconnecting=!0,this.reconnectionAttempts=0,this.reconnectionDelay=this.options["reconnection delay"];var a=this,o=this.options["max reconnection attempts"],c=this.options["try multiple transports"],p=this.options["reconnection limit"];function u(){if(a.connected){for(var y in a.namespaces)a.namespaces.hasOwnProperty(y)&&y!==""&&a.namespaces[y].packet({type:"connect"});a.publish("reconnect",a.transport.name,a.reconnectionAttempts)}clearTimeout(a.reconnectionTimer),a.removeListener("connect_failed",h),a.removeListener("connect",h),a.reconnecting=!1,delete a.reconnectionAttempts,delete a.reconnectionDelay,delete a.reconnectionTimer,delete a.redoTransports,a.options["try multiple transports"]=c}function h(){if(!!a.reconnecting){if(a.connected)return u();if(a.connecting&&a.reconnecting)return a.reconnectionTimer=setTimeout(h,1e3);a.reconnectionAttempts++>=o?a.redoTransports?(a.publish("reconnect_failed"),u()):(a.on("connect_failed",h),a.options["try multiple transports"]=!0,a.transports=a.origTransports,a.transport=a.getTransport(),a.redoTransports=!0,a.connect()):(a.reconnectionDelay<p&&(a.reconnectionDelay*=2),a.connect(),a.publish("reconnecting",a.reconnectionDelay,a.reconnectionAttempts),a.reconnectionTimer=setTimeout(h,a.reconnectionDelay))}}this.options["try multiple transports"]=!1,this.reconnectionTimer=setTimeout(h,this.reconnectionDelay),this.on("connect",h)}}(typeof io!="undefined"?io:module.exports,typeof io!="undefined"?io:module.parent.exports,that),function(e,t){e.SocketNamespace=r;function r(s,a){this.socket=s,this.name=a||"",this.flags={},this.json=new n(this,"json"),this.ackPackets=0,this.acks={}}t.util.mixin(r,t.EventEmitter),r.prototype.$emit=t.EventEmitter.prototype.emit,r.prototype.of=function(){return this.socket.of.apply(this.socket,arguments)},r.prototype.packet=function(s){return s.endpoint=this.name,this.socket.packet(s),this.flags={},this},r.prototype.send=function(s,a){var o={type:this.flags.json?"json":"message",data:s};return typeof a=="function"&&(o.id=++this.ackPackets,o.ack=!0,this.acks[o.id]=a),this.packet(o)},r.prototype.emit=function(s){var a=Array.prototype.slice.call(arguments,1),o=a[a.length-1],c={type:"event",name:s};return typeof o=="function"&&(c.id=++this.ackPackets,c.ack="data",this.acks[c.id]=o,a=a.slice(0,a.length-1)),c.args=a,this.packet(c)},r.prototype.disconnect=function(){return this.name===""?this.socket.disconnect():(this.packet({type:"disconnect"}),this.$emit("disconnect")),this},r.prototype.onPacket=function(s){var a=this;function o(){a.packet({type:"ack",args:t.util.toArray(arguments),ackId:s.id})}switch(s.type){case"connect":this.$emit("connect");break;case"disconnect":this.name===""?this.socket.onDisconnect(s.reason||"booted"):this.$emit("disconnect",s.reason);break;case"message":case"json":var c=["message",s.data];s.ack=="data"?c.push(o):s.ack&&this.packet({type:"ack",ackId:s.id}),this.$emit.apply(this,c);break;case"event":var c=[s.name].concat(s.args);s.ack=="data"&&c.push(o),this.$emit.apply(this,c);break;case"ack":this.acks[s.ackId]&&(this.acks[s.ackId].apply(this,s.args),delete this.acks[s.ackId]);break;case"error":s.advice?this.socket.onError(s):s.reason=="unauthorized"?this.$emit("connect_failed",s.reason):this.$emit("error",s.reason);break}};function n(s,a){this.namespace=s,this.name=a}n.prototype.send=function(){this.namespace.flags[this.name]=!0,this.namespace.send.apply(this.namespace,arguments)},n.prototype.emit=function(){this.namespace.flags[this.name]=!0,this.namespace.emit.apply(this.namespace,arguments)}}(typeof io!="undefined"?io:module.exports,typeof io!="undefined"?io:module.parent.exports),function(e,t,r){e.websocket=n;function n(s){t.Transport.apply(this,arguments)}t.util.inherit(n,t.Transport),n.prototype.name="websocket",n.prototype.open=function(){var s=t.util.query(this.socket.options.query),a=this,o;return o||(o=r.MozWebSocket||r.WebSocket),this.websocket=new o(this.prepareUrl()+s),this.websocket.onopen=function(){a.onOpen(),a.socket.setBuffer(!1)},this.websocket.onmessage=function(c){a.onData(c.data)},this.websocket.onclose=function(){a.onClose(),a.socket.setBuffer(!0)},this.websocket.onerror=function(c){a.onError(c)},this},t.util.ua.iDevice?n.prototype.send=function(s){var a=this;return setTimeout(function(){a.websocket.send(s)},0),this}:n.prototype.send=function(s){return this.websocket.send(s),this},n.prototype.payload=function(s){for(var a=0,o=s.length;a<o;a++)this.packet(s[a]);return this},n.prototype.close=function(){return this.websocket.close(),this},n.prototype.onError=function(s){this.socket.onError(s)},n.prototype.scheme=function(){return this.socket.options.secure?"wss":"ws"},n.check=function(){return"WebSocket"in r&&!("__addTask"in WebSocket)||"MozWebSocket"in r},n.xdomainCheck=function(){return!0},t.transports.push("websocket")}(typeof io!="undefined"?io.Transport:module.exports,typeof io!="undefined"?io:module.parent.exports,that)})()})(socket_ioWebsocketOnly);var io=socket_ioWebsocketOnly.exports;class Event{constructor(t,r,n={}){this._data=Object.assign({topic:t,data:r,target:"",inReplyToEvent:null},n,{id:v4_1(),sent:null})}getData(){return this._data}addSource(t){this._data.source=t}}function errorFactory(e){function t(r,n){this.name=e,this.message=r,this.errorCode=n,this.stack=new Error().stack}return t.prototype=new Error,t}const ServerError=errorFactory("ServerError"),ServerPermissionDeniedError=errorFactory("ServerPermissionDeniedError"),ServerValidationError=errorFactory("ServerValidationError"),EventServerReplyTimeoutError=errorFactory("EventServerReplyTimeoutError"),EventServerConnectionTimeoutError=errorFactory("EventServerConnectionTimeoutError"),NotUniqueError=errorFactory("NotUniqueError"),CreateComponentError=errorFactory("CreateComponentError"),AbortError=errorFactory("AbortError"),exports$3={ServerError,ServerPermissionDeniedError,ServerValidationError,EventServerReplyTimeoutError,EventServerConnectionTimeoutError,NotUniqueError,CreateComponentError,AbortError};function encodeUriParameters(e){return Object.keys(e).map(t=>[t,e[t]].map(encodeURIComponent).join("=")).join("&")}class EventHub{constructor(t,r,n,{applicationId:s="ftrack.api.javascript"}={}){this.logger=loglevel__default.default.getLogger("ftrack_api:EventHub"),this._applicationId=s,this._apiUser=r,this._apiKey=n;const a=new RegExp("\\:\\d+$");if(t.match(a))this._serverUrl=t;else{const o=t.lastIndexOf("https",0)===0?"443":"80";this._serverUrl=`${t}:${o}`}this._id=v4_1(),this._replyCallbacks={},this._unsentEvents=[],this._subscribers=[],this._socketIo=null,this._handle=this._handle.bind(this),this._handleReply=this._handleReply.bind(this),this._onSocketConnected=this._onSocketConnected.bind(this)}connect(){this._socketIo=io.connect(this._serverUrl,{"max reconnection attempts":1/0,"reconnection limit":1e4,"reconnection delay":5e3,transports:["websocket"],query:encodeUriParameters({api_user:this._apiUser,api_key:this._apiKey})}),this._socketIo.on("connect",this._onSocketConnected),this._socketIo.on("ftrack.event",this._handle)}isConnected(){return this._socketIo&&this._socketIo.socket.connected||!1}_onSocketConnected(){this.logger.debug("Connected to event server.");try{this.subscribe("topic=ftrack.meta.reply",this._handleReply,{id:this._id})}catch(r){if(r instanceof NotUniqueError)this.logger.debug("Already subscribed to replies.");else throw r}for(const r of this._subscribers)this._notifyServerAboutSubscriber(r);const t=this._unsentEvents;if(t.length){this._unsentEvents=[],this.logger.debug(`Publishing ${t.length} unsent events.`);for(const r of t)this._runWhenConnected(r)}}publish(t,{onReply:r=null,timeout:n=10}={}){t.addSource({id:this._id,applicationId:this._applicationId,user:{username:this._apiUser}});const s=Object.assign({},t.getData()),a=s.id;return new Promise((p,u)=>{this._runWhenConnected(p),n&&setTimeout(()=>{const h=new EventServerConnectionTimeoutError("Unable to connect to event server within timeout.");u(h)},n*1e3)}).then(()=>(r&&(this._replyCallbacks[a]=r),this.logger.debug("Publishing event.",s),this._socketIo.emit("ftrack.event",s),Promise.resolve(a)))}publishAndWaitForReply(t,{timeout:r=30}){return new Promise((s,a)=>{const o=c=>{s(c),this._removeReplyCallback(t.id)};this.publish(t,{timeout:r,onReply:o}),r&&setTimeout(()=>{const c=new EventServerReplyTimeoutError("No reply event received within timeout.");a(c),this._removeReplyCallback(t.id)},r*1e3)})}_removeReplyCallback(t){this._replyCallbacks[t]&&delete this._replyCallbacks[t]}_runWhenConnected(t){this.isConnected()?t():(this.logger.debug("Event hub is not connected, event is delayed."),this._unsentEvents.push(t),this._socketIo.socket.reconnect())}subscribe(t,r,n={}){const s=this._addSubscriber(t,r,n);return this._notifyServerAboutSubscriber(s),s.metadata.id}_getExpressionTopic(t){const r=new RegExp(`^topic[ ]?=[ '"]?([\\w-,./*@+]+)['"]?$`),n=t.trim().match(r);if(n&&n.length===2)return n[1];throw new Error('Only subscriptions on the format "topic=value" are supported.')}_addSubscriber(t,r,n={}){if(this._getExpressionTopic(t),n.id||(n.id=v4_1()),this.getSubscriberByIdentifier(n.id))throw new NotUniqueError(`Subscriber with identifier "${n.id}" already exists.`);const a={subscription:t,callback:r,metadata:n};return this._subscribers.push(a),a}_notifyServerAboutSubscriber(t){const r=new Event("ftrack.meta.subscribe",{subscriber:t.metadata,subscription:t.subscription});this.publish(r)}getSubscriberByIdentifier(t){for(const r of this._subscribers.slice())if(r.metadata.id===t)return r;return null}_IsSubscriberInterestedIn(t,r){return this._getExpressionTopic(t.subscription)===r.topic}_handle(t){this.logger.debug("Event received",t);for(const r of this._subscribers){if(!this._IsSubscriberInterestedIn(r,t))continue;let n=null;try{n=r.callback(t)}catch(s){this.logger.error("Error calling subscriber for event.",s,r,t)}n!=null&&this.publishReply(t,n,r.metadata)}}_handleReply(t){this.logger.debug("Reply received",t);const r=this._replyCallbacks[t.inReplyToEvent];r&&r(t)}publishReply(t,r,n=null){const s=new Event("ftrack.meta.reply",r);return s._data.target=`id=${t.source.id}`,s._data.inReplyToEvent=t.id,n&&(s._data.source=n),this.publish(s)}}function createOperation(e,t){const r={action:"create",entity_type:e};return r.entity_data=Object.assign({},t,{__entity_type__:e}),r}function queryOperation(e){return{action:"query",expression:e}}function searchOperation({expression:e,entityType:t,terms:r,contextId:n,objectTypeIds:s}){return{action:"search",expression:e,entity_type:t,terms:r,context_id:n,object_type_ids:s}}function updateOperation(e,t,r){const n={action:"update",entity_type:e,entity_key:t};return n.entity_data=Object.assign({},r,{__entity_type__:e}),n}function deleteOperation(e,t){return{action:"delete",entity_type:e,entity_key:t}}const exports$2={query:queryOperation,create:createOperation,update:updateOperation,delete:deleteOperation,search:searchOperation},SERVER_LOCATION_ID="3a372bde-05bc-11e4-8908-20c9d081909b";function normalizeString(e){let t=e;try{t=e.normalize()}catch(r){loglevel__default.default.warn("Failed to normalize string",e,r)}return t}const logger=loglevel__default.default.getLogger("ftrack_api"),ENCODE_DATETIME_FORMAT="YYYY-MM-DDTHH:mm:ss";function splitFileExtension(e){let t=e||"",r=e.slice((Math.max(0,e.lastIndexOf("."))||1/0)+1)||"";return r.length&&(r=`.${r}`,t=e.slice(0,-1*r.length)||""),[t,r]}class Session{constructor(t,r,n,{autoConnectEventHub:s=!1,serverInformationValues:a=null,eventHubOptions:o={},clientToken:c=null,apiEndpoint:p="/api"}={}){if(!t||!r||!n)throw new Error("Invalid arguments, please construct Session with *serverUrl*, *apiUser* and *apiKey*.");this.apiUser=r,this.apiKey=n,this.serverUrl=t,this.apiEndpoint=p,this.eventHub=new EventHub(t,r,n,o),s&&this.eventHub.connect(),c?this.clientToken=c:this.clientToken=`ftrack-javascript-api--${v4_1()}`,a&&!a.includes("is_timezone_support_enabled")&&a.push("is_timezone_support_enabled");const u=[{action:"query_server_information",values:a},{action:"query_schemas"}];this.initialized=!1,this.initializing=this.call(u).then(h=>(this.serverInformation=h[0],this.schemas=h[1],this.serverVersion=this.serverInformation.version,this.initialized=!0,Promise.resolve(this)))}getPrimaryKeyAttributes(t){const r=find_1(this.schemas,n=>n.id===t);return!r||!r.primary_key?(logger.warn("Primary key could not be found for: ",t),null):r.primary_key}getIdentifyingKey(t){const r=this.getPrimaryKeyAttributes(t.__entity_type__);return r?[t.__entity_type__,...r.map(n=>t[n])].join(","):null}encode(t){if(t&&t.constructor===Array)return t.map(r=>this.encode(r));if(t&&t.constructor===Object){const r={};return forIn_1(t,(n,s)=>{r[s]=this.encode(n)}),r}return t&&t._isAMomentObject?this.serverInformation&&this.serverInformation.is_timezone_support_enabled?{__type__:"datetime",value:t.utc().format(ENCODE_DATETIME_FORMAT)}:{__type__:"datetime",value:t.local().format(ENCODE_DATETIME_FORMAT)}:t}getErrorFromResponse(t){let r;return t.exception==="AbortError"?r=AbortError:t.exception==="ValidationError"?r=ServerValidationError:t.exception==="FTAuthenticationError"||t.exception==="PermissionError"?r=ServerPermissionDeniedError:r=ServerError,new r(t.content,t.error_code)}decode(t,r={}){return t==null?t:isArray_1(t)?this._decodeArray(t,r):isPlainObject_1(t)?t.__entity_type__?this._mergeEntity(t,r):t.__type__==="datetime"?this._decodeDateTime(t):this._decodePlainObject(t,r):t}_decodeDateTime(t){return this.serverInformation&&this.serverInformation.is_timezone_support_enabled?moment__default.default.utc(t.value):moment__default.default(t.value)}_decodePlainObject(t,r){return Object.keys(t).reduce((n,s)=>(n[s]=this.decode(t[s],r),n),{})}_decodeArray(t,r){return t.map(n=>this.decode(n,r))}_mergeEntity(t,r){const n=this.getIdentifyingKey(t);if(!n)return logger.warn("Identifier could not be determined for: ",n),t;r[n]||(r[n]={});const s=r[n];return forIn_1(t,(a,o)=>{s[o]=this.decode(a,r)}),s}encodeOperations(t){return JSON.stringify(this.encode(t))}call(t,{abortController:r}={}){const n=`${this.serverUrl}${this.apiEndpoint}`;let s=new Promise(a=>{this.initializing&&!this.initialized?this.initializing.then(()=>{a()}):a()});return s=s.then(()=>fetch(n,{method:"post",credentials:"include",headers:{Accept:"application/json","Content-Type":"application/json","ftrack-api-key":this.apiKey,"ftrack-user":this.apiUser,"ftrack-Clienttoken":this.clientToken},body:this.encodeOperations(t),signal:r&&r.signal})),s=s.catch(a=>(logger.warn("Failed to perform request. ",a),a.name==="AbortError"?Promise.resolve({exception:"AbortError",content:a.message}):Promise.resolve({exception:"NetworkError",content:a.message}))),s=s.then(a=>a.json&&a.json()||a),s=s.then(a=>this.initialized?this.decode(a):a),s=s.catch(a=>(logger.warn("Server reported error in unexpected format. ",a),Promise.resolve({exception:"MalformedResponseError",content:a.message,error:a}))),s=s.then(a=>a.exception?Promise.reject(this.getErrorFromResponse(a)):Promise.resolve(a)),s}ensure(t,r,n=[]){let s=n;if(logger.info("Ensuring entity with data using identifying keys: ",t,r,n),s.length||(s=Object.keys(r)),!s.length)throw new Error(`Could not determine any identifying data to check against when ensuring ${t} with data ${r}. Identifying keys: ${n}`);const a=this.getPrimaryKeyAttributes(t);let o=`select ${a.join(", ")} from ${t} where`;const c=s.map(p=>{let u=r[p];return isString_1(u)?u=`"${u}"`:u&&u._isAMomentObject&&(u=moment__default.default(u).utc().format(ENCODE_DATETIME_FORMAT),u=`"${u}"`),`${p} is ${u}`});return o=`${o} ${c.join(" and ")}`,this.query(o).then(p=>{if(p.data.length===0)return this.create(t,r).then(({data:y})=>Promise.resolve(y));if(p.data.length!==1)throw new Error(`Expected single or no item to be found but got multiple when ensuring ${t} with data ${r}. Identifying keys: ${n}`);const u=p.data[0];let h=!1;return Object.keys(r).forEach(y=>{r[y]!==u[y]&&(u[y]=r[y],h=!0)}),h?this.update(t,a.map(y=>u[y]),Object.keys(r).reduce((y,l)=>(a.indexOf(l)===-1&&(y[l]=r[l]),y),{})).then(({data:y})=>Promise.resolve(y)):Promise.resolve(p.data[0])})}getSchema(t){for(const r in this.schemas)if(this.schemas[r].id===t)return this.schemas[r];return null}query(t,{abortController:r}={}){logger.debug("Query",t);const n=queryOperation(t);let s=this.call([n],r);return s=s.then(a=>a[0]),s}search({expression:t,entityType:r,terms:n=[],contextId:s,objectTypeIds:a},{abortController:o}={}){logger.debug("Search",{expression:t,entityType:r,terms:n,contextId:s,objectTypeIds:a});const c=searchOperation({expression:t,entityType:r,terms:n,contextId:s,objectTypeIds:a});let p=this.call([c],o);return p=p.then(u=>u[0]),p}create(t,r){logger.debug("Create",t,r);let n=this.call([createOperation(t,r)]);return n=n.then(s=>s[0]),n}update(t,r,n){logger.debug("Update",t,r,n);let s=this.call([updateOperation(t,r,n)]);return s=s.then(a=>a[0]),s}delete(t,r){logger.debug("Delete",t,r);let n=this.call([deleteOperation(t,r)]);return n=n.then(s=>s[0]),n}getComponentUrl(t){if(!t)return null;const r={id:t,username:this.apiUser,apiKey:this.apiKey};return`${this.serverUrl}/component/get?${encodeUriParameters(r)}`}thumbnailUrl(t,{size:r=300}={}){if(!t)return`${this.serverUrl}/img/thumbnail2.png`;const n={id:t,size:r,username:this.apiUser,apiKey:this.apiKey};return`${this.serverUrl}/component/thumbnail?${encodeUriParameters(n)}`}createComponent(t,r={}){const n=normalizeString(t.name),s=splitFileExtension(n),a=b=>b,o=()=>{},c=r.data||{},p=r.onProgress||a,u=r.xhr||new XMLHttpRequest,h=r.onAborted||o,y=c.file_type||s[1],l=c.name||s[0],d=c.size||t.size,g=c.id||v4_1(),$=v4_1();let _,v;const m=b=>{b.lengthComputable&&p(parseInt(b.loaded/b.total*100,10))};logger.debug("Registering component and fetching upload metadata.");const T=Object.assign(c,{id:g,name:l,file_type:y,size:d}),A={id:$,component_id:g,resource_identifier:g,location_id:SERVER_LOCATION_ID},O=this.call([createOperation("FileComponent",T),createOperation("ComponentLocation",A),{action:"get_upload_metadata",file_name:`${l}${y}`,file_size:d,component_id:g}]).then(b=>(_=b[2].url,v=b[2].headers,b));return O.then(()=>(logger.debug(`Uploading file to: ${_}`),new Promise((b,C)=>{u.upload.addEventListener("progress",m),u.open("PUT",_,!0),u.onabort=()=>{h(),this.delete("FileComponent",[g]).then(()=>{C(new CreateComponentError("Upload aborted by client","UPLOAD_ABORTED"))})};for(const S in v)v.hasOwnProperty(S)&&S!=="Content-Length"&&u.setRequestHeader(S,v[S]);u.onload=()=>{u.status>=400&&C(new CreateComponentError(`Failed to upload file: ${u.status}`)),b(u.response)},u.onerror=()=>{this.delete("FileComponent",[g]).then(()=>{C(new CreateComponentError(`Failed to upload file: ${u.status}`))})},u.send(t)}).then(()=>O)))}}function getStatuses(e,t,r,n=null){let s;const a=["_task_workflow.statuses.name","_task_workflow.statuses.color","_task_workflow.statuses.sort"],o=["_version_workflow.statuses.name","_version_workflow.statuses.color","_version_workflow.statuses.sort"],c=["_overrides.type_id","_overrides.workflow_schema.statuses.name","_overrides.workflow_schema.statuses.sort","_overrides.workflow_schema.statuses.color"],p=["_schemas.type_id","_schemas.statuses.task_status.name","_schemas.statuses.task_status.color","_schemas.statuses.task_status.sort"];let u;r==="Task"&&n!==null?u=[a,c]:r==="Task"?u=[a]:r==="AssetVersion"?u=[o]:u=[p];const h=u.map(y=>exports$2.query(`select ${y.join(", ")} from ProjectSchema where id is ${t}`));return s=e.call(h),s=s.then(y=>{const l=y[0].data[0];let d=[];if(r==="Task"){if(d=null,n!==null&&l._overrides.length>0){for(const g in l._overrides)if(l._overrides[g].type_id===n){d=l._overrides[g].workflow_schema.statuses;break}}d===null&&(d=l._task_workflow.statuses)}else if(r==="AssetVersion")d=l._version_workflow.statuses;else{const g=e.getSchema(r);if(g&&g.alias_for&&g.alias_for.id==="Task"){const $=g.alias_for.classifiers.object_typeid;for(const _ in l._schemas)l._schemas[_].type_id===$&&(d=l._schemas[_].statuses.map(v=>v.task_status))}}return Promise.resolve(d)}),s}const exports$1={getStatuses};Object.defineProperty(exports,"logger",{enumerable:!0,get:function(){return loglevel__default.default}}),exports.Event=Event,exports.EventHub=EventHub,exports.Session=Session,exports.error=exports$3,exports.operation=exports$2,exports.projectSchema=exports$1,Object.defineProperty(exports,"__esModule",{value:!0}),exports[Symbol.toStringTag]="Module"});
+(function(global2, factory) {
+  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("moment"), require("loglevel")) : typeof define === "function" && define.amd ? define(["exports", "moment", "loglevel"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2["ftrack-javascript-api"] = {}, global2.moment, global2.loglevel));
+})(this, function(exports, moment, loglevel) {
+  "use strict";
+  function _interopDefaultLegacy(e) {
+    return e && typeof e === "object" && "default" in e ? e : { "default": e };
+  }
+  var moment__default = /* @__PURE__ */ _interopDefaultLegacy(moment);
+  var loglevel__default = /* @__PURE__ */ _interopDefaultLegacy(loglevel);
+  var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+  function createBaseFor$1(fromRight) {
+    return function(object, iteratee, keysFunc) {
+      var index = -1, iterable = Object(object), props = keysFunc(object), length = props.length;
+      while (length--) {
+        var key = props[fromRight ? length : ++index];
+        if (iteratee(iterable[key], key, iterable) === false) {
+          break;
+        }
+      }
+      return object;
+    };
+  }
+  var _createBaseFor = createBaseFor$1;
+  var createBaseFor = _createBaseFor;
+  var baseFor$1 = createBaseFor();
+  var _baseFor = baseFor$1;
+  function identity$2(value) {
+    return value;
+  }
+  var identity_1 = identity$2;
+  var identity$1 = identity_1;
+  function castFunction$1(value) {
+    return typeof value == "function" ? value : identity$1;
+  }
+  var _castFunction = castFunction$1;
+  function baseTimes$1(n, iteratee) {
+    var index = -1, result = Array(n);
+    while (++index < n) {
+      result[index] = iteratee(index);
+    }
+    return result;
+  }
+  var _baseTimes = baseTimes$1;
+  var freeGlobal$1 = typeof commonjsGlobal == "object" && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
+  var _freeGlobal = freeGlobal$1;
+  var freeGlobal = _freeGlobal;
+  var freeSelf = typeof self == "object" && self && self.Object === Object && self;
+  var root$8 = freeGlobal || freeSelf || Function("return this")();
+  var _root = root$8;
+  var root$7 = _root;
+  var Symbol$5 = root$7.Symbol;
+  var _Symbol = Symbol$5;
+  var Symbol$4 = _Symbol;
+  var objectProto$d = Object.prototype;
+  var hasOwnProperty$a = objectProto$d.hasOwnProperty;
+  var nativeObjectToString$1 = objectProto$d.toString;
+  var symToStringTag$1 = Symbol$4 ? Symbol$4.toStringTag : void 0;
+  function getRawTag$1(value) {
+    var isOwn = hasOwnProperty$a.call(value, symToStringTag$1), tag = value[symToStringTag$1];
+    try {
+      value[symToStringTag$1] = void 0;
+      var unmasked = true;
+    } catch (e) {
+    }
+    var result = nativeObjectToString$1.call(value);
+    if (unmasked) {
+      if (isOwn) {
+        value[symToStringTag$1] = tag;
+      } else {
+        delete value[symToStringTag$1];
+      }
+    }
+    return result;
+  }
+  var _getRawTag = getRawTag$1;
+  var objectProto$c = Object.prototype;
+  var nativeObjectToString = objectProto$c.toString;
+  function objectToString$1(value) {
+    return nativeObjectToString.call(value);
+  }
+  var _objectToString = objectToString$1;
+  var Symbol$3 = _Symbol, getRawTag = _getRawTag, objectToString = _objectToString;
+  var nullTag = "[object Null]", undefinedTag = "[object Undefined]";
+  var symToStringTag = Symbol$3 ? Symbol$3.toStringTag : void 0;
+  function baseGetTag$7(value) {
+    if (value == null) {
+      return value === void 0 ? undefinedTag : nullTag;
+    }
+    return symToStringTag && symToStringTag in Object(value) ? getRawTag(value) : objectToString(value);
+  }
+  var _baseGetTag = baseGetTag$7;
+  function isObjectLike$7(value) {
+    return value != null && typeof value == "object";
+  }
+  var isObjectLike_1 = isObjectLike$7;
+  var baseGetTag$6 = _baseGetTag, isObjectLike$6 = isObjectLike_1;
+  var argsTag$2 = "[object Arguments]";
+  function baseIsArguments$1(value) {
+    return isObjectLike$6(value) && baseGetTag$6(value) == argsTag$2;
+  }
+  var _baseIsArguments = baseIsArguments$1;
+  var baseIsArguments = _baseIsArguments, isObjectLike$5 = isObjectLike_1;
+  var objectProto$b = Object.prototype;
+  var hasOwnProperty$9 = objectProto$b.hasOwnProperty;
+  var propertyIsEnumerable$1 = objectProto$b.propertyIsEnumerable;
+  var isArguments$2 = baseIsArguments(function() {
+    return arguments;
+  }()) ? baseIsArguments : function(value) {
+    return isObjectLike$5(value) && hasOwnProperty$9.call(value, "callee") && !propertyIsEnumerable$1.call(value, "callee");
+  };
+  var isArguments_1 = isArguments$2;
+  var isArray$9 = Array.isArray;
+  var isArray_1 = isArray$9;
+  var isBuffer$2 = { exports: {} };
+  function stubFalse() {
+    return false;
+  }
+  var stubFalse_1 = stubFalse;
+  (function(module2, exports2) {
+    var root2 = _root, stubFalse2 = stubFalse_1;
+    var freeExports = exports2 && !exports2.nodeType && exports2;
+    var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
+    var moduleExports = freeModule && freeModule.exports === freeExports;
+    var Buffer = moduleExports ? root2.Buffer : void 0;
+    var nativeIsBuffer = Buffer ? Buffer.isBuffer : void 0;
+    var isBuffer2 = nativeIsBuffer || stubFalse2;
+    module2.exports = isBuffer2;
+  })(isBuffer$2, isBuffer$2.exports);
+  var MAX_SAFE_INTEGER$1 = 9007199254740991;
+  var reIsUint = /^(?:0|[1-9]\d*)$/;
+  function isIndex$2(value, length) {
+    length = length == null ? MAX_SAFE_INTEGER$1 : length;
+    return !!length && (typeof value == "number" || reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
+  }
+  var _isIndex = isIndex$2;
+  var MAX_SAFE_INTEGER = 9007199254740991;
+  function isLength$3(value) {
+    return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+  }
+  var isLength_1 = isLength$3;
+  var baseGetTag$5 = _baseGetTag, isLength$2 = isLength_1, isObjectLike$4 = isObjectLike_1;
+  var argsTag$1 = "[object Arguments]", arrayTag$1 = "[object Array]", boolTag$1 = "[object Boolean]", dateTag$1 = "[object Date]", errorTag$1 = "[object Error]", funcTag$1 = "[object Function]", mapTag$2 = "[object Map]", numberTag$1 = "[object Number]", objectTag$3 = "[object Object]", regexpTag$1 = "[object RegExp]", setTag$2 = "[object Set]", stringTag$2 = "[object String]", weakMapTag$1 = "[object WeakMap]";
+  var arrayBufferTag$1 = "[object ArrayBuffer]", dataViewTag$2 = "[object DataView]", float32Tag = "[object Float32Array]", float64Tag = "[object Float64Array]", int8Tag = "[object Int8Array]", int16Tag = "[object Int16Array]", int32Tag = "[object Int32Array]", uint8Tag = "[object Uint8Array]", uint8ClampedTag = "[object Uint8ClampedArray]", uint16Tag = "[object Uint16Array]", uint32Tag = "[object Uint32Array]";
+  var typedArrayTags = {};
+  typedArrayTags[float32Tag] = typedArrayTags[float64Tag] = typedArrayTags[int8Tag] = typedArrayTags[int16Tag] = typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] = typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] = typedArrayTags[uint32Tag] = true;
+  typedArrayTags[argsTag$1] = typedArrayTags[arrayTag$1] = typedArrayTags[arrayBufferTag$1] = typedArrayTags[boolTag$1] = typedArrayTags[dataViewTag$2] = typedArrayTags[dateTag$1] = typedArrayTags[errorTag$1] = typedArrayTags[funcTag$1] = typedArrayTags[mapTag$2] = typedArrayTags[numberTag$1] = typedArrayTags[objectTag$3] = typedArrayTags[regexpTag$1] = typedArrayTags[setTag$2] = typedArrayTags[stringTag$2] = typedArrayTags[weakMapTag$1] = false;
+  function baseIsTypedArray$1(value) {
+    return isObjectLike$4(value) && isLength$2(value.length) && !!typedArrayTags[baseGetTag$5(value)];
+  }
+  var _baseIsTypedArray = baseIsTypedArray$1;
+  function baseUnary$1(func) {
+    return function(value) {
+      return func(value);
+    };
+  }
+  var _baseUnary = baseUnary$1;
+  var _nodeUtil = { exports: {} };
+  (function(module2, exports2) {
+    var freeGlobal2 = _freeGlobal;
+    var freeExports = exports2 && !exports2.nodeType && exports2;
+    var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
+    var moduleExports = freeModule && freeModule.exports === freeExports;
+    var freeProcess = moduleExports && freeGlobal2.process;
+    var nodeUtil2 = function() {
+      try {
+        return freeProcess && freeProcess.binding && freeProcess.binding("util");
+      } catch (e) {
+      }
+    }();
+    module2.exports = nodeUtil2;
+  })(_nodeUtil, _nodeUtil.exports);
+  var baseIsTypedArray = _baseIsTypedArray, baseUnary = _baseUnary, nodeUtil = _nodeUtil.exports;
+  var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
+  var isTypedArray$2 = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
+  var isTypedArray_1 = isTypedArray$2;
+  var baseTimes = _baseTimes, isArguments$1 = isArguments_1, isArray$8 = isArray_1, isBuffer$1 = isBuffer$2.exports, isIndex$1 = _isIndex, isTypedArray$1 = isTypedArray_1;
+  var objectProto$a = Object.prototype;
+  var hasOwnProperty$8 = objectProto$a.hasOwnProperty;
+  function arrayLikeKeys$2(value, inherited) {
+    var isArr = isArray$8(value), isArg = !isArr && isArguments$1(value), isBuff = !isArr && !isArg && isBuffer$1(value), isType = !isArr && !isArg && !isBuff && isTypedArray$1(value), skipIndexes = isArr || isArg || isBuff || isType, result = skipIndexes ? baseTimes(value.length, String) : [], length = result.length;
+    for (var key in value) {
+      if ((inherited || hasOwnProperty$8.call(value, key)) && !(skipIndexes && (key == "length" || isBuff && (key == "offset" || key == "parent") || isType && (key == "buffer" || key == "byteLength" || key == "byteOffset") || isIndex$1(key, length)))) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+  var _arrayLikeKeys = arrayLikeKeys$2;
+  function isObject$5(value) {
+    var type = typeof value;
+    return value != null && (type == "object" || type == "function");
+  }
+  var isObject_1 = isObject$5;
+  var objectProto$9 = Object.prototype;
+  function isPrototype$2(value) {
+    var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto$9;
+    return value === proto;
+  }
+  var _isPrototype = isPrototype$2;
+  function nativeKeysIn$1(object) {
+    var result = [];
+    if (object != null) {
+      for (var key in Object(object)) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+  var _nativeKeysIn = nativeKeysIn$1;
+  var isObject$4 = isObject_1, isPrototype$1 = _isPrototype, nativeKeysIn = _nativeKeysIn;
+  var objectProto$8 = Object.prototype;
+  var hasOwnProperty$7 = objectProto$8.hasOwnProperty;
+  function baseKeysIn$1(object) {
+    if (!isObject$4(object)) {
+      return nativeKeysIn(object);
+    }
+    var isProto = isPrototype$1(object), result = [];
+    for (var key in object) {
+      if (!(key == "constructor" && (isProto || !hasOwnProperty$7.call(object, key)))) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+  var _baseKeysIn = baseKeysIn$1;
+  var baseGetTag$4 = _baseGetTag, isObject$3 = isObject_1;
+  var asyncTag = "[object AsyncFunction]", funcTag = "[object Function]", genTag = "[object GeneratorFunction]", proxyTag = "[object Proxy]";
+  function isFunction$2(value) {
+    if (!isObject$3(value)) {
+      return false;
+    }
+    var tag = baseGetTag$4(value);
+    return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
+  }
+  var isFunction_1 = isFunction$2;
+  var isFunction$1 = isFunction_1, isLength$1 = isLength_1;
+  function isArrayLike$3(value) {
+    return value != null && isLength$1(value.length) && !isFunction$1(value);
+  }
+  var isArrayLike_1 = isArrayLike$3;
+  var arrayLikeKeys$1 = _arrayLikeKeys, baseKeysIn = _baseKeysIn, isArrayLike$2 = isArrayLike_1;
+  function keysIn$1(object) {
+    return isArrayLike$2(object) ? arrayLikeKeys$1(object, true) : baseKeysIn(object);
+  }
+  var keysIn_1 = keysIn$1;
+  var baseFor = _baseFor, castFunction = _castFunction, keysIn = keysIn_1;
+  function forIn(object, iteratee) {
+    return object == null ? object : baseFor(object, castFunction(iteratee), keysIn);
+  }
+  var forIn_1 = forIn;
+  var baseGetTag$3 = _baseGetTag, isArray$7 = isArray_1, isObjectLike$3 = isObjectLike_1;
+  var stringTag$1 = "[object String]";
+  function isString(value) {
+    return typeof value == "string" || !isArray$7(value) && isObjectLike$3(value) && baseGetTag$3(value) == stringTag$1;
+  }
+  var isString_1 = isString;
+  function overArg$2(func, transform) {
+    return function(arg) {
+      return func(transform(arg));
+    };
+  }
+  var _overArg = overArg$2;
+  var overArg$1 = _overArg;
+  var getPrototype$1 = overArg$1(Object.getPrototypeOf, Object);
+  var _getPrototype = getPrototype$1;
+  var baseGetTag$2 = _baseGetTag, getPrototype = _getPrototype, isObjectLike$2 = isObjectLike_1;
+  var objectTag$2 = "[object Object]";
+  var funcProto$2 = Function.prototype, objectProto$7 = Object.prototype;
+  var funcToString$2 = funcProto$2.toString;
+  var hasOwnProperty$6 = objectProto$7.hasOwnProperty;
+  var objectCtorString = funcToString$2.call(Object);
+  function isPlainObject(value) {
+    if (!isObjectLike$2(value) || baseGetTag$2(value) != objectTag$2) {
+      return false;
+    }
+    var proto = getPrototype(value);
+    if (proto === null) {
+      return true;
+    }
+    var Ctor = hasOwnProperty$6.call(proto, "constructor") && proto.constructor;
+    return typeof Ctor == "function" && Ctor instanceof Ctor && funcToString$2.call(Ctor) == objectCtorString;
+  }
+  var isPlainObject_1 = isPlainObject;
+  function listCacheClear$1() {
+    this.__data__ = [];
+    this.size = 0;
+  }
+  var _listCacheClear = listCacheClear$1;
+  function eq$2(value, other) {
+    return value === other || value !== value && other !== other;
+  }
+  var eq_1 = eq$2;
+  var eq$1 = eq_1;
+  function assocIndexOf$4(array, key) {
+    var length = array.length;
+    while (length--) {
+      if (eq$1(array[length][0], key)) {
+        return length;
+      }
+    }
+    return -1;
+  }
+  var _assocIndexOf = assocIndexOf$4;
+  var assocIndexOf$3 = _assocIndexOf;
+  var arrayProto = Array.prototype;
+  var splice = arrayProto.splice;
+  function listCacheDelete$1(key) {
+    var data = this.__data__, index = assocIndexOf$3(data, key);
+    if (index < 0) {
+      return false;
+    }
+    var lastIndex = data.length - 1;
+    if (index == lastIndex) {
+      data.pop();
+    } else {
+      splice.call(data, index, 1);
+    }
+    --this.size;
+    return true;
+  }
+  var _listCacheDelete = listCacheDelete$1;
+  var assocIndexOf$2 = _assocIndexOf;
+  function listCacheGet$1(key) {
+    var data = this.__data__, index = assocIndexOf$2(data, key);
+    return index < 0 ? void 0 : data[index][1];
+  }
+  var _listCacheGet = listCacheGet$1;
+  var assocIndexOf$1 = _assocIndexOf;
+  function listCacheHas$1(key) {
+    return assocIndexOf$1(this.__data__, key) > -1;
+  }
+  var _listCacheHas = listCacheHas$1;
+  var assocIndexOf = _assocIndexOf;
+  function listCacheSet$1(key, value) {
+    var data = this.__data__, index = assocIndexOf(data, key);
+    if (index < 0) {
+      ++this.size;
+      data.push([key, value]);
+    } else {
+      data[index][1] = value;
+    }
+    return this;
+  }
+  var _listCacheSet = listCacheSet$1;
+  var listCacheClear = _listCacheClear, listCacheDelete = _listCacheDelete, listCacheGet = _listCacheGet, listCacheHas = _listCacheHas, listCacheSet = _listCacheSet;
+  function ListCache$4(entries) {
+    var index = -1, length = entries == null ? 0 : entries.length;
+    this.clear();
+    while (++index < length) {
+      var entry = entries[index];
+      this.set(entry[0], entry[1]);
+    }
+  }
+  ListCache$4.prototype.clear = listCacheClear;
+  ListCache$4.prototype["delete"] = listCacheDelete;
+  ListCache$4.prototype.get = listCacheGet;
+  ListCache$4.prototype.has = listCacheHas;
+  ListCache$4.prototype.set = listCacheSet;
+  var _ListCache = ListCache$4;
+  var ListCache$3 = _ListCache;
+  function stackClear$1() {
+    this.__data__ = new ListCache$3();
+    this.size = 0;
+  }
+  var _stackClear = stackClear$1;
+  function stackDelete$1(key) {
+    var data = this.__data__, result = data["delete"](key);
+    this.size = data.size;
+    return result;
+  }
+  var _stackDelete = stackDelete$1;
+  function stackGet$1(key) {
+    return this.__data__.get(key);
+  }
+  var _stackGet = stackGet$1;
+  function stackHas$1(key) {
+    return this.__data__.has(key);
+  }
+  var _stackHas = stackHas$1;
+  var root$6 = _root;
+  var coreJsData$1 = root$6["__core-js_shared__"];
+  var _coreJsData = coreJsData$1;
+  var coreJsData = _coreJsData;
+  var maskSrcKey = function() {
+    var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
+    return uid ? "Symbol(src)_1." + uid : "";
+  }();
+  function isMasked$1(func) {
+    return !!maskSrcKey && maskSrcKey in func;
+  }
+  var _isMasked = isMasked$1;
+  var funcProto$1 = Function.prototype;
+  var funcToString$1 = funcProto$1.toString;
+  function toSource$2(func) {
+    if (func != null) {
+      try {
+        return funcToString$1.call(func);
+      } catch (e) {
+      }
+      try {
+        return func + "";
+      } catch (e) {
+      }
+    }
+    return "";
+  }
+  var _toSource = toSource$2;
+  var isFunction = isFunction_1, isMasked = _isMasked, isObject$2 = isObject_1, toSource$1 = _toSource;
+  var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+  var reIsHostCtor = /^\[object .+?Constructor\]$/;
+  var funcProto = Function.prototype, objectProto$6 = Object.prototype;
+  var funcToString = funcProto.toString;
+  var hasOwnProperty$5 = objectProto$6.hasOwnProperty;
+  var reIsNative = RegExp("^" + funcToString.call(hasOwnProperty$5).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$");
+  function baseIsNative$1(value) {
+    if (!isObject$2(value) || isMasked(value)) {
+      return false;
+    }
+    var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
+    return pattern.test(toSource$1(value));
+  }
+  var _baseIsNative = baseIsNative$1;
+  function getValue$1(object, key) {
+    return object == null ? void 0 : object[key];
+  }
+  var _getValue = getValue$1;
+  var baseIsNative = _baseIsNative, getValue = _getValue;
+  function getNative$6(object, key) {
+    var value = getValue(object, key);
+    return baseIsNative(value) ? value : void 0;
+  }
+  var _getNative = getNative$6;
+  var getNative$5 = _getNative, root$5 = _root;
+  var Map$3 = getNative$5(root$5, "Map");
+  var _Map = Map$3;
+  var getNative$4 = _getNative;
+  var nativeCreate$4 = getNative$4(Object, "create");
+  var _nativeCreate = nativeCreate$4;
+  var nativeCreate$3 = _nativeCreate;
+  function hashClear$1() {
+    this.__data__ = nativeCreate$3 ? nativeCreate$3(null) : {};
+    this.size = 0;
+  }
+  var _hashClear = hashClear$1;
+  function hashDelete$1(key) {
+    var result = this.has(key) && delete this.__data__[key];
+    this.size -= result ? 1 : 0;
+    return result;
+  }
+  var _hashDelete = hashDelete$1;
+  var nativeCreate$2 = _nativeCreate;
+  var HASH_UNDEFINED$2 = "__lodash_hash_undefined__";
+  var objectProto$5 = Object.prototype;
+  var hasOwnProperty$4 = objectProto$5.hasOwnProperty;
+  function hashGet$1(key) {
+    var data = this.__data__;
+    if (nativeCreate$2) {
+      var result = data[key];
+      return result === HASH_UNDEFINED$2 ? void 0 : result;
+    }
+    return hasOwnProperty$4.call(data, key) ? data[key] : void 0;
+  }
+  var _hashGet = hashGet$1;
+  var nativeCreate$1 = _nativeCreate;
+  var objectProto$4 = Object.prototype;
+  var hasOwnProperty$3 = objectProto$4.hasOwnProperty;
+  function hashHas$1(key) {
+    var data = this.__data__;
+    return nativeCreate$1 ? data[key] !== void 0 : hasOwnProperty$3.call(data, key);
+  }
+  var _hashHas = hashHas$1;
+  var nativeCreate = _nativeCreate;
+  var HASH_UNDEFINED$1 = "__lodash_hash_undefined__";
+  function hashSet$1(key, value) {
+    var data = this.__data__;
+    this.size += this.has(key) ? 0 : 1;
+    data[key] = nativeCreate && value === void 0 ? HASH_UNDEFINED$1 : value;
+    return this;
+  }
+  var _hashSet = hashSet$1;
+  var hashClear = _hashClear, hashDelete = _hashDelete, hashGet = _hashGet, hashHas = _hashHas, hashSet = _hashSet;
+  function Hash$1(entries) {
+    var index = -1, length = entries == null ? 0 : entries.length;
+    this.clear();
+    while (++index < length) {
+      var entry = entries[index];
+      this.set(entry[0], entry[1]);
+    }
+  }
+  Hash$1.prototype.clear = hashClear;
+  Hash$1.prototype["delete"] = hashDelete;
+  Hash$1.prototype.get = hashGet;
+  Hash$1.prototype.has = hashHas;
+  Hash$1.prototype.set = hashSet;
+  var _Hash = Hash$1;
+  var Hash = _Hash, ListCache$2 = _ListCache, Map$2 = _Map;
+  function mapCacheClear$1() {
+    this.size = 0;
+    this.__data__ = {
+      "hash": new Hash(),
+      "map": new (Map$2 || ListCache$2)(),
+      "string": new Hash()
+    };
+  }
+  var _mapCacheClear = mapCacheClear$1;
+  function isKeyable$1(value) {
+    var type = typeof value;
+    return type == "string" || type == "number" || type == "symbol" || type == "boolean" ? value !== "__proto__" : value === null;
+  }
+  var _isKeyable = isKeyable$1;
+  var isKeyable = _isKeyable;
+  function getMapData$4(map, key) {
+    var data = map.__data__;
+    return isKeyable(key) ? data[typeof key == "string" ? "string" : "hash"] : data.map;
+  }
+  var _getMapData = getMapData$4;
+  var getMapData$3 = _getMapData;
+  function mapCacheDelete$1(key) {
+    var result = getMapData$3(this, key)["delete"](key);
+    this.size -= result ? 1 : 0;
+    return result;
+  }
+  var _mapCacheDelete = mapCacheDelete$1;
+  var getMapData$2 = _getMapData;
+  function mapCacheGet$1(key) {
+    return getMapData$2(this, key).get(key);
+  }
+  var _mapCacheGet = mapCacheGet$1;
+  var getMapData$1 = _getMapData;
+  function mapCacheHas$1(key) {
+    return getMapData$1(this, key).has(key);
+  }
+  var _mapCacheHas = mapCacheHas$1;
+  var getMapData = _getMapData;
+  function mapCacheSet$1(key, value) {
+    var data = getMapData(this, key), size = data.size;
+    data.set(key, value);
+    this.size += data.size == size ? 0 : 1;
+    return this;
+  }
+  var _mapCacheSet = mapCacheSet$1;
+  var mapCacheClear = _mapCacheClear, mapCacheDelete = _mapCacheDelete, mapCacheGet = _mapCacheGet, mapCacheHas = _mapCacheHas, mapCacheSet = _mapCacheSet;
+  function MapCache$3(entries) {
+    var index = -1, length = entries == null ? 0 : entries.length;
+    this.clear();
+    while (++index < length) {
+      var entry = entries[index];
+      this.set(entry[0], entry[1]);
+    }
+  }
+  MapCache$3.prototype.clear = mapCacheClear;
+  MapCache$3.prototype["delete"] = mapCacheDelete;
+  MapCache$3.prototype.get = mapCacheGet;
+  MapCache$3.prototype.has = mapCacheHas;
+  MapCache$3.prototype.set = mapCacheSet;
+  var _MapCache = MapCache$3;
+  var ListCache$1 = _ListCache, Map$1 = _Map, MapCache$2 = _MapCache;
+  var LARGE_ARRAY_SIZE = 200;
+  function stackSet$1(key, value) {
+    var data = this.__data__;
+    if (data instanceof ListCache$1) {
+      var pairs = data.__data__;
+      if (!Map$1 || pairs.length < LARGE_ARRAY_SIZE - 1) {
+        pairs.push([key, value]);
+        this.size = ++data.size;
+        return this;
+      }
+      data = this.__data__ = new MapCache$2(pairs);
+    }
+    data.set(key, value);
+    this.size = data.size;
+    return this;
+  }
+  var _stackSet = stackSet$1;
+  var ListCache = _ListCache, stackClear = _stackClear, stackDelete = _stackDelete, stackGet = _stackGet, stackHas = _stackHas, stackSet = _stackSet;
+  function Stack$2(entries) {
+    var data = this.__data__ = new ListCache(entries);
+    this.size = data.size;
+  }
+  Stack$2.prototype.clear = stackClear;
+  Stack$2.prototype["delete"] = stackDelete;
+  Stack$2.prototype.get = stackGet;
+  Stack$2.prototype.has = stackHas;
+  Stack$2.prototype.set = stackSet;
+  var _Stack = Stack$2;
+  var HASH_UNDEFINED = "__lodash_hash_undefined__";
+  function setCacheAdd$1(value) {
+    this.__data__.set(value, HASH_UNDEFINED);
+    return this;
+  }
+  var _setCacheAdd = setCacheAdd$1;
+  function setCacheHas$1(value) {
+    return this.__data__.has(value);
+  }
+  var _setCacheHas = setCacheHas$1;
+  var MapCache$1 = _MapCache, setCacheAdd = _setCacheAdd, setCacheHas = _setCacheHas;
+  function SetCache$1(values) {
+    var index = -1, length = values == null ? 0 : values.length;
+    this.__data__ = new MapCache$1();
+    while (++index < length) {
+      this.add(values[index]);
+    }
+  }
+  SetCache$1.prototype.add = SetCache$1.prototype.push = setCacheAdd;
+  SetCache$1.prototype.has = setCacheHas;
+  var _SetCache = SetCache$1;
+  function arraySome$1(array, predicate) {
+    var index = -1, length = array == null ? 0 : array.length;
+    while (++index < length) {
+      if (predicate(array[index], index, array)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  var _arraySome = arraySome$1;
+  function cacheHas$1(cache, key) {
+    return cache.has(key);
+  }
+  var _cacheHas = cacheHas$1;
+  var SetCache = _SetCache, arraySome = _arraySome, cacheHas = _cacheHas;
+  var COMPARE_PARTIAL_FLAG$5 = 1, COMPARE_UNORDERED_FLAG$3 = 2;
+  function equalArrays$2(array, other, bitmask, customizer, equalFunc, stack) {
+    var isPartial = bitmask & COMPARE_PARTIAL_FLAG$5, arrLength = array.length, othLength = other.length;
+    if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
+      return false;
+    }
+    var stacked = stack.get(array);
+    if (stacked && stack.get(other)) {
+      return stacked == other;
+    }
+    var index = -1, result = true, seen = bitmask & COMPARE_UNORDERED_FLAG$3 ? new SetCache() : void 0;
+    stack.set(array, other);
+    stack.set(other, array);
+    while (++index < arrLength) {
+      var arrValue = array[index], othValue = other[index];
+      if (customizer) {
+        var compared = isPartial ? customizer(othValue, arrValue, index, other, array, stack) : customizer(arrValue, othValue, index, array, other, stack);
+      }
+      if (compared !== void 0) {
+        if (compared) {
+          continue;
+        }
+        result = false;
+        break;
+      }
+      if (seen) {
+        if (!arraySome(other, function(othValue2, othIndex) {
+          if (!cacheHas(seen, othIndex) && (arrValue === othValue2 || equalFunc(arrValue, othValue2, bitmask, customizer, stack))) {
+            return seen.push(othIndex);
+          }
+        })) {
+          result = false;
+          break;
+        }
+      } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
+        result = false;
+        break;
+      }
+    }
+    stack["delete"](array);
+    stack["delete"](other);
+    return result;
+  }
+  var _equalArrays = equalArrays$2;
+  var root$4 = _root;
+  var Uint8Array$2 = root$4.Uint8Array;
+  var _Uint8Array = Uint8Array$2;
+  function mapToArray$1(map) {
+    var index = -1, result = Array(map.size);
+    map.forEach(function(value, key) {
+      result[++index] = [key, value];
+    });
+    return result;
+  }
+  var _mapToArray = mapToArray$1;
+  function setToArray$1(set) {
+    var index = -1, result = Array(set.size);
+    set.forEach(function(value) {
+      result[++index] = value;
+    });
+    return result;
+  }
+  var _setToArray = setToArray$1;
+  var Symbol$2 = _Symbol, Uint8Array$1 = _Uint8Array, eq = eq_1, equalArrays$1 = _equalArrays, mapToArray = _mapToArray, setToArray = _setToArray;
+  var COMPARE_PARTIAL_FLAG$4 = 1, COMPARE_UNORDERED_FLAG$2 = 2;
+  var boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", mapTag$1 = "[object Map]", numberTag = "[object Number]", regexpTag = "[object RegExp]", setTag$1 = "[object Set]", stringTag = "[object String]", symbolTag$1 = "[object Symbol]";
+  var arrayBufferTag = "[object ArrayBuffer]", dataViewTag$1 = "[object DataView]";
+  var symbolProto$1 = Symbol$2 ? Symbol$2.prototype : void 0, symbolValueOf = symbolProto$1 ? symbolProto$1.valueOf : void 0;
+  function equalByTag$1(object, other, tag, bitmask, customizer, equalFunc, stack) {
+    switch (tag) {
+      case dataViewTag$1:
+        if (object.byteLength != other.byteLength || object.byteOffset != other.byteOffset) {
+          return false;
+        }
+        object = object.buffer;
+        other = other.buffer;
+      case arrayBufferTag:
+        if (object.byteLength != other.byteLength || !equalFunc(new Uint8Array$1(object), new Uint8Array$1(other))) {
+          return false;
+        }
+        return true;
+      case boolTag:
+      case dateTag:
+      case numberTag:
+        return eq(+object, +other);
+      case errorTag:
+        return object.name == other.name && object.message == other.message;
+      case regexpTag:
+      case stringTag:
+        return object == other + "";
+      case mapTag$1:
+        var convert = mapToArray;
+      case setTag$1:
+        var isPartial = bitmask & COMPARE_PARTIAL_FLAG$4;
+        convert || (convert = setToArray);
+        if (object.size != other.size && !isPartial) {
+          return false;
+        }
+        var stacked = stack.get(object);
+        if (stacked) {
+          return stacked == other;
+        }
+        bitmask |= COMPARE_UNORDERED_FLAG$2;
+        stack.set(object, other);
+        var result = equalArrays$1(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
+        stack["delete"](object);
+        return result;
+      case symbolTag$1:
+        if (symbolValueOf) {
+          return symbolValueOf.call(object) == symbolValueOf.call(other);
+        }
+    }
+    return false;
+  }
+  var _equalByTag = equalByTag$1;
+  function arrayPush$1(array, values) {
+    var index = -1, length = values.length, offset = array.length;
+    while (++index < length) {
+      array[offset + index] = values[index];
+    }
+    return array;
+  }
+  var _arrayPush = arrayPush$1;
+  var arrayPush = _arrayPush, isArray$6 = isArray_1;
+  function baseGetAllKeys$1(object, keysFunc, symbolsFunc) {
+    var result = keysFunc(object);
+    return isArray$6(object) ? result : arrayPush(result, symbolsFunc(object));
+  }
+  var _baseGetAllKeys = baseGetAllKeys$1;
+  function arrayFilter$1(array, predicate) {
+    var index = -1, length = array == null ? 0 : array.length, resIndex = 0, result = [];
+    while (++index < length) {
+      var value = array[index];
+      if (predicate(value, index, array)) {
+        result[resIndex++] = value;
+      }
+    }
+    return result;
+  }
+  var _arrayFilter = arrayFilter$1;
+  function stubArray$1() {
+    return [];
+  }
+  var stubArray_1 = stubArray$1;
+  var arrayFilter = _arrayFilter, stubArray = stubArray_1;
+  var objectProto$3 = Object.prototype;
+  var propertyIsEnumerable = objectProto$3.propertyIsEnumerable;
+  var nativeGetSymbols = Object.getOwnPropertySymbols;
+  var getSymbols$1 = !nativeGetSymbols ? stubArray : function(object) {
+    if (object == null) {
+      return [];
+    }
+    object = Object(object);
+    return arrayFilter(nativeGetSymbols(object), function(symbol) {
+      return propertyIsEnumerable.call(object, symbol);
+    });
+  };
+  var _getSymbols = getSymbols$1;
+  var overArg = _overArg;
+  var nativeKeys$1 = overArg(Object.keys, Object);
+  var _nativeKeys = nativeKeys$1;
+  var isPrototype = _isPrototype, nativeKeys = _nativeKeys;
+  var objectProto$2 = Object.prototype;
+  var hasOwnProperty$2 = objectProto$2.hasOwnProperty;
+  function baseKeys$1(object) {
+    if (!isPrototype(object)) {
+      return nativeKeys(object);
+    }
+    var result = [];
+    for (var key in Object(object)) {
+      if (hasOwnProperty$2.call(object, key) && key != "constructor") {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+  var _baseKeys = baseKeys$1;
+  var arrayLikeKeys = _arrayLikeKeys, baseKeys = _baseKeys, isArrayLike$1 = isArrayLike_1;
+  function keys$3(object) {
+    return isArrayLike$1(object) ? arrayLikeKeys(object) : baseKeys(object);
+  }
+  var keys_1 = keys$3;
+  var baseGetAllKeys = _baseGetAllKeys, getSymbols = _getSymbols, keys$2 = keys_1;
+  function getAllKeys$1(object) {
+    return baseGetAllKeys(object, keys$2, getSymbols);
+  }
+  var _getAllKeys = getAllKeys$1;
+  var getAllKeys = _getAllKeys;
+  var COMPARE_PARTIAL_FLAG$3 = 1;
+  var objectProto$1 = Object.prototype;
+  var hasOwnProperty$1 = objectProto$1.hasOwnProperty;
+  function equalObjects$1(object, other, bitmask, customizer, equalFunc, stack) {
+    var isPartial = bitmask & COMPARE_PARTIAL_FLAG$3, objProps = getAllKeys(object), objLength = objProps.length, othProps = getAllKeys(other), othLength = othProps.length;
+    if (objLength != othLength && !isPartial) {
+      return false;
+    }
+    var index = objLength;
+    while (index--) {
+      var key = objProps[index];
+      if (!(isPartial ? key in other : hasOwnProperty$1.call(other, key))) {
+        return false;
+      }
+    }
+    var stacked = stack.get(object);
+    if (stacked && stack.get(other)) {
+      return stacked == other;
+    }
+    var result = true;
+    stack.set(object, other);
+    stack.set(other, object);
+    var skipCtor = isPartial;
+    while (++index < objLength) {
+      key = objProps[index];
+      var objValue = object[key], othValue = other[key];
+      if (customizer) {
+        var compared = isPartial ? customizer(othValue, objValue, key, other, object, stack) : customizer(objValue, othValue, key, object, other, stack);
+      }
+      if (!(compared === void 0 ? objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack) : compared)) {
+        result = false;
+        break;
+      }
+      skipCtor || (skipCtor = key == "constructor");
+    }
+    if (result && !skipCtor) {
+      var objCtor = object.constructor, othCtor = other.constructor;
+      if (objCtor != othCtor && ("constructor" in object && "constructor" in other) && !(typeof objCtor == "function" && objCtor instanceof objCtor && typeof othCtor == "function" && othCtor instanceof othCtor)) {
+        result = false;
+      }
+    }
+    stack["delete"](object);
+    stack["delete"](other);
+    return result;
+  }
+  var _equalObjects = equalObjects$1;
+  var getNative$3 = _getNative, root$3 = _root;
+  var DataView$1 = getNative$3(root$3, "DataView");
+  var _DataView = DataView$1;
+  var getNative$2 = _getNative, root$2 = _root;
+  var Promise$2 = getNative$2(root$2, "Promise");
+  var _Promise = Promise$2;
+  var getNative$1 = _getNative, root$1 = _root;
+  var Set$1 = getNative$1(root$1, "Set");
+  var _Set = Set$1;
+  var getNative = _getNative, root = _root;
+  var WeakMap$1 = getNative(root, "WeakMap");
+  var _WeakMap = WeakMap$1;
+  var DataView = _DataView, Map = _Map, Promise$1 = _Promise, Set = _Set, WeakMap = _WeakMap, baseGetTag$1 = _baseGetTag, toSource = _toSource;
+  var mapTag = "[object Map]", objectTag$1 = "[object Object]", promiseTag = "[object Promise]", setTag = "[object Set]", weakMapTag = "[object WeakMap]";
+  var dataViewTag = "[object DataView]";
+  var dataViewCtorString = toSource(DataView), mapCtorString = toSource(Map), promiseCtorString = toSource(Promise$1), setCtorString = toSource(Set), weakMapCtorString = toSource(WeakMap);
+  var getTag$1 = baseGetTag$1;
+  if (DataView && getTag$1(new DataView(new ArrayBuffer(1))) != dataViewTag || Map && getTag$1(new Map()) != mapTag || Promise$1 && getTag$1(Promise$1.resolve()) != promiseTag || Set && getTag$1(new Set()) != setTag || WeakMap && getTag$1(new WeakMap()) != weakMapTag) {
+    getTag$1 = function(value) {
+      var result = baseGetTag$1(value), Ctor = result == objectTag$1 ? value.constructor : void 0, ctorString = Ctor ? toSource(Ctor) : "";
+      if (ctorString) {
+        switch (ctorString) {
+          case dataViewCtorString:
+            return dataViewTag;
+          case mapCtorString:
+            return mapTag;
+          case promiseCtorString:
+            return promiseTag;
+          case setCtorString:
+            return setTag;
+          case weakMapCtorString:
+            return weakMapTag;
+        }
+      }
+      return result;
+    };
+  }
+  var _getTag = getTag$1;
+  var Stack$1 = _Stack, equalArrays = _equalArrays, equalByTag = _equalByTag, equalObjects = _equalObjects, getTag = _getTag, isArray$5 = isArray_1, isBuffer = isBuffer$2.exports, isTypedArray = isTypedArray_1;
+  var COMPARE_PARTIAL_FLAG$2 = 1;
+  var argsTag = "[object Arguments]", arrayTag = "[object Array]", objectTag = "[object Object]";
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  function baseIsEqualDeep$1(object, other, bitmask, customizer, equalFunc, stack) {
+    var objIsArr = isArray$5(object), othIsArr = isArray$5(other), objTag = objIsArr ? arrayTag : getTag(object), othTag = othIsArr ? arrayTag : getTag(other);
+    objTag = objTag == argsTag ? objectTag : objTag;
+    othTag = othTag == argsTag ? objectTag : othTag;
+    var objIsObj = objTag == objectTag, othIsObj = othTag == objectTag, isSameTag = objTag == othTag;
+    if (isSameTag && isBuffer(object)) {
+      if (!isBuffer(other)) {
+        return false;
+      }
+      objIsArr = true;
+      objIsObj = false;
+    }
+    if (isSameTag && !objIsObj) {
+      stack || (stack = new Stack$1());
+      return objIsArr || isTypedArray(object) ? equalArrays(object, other, bitmask, customizer, equalFunc, stack) : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);
+    }
+    if (!(bitmask & COMPARE_PARTIAL_FLAG$2)) {
+      var objIsWrapped = objIsObj && hasOwnProperty.call(object, "__wrapped__"), othIsWrapped = othIsObj && hasOwnProperty.call(other, "__wrapped__");
+      if (objIsWrapped || othIsWrapped) {
+        var objUnwrapped = objIsWrapped ? object.value() : object, othUnwrapped = othIsWrapped ? other.value() : other;
+        stack || (stack = new Stack$1());
+        return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);
+      }
+    }
+    if (!isSameTag) {
+      return false;
+    }
+    stack || (stack = new Stack$1());
+    return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
+  }
+  var _baseIsEqualDeep = baseIsEqualDeep$1;
+  var baseIsEqualDeep = _baseIsEqualDeep, isObjectLike$1 = isObjectLike_1;
+  function baseIsEqual$2(value, other, bitmask, customizer, stack) {
+    if (value === other) {
+      return true;
+    }
+    if (value == null || other == null || !isObjectLike$1(value) && !isObjectLike$1(other)) {
+      return value !== value && other !== other;
+    }
+    return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual$2, stack);
+  }
+  var _baseIsEqual = baseIsEqual$2;
+  var Stack = _Stack, baseIsEqual$1 = _baseIsEqual;
+  var COMPARE_PARTIAL_FLAG$1 = 1, COMPARE_UNORDERED_FLAG$1 = 2;
+  function baseIsMatch$1(object, source, matchData, customizer) {
+    var index = matchData.length, length = index, noCustomizer = !customizer;
+    if (object == null) {
+      return !length;
+    }
+    object = Object(object);
+    while (index--) {
+      var data = matchData[index];
+      if (noCustomizer && data[2] ? data[1] !== object[data[0]] : !(data[0] in object)) {
+        return false;
+      }
+    }
+    while (++index < length) {
+      data = matchData[index];
+      var key = data[0], objValue = object[key], srcValue = data[1];
+      if (noCustomizer && data[2]) {
+        if (objValue === void 0 && !(key in object)) {
+          return false;
+        }
+      } else {
+        var stack = new Stack();
+        if (customizer) {
+          var result = customizer(objValue, srcValue, key, object, source, stack);
+        }
+        if (!(result === void 0 ? baseIsEqual$1(srcValue, objValue, COMPARE_PARTIAL_FLAG$1 | COMPARE_UNORDERED_FLAG$1, customizer, stack) : result)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  var _baseIsMatch = baseIsMatch$1;
+  var isObject$1 = isObject_1;
+  function isStrictComparable$2(value) {
+    return value === value && !isObject$1(value);
+  }
+  var _isStrictComparable = isStrictComparable$2;
+  var isStrictComparable$1 = _isStrictComparable, keys$1 = keys_1;
+  function getMatchData$1(object) {
+    var result = keys$1(object), length = result.length;
+    while (length--) {
+      var key = result[length], value = object[key];
+      result[length] = [key, value, isStrictComparable$1(value)];
+    }
+    return result;
+  }
+  var _getMatchData = getMatchData$1;
+  function matchesStrictComparable$2(key, srcValue) {
+    return function(object) {
+      if (object == null) {
+        return false;
+      }
+      return object[key] === srcValue && (srcValue !== void 0 || key in Object(object));
+    };
+  }
+  var _matchesStrictComparable = matchesStrictComparable$2;
+  var baseIsMatch = _baseIsMatch, getMatchData = _getMatchData, matchesStrictComparable$1 = _matchesStrictComparable;
+  function baseMatches$1(source) {
+    var matchData = getMatchData(source);
+    if (matchData.length == 1 && matchData[0][2]) {
+      return matchesStrictComparable$1(matchData[0][0], matchData[0][1]);
+    }
+    return function(object) {
+      return object === source || baseIsMatch(object, source, matchData);
+    };
+  }
+  var _baseMatches = baseMatches$1;
+  var baseGetTag = _baseGetTag, isObjectLike = isObjectLike_1;
+  var symbolTag = "[object Symbol]";
+  function isSymbol$4(value) {
+    return typeof value == "symbol" || isObjectLike(value) && baseGetTag(value) == symbolTag;
+  }
+  var isSymbol_1 = isSymbol$4;
+  var isArray$4 = isArray_1, isSymbol$3 = isSymbol_1;
+  var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/, reIsPlainProp = /^\w*$/;
+  function isKey$3(value, object) {
+    if (isArray$4(value)) {
+      return false;
+    }
+    var type = typeof value;
+    if (type == "number" || type == "symbol" || type == "boolean" || value == null || isSymbol$3(value)) {
+      return true;
+    }
+    return reIsPlainProp.test(value) || !reIsDeepProp.test(value) || object != null && value in Object(object);
+  }
+  var _isKey = isKey$3;
+  var MapCache = _MapCache;
+  var FUNC_ERROR_TEXT = "Expected a function";
+  function memoize$1(func, resolver) {
+    if (typeof func != "function" || resolver != null && typeof resolver != "function") {
+      throw new TypeError(FUNC_ERROR_TEXT);
+    }
+    var memoized = function() {
+      var args = arguments, key = resolver ? resolver.apply(this, args) : args[0], cache = memoized.cache;
+      if (cache.has(key)) {
+        return cache.get(key);
+      }
+      var result = func.apply(this, args);
+      memoized.cache = cache.set(key, result) || cache;
+      return result;
+    };
+    memoized.cache = new (memoize$1.Cache || MapCache)();
+    return memoized;
+  }
+  memoize$1.Cache = MapCache;
+  var memoize_1 = memoize$1;
+  var memoize = memoize_1;
+  var MAX_MEMOIZE_SIZE = 500;
+  function memoizeCapped$1(func) {
+    var result = memoize(func, function(key) {
+      if (cache.size === MAX_MEMOIZE_SIZE) {
+        cache.clear();
+      }
+      return key;
+    });
+    var cache = result.cache;
+    return result;
+  }
+  var _memoizeCapped = memoizeCapped$1;
+  var memoizeCapped = _memoizeCapped;
+  var reLeadingDot = /^\./, rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+  var reEscapeChar = /\\(\\)?/g;
+  var stringToPath$1 = memoizeCapped(function(string) {
+    var result = [];
+    if (reLeadingDot.test(string)) {
+      result.push("");
+    }
+    string.replace(rePropName, function(match, number, quote2, string2) {
+      result.push(quote2 ? string2.replace(reEscapeChar, "$1") : number || match);
+    });
+    return result;
+  });
+  var _stringToPath = stringToPath$1;
+  function arrayMap$1(array, iteratee) {
+    var index = -1, length = array == null ? 0 : array.length, result = Array(length);
+    while (++index < length) {
+      result[index] = iteratee(array[index], index, array);
+    }
+    return result;
+  }
+  var _arrayMap = arrayMap$1;
+  var Symbol$1 = _Symbol, arrayMap = _arrayMap, isArray$3 = isArray_1, isSymbol$2 = isSymbol_1;
+  var INFINITY$2 = 1 / 0;
+  var symbolProto = Symbol$1 ? Symbol$1.prototype : void 0, symbolToString = symbolProto ? symbolProto.toString : void 0;
+  function baseToString$1(value) {
+    if (typeof value == "string") {
+      return value;
+    }
+    if (isArray$3(value)) {
+      return arrayMap(value, baseToString$1) + "";
+    }
+    if (isSymbol$2(value)) {
+      return symbolToString ? symbolToString.call(value) : "";
+    }
+    var result = value + "";
+    return result == "0" && 1 / value == -INFINITY$2 ? "-0" : result;
+  }
+  var _baseToString = baseToString$1;
+  var baseToString = _baseToString;
+  function toString$1(value) {
+    return value == null ? "" : baseToString(value);
+  }
+  var toString_1 = toString$1;
+  var isArray$2 = isArray_1, isKey$2 = _isKey, stringToPath = _stringToPath, toString = toString_1;
+  function castPath$2(value, object) {
+    if (isArray$2(value)) {
+      return value;
+    }
+    return isKey$2(value, object) ? [value] : stringToPath(toString(value));
+  }
+  var _castPath = castPath$2;
+  var isSymbol$1 = isSymbol_1;
+  var INFINITY$1 = 1 / 0;
+  function toKey$4(value) {
+    if (typeof value == "string" || isSymbol$1(value)) {
+      return value;
+    }
+    var result = value + "";
+    return result == "0" && 1 / value == -INFINITY$1 ? "-0" : result;
+  }
+  var _toKey = toKey$4;
+  var castPath$1 = _castPath, toKey$3 = _toKey;
+  function baseGet$2(object, path) {
+    path = castPath$1(path, object);
+    var index = 0, length = path.length;
+    while (object != null && index < length) {
+      object = object[toKey$3(path[index++])];
+    }
+    return index && index == length ? object : void 0;
+  }
+  var _baseGet = baseGet$2;
+  var baseGet$1 = _baseGet;
+  function get$1(object, path, defaultValue) {
+    var result = object == null ? void 0 : baseGet$1(object, path);
+    return result === void 0 ? defaultValue : result;
+  }
+  var get_1 = get$1;
+  function baseHasIn$1(object, key) {
+    return object != null && key in Object(object);
+  }
+  var _baseHasIn = baseHasIn$1;
+  var castPath = _castPath, isArguments = isArguments_1, isArray$1 = isArray_1, isIndex = _isIndex, isLength = isLength_1, toKey$2 = _toKey;
+  function hasPath$1(object, path, hasFunc) {
+    path = castPath(path, object);
+    var index = -1, length = path.length, result = false;
+    while (++index < length) {
+      var key = toKey$2(path[index]);
+      if (!(result = object != null && hasFunc(object, key))) {
+        break;
+      }
+      object = object[key];
+    }
+    if (result || ++index != length) {
+      return result;
+    }
+    length = object == null ? 0 : object.length;
+    return !!length && isLength(length) && isIndex(key, length) && (isArray$1(object) || isArguments(object));
+  }
+  var _hasPath = hasPath$1;
+  var baseHasIn = _baseHasIn, hasPath = _hasPath;
+  function hasIn$1(object, path) {
+    return object != null && hasPath(object, path, baseHasIn);
+  }
+  var hasIn_1 = hasIn$1;
+  var baseIsEqual = _baseIsEqual, get = get_1, hasIn = hasIn_1, isKey$1 = _isKey, isStrictComparable = _isStrictComparable, matchesStrictComparable = _matchesStrictComparable, toKey$1 = _toKey;
+  var COMPARE_PARTIAL_FLAG = 1, COMPARE_UNORDERED_FLAG = 2;
+  function baseMatchesProperty$1(path, srcValue) {
+    if (isKey$1(path) && isStrictComparable(srcValue)) {
+      return matchesStrictComparable(toKey$1(path), srcValue);
+    }
+    return function(object) {
+      var objValue = get(object, path);
+      return objValue === void 0 && objValue === srcValue ? hasIn(object, path) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
+    };
+  }
+  var _baseMatchesProperty = baseMatchesProperty$1;
+  function baseProperty$1(key) {
+    return function(object) {
+      return object == null ? void 0 : object[key];
+    };
+  }
+  var _baseProperty = baseProperty$1;
+  var baseGet = _baseGet;
+  function basePropertyDeep$1(path) {
+    return function(object) {
+      return baseGet(object, path);
+    };
+  }
+  var _basePropertyDeep = basePropertyDeep$1;
+  var baseProperty = _baseProperty, basePropertyDeep = _basePropertyDeep, isKey = _isKey, toKey = _toKey;
+  function property$1(path) {
+    return isKey(path) ? baseProperty(toKey(path)) : basePropertyDeep(path);
+  }
+  var property_1 = property$1;
+  var baseMatches = _baseMatches, baseMatchesProperty = _baseMatchesProperty, identity = identity_1, isArray = isArray_1, property = property_1;
+  function baseIteratee$2(value) {
+    if (typeof value == "function") {
+      return value;
+    }
+    if (value == null) {
+      return identity;
+    }
+    if (typeof value == "object") {
+      return isArray(value) ? baseMatchesProperty(value[0], value[1]) : baseMatches(value);
+    }
+    return property(value);
+  }
+  var _baseIteratee = baseIteratee$2;
+  var baseIteratee$1 = _baseIteratee, isArrayLike = isArrayLike_1, keys = keys_1;
+  function createFind$1(findIndexFunc) {
+    return function(collection, predicate, fromIndex) {
+      var iterable = Object(collection);
+      if (!isArrayLike(collection)) {
+        var iteratee = baseIteratee$1(predicate);
+        collection = keys(collection);
+        predicate = function(key) {
+          return iteratee(iterable[key], key, iterable);
+        };
+      }
+      var index = findIndexFunc(collection, predicate, fromIndex);
+      return index > -1 ? iterable[iteratee ? collection[index] : index] : void 0;
+    };
+  }
+  var _createFind = createFind$1;
+  function baseFindIndex$1(array, predicate, fromIndex, fromRight) {
+    var length = array.length, index = fromIndex + (fromRight ? 1 : -1);
+    while (fromRight ? index-- : ++index < length) {
+      if (predicate(array[index], index, array)) {
+        return index;
+      }
+    }
+    return -1;
+  }
+  var _baseFindIndex = baseFindIndex$1;
+  var isObject = isObject_1, isSymbol = isSymbol_1;
+  var NAN = 0 / 0;
+  var reTrim = /^\s+|\s+$/g;
+  var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+  var reIsBinary = /^0b[01]+$/i;
+  var reIsOctal = /^0o[0-7]+$/i;
+  var freeParseInt = parseInt;
+  function toNumber$1(value) {
+    if (typeof value == "number") {
+      return value;
+    }
+    if (isSymbol(value)) {
+      return NAN;
+    }
+    if (isObject(value)) {
+      var other = typeof value.valueOf == "function" ? value.valueOf() : value;
+      value = isObject(other) ? other + "" : other;
+    }
+    if (typeof value != "string") {
+      return value === 0 ? value : +value;
+    }
+    value = value.replace(reTrim, "");
+    var isBinary = reIsBinary.test(value);
+    return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
+  }
+  var toNumber_1 = toNumber$1;
+  var toNumber = toNumber_1;
+  var INFINITY = 1 / 0, MAX_INTEGER = 17976931348623157e292;
+  function toFinite$1(value) {
+    if (!value) {
+      return value === 0 ? value : 0;
+    }
+    value = toNumber(value);
+    if (value === INFINITY || value === -INFINITY) {
+      var sign = value < 0 ? -1 : 1;
+      return sign * MAX_INTEGER;
+    }
+    return value === value ? value : 0;
+  }
+  var toFinite_1 = toFinite$1;
+  var toFinite = toFinite_1;
+  function toInteger$1(value) {
+    var result = toFinite(value), remainder = result % 1;
+    return result === result ? remainder ? result - remainder : result : 0;
+  }
+  var toInteger_1 = toInteger$1;
+  var baseFindIndex = _baseFindIndex, baseIteratee = _baseIteratee, toInteger = toInteger_1;
+  var nativeMax = Math.max;
+  function findIndex$1(array, predicate, fromIndex) {
+    var length = array == null ? 0 : array.length;
+    if (!length) {
+      return -1;
+    }
+    var index = fromIndex == null ? 0 : toInteger(fromIndex);
+    if (index < 0) {
+      index = nativeMax(length + index, 0);
+    }
+    return baseFindIndex(array, baseIteratee(predicate), index);
+  }
+  var findIndex_1 = findIndex$1;
+  var createFind = _createFind, findIndex = findIndex_1;
+  var find = createFind(findIndex);
+  var find_1 = find;
+  var rngBrowser = { exports: {} };
+  var getRandomValues = typeof crypto != "undefined" && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto != "undefined" && typeof window.msCrypto.getRandomValues == "function" && msCrypto.getRandomValues.bind(msCrypto);
+  if (getRandomValues) {
+    var rnds8 = new Uint8Array(16);
+    rngBrowser.exports = function whatwgRNG() {
+      getRandomValues(rnds8);
+      return rnds8;
+    };
+  } else {
+    var rnds = new Array(16);
+    rngBrowser.exports = function mathRNG() {
+      for (var i2 = 0, r; i2 < 16; i2++) {
+        if ((i2 & 3) === 0)
+          r = Math.random() * 4294967296;
+        rnds[i2] = r >>> ((i2 & 3) << 3) & 255;
+      }
+      return rnds;
+    };
+  }
+  var byteToHex = [];
+  for (var i = 0; i < 256; ++i) {
+    byteToHex[i] = (i + 256).toString(16).substr(1);
+  }
+  function bytesToUuid$1(buf, offset) {
+    var i2 = offset || 0;
+    var bth = byteToHex;
+    return [
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      "-",
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      "-",
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      "-",
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      "-",
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      bth[buf[i2++]],
+      bth[buf[i2++]]
+    ].join("");
+  }
+  var bytesToUuid_1 = bytesToUuid$1;
+  var rng = rngBrowser.exports;
+  var bytesToUuid = bytesToUuid_1;
+  function v4(options, buf, offset) {
+    var i2 = buf && offset || 0;
+    if (typeof options == "string") {
+      buf = options === "binary" ? new Array(16) : null;
+      options = null;
+    }
+    options = options || {};
+    var rnds2 = options.random || (options.rng || rng)();
+    rnds2[6] = rnds2[6] & 15 | 64;
+    rnds2[8] = rnds2[8] & 63 | 128;
+    if (buf) {
+      for (var ii = 0; ii < 16; ++ii) {
+        buf[i2 + ii] = rnds2[ii];
+      }
+    }
+    return buf || bytesToUuid(rnds2);
+  }
+  var v4_1 = v4;
+  var socket_ioWebsocketOnly = { exports: {} };
+  /*! Socket.IO.js build:0.9.17, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
+  (function(module) {
+    const that = typeof window === "undefined" ? {} : window;
+    var io = module.exports;
+    (function() {
+      (function(exports2, global2) {
+        var io2 = exports2;
+        io2.version = "0.9.17";
+        io2.protocol = 1;
+        io2.transports = [];
+        io2.j = [];
+        io2.sockets = {};
+        io2.connect = function(host, details) {
+          var uri = io2.util.parseUri(host), uuri, socket;
+          if (global2 && global2.location) {
+            uri.protocol = uri.protocol || global2.location.protocol.slice(0, -1);
+            uri.host = uri.host || (global2.document ? global2.document.domain : global2.location.hostname);
+            uri.port = uri.port || global2.location.port;
+          }
+          uuri = io2.util.uniqueUri(uri);
+          var options = {
+            host: uri.host,
+            secure: uri.protocol == "https",
+            port: uri.port || (uri.protocol == "https" ? 443 : 80),
+            query: uri.query || ""
+          };
+          io2.util.merge(options, details);
+          if (options["force new connection"] || !io2.sockets[uuri]) {
+            socket = new io2.Socket(options);
+          }
+          if (!options["force new connection"] && socket) {
+            io2.sockets[uuri] = socket;
+          }
+          socket = socket || io2.sockets[uuri];
+          return socket.of(uri.path.length > 1 ? uri.path : "");
+        };
+      })(module.exports, that);
+      (function(exports2, global2) {
+        var util = exports2.util = {};
+        var re = /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/;
+        var parts = [
+          "source",
+          "protocol",
+          "authority",
+          "userInfo",
+          "user",
+          "password",
+          "host",
+          "port",
+          "relative",
+          "path",
+          "directory",
+          "file",
+          "query",
+          "anchor"
+        ];
+        util.parseUri = function(str2) {
+          var m = re.exec(str2 || ""), uri = {}, i2 = 14;
+          while (i2--) {
+            uri[parts[i2]] = m[i2] || "";
+          }
+          return uri;
+        };
+        util.uniqueUri = function(uri) {
+          var protocol = uri.protocol, host = uri.host, port = uri.port;
+          if ("document" in global2) {
+            host = host || document.domain;
+            port = port || (protocol == "https" && document.location.protocol !== "https:" ? 443 : document.location.port);
+          } else {
+            host = host || "localhost";
+            if (!port && protocol == "https") {
+              port = 443;
+            }
+          }
+          return (protocol || "http") + "://" + host + ":" + (port || 80);
+        };
+        util.query = function(base, addition) {
+          var query = util.chunkQuery(base || ""), components = [];
+          util.merge(query, util.chunkQuery(addition || ""));
+          for (var part in query) {
+            if (query.hasOwnProperty(part)) {
+              components.push(part + "=" + query[part]);
+            }
+          }
+          return components.length ? "?" + components.join("&") : "";
+        };
+        util.chunkQuery = function(qs) {
+          var query = {}, params = qs.split("&"), i2 = 0, l = params.length, kv;
+          for (; i2 < l; ++i2) {
+            kv = params[i2].split("=");
+            if (kv[0]) {
+              query[kv[0]] = kv[1];
+            }
+          }
+          return query;
+        };
+        var pageLoaded = false;
+        util.load = function(fn) {
+          if ("document" in global2 && document.readyState === "complete" || pageLoaded) {
+            return fn();
+          }
+          util.on(global2, "load", fn, false);
+        };
+        util.on = function(element, event, fn, capture) {
+          if (element.attachEvent) {
+            element.attachEvent("on" + event, fn);
+          } else if (element.addEventListener) {
+            element.addEventListener(event, fn, capture);
+          }
+        };
+        util.request = function(xdomain) {
+          if (xdomain && typeof XDomainRequest != "undefined" && !util.ua.hasCORS) {
+            return new XDomainRequest();
+          }
+          if (typeof XMLHttpRequest != "undefined" && (!xdomain || util.ua.hasCORS)) {
+            return new XMLHttpRequest();
+          }
+          if (!xdomain) {
+            try {
+              return new window[["Active"].concat("Object").join("X")]("Microsoft.XMLHTTP");
+            } catch (e) {
+            }
+          }
+          return null;
+        };
+        if (typeof window != "undefined") {
+          util.load(function() {
+            pageLoaded = true;
+          });
+        }
+        util.defer = function(fn) {
+          if (!util.ua.webkit || typeof importScripts != "undefined") {
+            return fn();
+          }
+          util.load(function() {
+            setTimeout(fn, 100);
+          });
+        };
+        util.merge = function merge(target, additional, deep, lastseen) {
+          var seen = lastseen || [], depth = typeof deep == "undefined" ? 2 : deep, prop;
+          for (prop in additional) {
+            if (additional.hasOwnProperty(prop) && util.indexOf(seen, prop) < 0) {
+              if (typeof target[prop] !== "object" || !depth) {
+                target[prop] = additional[prop];
+                seen.push(additional[prop]);
+              } else {
+                util.merge(target[prop], additional[prop], depth - 1, seen);
+              }
+            }
+          }
+          return target;
+        };
+        util.mixin = function(ctor, ctor2) {
+          util.merge(ctor.prototype, ctor2.prototype);
+        };
+        util.inherit = function(ctor, ctor2) {
+          function f2() {
+          }
+          f2.prototype = ctor2.prototype;
+          ctor.prototype = new f2();
+        };
+        util.isArray = Array.isArray || function(obj) {
+          return Object.prototype.toString.call(obj) === "[object Array]";
+        };
+        util.intersect = function(arr, arr2) {
+          var ret = [], longest = arr.length > arr2.length ? arr : arr2, shortest = arr.length > arr2.length ? arr2 : arr;
+          for (var i2 = 0, l = shortest.length; i2 < l; i2++) {
+            if (~util.indexOf(longest, shortest[i2]))
+              ret.push(shortest[i2]);
+          }
+          return ret;
+        };
+        util.indexOf = function(arr, o, i2) {
+          for (var j2 = arr.length, i2 = i2 < 0 ? i2 + j2 < 0 ? 0 : i2 + j2 : i2 || 0; i2 < j2 && arr[i2] !== o; i2++) {
+          }
+          return j2 <= i2 ? -1 : i2;
+        };
+        util.toArray = function(enu) {
+          var arr = [];
+          for (var i2 = 0, l = enu.length; i2 < l; i2++)
+            arr.push(enu[i2]);
+          return arr;
+        };
+        util.ua = {};
+        util.ua.hasCORS = typeof XMLHttpRequest != "undefined" && function() {
+          try {
+            var a = new XMLHttpRequest();
+          } catch (e) {
+            return false;
+          }
+          return a.withCredentials != void 0;
+        }();
+        util.ua.webkit = typeof navigator != "undefined" && /webkit/i.test(navigator.userAgent);
+        util.ua.iDevice = typeof navigator != "undefined" && /iPad|iPhone|iPod/i.test(navigator.userAgent);
+      })(typeof io != "undefined" ? io : module.exports, that);
+      (function(exports2, io2) {
+        exports2.EventEmitter = EventEmitter;
+        function EventEmitter() {
+        }
+        EventEmitter.prototype.on = function(name, fn) {
+          if (!this.$events) {
+            this.$events = {};
+          }
+          if (!this.$events[name]) {
+            this.$events[name] = fn;
+          } else if (io2.util.isArray(this.$events[name])) {
+            this.$events[name].push(fn);
+          } else {
+            this.$events[name] = [this.$events[name], fn];
+          }
+          return this;
+        };
+        EventEmitter.prototype.addListener = EventEmitter.prototype.on;
+        EventEmitter.prototype.once = function(name, fn) {
+          var self2 = this;
+          function on() {
+            self2.removeListener(name, on);
+            fn.apply(this, arguments);
+          }
+          on.listener = fn;
+          this.on(name, on);
+          return this;
+        };
+        EventEmitter.prototype.removeListener = function(name, fn) {
+          if (this.$events && this.$events[name]) {
+            var list = this.$events[name];
+            if (io2.util.isArray(list)) {
+              var pos = -1;
+              for (var i2 = 0, l = list.length; i2 < l; i2++) {
+                if (list[i2] === fn || list[i2].listener && list[i2].listener === fn) {
+                  pos = i2;
+                  break;
+                }
+              }
+              if (pos < 0) {
+                return this;
+              }
+              list.splice(pos, 1);
+              if (!list.length) {
+                delete this.$events[name];
+              }
+            } else if (list === fn || list.listener && list.listener === fn) {
+              delete this.$events[name];
+            }
+          }
+          return this;
+        };
+        EventEmitter.prototype.removeAllListeners = function(name) {
+          if (name === void 0) {
+            this.$events = {};
+            return this;
+          }
+          if (this.$events && this.$events[name]) {
+            this.$events[name] = null;
+          }
+          return this;
+        };
+        EventEmitter.prototype.listeners = function(name) {
+          if (!this.$events) {
+            this.$events = {};
+          }
+          if (!this.$events[name]) {
+            this.$events[name] = [];
+          }
+          if (!io2.util.isArray(this.$events[name])) {
+            this.$events[name] = [this.$events[name]];
+          }
+          return this.$events[name];
+        };
+        EventEmitter.prototype.emit = function(name) {
+          if (!this.$events) {
+            return false;
+          }
+          var handler = this.$events[name];
+          if (!handler) {
+            return false;
+          }
+          var args = Array.prototype.slice.call(arguments, 1);
+          if (typeof handler == "function") {
+            handler.apply(this, args);
+          } else if (io2.util.isArray(handler)) {
+            var listeners = handler.slice();
+            for (var i2 = 0, l = listeners.length; i2 < l; i2++) {
+              listeners[i2].apply(this, args);
+            }
+          } else {
+            return false;
+          }
+          return true;
+        };
+      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+      (function(exports, nativeJSON) {
+        if (nativeJSON && nativeJSON.parse) {
+          return exports.JSON = {
+            parse: nativeJSON.parse,
+            stringify: nativeJSON.stringify
+          };
+        }
+        var JSON = exports.JSON = {};
+        function f(n) {
+          return n < 10 ? "0" + n : n;
+        }
+        function date(d, key) {
+          return isFinite(d.valueOf()) ? d.getUTCFullYear() + "-" + f(d.getUTCMonth() + 1) + "-" + f(d.getUTCDate()) + "T" + f(d.getUTCHours()) + ":" + f(d.getUTCMinutes()) + ":" + f(d.getUTCSeconds()) + "Z" : null;
+        }
+        var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, gap, indent, meta = {
+          "\b": "\\b",
+          "	": "\\t",
+          "\n": "\\n",
+          "\f": "\\f",
+          "\r": "\\r",
+          '"': '\\"',
+          "\\": "\\\\"
+        }, rep;
+        function quote(string) {
+          escapable.lastIndex = 0;
+          return escapable.test(string) ? '"' + string.replace(escapable, function(a) {
+            var c = meta[a];
+            return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+          }) + '"' : '"' + string + '"';
+        }
+        function str(key, holder) {
+          var i2, k, v, length, mind = gap, partial, value = holder[key];
+          if (value instanceof Date) {
+            value = date(key);
+          }
+          if (typeof rep === "function") {
+            value = rep.call(holder, key, value);
+          }
+          switch (typeof value) {
+            case "string":
+              return quote(value);
+            case "number":
+              return isFinite(value) ? String(value) : "null";
+            case "boolean":
+            case "null":
+              return String(value);
+            case "object":
+              if (!value) {
+                return "null";
+              }
+              gap += indent;
+              partial = [];
+              if (Object.prototype.toString.apply(value) === "[object Array]") {
+                length = value.length;
+                for (i2 = 0; i2 < length; i2 += 1) {
+                  partial[i2] = str(i2, value) || "null";
+                }
+                v = partial.length === 0 ? "[]" : gap ? "[\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "]" : "[" + partial.join(",") + "]";
+                gap = mind;
+                return v;
+              }
+              if (rep && typeof rep === "object") {
+                length = rep.length;
+                for (i2 = 0; i2 < length; i2 += 1) {
+                  if (typeof rep[i2] === "string") {
+                    k = rep[i2];
+                    v = str(k, value);
+                    if (v) {
+                      partial.push(quote(k) + (gap ? ": " : ":") + v);
+                    }
+                  }
+                }
+              } else {
+                for (k in value) {
+                  if (Object.prototype.hasOwnProperty.call(value, k)) {
+                    v = str(k, value);
+                    if (v) {
+                      partial.push(quote(k) + (gap ? ": " : ":") + v);
+                    }
+                  }
+                }
+              }
+              v = partial.length === 0 ? "{}" : gap ? "{\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "}" : "{" + partial.join(",") + "}";
+              gap = mind;
+              return v;
+          }
+        }
+        JSON.stringify = function(value, replacer, space) {
+          var i2;
+          gap = "";
+          indent = "";
+          if (typeof space === "number") {
+            for (i2 = 0; i2 < space; i2 += 1) {
+              indent += " ";
+            }
+          } else if (typeof space === "string") {
+            indent = space;
+          }
+          rep = replacer;
+          if (replacer && typeof replacer !== "function" && (typeof replacer !== "object" || typeof replacer.length !== "number")) {
+            throw new Error("JSON.stringify");
+          }
+          return str("", { "": value });
+        };
+        JSON.parse = function(text, reviver) {
+          var j;
+          function walk(holder, key) {
+            var k, v, value = holder[key];
+            if (value && typeof value === "object") {
+              for (k in value) {
+                if (Object.prototype.hasOwnProperty.call(value, k)) {
+                  v = walk(value, k);
+                  if (v !== void 0) {
+                    value[k] = v;
+                  } else {
+                    delete value[k];
+                  }
+                }
+              }
+            }
+            return reviver.call(holder, key, value);
+          }
+          text = String(text);
+          cx.lastIndex = 0;
+          if (cx.test(text)) {
+            text = text.replace(cx, function(a) {
+              return "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+            });
+          }
+          if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
+            j = eval("(" + text + ")");
+            return typeof reviver === "function" ? walk({ "": j }, "") : j;
+          }
+          throw new SyntaxError("JSON.parse");
+        };
+      })(typeof io != "undefined" ? io : module.exports, typeof JSON !== "undefined" ? JSON : void 0);
+      (function(exports2, io2) {
+        var parser = exports2.parser = {};
+        var packets = parser.packets = [
+          "disconnect",
+          "connect",
+          "heartbeat",
+          "message",
+          "json",
+          "event",
+          "ack",
+          "error",
+          "noop"
+        ];
+        var reasons = parser.reasons = [
+          "transport not supported",
+          "client not handshaken",
+          "unauthorized"
+        ];
+        var advice = parser.advice = ["reconnect"];
+        var JSON2 = io2.JSON, indexOf = io2.util.indexOf;
+        parser.encodePacket = function(packet) {
+          var type = indexOf(packets, packet.type), id = packet.id || "", endpoint = packet.endpoint || "", ack = packet.ack, data = null;
+          switch (packet.type) {
+            case "error":
+              var reason = packet.reason ? indexOf(reasons, packet.reason) : "", adv = packet.advice ? indexOf(advice, packet.advice) : "";
+              if (reason !== "" || adv !== "")
+                data = reason + (adv !== "" ? "+" + adv : "");
+              break;
+            case "message":
+              if (packet.data !== "")
+                data = packet.data;
+              break;
+            case "event":
+              var ev = { name: packet.name };
+              if (packet.args && packet.args.length) {
+                ev.args = packet.args;
+              }
+              data = JSON2.stringify(ev);
+              break;
+            case "json":
+              data = JSON2.stringify(packet.data);
+              break;
+            case "connect":
+              if (packet.qs)
+                data = packet.qs;
+              break;
+            case "ack":
+              data = packet.ackId + (packet.args && packet.args.length ? "+" + JSON2.stringify(packet.args) : "");
+              break;
+          }
+          var encoded = [type, id + (ack == "data" ? "+" : ""), endpoint];
+          if (data !== null && data !== void 0)
+            encoded.push(data);
+          return encoded.join(":");
+        };
+        parser.encodePayload = function(packets2) {
+          var decoded = "";
+          if (packets2.length == 1)
+            return packets2[0];
+          for (var i2 = 0, l = packets2.length; i2 < l; i2++) {
+            var packet = packets2[i2];
+            decoded += "\uFFFD" + packet.length + "\uFFFD" + packets2[i2];
+          }
+          return decoded;
+        };
+        var regexp = /([^:]+):([0-9]+)?(\+)?:([^:]+)?:?([\s\S]*)?/;
+        parser.decodePacket = function(data) {
+          var pieces = data.match(regexp);
+          if (!pieces)
+            return {};
+          var id = pieces[2] || "", data = pieces[5] || "", packet = {
+            type: packets[pieces[1]],
+            endpoint: pieces[4] || ""
+          };
+          if (id) {
+            packet.id = id;
+            if (pieces[3])
+              packet.ack = "data";
+            else
+              packet.ack = true;
+          }
+          switch (packet.type) {
+            case "error":
+              var pieces = data.split("+");
+              packet.reason = reasons[pieces[0]] || "";
+              packet.advice = advice[pieces[1]] || "";
+              break;
+            case "message":
+              packet.data = data || "";
+              break;
+            case "event":
+              try {
+                var opts = JSON2.parse(data);
+                packet.name = opts.name;
+                packet.args = opts.args;
+              } catch (e) {
+              }
+              packet.args = packet.args || [];
+              break;
+            case "json":
+              try {
+                packet.data = JSON2.parse(data);
+              } catch (e) {
+              }
+              break;
+            case "connect":
+              packet.qs = data || "";
+              break;
+            case "ack":
+              var pieces = data.match(/^([0-9]+)(\+)?(.*)/);
+              if (pieces) {
+                packet.ackId = pieces[1];
+                packet.args = [];
+                if (pieces[3]) {
+                  try {
+                    packet.args = pieces[3] ? JSON2.parse(pieces[3]) : [];
+                  } catch (e) {
+                  }
+                }
+              }
+              break;
+          }
+          return packet;
+        };
+        parser.decodePayload = function(data) {
+          if (data.charAt(0) == "\uFFFD") {
+            var ret = [];
+            for (var i2 = 1, length = ""; i2 < data.length; i2++) {
+              if (data.charAt(i2) == "\uFFFD") {
+                ret.push(parser.decodePacket(data.substr(i2 + 1).substr(0, length)));
+                i2 += Number(length) + 1;
+                length = "";
+              } else {
+                length += data.charAt(i2);
+              }
+            }
+            return ret;
+          } else {
+            return [parser.decodePacket(data)];
+          }
+        };
+      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+      (function(exports2, io2) {
+        exports2.Transport = Transport;
+        function Transport(socket, sessid) {
+          this.socket = socket;
+          this.sessid = sessid;
+        }
+        io2.util.mixin(Transport, io2.EventEmitter);
+        Transport.prototype.heartbeats = function() {
+          return true;
+        };
+        Transport.prototype.onData = function(data) {
+          this.clearCloseTimeout();
+          if (this.socket.connected || this.socket.connecting || this.socket.reconnecting) {
+            this.setCloseTimeout();
+          }
+          if (data !== "") {
+            var msgs = io2.parser.decodePayload(data);
+            if (msgs && msgs.length) {
+              for (var i2 = 0, l = msgs.length; i2 < l; i2++) {
+                this.onPacket(msgs[i2]);
+              }
+            }
+          }
+          return this;
+        };
+        Transport.prototype.onPacket = function(packet) {
+          this.socket.setHeartbeatTimeout();
+          if (packet.type == "heartbeat") {
+            return this.onHeartbeat();
+          }
+          if (packet.type == "connect" && packet.endpoint == "") {
+            this.onConnect();
+          }
+          if (packet.type == "error" && packet.advice == "reconnect") {
+            this.isOpen = false;
+          }
+          this.socket.onPacket(packet);
+          return this;
+        };
+        Transport.prototype.setCloseTimeout = function() {
+          if (!this.closeTimeout) {
+            var self2 = this;
+            this.closeTimeout = setTimeout(function() {
+              self2.onDisconnect();
+            }, this.socket.closeTimeout);
+          }
+        };
+        Transport.prototype.onDisconnect = function() {
+          if (this.isOpen)
+            this.close();
+          this.clearTimeouts();
+          this.socket.onDisconnect();
+          return this;
+        };
+        Transport.prototype.onConnect = function() {
+          this.socket.onConnect();
+          return this;
+        };
+        Transport.prototype.clearCloseTimeout = function() {
+          if (this.closeTimeout) {
+            clearTimeout(this.closeTimeout);
+            this.closeTimeout = null;
+          }
+        };
+        Transport.prototype.clearTimeouts = function() {
+          this.clearCloseTimeout();
+          if (this.reopenTimeout) {
+            clearTimeout(this.reopenTimeout);
+          }
+        };
+        Transport.prototype.packet = function(packet) {
+          this.send(io2.parser.encodePacket(packet));
+        };
+        Transport.prototype.onHeartbeat = function(heartbeat) {
+          this.packet({ type: "heartbeat" });
+        };
+        Transport.prototype.onOpen = function() {
+          this.isOpen = true;
+          this.clearCloseTimeout();
+          this.socket.onOpen();
+        };
+        Transport.prototype.onClose = function() {
+          this.isOpen = false;
+          this.socket.onClose();
+          this.onDisconnect();
+        };
+        Transport.prototype.prepareUrl = function() {
+          var options = this.socket.options;
+          return this.scheme() + "://" + options.host + ":" + options.port + "/" + options.resource + "/" + io2.protocol + "/" + this.name + "/" + this.sessid;
+        };
+        Transport.prototype.ready = function(socket, fn) {
+          fn.call(this);
+        };
+      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+      (function(exports2, io2, global2) {
+        exports2.Socket = Socket;
+        function Socket(options) {
+          this.options = {
+            port: 80,
+            secure: false,
+            document: "document" in global2 ? document : false,
+            resource: "socket.io",
+            transports: io2.transports,
+            "connect timeout": 1e4,
+            "try multiple transports": true,
+            reconnect: true,
+            "reconnection delay": 500,
+            "reconnection limit": Infinity,
+            "reopen delay": 3e3,
+            "max reconnection attempts": 10,
+            "sync disconnect on unload": false,
+            "auto connect": true,
+            "flash policy port": 10843,
+            manualFlush: false
+          };
+          io2.util.merge(this.options, options);
+          this.connected = false;
+          this.open = false;
+          this.connecting = false;
+          this.reconnecting = false;
+          this.namespaces = {};
+          this.buffer = [];
+          this.doBuffer = false;
+          if (this.options["sync disconnect on unload"] && (!this.isXDomain() || io2.util.ua.hasCORS)) {
+            var self2 = this;
+            io2.util.on(global2, "beforeunload", function() {
+              self2.disconnectSync();
+            }, false);
+          }
+          if (this.options["auto connect"]) {
+            this.connect();
+          }
+        }
+        io2.util.mixin(Socket, io2.EventEmitter);
+        Socket.prototype.of = function(name) {
+          if (!this.namespaces[name]) {
+            this.namespaces[name] = new io2.SocketNamespace(this, name);
+            if (name !== "") {
+              this.namespaces[name].packet({ type: "connect" });
+            }
+          }
+          return this.namespaces[name];
+        };
+        Socket.prototype.publish = function() {
+          this.emit.apply(this, arguments);
+          var nsp;
+          for (var i2 in this.namespaces) {
+            if (this.namespaces.hasOwnProperty(i2)) {
+              nsp = this.of(i2);
+              nsp.$emit.apply(nsp, arguments);
+            }
+          }
+        };
+        function empty() {
+        }
+        Socket.prototype.handshake = function(fn) {
+          var self2 = this, options = this.options;
+          function complete(data) {
+            if (data instanceof Error) {
+              self2.connecting = false;
+              self2.onError(data.message);
+            } else {
+              fn.apply(null, data.split(":"));
+            }
+          }
+          var url = [
+            "http" + (options.secure ? "s" : "") + ":/",
+            options.host + ":" + options.port,
+            options.resource,
+            io2.protocol,
+            io2.util.query(this.options.query, "t=" + +new Date())
+          ].join("/");
+          if (this.isXDomain() && !io2.util.ua.hasCORS) {
+            var insertAt = document.getElementsByTagName("script")[0], script = document.createElement("script");
+            script.src = url + "&jsonp=" + io2.j.length;
+            insertAt.parentNode.insertBefore(script, insertAt);
+            io2.j.push(function(data) {
+              complete(data);
+              script.parentNode.removeChild(script);
+            });
+          } else {
+            var xhr = io2.util.request();
+            xhr.open("GET", url, true);
+            if (this.isXDomain()) {
+              xhr.withCredentials = true;
+            }
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState == 4) {
+                xhr.onreadystatechange = empty;
+                if (xhr.status == 200) {
+                  complete(xhr.responseText);
+                } else if (xhr.status == 403) {
+                  self2.onError(xhr.responseText);
+                } else {
+                  self2.connecting = false;
+                  !self2.reconnecting && self2.onError(xhr.responseText);
+                }
+              }
+            };
+            xhr.send(null);
+          }
+        };
+        Socket.prototype.getTransport = function(override) {
+          var transports = override || this.transports;
+          for (var i2 = 0, transport; transport = transports[i2]; i2++) {
+            if (io2.Transport[transport] && io2.Transport[transport].check(this) && (!this.isXDomain() || io2.Transport[transport].xdomainCheck(this))) {
+              return new io2.Transport[transport](this, this.sessionid);
+            }
+          }
+          return null;
+        };
+        Socket.prototype.connect = function(fn) {
+          if (this.connecting) {
+            return this;
+          }
+          var self2 = this;
+          self2.connecting = true;
+          this.handshake(function(sid, heartbeat, close, transports) {
+            self2.sessionid = sid;
+            self2.closeTimeout = close * 1e3;
+            self2.heartbeatTimeout = heartbeat * 1e3;
+            if (!self2.transports)
+              self2.transports = self2.origTransports = transports ? io2.util.intersect(transports.split(","), self2.options.transports) : self2.options.transports;
+            self2.setHeartbeatTimeout();
+            function connect(transports2) {
+              if (self2.transport)
+                self2.transport.clearTimeouts();
+              self2.transport = self2.getTransport(transports2);
+              if (!self2.transport)
+                return self2.publish("connect_failed");
+              self2.transport.ready(self2, function() {
+                self2.connecting = true;
+                self2.publish("connecting", self2.transport.name);
+                self2.transport.open();
+                if (self2.options["connect timeout"]) {
+                  self2.connectTimeoutTimer = setTimeout(function() {
+                    if (!self2.connected) {
+                      self2.connecting = false;
+                      if (self2.options["try multiple transports"]) {
+                        var remaining = self2.transports;
+                        while (remaining.length > 0 && remaining.splice(0, 1)[0] != self2.transport.name) {
+                        }
+                        if (remaining.length) {
+                          connect(remaining);
+                        } else {
+                          self2.publish("connect_failed");
+                        }
+                      }
+                    }
+                  }, self2.options["connect timeout"]);
+                }
+              });
+            }
+            connect(self2.transports);
+            self2.once("connect", function() {
+              clearTimeout(self2.connectTimeoutTimer);
+              fn && typeof fn == "function" && fn();
+            });
+          });
+          return this;
+        };
+        Socket.prototype.setHeartbeatTimeout = function() {
+          clearTimeout(this.heartbeatTimeoutTimer);
+          if (this.transport && !this.transport.heartbeats())
+            return;
+          var self2 = this;
+          this.heartbeatTimeoutTimer = setTimeout(function() {
+            self2.transport.onClose();
+          }, this.heartbeatTimeout);
+        };
+        Socket.prototype.packet = function(data) {
+          if (this.connected && !this.doBuffer) {
+            this.transport.packet(data);
+          } else {
+            this.buffer.push(data);
+          }
+          return this;
+        };
+        Socket.prototype.setBuffer = function(v) {
+          this.doBuffer = v;
+          if (!v && this.connected && this.buffer.length) {
+            if (!this.options["manualFlush"]) {
+              this.flushBuffer();
+            }
+          }
+        };
+        Socket.prototype.flushBuffer = function() {
+          this.transport.payload(this.buffer);
+          this.buffer = [];
+        };
+        Socket.prototype.disconnect = function() {
+          if (this.connected || this.connecting) {
+            if (this.open) {
+              this.of("").packet({ type: "disconnect" });
+            }
+            this.onDisconnect("booted");
+          }
+          return this;
+        };
+        Socket.prototype.disconnectSync = function() {
+          var xhr = io2.util.request();
+          var uri = [
+            "http" + (this.options.secure ? "s" : "") + ":/",
+            this.options.host + ":" + this.options.port,
+            this.options.resource,
+            io2.protocol,
+            "",
+            this.sessionid
+          ].join("/") + "/?disconnect=1";
+          xhr.open("GET", uri, false);
+          xhr.send(null);
+          this.onDisconnect("booted");
+        };
+        Socket.prototype.isXDomain = function() {
+          var port = global2.location.port || (global2.location.protocol == "https:" ? 443 : 80);
+          return this.options.host !== global2.location.hostname || this.options.port != port;
+        };
+        Socket.prototype.onConnect = function() {
+          if (!this.connected) {
+            this.connected = true;
+            this.connecting = false;
+            if (!this.doBuffer) {
+              this.setBuffer(false);
+            }
+            this.emit("connect");
+          }
+        };
+        Socket.prototype.onOpen = function() {
+          this.open = true;
+        };
+        Socket.prototype.onClose = function() {
+          this.open = false;
+          clearTimeout(this.heartbeatTimeoutTimer);
+        };
+        Socket.prototype.onPacket = function(packet) {
+          this.of(packet.endpoint).onPacket(packet);
+        };
+        Socket.prototype.onError = function(err) {
+          if (err && err.advice) {
+            if (err.advice === "reconnect" && (this.connected || this.connecting)) {
+              this.disconnect();
+              if (this.options.reconnect) {
+                this.reconnect();
+              }
+            }
+          }
+          this.publish("error", err && err.reason ? err.reason : err);
+        };
+        Socket.prototype.onDisconnect = function(reason) {
+          var wasConnected = this.connected, wasConnecting = this.connecting;
+          this.connected = false;
+          this.connecting = false;
+          this.open = false;
+          if (wasConnected || wasConnecting) {
+            this.transport.close();
+            this.transport.clearTimeouts();
+            if (wasConnected) {
+              this.publish("disconnect", reason);
+              if (reason != "booted" && this.options.reconnect && !this.reconnecting) {
+                this.reconnect();
+              }
+            }
+          }
+        };
+        Socket.prototype.reconnect = function() {
+          this.reconnecting = true;
+          this.reconnectionAttempts = 0;
+          this.reconnectionDelay = this.options["reconnection delay"];
+          var self2 = this, maxAttempts = this.options["max reconnection attempts"], tryMultiple = this.options["try multiple transports"], limit = this.options["reconnection limit"];
+          function reset() {
+            if (self2.connected) {
+              for (var i2 in self2.namespaces) {
+                if (self2.namespaces.hasOwnProperty(i2) && i2 !== "") {
+                  self2.namespaces[i2].packet({ type: "connect" });
+                }
+              }
+              self2.publish("reconnect", self2.transport.name, self2.reconnectionAttempts);
+            }
+            clearTimeout(self2.reconnectionTimer);
+            self2.removeListener("connect_failed", maybeReconnect);
+            self2.removeListener("connect", maybeReconnect);
+            self2.reconnecting = false;
+            delete self2.reconnectionAttempts;
+            delete self2.reconnectionDelay;
+            delete self2.reconnectionTimer;
+            delete self2.redoTransports;
+            self2.options["try multiple transports"] = tryMultiple;
+          }
+          function maybeReconnect() {
+            if (!self2.reconnecting) {
+              return;
+            }
+            if (self2.connected) {
+              return reset();
+            }
+            if (self2.connecting && self2.reconnecting) {
+              return self2.reconnectionTimer = setTimeout(maybeReconnect, 1e3);
+            }
+            if (self2.reconnectionAttempts++ >= maxAttempts) {
+              if (!self2.redoTransports) {
+                self2.on("connect_failed", maybeReconnect);
+                self2.options["try multiple transports"] = true;
+                self2.transports = self2.origTransports;
+                self2.transport = self2.getTransport();
+                self2.redoTransports = true;
+                self2.connect();
+              } else {
+                self2.publish("reconnect_failed");
+                reset();
+              }
+            } else {
+              if (self2.reconnectionDelay < limit) {
+                self2.reconnectionDelay *= 2;
+              }
+              self2.connect();
+              self2.publish("reconnecting", self2.reconnectionDelay, self2.reconnectionAttempts);
+              self2.reconnectionTimer = setTimeout(maybeReconnect, self2.reconnectionDelay);
+            }
+          }
+          this.options["try multiple transports"] = false;
+          this.reconnectionTimer = setTimeout(maybeReconnect, this.reconnectionDelay);
+          this.on("connect", maybeReconnect);
+        };
+      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
+      (function(exports2, io2) {
+        exports2.SocketNamespace = SocketNamespace;
+        function SocketNamespace(socket, name) {
+          this.socket = socket;
+          this.name = name || "";
+          this.flags = {};
+          this.json = new Flag(this, "json");
+          this.ackPackets = 0;
+          this.acks = {};
+        }
+        io2.util.mixin(SocketNamespace, io2.EventEmitter);
+        SocketNamespace.prototype.$emit = io2.EventEmitter.prototype.emit;
+        SocketNamespace.prototype.of = function() {
+          return this.socket.of.apply(this.socket, arguments);
+        };
+        SocketNamespace.prototype.packet = function(packet) {
+          packet.endpoint = this.name;
+          this.socket.packet(packet);
+          this.flags = {};
+          return this;
+        };
+        SocketNamespace.prototype.send = function(data, fn) {
+          var packet = {
+            type: this.flags.json ? "json" : "message",
+            data
+          };
+          if (typeof fn == "function") {
+            packet.id = ++this.ackPackets;
+            packet.ack = true;
+            this.acks[packet.id] = fn;
+          }
+          return this.packet(packet);
+        };
+        SocketNamespace.prototype.emit = function(name) {
+          var args = Array.prototype.slice.call(arguments, 1), lastArg = args[args.length - 1], packet = {
+            type: "event",
+            name
+          };
+          if (typeof lastArg == "function") {
+            packet.id = ++this.ackPackets;
+            packet.ack = "data";
+            this.acks[packet.id] = lastArg;
+            args = args.slice(0, args.length - 1);
+          }
+          packet.args = args;
+          return this.packet(packet);
+        };
+        SocketNamespace.prototype.disconnect = function() {
+          if (this.name === "") {
+            this.socket.disconnect();
+          } else {
+            this.packet({ type: "disconnect" });
+            this.$emit("disconnect");
+          }
+          return this;
+        };
+        SocketNamespace.prototype.onPacket = function(packet) {
+          var self2 = this;
+          function ack() {
+            self2.packet({
+              type: "ack",
+              args: io2.util.toArray(arguments),
+              ackId: packet.id
+            });
+          }
+          switch (packet.type) {
+            case "connect":
+              this.$emit("connect");
+              break;
+            case "disconnect":
+              if (this.name === "") {
+                this.socket.onDisconnect(packet.reason || "booted");
+              } else {
+                this.$emit("disconnect", packet.reason);
+              }
+              break;
+            case "message":
+            case "json":
+              var params = ["message", packet.data];
+              if (packet.ack == "data") {
+                params.push(ack);
+              } else if (packet.ack) {
+                this.packet({ type: "ack", ackId: packet.id });
+              }
+              this.$emit.apply(this, params);
+              break;
+            case "event":
+              var params = [packet.name].concat(packet.args);
+              if (packet.ack == "data")
+                params.push(ack);
+              this.$emit.apply(this, params);
+              break;
+            case "ack":
+              if (this.acks[packet.ackId]) {
+                this.acks[packet.ackId].apply(this, packet.args);
+                delete this.acks[packet.ackId];
+              }
+              break;
+            case "error":
+              if (packet.advice) {
+                this.socket.onError(packet);
+              } else {
+                if (packet.reason == "unauthorized") {
+                  this.$emit("connect_failed", packet.reason);
+                } else {
+                  this.$emit("error", packet.reason);
+                }
+              }
+              break;
+          }
+        };
+        function Flag(nsp, name) {
+          this.namespace = nsp;
+          this.name = name;
+        }
+        Flag.prototype.send = function() {
+          this.namespace.flags[this.name] = true;
+          this.namespace.send.apply(this.namespace, arguments);
+        };
+        Flag.prototype.emit = function() {
+          this.namespace.flags[this.name] = true;
+          this.namespace.emit.apply(this.namespace, arguments);
+        };
+      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+      (function(exports2, io2, global2) {
+        exports2.websocket = WS;
+        function WS(socket) {
+          io2.Transport.apply(this, arguments);
+        }
+        io2.util.inherit(WS, io2.Transport);
+        WS.prototype.name = "websocket";
+        WS.prototype.open = function() {
+          var query = io2.util.query(this.socket.options.query), self2 = this, Socket;
+          if (!Socket) {
+            Socket = global2.MozWebSocket || global2.WebSocket;
+          }
+          this.websocket = new Socket(this.prepareUrl() + query);
+          this.websocket.onopen = function() {
+            self2.onOpen();
+            self2.socket.setBuffer(false);
+          };
+          this.websocket.onmessage = function(ev) {
+            self2.onData(ev.data);
+          };
+          this.websocket.onclose = function() {
+            self2.onClose();
+            self2.socket.setBuffer(true);
+          };
+          this.websocket.onerror = function(e) {
+            self2.onError(e);
+          };
+          return this;
+        };
+        if (io2.util.ua.iDevice) {
+          WS.prototype.send = function(data) {
+            var self2 = this;
+            setTimeout(function() {
+              self2.websocket.send(data);
+            }, 0);
+            return this;
+          };
+        } else {
+          WS.prototype.send = function(data) {
+            this.websocket.send(data);
+            return this;
+          };
+        }
+        WS.prototype.payload = function(arr) {
+          for (var i2 = 0, l = arr.length; i2 < l; i2++) {
+            this.packet(arr[i2]);
+          }
+          return this;
+        };
+        WS.prototype.close = function() {
+          this.websocket.close();
+          return this;
+        };
+        WS.prototype.onError = function(e) {
+          this.socket.onError(e);
+        };
+        WS.prototype.scheme = function() {
+          return this.socket.options.secure ? "wss" : "ws";
+        };
+        WS.check = function() {
+          return "WebSocket" in global2 && !("__addTask" in WebSocket) || "MozWebSocket" in global2;
+        };
+        WS.xdomainCheck = function() {
+          return true;
+        };
+        io2.transports.push("websocket");
+      })(typeof io != "undefined" ? io.Transport : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
+    })();
+  })(socket_ioWebsocketOnly);
+  var io = socket_ioWebsocketOnly.exports;
+  class Event {
+    constructor(topic, data, options = {}) {
+      this._data = Object.assign({
+        topic,
+        data,
+        target: "",
+        inReplyToEvent: null
+      }, options, {
+        id: v4_1(),
+        sent: null
+      });
+    }
+    getData() {
+      return this._data;
+    }
+    addSource(source) {
+      this._data.source = source;
+    }
+  }
+  function errorFactory(name) {
+    function CustomError(message, errorCode) {
+      this.name = name;
+      this.message = message;
+      this.errorCode = errorCode;
+      this.stack = new Error().stack;
+    }
+    CustomError.prototype = new Error();
+    return CustomError;
+  }
+  const ServerError = errorFactory("ServerError");
+  const ServerPermissionDeniedError = errorFactory("ServerPermissionDeniedError");
+  const ServerValidationError = errorFactory("ServerValidationError");
+  const EventServerReplyTimeoutError = errorFactory("EventServerReplyTimeoutError");
+  const EventServerConnectionTimeoutError = errorFactory("EventServerConnectionTimeoutError");
+  const NotUniqueError = errorFactory("NotUniqueError");
+  const CreateComponentError = errorFactory("CreateComponentError");
+  const AbortError = errorFactory("AbortError");
+  const exports$3 = {
+    ServerError,
+    ServerPermissionDeniedError,
+    ServerValidationError,
+    EventServerReplyTimeoutError,
+    EventServerConnectionTimeoutError,
+    NotUniqueError,
+    CreateComponentError,
+    AbortError
+  };
+  function encodeUriParameters(data) {
+    return Object.keys(data).map((key) => [key, data[key]].map(encodeURIComponent).join("=")).join("&");
+  }
+  class EventHub {
+    constructor(serverUrl, apiUser, apiKey, { applicationId = "ftrack.api.javascript" } = {}) {
+      this.logger = loglevel__default["default"].getLogger("ftrack_api:EventHub");
+      this._applicationId = applicationId;
+      this._apiUser = apiUser;
+      this._apiKey = apiKey;
+      const portRegex = new RegExp("\\:\\d+$");
+      if (serverUrl.match(portRegex)) {
+        this._serverUrl = serverUrl;
+      } else {
+        const port = serverUrl.lastIndexOf("https", 0) === 0 ? "443" : "80";
+        this._serverUrl = `${serverUrl}:${port}`;
+      }
+      this._id = v4_1();
+      this._replyCallbacks = {};
+      this._unsentEvents = [];
+      this._subscribers = [];
+      this._socketIo = null;
+      this._handle = this._handle.bind(this);
+      this._handleReply = this._handleReply.bind(this);
+      this._onSocketConnected = this._onSocketConnected.bind(this);
+    }
+    connect() {
+      this._socketIo = io.connect(this._serverUrl, {
+        "max reconnection attempts": Infinity,
+        "reconnection limit": 1e4,
+        "reconnection delay": 5e3,
+        transports: ["websocket"],
+        query: encodeUriParameters({
+          api_user: this._apiUser,
+          api_key: this._apiKey
+        })
+      });
+      this._socketIo.on("connect", this._onSocketConnected);
+      this._socketIo.on("ftrack.event", this._handle);
+    }
+    isConnected() {
+      return this._socketIo && this._socketIo.socket.connected || false;
+    }
+    _onSocketConnected() {
+      this.logger.debug("Connected to event server.");
+      try {
+        this.subscribe("topic=ftrack.meta.reply", this._handleReply, {
+          id: this._id
+        });
+      } catch (error) {
+        if (error instanceof NotUniqueError) {
+          this.logger.debug("Already subscribed to replies.");
+        } else {
+          throw error;
+        }
+      }
+      for (const subscriber of this._subscribers) {
+        this._notifyServerAboutSubscriber(subscriber);
+      }
+      const callbacks = this._unsentEvents;
+      if (callbacks.length) {
+        this._unsentEvents = [];
+        this.logger.debug(`Publishing ${callbacks.length} unsent events.`);
+        for (const callback of callbacks) {
+          this._runWhenConnected(callback);
+        }
+      }
+    }
+    publish(event, { onReply = null, timeout = 10 } = {}) {
+      event.addSource({
+        id: this._id,
+        applicationId: this._applicationId,
+        user: {
+          username: this._apiUser
+        }
+      });
+      const eventData = Object.assign({}, event.getData());
+      const eventId = eventData.id;
+      const onConnected = new Promise((resolve, reject) => {
+        this._runWhenConnected(resolve);
+        if (timeout) {
+          setTimeout(() => {
+            const error = new EventServerConnectionTimeoutError("Unable to connect to event server within timeout.");
+            reject(error);
+          }, timeout * 1e3);
+        }
+      });
+      const onPublish = onConnected.then(() => {
+        if (onReply) {
+          this._replyCallbacks[eventId] = onReply;
+        }
+        this.logger.debug("Publishing event.", eventData);
+        this._socketIo.emit("ftrack.event", eventData);
+        return Promise.resolve(eventId);
+      });
+      return onPublish;
+    }
+    publishAndWaitForReply(event, { timeout = 30 }) {
+      const response = new Promise((resolve, reject) => {
+        const onReply = (replyEvent) => {
+          resolve(replyEvent);
+          this._removeReplyCallback(event.id);
+        };
+        this.publish(event, { timeout, onReply });
+        if (timeout) {
+          setTimeout(() => {
+            const error = new EventServerReplyTimeoutError("No reply event received within timeout.");
+            reject(error);
+            this._removeReplyCallback(event.id);
+          }, timeout * 1e3);
+        }
+      });
+      return response;
+    }
+    _removeReplyCallback(eventId) {
+      if (this._replyCallbacks[eventId]) {
+        delete this._replyCallbacks[eventId];
+      }
+    }
+    _runWhenConnected(callback) {
+      if (!this.isConnected()) {
+        this.logger.debug("Event hub is not connected, event is delayed.");
+        this._unsentEvents.push(callback);
+        this._socketIo.socket.reconnect();
+      } else {
+        callback();
+      }
+    }
+    subscribe(subscription, callback, metadata = {}) {
+      const subscriber = this._addSubscriber(subscription, callback, metadata);
+      this._notifyServerAboutSubscriber(subscriber);
+      return subscriber.metadata.id;
+    }
+    _getExpressionTopic(subscription) {
+      const regex = new RegExp(`^topic[ ]?=[ '"]?([\\w-,./*@+]+)['"]?$`);
+      const matches = subscription.trim().match(regex);
+      if (matches && matches.length === 2) {
+        return matches[1];
+      }
+      throw new Error('Only subscriptions on the format "topic=value" are supported.');
+    }
+    _addSubscriber(subscription, callback, metadata = {}) {
+      this._getExpressionTopic(subscription);
+      if (!metadata.id) {
+        metadata.id = v4_1();
+      }
+      const existingSubscriber = this.getSubscriberByIdentifier(metadata.id);
+      if (existingSubscriber) {
+        throw new NotUniqueError(`Subscriber with identifier "${metadata.id}" already exists.`);
+      }
+      const subscriber = {
+        subscription,
+        callback,
+        metadata
+      };
+      this._subscribers.push(subscriber);
+      return subscriber;
+    }
+    _notifyServerAboutSubscriber(subscriber) {
+      const subscribeEvent = new Event("ftrack.meta.subscribe", {
+        subscriber: subscriber.metadata,
+        subscription: subscriber.subscription
+      });
+      this.publish(subscribeEvent);
+    }
+    getSubscriberByIdentifier(identifier) {
+      for (const subscriber of this._subscribers.slice()) {
+        if (subscriber.metadata.id === identifier) {
+          return subscriber;
+        }
+      }
+      return null;
+    }
+    _IsSubscriberInterestedIn(subscriber, event) {
+      const topic = this._getExpressionTopic(subscriber.subscription);
+      if (topic === event.topic) {
+        return true;
+      }
+      return false;
+    }
+    _handle(event) {
+      this.logger.debug("Event received", event);
+      for (const subscriber of this._subscribers) {
+        if (!this._IsSubscriberInterestedIn(subscriber, event)) {
+          continue;
+        }
+        let response = null;
+        try {
+          response = subscriber.callback(event);
+        } catch (error) {
+          this.logger.error("Error calling subscriber for event.", error, subscriber, event);
+        }
+        if (response != null) {
+          this.publishReply(event, response, subscriber.metadata);
+        }
+      }
+    }
+    _handleReply(event) {
+      this.logger.debug("Reply received", event);
+      const onReplyCallback = this._replyCallbacks[event.inReplyToEvent];
+      if (onReplyCallback) {
+        onReplyCallback(event);
+      }
+    }
+    publishReply(sourceEvent, data, source = null) {
+      const replyEvent = new Event("ftrack.meta.reply", data);
+      replyEvent._data.target = `id=${sourceEvent.source.id}`;
+      replyEvent._data.inReplyToEvent = sourceEvent.id;
+      if (source) {
+        replyEvent._data.source = source;
+      }
+      return this.publish(replyEvent);
+    }
+  }
+  function createOperation(type, data) {
+    const operation = { action: "create", entity_type: type };
+    operation.entity_data = Object.assign({}, data, { __entity_type__: type });
+    return operation;
+  }
+  function queryOperation(expression) {
+    return { action: "query", expression };
+  }
+  function searchOperation({
+    expression,
+    entityType,
+    terms,
+    contextId,
+    objectTypeIds
+  }) {
+    return {
+      action: "search",
+      expression,
+      entity_type: entityType,
+      terms,
+      context_id: contextId,
+      object_type_ids: objectTypeIds
+    };
+  }
+  function updateOperation(type, keys2, data) {
+    const operation = {
+      action: "update",
+      entity_type: type,
+      entity_key: keys2
+    };
+    operation.entity_data = Object.assign({}, data, { __entity_type__: type });
+    return operation;
+  }
+  function deleteOperation(type, keys2) {
+    const operation = {
+      action: "delete",
+      entity_type: type,
+      entity_key: keys2
+    };
+    return operation;
+  }
+  const exports$2 = {
+    query: queryOperation,
+    create: createOperation,
+    update: updateOperation,
+    delete: deleteOperation,
+    search: searchOperation
+  };
+  const SERVER_LOCATION_ID = "3a372bde-05bc-11e4-8908-20c9d081909b";
+  function normalizeString(value) {
+    let result = value;
+    try {
+      result = value.normalize();
+    } catch (error) {
+      loglevel__default["default"].warn("Failed to normalize string", value, error);
+    }
+    return result;
+  }
+  const logger = loglevel__default["default"].getLogger("ftrack_api");
+  const ENCODE_DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
+  function splitFileExtension(fileName) {
+    let basename = fileName || "";
+    let extension = fileName.slice((Math.max(0, fileName.lastIndexOf(".")) || Infinity) + 1) || "";
+    if (extension.length) {
+      extension = `.${extension}`;
+      basename = fileName.slice(0, -1 * extension.length) || "";
+    }
+    return [basename, extension];
+  }
+  class Session {
+    constructor(serverUrl, apiUser, apiKey, {
+      autoConnectEventHub = false,
+      serverInformationValues = null,
+      eventHubOptions = {},
+      clientToken = null,
+      apiEndpoint = "/api"
+    } = {}) {
+      if (!serverUrl || !apiUser || !apiKey) {
+        throw new Error("Invalid arguments, please construct Session with *serverUrl*, *apiUser* and *apiKey*.");
+      }
+      this.apiUser = apiUser;
+      this.apiKey = apiKey;
+      this.serverUrl = serverUrl;
+      this.apiEndpoint = apiEndpoint;
+      this.eventHub = new EventHub(serverUrl, apiUser, apiKey, eventHubOptions);
+      if (autoConnectEventHub) {
+        this.eventHub.connect();
+      }
+      if (clientToken) {
+        this.clientToken = clientToken;
+      } else {
+        this.clientToken = `ftrack-javascript-api--${v4_1()}`;
+      }
+      if (serverInformationValues && !serverInformationValues.includes("is_timezone_support_enabled")) {
+        serverInformationValues.push("is_timezone_support_enabled");
+      }
+      const operations = [
+        {
+          action: "query_server_information",
+          values: serverInformationValues
+        },
+        { action: "query_schemas" }
+      ];
+      this.initialized = false;
+      this.initializing = this.call(operations).then((responses) => {
+        this.serverInformation = responses[0];
+        this.schemas = responses[1];
+        this.serverVersion = this.serverInformation.version;
+        this.initialized = true;
+        return Promise.resolve(this);
+      });
+    }
+    getPrimaryKeyAttributes(entityType) {
+      const schema = find_1(this.schemas, (item) => item.id === entityType);
+      if (!schema || !schema.primary_key) {
+        logger.warn("Primary key could not be found for: ", entityType);
+        return null;
+      }
+      return schema.primary_key;
+    }
+    getIdentifyingKey(entity) {
+      const primaryKeys = this.getPrimaryKeyAttributes(entity.__entity_type__);
+      if (primaryKeys) {
+        return [
+          entity.__entity_type__,
+          ...primaryKeys.map((attribute) => entity[attribute])
+        ].join(",");
+      }
+      return null;
+    }
+    encode(data) {
+      if (data && data.constructor === Array) {
+        return data.map((item) => this.encode(item));
+      }
+      if (data && data.constructor === Object) {
+        const out = {};
+        forIn_1(data, (value, key) => {
+          out[key] = this.encode(value);
+        });
+        return out;
+      }
+      if (data && data._isAMomentObject) {
+        if (this.serverInformation && this.serverInformation.is_timezone_support_enabled) {
+          return {
+            __type__: "datetime",
+            value: data.utc().format(ENCODE_DATETIME_FORMAT)
+          };
+        }
+        return {
+          __type__: "datetime",
+          value: data.local().format(ENCODE_DATETIME_FORMAT)
+        };
+      }
+      return data;
+    }
+    getErrorFromResponse(response) {
+      let ErrorClass;
+      if (response.exception === "AbortError") {
+        ErrorClass = AbortError;
+      } else if (response.exception === "ValidationError") {
+        ErrorClass = ServerValidationError;
+      } else if (response.exception === "FTAuthenticationError" || response.exception === "PermissionError") {
+        ErrorClass = ServerPermissionDeniedError;
+      } else {
+        ErrorClass = ServerError;
+      }
+      const error = new ErrorClass(response.content, response.error_code);
+      return error;
+    }
+    decode(data, identityMap = {}) {
+      if (data == null) {
+        return data;
+      } else if (isArray_1(data)) {
+        return this._decodeArray(data, identityMap);
+      } else if (isPlainObject_1(data)) {
+        if (data.__entity_type__) {
+          return this._mergeEntity(data, identityMap);
+        } else if (data.__type__ === "datetime") {
+          return this._decodeDateTime(data);
+        }
+        return this._decodePlainObject(data, identityMap);
+      }
+      return data;
+    }
+    _decodeDateTime(data) {
+      if (this.serverInformation && this.serverInformation.is_timezone_support_enabled) {
+        return moment__default["default"].utc(data.value);
+      }
+      return moment__default["default"](data.value);
+    }
+    _decodePlainObject(object, identityMap) {
+      return Object.keys(object).reduce((previous, key) => {
+        previous[key] = this.decode(object[key], identityMap);
+        return previous;
+      }, {});
+    }
+    _decodeArray(collection, identityMap) {
+      return collection.map((item) => this.decode(item, identityMap));
+    }
+    _mergeEntity(entity, identityMap) {
+      const identifier = this.getIdentifyingKey(entity);
+      if (!identifier) {
+        logger.warn("Identifier could not be determined for: ", identifier);
+        return entity;
+      }
+      if (!identityMap[identifier]) {
+        identityMap[identifier] = {};
+      }
+      const mergedEntity = identityMap[identifier];
+      forIn_1(entity, (value, key) => {
+        mergedEntity[key] = this.decode(value, identityMap);
+      });
+      return mergedEntity;
+    }
+    encodeOperations(operations) {
+      return JSON.stringify(this.encode(operations));
+    }
+    call(operations, { abortController } = {}) {
+      const url = `${this.serverUrl}${this.apiEndpoint}`;
+      let request = new Promise((resolve) => {
+        if (this.initializing && !this.initialized) {
+          this.initializing.then(() => {
+            resolve();
+          });
+        } else {
+          resolve();
+        }
+      });
+      request = request.then(() => fetch(url, {
+        method: "post",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "ftrack-api-key": this.apiKey,
+          "ftrack-user": this.apiUser,
+          "ftrack-Clienttoken": this.clientToken
+        },
+        body: this.encodeOperations(operations),
+        signal: abortController && abortController.signal
+      }));
+      request = request.catch((reason) => {
+        logger.warn("Failed to perform request. ", reason);
+        if (reason.name === "AbortError") {
+          return Promise.resolve({
+            exception: "AbortError",
+            content: reason.message
+          });
+        }
+        return Promise.resolve({
+          exception: "NetworkError",
+          content: reason.message
+        });
+      });
+      request = request.then((response) => response.json && response.json() || response);
+      request = request.then((data) => {
+        if (this.initialized) {
+          return this.decode(data);
+        }
+        return data;
+      });
+      request = request.catch((reason) => {
+        logger.warn("Server reported error in unexpected format. ", reason);
+        return Promise.resolve({
+          exception: "MalformedResponseError",
+          content: reason.message,
+          error: reason
+        });
+      });
+      request = request.then((response) => {
+        if (response.exception) {
+          return Promise.reject(this.getErrorFromResponse(response));
+        }
+        return Promise.resolve(response);
+      });
+      return request;
+    }
+    ensure(entityType, data, identifyingKeys = []) {
+      let keys2 = identifyingKeys;
+      logger.info("Ensuring entity with data using identifying keys: ", entityType, data, identifyingKeys);
+      if (!keys2.length) {
+        keys2 = Object.keys(data);
+      }
+      if (!keys2.length) {
+        throw new Error(`Could not determine any identifying data to check against when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`);
+      }
+      const primaryKeys = this.getPrimaryKeyAttributes(entityType);
+      let expression = `select ${primaryKeys.join(", ")} from ${entityType} where`;
+      const criteria = keys2.map((identifyingKey) => {
+        let value = data[identifyingKey];
+        if (isString_1(value)) {
+          value = `"${value}"`;
+        } else if (value && value._isAMomentObject) {
+          value = moment__default["default"](value).utc().format(ENCODE_DATETIME_FORMAT);
+          value = `"${value}"`;
+        }
+        return `${identifyingKey} is ${value}`;
+      });
+      expression = `${expression} ${criteria.join(" and ")}`;
+      return this.query(expression).then((response) => {
+        if (response.data.length === 0) {
+          return this.create(entityType, data).then(({ data: responseData }) => Promise.resolve(responseData));
+        }
+        if (response.data.length !== 1) {
+          throw new Error(`Expected single or no item to be found but got multiple when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`);
+        }
+        const updateEntity = response.data[0];
+        let updated = false;
+        Object.keys(data).forEach((key) => {
+          if (data[key] !== updateEntity[key]) {
+            updateEntity[key] = data[key];
+            updated = true;
+          }
+        });
+        if (updated) {
+          return this.update(entityType, primaryKeys.map((key) => updateEntity[key]), Object.keys(data).reduce((accumulator, key) => {
+            if (primaryKeys.indexOf(key) === -1) {
+              accumulator[key] = data[key];
+            }
+            return accumulator;
+          }, {})).then(({ data: responseData }) => Promise.resolve(responseData));
+        }
+        return Promise.resolve(response.data[0]);
+      });
+    }
+    getSchema(schemaId) {
+      for (const index in this.schemas) {
+        if (this.schemas[index].id === schemaId) {
+          return this.schemas[index];
+        }
+      }
+      return null;
+    }
+    query(expression, { abortController } = {}) {
+      logger.debug("Query", expression);
+      const operation = queryOperation(expression);
+      let request = this.call([operation], abortController);
+      request = request.then((responses) => {
+        const response = responses[0];
+        return response;
+      });
+      return request;
+    }
+    search({ expression, entityType, terms = [], contextId, objectTypeIds }, { abortController } = {}) {
+      logger.debug("Search", {
+        expression,
+        entityType,
+        terms,
+        contextId,
+        objectTypeIds
+      });
+      const operation = searchOperation({
+        expression,
+        entityType,
+        terms,
+        contextId,
+        objectTypeIds
+      });
+      let request = this.call([operation], abortController);
+      request = request.then((responses) => {
+        const response = responses[0];
+        return response;
+      });
+      return request;
+    }
+    create(type, data) {
+      logger.debug("Create", type, data);
+      let request = this.call([createOperation(type, data)]);
+      request = request.then((responses) => {
+        const response = responses[0];
+        return response;
+      });
+      return request;
+    }
+    update(type, keys2, data) {
+      logger.debug("Update", type, keys2, data);
+      let request = this.call([updateOperation(type, keys2, data)]);
+      request = request.then((responses) => {
+        const response = responses[0];
+        return response;
+      });
+      return request;
+    }
+    delete(type, id) {
+      logger.debug("Delete", type, id);
+      let request = this.call([deleteOperation(type, id)]);
+      request = request.then((responses) => {
+        const response = responses[0];
+        return response;
+      });
+      return request;
+    }
+    getComponentUrl(componentId) {
+      if (!componentId) {
+        return null;
+      }
+      const params = {
+        id: componentId,
+        username: this.apiUser,
+        apiKey: this.apiKey
+      };
+      return `${this.serverUrl}/component/get?${encodeUriParameters(params)}`;
+    }
+    thumbnailUrl(componentId, { size = 300 } = {}) {
+      if (!componentId) {
+        return `${this.serverUrl}/img/thumbnail2.png`;
+      }
+      const params = {
+        id: componentId,
+        size,
+        username: this.apiUser,
+        apiKey: this.apiKey
+      };
+      return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(params)}`;
+    }
+    createComponent(file, options = {}) {
+      const normalizedFileName = normalizeString(file.name);
+      const fileNameParts = splitFileExtension(normalizedFileName);
+      const defaultProgress = (progress) => progress;
+      const defaultAbort = () => {
+      };
+      const data = options.data || {};
+      const onProgress = options.onProgress || defaultProgress;
+      const xhr = options.xhr || new XMLHttpRequest();
+      const onAborted = options.onAborted || defaultAbort;
+      const fileType = data.file_type || fileNameParts[1];
+      const fileName = data.name || fileNameParts[0];
+      const fileSize = data.size || file.size;
+      const componentId = data.id || v4_1();
+      const componentLocationId = v4_1();
+      let url;
+      let headers;
+      const updateOnProgressCallback = (oEvent) => {
+        if (oEvent.lengthComputable) {
+          onProgress(parseInt(oEvent.loaded / oEvent.total * 100, 10));
+        }
+      };
+      logger.debug("Registering component and fetching upload metadata.");
+      const component = Object.assign(data, {
+        id: componentId,
+        name: fileName,
+        file_type: fileType,
+        size: fileSize
+      });
+      const componentLocation = {
+        id: componentLocationId,
+        component_id: componentId,
+        resource_identifier: componentId,
+        location_id: SERVER_LOCATION_ID
+      };
+      const componentAndLocationPromise = this.call([
+        createOperation("FileComponent", component),
+        createOperation("ComponentLocation", componentLocation),
+        {
+          action: "get_upload_metadata",
+          file_name: `${fileName}${fileType}`,
+          file_size: fileSize,
+          component_id: componentId
+        }
+      ]).then((response) => {
+        url = response[2].url;
+        headers = response[2].headers;
+        return response;
+      });
+      return componentAndLocationPromise.then(() => {
+        logger.debug(`Uploading file to: ${url}`);
+        return new Promise((resolve, reject) => {
+          xhr.upload.addEventListener("progress", updateOnProgressCallback);
+          xhr.open("PUT", url, true);
+          xhr.onabort = () => {
+            onAborted();
+            this.delete("FileComponent", [componentId]).then(() => {
+              reject(new CreateComponentError("Upload aborted by client", "UPLOAD_ABORTED"));
+            });
+          };
+          for (const key in headers) {
+            if (headers.hasOwnProperty(key) && key !== "Content-Length") {
+              xhr.setRequestHeader(key, headers[key]);
+            }
+          }
+          xhr.onload = () => {
+            if (xhr.status >= 400) {
+              reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+            }
+            resolve(xhr.response);
+          };
+          xhr.onerror = () => {
+            this.delete("FileComponent", [componentId]).then(() => {
+              reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+            });
+          };
+          xhr.send(file);
+        }).then(() => componentAndLocationPromise);
+      });
+    }
+  }
+  function getStatuses(session, projectSchemaId, entityType, typeId = null) {
+    let response;
+    const taskWorkflowAttributes = [
+      "_task_workflow.statuses.name",
+      "_task_workflow.statuses.color",
+      "_task_workflow.statuses.sort"
+    ];
+    const versionWorkflowAttributes = [
+      "_version_workflow.statuses.name",
+      "_version_workflow.statuses.color",
+      "_version_workflow.statuses.sort"
+    ];
+    const overridesAttributes = [
+      "_overrides.type_id",
+      "_overrides.workflow_schema.statuses.name",
+      "_overrides.workflow_schema.statuses.sort",
+      "_overrides.workflow_schema.statuses.color"
+    ];
+    const schemasAttributes = [
+      "_schemas.type_id",
+      "_schemas.statuses.task_status.name",
+      "_schemas.statuses.task_status.color",
+      "_schemas.statuses.task_status.sort"
+    ];
+    let groupedAttributes;
+    if (entityType === "Task" && typeId !== null) {
+      groupedAttributes = [taskWorkflowAttributes, overridesAttributes];
+    } else if (entityType === "Task") {
+      groupedAttributes = [taskWorkflowAttributes];
+    } else if (entityType === "AssetVersion") {
+      groupedAttributes = [versionWorkflowAttributes];
+    } else {
+      groupedAttributes = [schemasAttributes];
+    }
+    const operations = groupedAttributes.map((select) => exports$2.query(`select ${select.join(", ")} from ProjectSchema where id is ${projectSchemaId}`));
+    response = session.call(operations);
+    response = response.then((results) => {
+      const data = results[0].data[0];
+      let statuses = [];
+      if (entityType === "Task") {
+        statuses = null;
+        if (typeId !== null && data._overrides.length > 0) {
+          for (const index in data._overrides) {
+            if (data._overrides[index].type_id === typeId) {
+              statuses = data._overrides[index].workflow_schema.statuses;
+              break;
+            }
+          }
+        }
+        if (statuses === null) {
+          statuses = data._task_workflow.statuses;
+        }
+      } else if (entityType === "AssetVersion") {
+        statuses = data._version_workflow.statuses;
+      } else {
+        const schema = session.getSchema(entityType);
+        if (schema && schema.alias_for && schema.alias_for.id === "Task") {
+          const objectTypeId = schema.alias_for.classifiers.object_typeid;
+          for (const index in data._schemas) {
+            if (data._schemas[index].type_id === objectTypeId) {
+              statuses = data._schemas[index].statuses.map((status) => status.task_status);
+            }
+          }
+        }
+      }
+      return Promise.resolve(statuses);
+    });
+    return response;
+  }
+  const exports$1 = {
+    getStatuses
+  };
+  Object.defineProperty(exports, "logger", {
+    enumerable: true,
+    get: function() {
+      return loglevel__default["default"];
+    }
+  });
+  exports.Event = Event;
+  exports.EventHub = EventHub;
+  exports.Session = Session;
+  exports.error = exports$3;
+  exports.operation = exports$2;
+  exports.projectSchema = exports$1;
+  Object.defineProperty(exports, "__esModule", { value: true });
+  exports[Symbol.toStringTag] = "Module";
+});
 //# sourceMappingURL=ftrack-javascript-api.umd.js.map
