@@ -3,7 +3,7 @@ const that = typeof window === "undefined" ? {} : window;
 
 var io = "undefined" === typeof module ? {} : module.exports;
 
-export default (function () {
+(function () {
   /**
    * socket.io
    * Copyright(c) 2011 LearnBoost <dev@learnboost.com>

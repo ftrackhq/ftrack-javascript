@@ -8,5 +8,6 @@
         "corejs": 3
       }
     ]
-  ]
+  ],
+  "ignore": ["source/socket.io-websocket-only.cjs"]
 }

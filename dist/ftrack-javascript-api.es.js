@@ -1546,1195 +1546,1194 @@ function v4(options, buf, offset) {
   return buf || bytesToUuid(rnds2);
 }
 var v4_1 = v4;
+var socket_ioWebsocketOnly = { exports: {} };
 /*! Socket.IO.js build:0.9.17, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
-const that = typeof window === "undefined" ? {} : window;
-var io = typeof module === "undefined" ? {} : module.exports;
-var io$1 = function() {
-  (function(exports2, global2) {
-    var io2 = exports2;
-    io2.version = "0.9.17";
-    io2.protocol = 1;
-    io2.transports = [];
-    io2.j = [];
-    io2.sockets = {};
-    io2.connect = function(host, details) {
-      var uri = io2.util.parseUri(host), uuri, socket;
-      if (global2 && global2.location) {
-        uri.protocol = uri.protocol || global2.location.protocol.slice(0, -1);
-        uri.host = uri.host || (global2.document ? global2.document.domain : global2.location.hostname);
-        uri.port = uri.port || global2.location.port;
-      }
-      uuri = io2.util.uniqueUri(uri);
-      var options = {
-        host: uri.host,
-        secure: uri.protocol == "https",
-        port: uri.port || (uri.protocol == "https" ? 443 : 80),
-        query: uri.query || ""
+(function(module) {
+  const that = typeof window === "undefined" ? {} : window;
+  var io = module.exports;
+  (function() {
+    (function(exports2, global2) {
+      var io2 = exports2;
+      io2.version = "0.9.17";
+      io2.protocol = 1;
+      io2.transports = [];
+      io2.j = [];
+      io2.sockets = {};
+      io2.connect = function(host, details) {
+        var uri = io2.util.parseUri(host), uuri, socket;
+        if (global2 && global2.location) {
+          uri.protocol = uri.protocol || global2.location.protocol.slice(0, -1);
+          uri.host = uri.host || (global2.document ? global2.document.domain : global2.location.hostname);
+          uri.port = uri.port || global2.location.port;
+        }
+        uuri = io2.util.uniqueUri(uri);
+        var options = {
+          host: uri.host,
+          secure: uri.protocol == "https",
+          port: uri.port || (uri.protocol == "https" ? 443 : 80),
+          query: uri.query || ""
+        };
+        io2.util.merge(options, details);
+        if (options["force new connection"] || !io2.sockets[uuri]) {
+          socket = new io2.Socket(options);
+        }
+        if (!options["force new connection"] && socket) {
+          io2.sockets[uuri] = socket;
+        }
+        socket = socket || io2.sockets[uuri];
+        return socket.of(uri.path.length > 1 ? uri.path : "");
       };
-      io2.util.merge(options, details);
-      if (options["force new connection"] || !io2.sockets[uuri]) {
-        socket = new io2.Socket(options);
-      }
-      if (!options["force new connection"] && socket) {
-        io2.sockets[uuri] = socket;
-      }
-      socket = socket || io2.sockets[uuri];
-      return socket.of(uri.path.length > 1 ? uri.path : "");
-    };
-  })(typeof module === "object" ? module.exports : this.io = {}, that);
-  (function(exports2, global2) {
-    var util = exports2.util = {};
-    var re = /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/;
-    var parts = [
-      "source",
-      "protocol",
-      "authority",
-      "userInfo",
-      "user",
-      "password",
-      "host",
-      "port",
-      "relative",
-      "path",
-      "directory",
-      "file",
-      "query",
-      "anchor"
-    ];
-    util.parseUri = function(str2) {
-      var m = re.exec(str2 || ""), uri = {}, i2 = 14;
-      while (i2--) {
-        uri[parts[i2]] = m[i2] || "";
-      }
-      return uri;
-    };
-    util.uniqueUri = function(uri) {
-      var protocol = uri.protocol, host = uri.host, port = uri.port;
-      if ("document" in global2) {
-        host = host || document.domain;
-        port = port || (protocol == "https" && document.location.protocol !== "https:" ? 443 : document.location.port);
-      } else {
-        host = host || "localhost";
-        if (!port && protocol == "https") {
-          port = 443;
+    })(module.exports, that);
+    (function(exports2, global2) {
+      var util = exports2.util = {};
+      var re = /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/;
+      var parts = [
+        "source",
+        "protocol",
+        "authority",
+        "userInfo",
+        "user",
+        "password",
+        "host",
+        "port",
+        "relative",
+        "path",
+        "directory",
+        "file",
+        "query",
+        "anchor"
+      ];
+      util.parseUri = function(str2) {
+        var m = re.exec(str2 || ""), uri = {}, i2 = 14;
+        while (i2--) {
+          uri[parts[i2]] = m[i2] || "";
         }
-      }
-      return (protocol || "http") + "://" + host + ":" + (port || 80);
-    };
-    util.query = function(base, addition) {
-      var query = util.chunkQuery(base || ""), components = [];
-      util.merge(query, util.chunkQuery(addition || ""));
-      for (var part in query) {
-        if (query.hasOwnProperty(part)) {
-          components.push(part + "=" + query[part]);
-        }
-      }
-      return components.length ? "?" + components.join("&") : "";
-    };
-    util.chunkQuery = function(qs) {
-      var query = {}, params = qs.split("&"), i2 = 0, l = params.length, kv;
-      for (; i2 < l; ++i2) {
-        kv = params[i2].split("=");
-        if (kv[0]) {
-          query[kv[0]] = kv[1];
-        }
-      }
-      return query;
-    };
-    var pageLoaded = false;
-    util.load = function(fn) {
-      if ("document" in global2 && document.readyState === "complete" || pageLoaded) {
-        return fn();
-      }
-      util.on(global2, "load", fn, false);
-    };
-    util.on = function(element, event, fn, capture) {
-      if (element.attachEvent) {
-        element.attachEvent("on" + event, fn);
-      } else if (element.addEventListener) {
-        element.addEventListener(event, fn, capture);
-      }
-    };
-    util.request = function(xdomain) {
-      if (xdomain && typeof XDomainRequest != "undefined" && !util.ua.hasCORS) {
-        return new XDomainRequest();
-      }
-      if (typeof XMLHttpRequest != "undefined" && (!xdomain || util.ua.hasCORS)) {
-        return new XMLHttpRequest();
-      }
-      if (!xdomain) {
-        try {
-          return new window[["Active"].concat("Object").join("X")]("Microsoft.XMLHTTP");
-        } catch (e) {
-        }
-      }
-      return null;
-    };
-    if (typeof window != "undefined") {
-      util.load(function() {
-        pageLoaded = true;
-      });
-    }
-    util.defer = function(fn) {
-      if (!util.ua.webkit || typeof importScripts != "undefined") {
-        return fn();
-      }
-      util.load(function() {
-        setTimeout(fn, 100);
-      });
-    };
-    util.merge = function merge(target, additional, deep, lastseen) {
-      var seen = lastseen || [], depth = typeof deep == "undefined" ? 2 : deep, prop;
-      for (prop in additional) {
-        if (additional.hasOwnProperty(prop) && util.indexOf(seen, prop) < 0) {
-          if (typeof target[prop] !== "object" || !depth) {
-            target[prop] = additional[prop];
-            seen.push(additional[prop]);
-          } else {
-            util.merge(target[prop], additional[prop], depth - 1, seen);
-          }
-        }
-      }
-      return target;
-    };
-    util.mixin = function(ctor, ctor2) {
-      util.merge(ctor.prototype, ctor2.prototype);
-    };
-    util.inherit = function(ctor, ctor2) {
-      function f2() {
-      }
-      f2.prototype = ctor2.prototype;
-      ctor.prototype = new f2();
-    };
-    util.isArray = Array.isArray || function(obj) {
-      return Object.prototype.toString.call(obj) === "[object Array]";
-    };
-    util.intersect = function(arr, arr2) {
-      var ret = [], longest = arr.length > arr2.length ? arr : arr2, shortest = arr.length > arr2.length ? arr2 : arr;
-      for (var i2 = 0, l = shortest.length; i2 < l; i2++) {
-        if (~util.indexOf(longest, shortest[i2]))
-          ret.push(shortest[i2]);
-      }
-      return ret;
-    };
-    util.indexOf = function(arr, o, i2) {
-      for (var j2 = arr.length, i2 = i2 < 0 ? i2 + j2 < 0 ? 0 : i2 + j2 : i2 || 0; i2 < j2 && arr[i2] !== o; i2++) {
-      }
-      return j2 <= i2 ? -1 : i2;
-    };
-    util.toArray = function(enu) {
-      var arr = [];
-      for (var i2 = 0, l = enu.length; i2 < l; i2++)
-        arr.push(enu[i2]);
-      return arr;
-    };
-    util.ua = {};
-    util.ua.hasCORS = typeof XMLHttpRequest != "undefined" && function() {
-      try {
-        var a = new XMLHttpRequest();
-      } catch (e) {
-        return false;
-      }
-      return a.withCredentials != void 0;
-    }();
-    util.ua.webkit = typeof navigator != "undefined" && /webkit/i.test(navigator.userAgent);
-    util.ua.iDevice = typeof navigator != "undefined" && /iPad|iPhone|iPod/i.test(navigator.userAgent);
-  })(typeof io != "undefined" ? io : module.exports, that);
-  (function(exports2, io2) {
-    exports2.EventEmitter = EventEmitter;
-    function EventEmitter() {
-    }
-    EventEmitter.prototype.on = function(name, fn) {
-      if (!this.$events) {
-        this.$events = {};
-      }
-      if (!this.$events[name]) {
-        this.$events[name] = fn;
-      } else if (io2.util.isArray(this.$events[name])) {
-        this.$events[name].push(fn);
-      } else {
-        this.$events[name] = [this.$events[name], fn];
-      }
-      return this;
-    };
-    EventEmitter.prototype.addListener = EventEmitter.prototype.on;
-    EventEmitter.prototype.once = function(name, fn) {
-      var self2 = this;
-      function on() {
-        self2.removeListener(name, on);
-        fn.apply(this, arguments);
-      }
-      on.listener = fn;
-      this.on(name, on);
-      return this;
-    };
-    EventEmitter.prototype.removeListener = function(name, fn) {
-      if (this.$events && this.$events[name]) {
-        var list = this.$events[name];
-        if (io2.util.isArray(list)) {
-          var pos = -1;
-          for (var i2 = 0, l = list.length; i2 < l; i2++) {
-            if (list[i2] === fn || list[i2].listener && list[i2].listener === fn) {
-              pos = i2;
-              break;
-            }
-          }
-          if (pos < 0) {
-            return this;
-          }
-          list.splice(pos, 1);
-          if (!list.length) {
-            delete this.$events[name];
-          }
-        } else if (list === fn || list.listener && list.listener === fn) {
-          delete this.$events[name];
-        }
-      }
-      return this;
-    };
-    EventEmitter.prototype.removeAllListeners = function(name) {
-      if (name === void 0) {
-        this.$events = {};
-        return this;
-      }
-      if (this.$events && this.$events[name]) {
-        this.$events[name] = null;
-      }
-      return this;
-    };
-    EventEmitter.prototype.listeners = function(name) {
-      if (!this.$events) {
-        this.$events = {};
-      }
-      if (!this.$events[name]) {
-        this.$events[name] = [];
-      }
-      if (!io2.util.isArray(this.$events[name])) {
-        this.$events[name] = [this.$events[name]];
-      }
-      return this.$events[name];
-    };
-    EventEmitter.prototype.emit = function(name) {
-      if (!this.$events) {
-        return false;
-      }
-      var handler = this.$events[name];
-      if (!handler) {
-        return false;
-      }
-      var args = Array.prototype.slice.call(arguments, 1);
-      if (typeof handler == "function") {
-        handler.apply(this, args);
-      } else if (io2.util.isArray(handler)) {
-        var listeners = handler.slice();
-        for (var i2 = 0, l = listeners.length; i2 < l; i2++) {
-          listeners[i2].apply(this, args);
-        }
-      } else {
-        return false;
-      }
-      return true;
-    };
-  })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
-  (function(exports, nativeJSON) {
-    if (nativeJSON && nativeJSON.parse) {
-      return exports.JSON = {
-        parse: nativeJSON.parse,
-        stringify: nativeJSON.stringify
+        return uri;
       };
-    }
-    var JSON = exports.JSON = {};
-    function f(n) {
-      return n < 10 ? "0" + n : n;
-    }
-    function date(d, key) {
-      return isFinite(d.valueOf()) ? d.getUTCFullYear() + "-" + f(d.getUTCMonth() + 1) + "-" + f(d.getUTCDate()) + "T" + f(d.getUTCHours()) + ":" + f(d.getUTCMinutes()) + ":" + f(d.getUTCSeconds()) + "Z" : null;
-    }
-    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, gap, indent, meta = {
-      "\b": "\\b",
-      "	": "\\t",
-      "\n": "\\n",
-      "\f": "\\f",
-      "\r": "\\r",
-      '"': '\\"',
-      "\\": "\\\\"
-    }, rep;
-    function quote(string) {
-      escapable.lastIndex = 0;
-      return escapable.test(string) ? '"' + string.replace(escapable, function(a) {
-        var c = meta[a];
-        return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
-      }) + '"' : '"' + string + '"';
-    }
-    function str(key, holder) {
-      var i2, k, v, length, mind = gap, partial, value = holder[key];
-      if (value instanceof Date) {
-        value = date(key);
-      }
-      if (typeof rep === "function") {
-        value = rep.call(holder, key, value);
-      }
-      switch (typeof value) {
-        case "string":
-          return quote(value);
-        case "number":
-          return isFinite(value) ? String(value) : "null";
-        case "boolean":
-        case "null":
-          return String(value);
-        case "object":
-          if (!value) {
-            return "null";
-          }
-          gap += indent;
-          partial = [];
-          if (Object.prototype.toString.apply(value) === "[object Array]") {
-            length = value.length;
-            for (i2 = 0; i2 < length; i2 += 1) {
-              partial[i2] = str(i2, value) || "null";
-            }
-            v = partial.length === 0 ? "[]" : gap ? "[\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "]" : "[" + partial.join(",") + "]";
-            gap = mind;
-            return v;
-          }
-          if (rep && typeof rep === "object") {
-            length = rep.length;
-            for (i2 = 0; i2 < length; i2 += 1) {
-              if (typeof rep[i2] === "string") {
-                k = rep[i2];
-                v = str(k, value);
-                if (v) {
-                  partial.push(quote(k) + (gap ? ": " : ":") + v);
-                }
-              }
-            }
-          } else {
-            for (k in value) {
-              if (Object.prototype.hasOwnProperty.call(value, k)) {
-                v = str(k, value);
-                if (v) {
-                  partial.push(quote(k) + (gap ? ": " : ":") + v);
-                }
-              }
-            }
-          }
-          v = partial.length === 0 ? "{}" : gap ? "{\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "}" : "{" + partial.join(",") + "}";
-          gap = mind;
-          return v;
-      }
-    }
-    JSON.stringify = function(value, replacer, space) {
-      var i2;
-      gap = "";
-      indent = "";
-      if (typeof space === "number") {
-        for (i2 = 0; i2 < space; i2 += 1) {
-          indent += " ";
-        }
-      } else if (typeof space === "string") {
-        indent = space;
-      }
-      rep = replacer;
-      if (replacer && typeof replacer !== "function" && (typeof replacer !== "object" || typeof replacer.length !== "number")) {
-        throw new Error("JSON.stringify");
-      }
-      return str("", { "": value });
-    };
-    JSON.parse = function(text, reviver) {
-      var j;
-      function walk(holder, key) {
-        var k, v, value = holder[key];
-        if (value && typeof value === "object") {
-          for (k in value) {
-            if (Object.prototype.hasOwnProperty.call(value, k)) {
-              v = walk(value, k);
-              if (v !== void 0) {
-                value[k] = v;
-              } else {
-                delete value[k];
-              }
-            }
+      util.uniqueUri = function(uri) {
+        var protocol = uri.protocol, host = uri.host, port = uri.port;
+        if ("document" in global2) {
+          host = host || document.domain;
+          port = port || (protocol == "https" && document.location.protocol !== "https:" ? 443 : document.location.port);
+        } else {
+          host = host || "localhost";
+          if (!port && protocol == "https") {
+            port = 443;
           }
         }
-        return reviver.call(holder, key, value);
-      }
-      text = String(text);
-      cx.lastIndex = 0;
-      if (cx.test(text)) {
-        text = text.replace(cx, function(a) {
-          return "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+        return (protocol || "http") + "://" + host + ":" + (port || 80);
+      };
+      util.query = function(base, addition) {
+        var query = util.chunkQuery(base || ""), components = [];
+        util.merge(query, util.chunkQuery(addition || ""));
+        for (var part in query) {
+          if (query.hasOwnProperty(part)) {
+            components.push(part + "=" + query[part]);
+          }
+        }
+        return components.length ? "?" + components.join("&") : "";
+      };
+      util.chunkQuery = function(qs) {
+        var query = {}, params = qs.split("&"), i2 = 0, l = params.length, kv;
+        for (; i2 < l; ++i2) {
+          kv = params[i2].split("=");
+          if (kv[0]) {
+            query[kv[0]] = kv[1];
+          }
+        }
+        return query;
+      };
+      var pageLoaded = false;
+      util.load = function(fn) {
+        if ("document" in global2 && document.readyState === "complete" || pageLoaded) {
+          return fn();
+        }
+        util.on(global2, "load", fn, false);
+      };
+      util.on = function(element, event, fn, capture) {
+        if (element.attachEvent) {
+          element.attachEvent("on" + event, fn);
+        } else if (element.addEventListener) {
+          element.addEventListener(event, fn, capture);
+        }
+      };
+      util.request = function(xdomain) {
+        if (xdomain && typeof XDomainRequest != "undefined" && !util.ua.hasCORS) {
+          return new XDomainRequest();
+        }
+        if (typeof XMLHttpRequest != "undefined" && (!xdomain || util.ua.hasCORS)) {
+          return new XMLHttpRequest();
+        }
+        if (!xdomain) {
+          try {
+            return new window[["Active"].concat("Object").join("X")]("Microsoft.XMLHTTP");
+          } catch (e) {
+          }
+        }
+        return null;
+      };
+      if (typeof window != "undefined") {
+        util.load(function() {
+          pageLoaded = true;
         });
       }
-      if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
-        j = eval("(" + text + ")");
-        return typeof reviver === "function" ? walk({ "": j }, "") : j;
-      }
-      throw new SyntaxError("JSON.parse");
-    };
-  })(typeof io != "undefined" ? io : module.exports, typeof JSON !== "undefined" ? JSON : void 0);
-  (function(exports2, io2) {
-    var parser = exports2.parser = {};
-    var packets = parser.packets = [
-      "disconnect",
-      "connect",
-      "heartbeat",
-      "message",
-      "json",
-      "event",
-      "ack",
-      "error",
-      "noop"
-    ];
-    var reasons = parser.reasons = [
-      "transport not supported",
-      "client not handshaken",
-      "unauthorized"
-    ];
-    var advice = parser.advice = ["reconnect"];
-    var JSON2 = io2.JSON, indexOf = io2.util.indexOf;
-    parser.encodePacket = function(packet) {
-      var type = indexOf(packets, packet.type), id = packet.id || "", endpoint = packet.endpoint || "", ack = packet.ack, data = null;
-      switch (packet.type) {
-        case "error":
-          var reason = packet.reason ? indexOf(reasons, packet.reason) : "", adv = packet.advice ? indexOf(advice, packet.advice) : "";
-          if (reason !== "" || adv !== "")
-            data = reason + (adv !== "" ? "+" + adv : "");
-          break;
-        case "message":
-          if (packet.data !== "")
-            data = packet.data;
-          break;
-        case "event":
-          var ev = { name: packet.name };
-          if (packet.args && packet.args.length) {
-            ev.args = packet.args;
-          }
-          data = JSON2.stringify(ev);
-          break;
-        case "json":
-          data = JSON2.stringify(packet.data);
-          break;
-        case "connect":
-          if (packet.qs)
-            data = packet.qs;
-          break;
-        case "ack":
-          data = packet.ackId + (packet.args && packet.args.length ? "+" + JSON2.stringify(packet.args) : "");
-          break;
-      }
-      var encoded = [type, id + (ack == "data" ? "+" : ""), endpoint];
-      if (data !== null && data !== void 0)
-        encoded.push(data);
-      return encoded.join(":");
-    };
-    parser.encodePayload = function(packets2) {
-      var decoded = "";
-      if (packets2.length == 1)
-        return packets2[0];
-      for (var i2 = 0, l = packets2.length; i2 < l; i2++) {
-        var packet = packets2[i2];
-        decoded += "\uFFFD" + packet.length + "\uFFFD" + packets2[i2];
-      }
-      return decoded;
-    };
-    var regexp = /([^:]+):([0-9]+)?(\+)?:([^:]+)?:?([\s\S]*)?/;
-    parser.decodePacket = function(data) {
-      var pieces = data.match(regexp);
-      if (!pieces)
-        return {};
-      var id = pieces[2] || "", data = pieces[5] || "", packet = {
-        type: packets[pieces[1]],
-        endpoint: pieces[4] || ""
+      util.defer = function(fn) {
+        if (!util.ua.webkit || typeof importScripts != "undefined") {
+          return fn();
+        }
+        util.load(function() {
+          setTimeout(fn, 100);
+        });
       };
-      if (id) {
-        packet.id = id;
-        if (pieces[3])
-          packet.ack = "data";
-        else
-          packet.ack = true;
-      }
-      switch (packet.type) {
-        case "error":
-          var pieces = data.split("+");
-          packet.reason = reasons[pieces[0]] || "";
-          packet.advice = advice[pieces[1]] || "";
-          break;
-        case "message":
-          packet.data = data || "";
-          break;
-        case "event":
-          try {
-            var opts = JSON2.parse(data);
-            packet.name = opts.name;
-            packet.args = opts.args;
-          } catch (e) {
-          }
-          packet.args = packet.args || [];
-          break;
-        case "json":
-          try {
-            packet.data = JSON2.parse(data);
-          } catch (e) {
-          }
-          break;
-        case "connect":
-          packet.qs = data || "";
-          break;
-        case "ack":
-          var pieces = data.match(/^([0-9]+)(\+)?(.*)/);
-          if (pieces) {
-            packet.ackId = pieces[1];
-            packet.args = [];
-            if (pieces[3]) {
-              try {
-                packet.args = pieces[3] ? JSON2.parse(pieces[3]) : [];
-              } catch (e) {
-              }
+      util.merge = function merge(target, additional, deep, lastseen) {
+        var seen = lastseen || [], depth = typeof deep == "undefined" ? 2 : deep, prop;
+        for (prop in additional) {
+          if (additional.hasOwnProperty(prop) && util.indexOf(seen, prop) < 0) {
+            if (typeof target[prop] !== "object" || !depth) {
+              target[prop] = additional[prop];
+              seen.push(additional[prop]);
+            } else {
+              util.merge(target[prop], additional[prop], depth - 1, seen);
             }
           }
-          break;
-      }
-      return packet;
-    };
-    parser.decodePayload = function(data) {
-      if (data.charAt(0) == "\uFFFD") {
-        var ret = [];
-        for (var i2 = 1, length = ""; i2 < data.length; i2++) {
-          if (data.charAt(i2) == "\uFFFD") {
-            ret.push(parser.decodePacket(data.substr(i2 + 1).substr(0, length)));
-            i2 += Number(length) + 1;
-            length = "";
-          } else {
-            length += data.charAt(i2);
-          }
+        }
+        return target;
+      };
+      util.mixin = function(ctor, ctor2) {
+        util.merge(ctor.prototype, ctor2.prototype);
+      };
+      util.inherit = function(ctor, ctor2) {
+        function f2() {
+        }
+        f2.prototype = ctor2.prototype;
+        ctor.prototype = new f2();
+      };
+      util.isArray = Array.isArray || function(obj) {
+        return Object.prototype.toString.call(obj) === "[object Array]";
+      };
+      util.intersect = function(arr, arr2) {
+        var ret = [], longest = arr.length > arr2.length ? arr : arr2, shortest = arr.length > arr2.length ? arr2 : arr;
+        for (var i2 = 0, l = shortest.length; i2 < l; i2++) {
+          if (~util.indexOf(longest, shortest[i2]))
+            ret.push(shortest[i2]);
         }
         return ret;
-      } else {
-        return [parser.decodePacket(data)];
-      }
-    };
-  })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
-  (function(exports2, io2) {
-    exports2.Transport = Transport;
-    function Transport(socket, sessid) {
-      this.socket = socket;
-      this.sessid = sessid;
-    }
-    io2.util.mixin(Transport, io2.EventEmitter);
-    Transport.prototype.heartbeats = function() {
-      return true;
-    };
-    Transport.prototype.onData = function(data) {
-      this.clearCloseTimeout();
-      if (this.socket.connected || this.socket.connecting || this.socket.reconnecting) {
-        this.setCloseTimeout();
-      }
-      if (data !== "") {
-        var msgs = io2.parser.decodePayload(data);
-        if (msgs && msgs.length) {
-          for (var i2 = 0, l = msgs.length; i2 < l; i2++) {
-            this.onPacket(msgs[i2]);
-          }
-        }
-      }
-      return this;
-    };
-    Transport.prototype.onPacket = function(packet) {
-      this.socket.setHeartbeatTimeout();
-      if (packet.type == "heartbeat") {
-        return this.onHeartbeat();
-      }
-      if (packet.type == "connect" && packet.endpoint == "") {
-        this.onConnect();
-      }
-      if (packet.type == "error" && packet.advice == "reconnect") {
-        this.isOpen = false;
-      }
-      this.socket.onPacket(packet);
-      return this;
-    };
-    Transport.prototype.setCloseTimeout = function() {
-      if (!this.closeTimeout) {
-        var self2 = this;
-        this.closeTimeout = setTimeout(function() {
-          self2.onDisconnect();
-        }, this.socket.closeTimeout);
-      }
-    };
-    Transport.prototype.onDisconnect = function() {
-      if (this.isOpen)
-        this.close();
-      this.clearTimeouts();
-      this.socket.onDisconnect();
-      return this;
-    };
-    Transport.prototype.onConnect = function() {
-      this.socket.onConnect();
-      return this;
-    };
-    Transport.prototype.clearCloseTimeout = function() {
-      if (this.closeTimeout) {
-        clearTimeout(this.closeTimeout);
-        this.closeTimeout = null;
-      }
-    };
-    Transport.prototype.clearTimeouts = function() {
-      this.clearCloseTimeout();
-      if (this.reopenTimeout) {
-        clearTimeout(this.reopenTimeout);
-      }
-    };
-    Transport.prototype.packet = function(packet) {
-      this.send(io2.parser.encodePacket(packet));
-    };
-    Transport.prototype.onHeartbeat = function(heartbeat) {
-      this.packet({ type: "heartbeat" });
-    };
-    Transport.prototype.onOpen = function() {
-      this.isOpen = true;
-      this.clearCloseTimeout();
-      this.socket.onOpen();
-    };
-    Transport.prototype.onClose = function() {
-      this.isOpen = false;
-      this.socket.onClose();
-      this.onDisconnect();
-    };
-    Transport.prototype.prepareUrl = function() {
-      var options = this.socket.options;
-      return this.scheme() + "://" + options.host + ":" + options.port + "/" + options.resource + "/" + io2.protocol + "/" + this.name + "/" + this.sessid;
-    };
-    Transport.prototype.ready = function(socket, fn) {
-      fn.call(this);
-    };
-  })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
-  (function(exports2, io2, global2) {
-    exports2.Socket = Socket;
-    function Socket(options) {
-      this.options = {
-        port: 80,
-        secure: false,
-        document: "document" in global2 ? document : false,
-        resource: "socket.io",
-        transports: io2.transports,
-        "connect timeout": 1e4,
-        "try multiple transports": true,
-        reconnect: true,
-        "reconnection delay": 500,
-        "reconnection limit": Infinity,
-        "reopen delay": 3e3,
-        "max reconnection attempts": 10,
-        "sync disconnect on unload": false,
-        "auto connect": true,
-        "flash policy port": 10843,
-        manualFlush: false
       };
-      io2.util.merge(this.options, options);
-      this.connected = false;
-      this.open = false;
-      this.connecting = false;
-      this.reconnecting = false;
-      this.namespaces = {};
-      this.buffer = [];
-      this.doBuffer = false;
-      if (this.options["sync disconnect on unload"] && (!this.isXDomain() || io2.util.ua.hasCORS)) {
-        var self2 = this;
-        io2.util.on(global2, "beforeunload", function() {
-          self2.disconnectSync();
-        }, false);
-      }
-      if (this.options["auto connect"]) {
-        this.connect();
-      }
-    }
-    io2.util.mixin(Socket, io2.EventEmitter);
-    Socket.prototype.of = function(name) {
-      if (!this.namespaces[name]) {
-        this.namespaces[name] = new io2.SocketNamespace(this, name);
-        if (name !== "") {
-          this.namespaces[name].packet({ type: "connect" });
+      util.indexOf = function(arr, o, i2) {
+        for (var j2 = arr.length, i2 = i2 < 0 ? i2 + j2 < 0 ? 0 : i2 + j2 : i2 || 0; i2 < j2 && arr[i2] !== o; i2++) {
         }
-      }
-      return this.namespaces[name];
-    };
-    Socket.prototype.publish = function() {
-      this.emit.apply(this, arguments);
-      var nsp;
-      for (var i2 in this.namespaces) {
-        if (this.namespaces.hasOwnProperty(i2)) {
-          nsp = this.of(i2);
-          nsp.$emit.apply(nsp, arguments);
+        return j2 <= i2 ? -1 : i2;
+      };
+      util.toArray = function(enu) {
+        var arr = [];
+        for (var i2 = 0, l = enu.length; i2 < l; i2++)
+          arr.push(enu[i2]);
+        return arr;
+      };
+      util.ua = {};
+      util.ua.hasCORS = typeof XMLHttpRequest != "undefined" && function() {
+        try {
+          var a = new XMLHttpRequest();
+        } catch (e) {
+          return false;
         }
+        return a.withCredentials != void 0;
+      }();
+      util.ua.webkit = typeof navigator != "undefined" && /webkit/i.test(navigator.userAgent);
+      util.ua.iDevice = typeof navigator != "undefined" && /iPad|iPhone|iPod/i.test(navigator.userAgent);
+    })(typeof io != "undefined" ? io : module.exports, that);
+    (function(exports2, io2) {
+      exports2.EventEmitter = EventEmitter;
+      function EventEmitter() {
       }
-    };
-    function empty() {
-    }
-    Socket.prototype.handshake = function(fn) {
-      var self2 = this, options = this.options;
-      function complete(data) {
-        if (data instanceof Error) {
-          self2.connecting = false;
-          self2.onError(data.message);
+      EventEmitter.prototype.on = function(name, fn) {
+        if (!this.$events) {
+          this.$events = {};
+        }
+        if (!this.$events[name]) {
+          this.$events[name] = fn;
+        } else if (io2.util.isArray(this.$events[name])) {
+          this.$events[name].push(fn);
         } else {
-          fn.apply(null, data.split(":"));
+          this.$events[name] = [this.$events[name], fn];
         }
-      }
-      var url = [
-        "http" + (options.secure ? "s" : "") + ":/",
-        options.host + ":" + options.port,
-        options.resource,
-        io2.protocol,
-        io2.util.query(this.options.query, "t=" + +new Date())
-      ].join("/");
-      if (this.isXDomain() && !io2.util.ua.hasCORS) {
-        var insertAt = document.getElementsByTagName("script")[0], script = document.createElement("script");
-        script.src = url + "&jsonp=" + io2.j.length;
-        insertAt.parentNode.insertBefore(script, insertAt);
-        io2.j.push(function(data) {
-          complete(data);
-          script.parentNode.removeChild(script);
-        });
-      } else {
-        var xhr = io2.util.request();
-        xhr.open("GET", url, true);
-        if (this.isXDomain()) {
-          xhr.withCredentials = true;
-        }
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState == 4) {
-            xhr.onreadystatechange = empty;
-            if (xhr.status == 200) {
-              complete(xhr.responseText);
-            } else if (xhr.status == 403) {
-              self2.onError(xhr.responseText);
-            } else {
-              self2.connecting = false;
-              !self2.reconnecting && self2.onError(xhr.responseText);
-            }
-          }
-        };
-        xhr.send(null);
-      }
-    };
-    Socket.prototype.getTransport = function(override) {
-      var transports = override || this.transports;
-      for (var i2 = 0, transport; transport = transports[i2]; i2++) {
-        if (io2.Transport[transport] && io2.Transport[transport].check(this) && (!this.isXDomain() || io2.Transport[transport].xdomainCheck(this))) {
-          return new io2.Transport[transport](this, this.sessionid);
-        }
-      }
-      return null;
-    };
-    Socket.prototype.connect = function(fn) {
-      if (this.connecting) {
         return this;
+      };
+      EventEmitter.prototype.addListener = EventEmitter.prototype.on;
+      EventEmitter.prototype.once = function(name, fn) {
+        var self2 = this;
+        function on() {
+          self2.removeListener(name, on);
+          fn.apply(this, arguments);
+        }
+        on.listener = fn;
+        this.on(name, on);
+        return this;
+      };
+      EventEmitter.prototype.removeListener = function(name, fn) {
+        if (this.$events && this.$events[name]) {
+          var list = this.$events[name];
+          if (io2.util.isArray(list)) {
+            var pos = -1;
+            for (var i2 = 0, l = list.length; i2 < l; i2++) {
+              if (list[i2] === fn || list[i2].listener && list[i2].listener === fn) {
+                pos = i2;
+                break;
+              }
+            }
+            if (pos < 0) {
+              return this;
+            }
+            list.splice(pos, 1);
+            if (!list.length) {
+              delete this.$events[name];
+            }
+          } else if (list === fn || list.listener && list.listener === fn) {
+            delete this.$events[name];
+          }
+        }
+        return this;
+      };
+      EventEmitter.prototype.removeAllListeners = function(name) {
+        if (name === void 0) {
+          this.$events = {};
+          return this;
+        }
+        if (this.$events && this.$events[name]) {
+          this.$events[name] = null;
+        }
+        return this;
+      };
+      EventEmitter.prototype.listeners = function(name) {
+        if (!this.$events) {
+          this.$events = {};
+        }
+        if (!this.$events[name]) {
+          this.$events[name] = [];
+        }
+        if (!io2.util.isArray(this.$events[name])) {
+          this.$events[name] = [this.$events[name]];
+        }
+        return this.$events[name];
+      };
+      EventEmitter.prototype.emit = function(name) {
+        if (!this.$events) {
+          return false;
+        }
+        var handler = this.$events[name];
+        if (!handler) {
+          return false;
+        }
+        var args = Array.prototype.slice.call(arguments, 1);
+        if (typeof handler == "function") {
+          handler.apply(this, args);
+        } else if (io2.util.isArray(handler)) {
+          var listeners = handler.slice();
+          for (var i2 = 0, l = listeners.length; i2 < l; i2++) {
+            listeners[i2].apply(this, args);
+          }
+        } else {
+          return false;
+        }
+        return true;
+      };
+    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+    (function(exports, nativeJSON) {
+      if (nativeJSON && nativeJSON.parse) {
+        return exports.JSON = {
+          parse: nativeJSON.parse,
+          stringify: nativeJSON.stringify
+        };
       }
-      var self2 = this;
-      self2.connecting = true;
-      this.handshake(function(sid, heartbeat, close, transports) {
-        self2.sessionid = sid;
-        self2.closeTimeout = close * 1e3;
-        self2.heartbeatTimeout = heartbeat * 1e3;
-        if (!self2.transports)
-          self2.transports = self2.origTransports = transports ? io2.util.intersect(transports.split(","), self2.options.transports) : self2.options.transports;
-        self2.setHeartbeatTimeout();
-        function connect(transports2) {
-          if (self2.transport)
-            self2.transport.clearTimeouts();
-          self2.transport = self2.getTransport(transports2);
-          if (!self2.transport)
-            return self2.publish("connect_failed");
-          self2.transport.ready(self2, function() {
-            self2.connecting = true;
-            self2.publish("connecting", self2.transport.name);
-            self2.transport.open();
-            if (self2.options["connect timeout"]) {
-              self2.connectTimeoutTimer = setTimeout(function() {
-                if (!self2.connected) {
-                  self2.connecting = false;
-                  if (self2.options["try multiple transports"]) {
-                    var remaining = self2.transports;
-                    while (remaining.length > 0 && remaining.splice(0, 1)[0] != self2.transport.name) {
-                    }
-                    if (remaining.length) {
-                      connect(remaining);
-                    } else {
-                      self2.publish("connect_failed");
-                    }
+      var JSON = exports.JSON = {};
+      function f(n) {
+        return n < 10 ? "0" + n : n;
+      }
+      function date(d, key) {
+        return isFinite(d.valueOf()) ? d.getUTCFullYear() + "-" + f(d.getUTCMonth() + 1) + "-" + f(d.getUTCDate()) + "T" + f(d.getUTCHours()) + ":" + f(d.getUTCMinutes()) + ":" + f(d.getUTCSeconds()) + "Z" : null;
+      }
+      var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, gap, indent, meta = {
+        "\b": "\\b",
+        "	": "\\t",
+        "\n": "\\n",
+        "\f": "\\f",
+        "\r": "\\r",
+        '"': '\\"',
+        "\\": "\\\\"
+      }, rep;
+      function quote(string) {
+        escapable.lastIndex = 0;
+        return escapable.test(string) ? '"' + string.replace(escapable, function(a) {
+          var c = meta[a];
+          return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+        }) + '"' : '"' + string + '"';
+      }
+      function str(key, holder) {
+        var i2, k, v, length, mind = gap, partial, value = holder[key];
+        if (value instanceof Date) {
+          value = date(key);
+        }
+        if (typeof rep === "function") {
+          value = rep.call(holder, key, value);
+        }
+        switch (typeof value) {
+          case "string":
+            return quote(value);
+          case "number":
+            return isFinite(value) ? String(value) : "null";
+          case "boolean":
+          case "null":
+            return String(value);
+          case "object":
+            if (!value) {
+              return "null";
+            }
+            gap += indent;
+            partial = [];
+            if (Object.prototype.toString.apply(value) === "[object Array]") {
+              length = value.length;
+              for (i2 = 0; i2 < length; i2 += 1) {
+                partial[i2] = str(i2, value) || "null";
+              }
+              v = partial.length === 0 ? "[]" : gap ? "[\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "]" : "[" + partial.join(",") + "]";
+              gap = mind;
+              return v;
+            }
+            if (rep && typeof rep === "object") {
+              length = rep.length;
+              for (i2 = 0; i2 < length; i2 += 1) {
+                if (typeof rep[i2] === "string") {
+                  k = rep[i2];
+                  v = str(k, value);
+                  if (v) {
+                    partial.push(quote(k) + (gap ? ": " : ":") + v);
                   }
                 }
-              }, self2.options["connect timeout"]);
+              }
+            } else {
+              for (k in value) {
+                if (Object.prototype.hasOwnProperty.call(value, k)) {
+                  v = str(k, value);
+                  if (v) {
+                    partial.push(quote(k) + (gap ? ": " : ":") + v);
+                  }
+                }
+              }
             }
+            v = partial.length === 0 ? "{}" : gap ? "{\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "}" : "{" + partial.join(",") + "}";
+            gap = mind;
+            return v;
+        }
+      }
+      JSON.stringify = function(value, replacer, space) {
+        var i2;
+        gap = "";
+        indent = "";
+        if (typeof space === "number") {
+          for (i2 = 0; i2 < space; i2 += 1) {
+            indent += " ";
+          }
+        } else if (typeof space === "string") {
+          indent = space;
+        }
+        rep = replacer;
+        if (replacer && typeof replacer !== "function" && (typeof replacer !== "object" || typeof replacer.length !== "number")) {
+          throw new Error("JSON.stringify");
+        }
+        return str("", { "": value });
+      };
+      JSON.parse = function(text, reviver) {
+        var j;
+        function walk(holder, key) {
+          var k, v, value = holder[key];
+          if (value && typeof value === "object") {
+            for (k in value) {
+              if (Object.prototype.hasOwnProperty.call(value, k)) {
+                v = walk(value, k);
+                if (v !== void 0) {
+                  value[k] = v;
+                } else {
+                  delete value[k];
+                }
+              }
+            }
+          }
+          return reviver.call(holder, key, value);
+        }
+        text = String(text);
+        cx.lastIndex = 0;
+        if (cx.test(text)) {
+          text = text.replace(cx, function(a) {
+            return "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
           });
         }
-        connect(self2.transports);
-        self2.once("connect", function() {
-          clearTimeout(self2.connectTimeoutTimer);
-          fn && typeof fn == "function" && fn();
-        });
-      });
-      return this;
-    };
-    Socket.prototype.setHeartbeatTimeout = function() {
-      clearTimeout(this.heartbeatTimeoutTimer);
-      if (this.transport && !this.transport.heartbeats())
-        return;
-      var self2 = this;
-      this.heartbeatTimeoutTimer = setTimeout(function() {
-        self2.transport.onClose();
-      }, this.heartbeatTimeout);
-    };
-    Socket.prototype.packet = function(data) {
-      if (this.connected && !this.doBuffer) {
-        this.transport.packet(data);
-      } else {
-        this.buffer.push(data);
-      }
-      return this;
-    };
-    Socket.prototype.setBuffer = function(v) {
-      this.doBuffer = v;
-      if (!v && this.connected && this.buffer.length) {
-        if (!this.options["manualFlush"]) {
-          this.flushBuffer();
+        if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
+          j = eval("(" + text + ")");
+          return typeof reviver === "function" ? walk({ "": j }, "") : j;
         }
-      }
-    };
-    Socket.prototype.flushBuffer = function() {
-      this.transport.payload(this.buffer);
-      this.buffer = [];
-    };
-    Socket.prototype.disconnect = function() {
-      if (this.connected || this.connecting) {
-        if (this.open) {
-          this.of("").packet({ type: "disconnect" });
-        }
-        this.onDisconnect("booted");
-      }
-      return this;
-    };
-    Socket.prototype.disconnectSync = function() {
-      var xhr = io2.util.request();
-      var uri = [
-        "http" + (this.options.secure ? "s" : "") + ":/",
-        this.options.host + ":" + this.options.port,
-        this.options.resource,
-        io2.protocol,
-        "",
-        this.sessionid
-      ].join("/") + "/?disconnect=1";
-      xhr.open("GET", uri, false);
-      xhr.send(null);
-      this.onDisconnect("booted");
-    };
-    Socket.prototype.isXDomain = function() {
-      var port = global2.location.port || (global2.location.protocol == "https:" ? 443 : 80);
-      return this.options.host !== global2.location.hostname || this.options.port != port;
-    };
-    Socket.prototype.onConnect = function() {
-      if (!this.connected) {
-        this.connected = true;
-        this.connecting = false;
-        if (!this.doBuffer) {
-          this.setBuffer(false);
-        }
-        this.emit("connect");
-      }
-    };
-    Socket.prototype.onOpen = function() {
-      this.open = true;
-    };
-    Socket.prototype.onClose = function() {
-      this.open = false;
-      clearTimeout(this.heartbeatTimeoutTimer);
-    };
-    Socket.prototype.onPacket = function(packet) {
-      this.of(packet.endpoint).onPacket(packet);
-    };
-    Socket.prototype.onError = function(err) {
-      if (err && err.advice) {
-        if (err.advice === "reconnect" && (this.connected || this.connecting)) {
-          this.disconnect();
-          if (this.options.reconnect) {
-            this.reconnect();
-          }
-        }
-      }
-      this.publish("error", err && err.reason ? err.reason : err);
-    };
-    Socket.prototype.onDisconnect = function(reason) {
-      var wasConnected = this.connected, wasConnecting = this.connecting;
-      this.connected = false;
-      this.connecting = false;
-      this.open = false;
-      if (wasConnected || wasConnecting) {
-        this.transport.close();
-        this.transport.clearTimeouts();
-        if (wasConnected) {
-          this.publish("disconnect", reason);
-          if (reason != "booted" && this.options.reconnect && !this.reconnecting) {
-            this.reconnect();
-          }
-        }
-      }
-    };
-    Socket.prototype.reconnect = function() {
-      this.reconnecting = true;
-      this.reconnectionAttempts = 0;
-      this.reconnectionDelay = this.options["reconnection delay"];
-      var self2 = this, maxAttempts = this.options["max reconnection attempts"], tryMultiple = this.options["try multiple transports"], limit = this.options["reconnection limit"];
-      function reset() {
-        if (self2.connected) {
-          for (var i2 in self2.namespaces) {
-            if (self2.namespaces.hasOwnProperty(i2) && i2 !== "") {
-              self2.namespaces[i2].packet({ type: "connect" });
+        throw new SyntaxError("JSON.parse");
+      };
+    })(typeof io != "undefined" ? io : module.exports, typeof JSON !== "undefined" ? JSON : void 0);
+    (function(exports2, io2) {
+      var parser = exports2.parser = {};
+      var packets = parser.packets = [
+        "disconnect",
+        "connect",
+        "heartbeat",
+        "message",
+        "json",
+        "event",
+        "ack",
+        "error",
+        "noop"
+      ];
+      var reasons = parser.reasons = [
+        "transport not supported",
+        "client not handshaken",
+        "unauthorized"
+      ];
+      var advice = parser.advice = ["reconnect"];
+      var JSON2 = io2.JSON, indexOf = io2.util.indexOf;
+      parser.encodePacket = function(packet) {
+        var type = indexOf(packets, packet.type), id = packet.id || "", endpoint = packet.endpoint || "", ack = packet.ack, data = null;
+        switch (packet.type) {
+          case "error":
+            var reason = packet.reason ? indexOf(reasons, packet.reason) : "", adv = packet.advice ? indexOf(advice, packet.advice) : "";
+            if (reason !== "" || adv !== "")
+              data = reason + (adv !== "" ? "+" + adv : "");
+            break;
+          case "message":
+            if (packet.data !== "")
+              data = packet.data;
+            break;
+          case "event":
+            var ev = { name: packet.name };
+            if (packet.args && packet.args.length) {
+              ev.args = packet.args;
             }
-          }
-          self2.publish("reconnect", self2.transport.name, self2.reconnectionAttempts);
+            data = JSON2.stringify(ev);
+            break;
+          case "json":
+            data = JSON2.stringify(packet.data);
+            break;
+          case "connect":
+            if (packet.qs)
+              data = packet.qs;
+            break;
+          case "ack":
+            data = packet.ackId + (packet.args && packet.args.length ? "+" + JSON2.stringify(packet.args) : "");
+            break;
         }
-        clearTimeout(self2.reconnectionTimer);
-        self2.removeListener("connect_failed", maybeReconnect);
-        self2.removeListener("connect", maybeReconnect);
-        self2.reconnecting = false;
-        delete self2.reconnectionAttempts;
-        delete self2.reconnectionDelay;
-        delete self2.reconnectionTimer;
-        delete self2.redoTransports;
-        self2.options["try multiple transports"] = tryMultiple;
-      }
-      function maybeReconnect() {
-        if (!self2.reconnecting) {
-          return;
-        }
-        if (self2.connected) {
-          return reset();
-        }
-        if (self2.connecting && self2.reconnecting) {
-          return self2.reconnectionTimer = setTimeout(maybeReconnect, 1e3);
-        }
-        if (self2.reconnectionAttempts++ >= maxAttempts) {
-          if (!self2.redoTransports) {
-            self2.on("connect_failed", maybeReconnect);
-            self2.options["try multiple transports"] = true;
-            self2.transports = self2.origTransports;
-            self2.transport = self2.getTransport();
-            self2.redoTransports = true;
-            self2.connect();
-          } else {
-            self2.publish("reconnect_failed");
-            reset();
-          }
-        } else {
-          if (self2.reconnectionDelay < limit) {
-            self2.reconnectionDelay *= 2;
-          }
-          self2.connect();
-          self2.publish("reconnecting", self2.reconnectionDelay, self2.reconnectionAttempts);
-          self2.reconnectionTimer = setTimeout(maybeReconnect, self2.reconnectionDelay);
-        }
-      }
-      this.options["try multiple transports"] = false;
-      this.reconnectionTimer = setTimeout(maybeReconnect, this.reconnectionDelay);
-      this.on("connect", maybeReconnect);
-    };
-  })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
-  (function(exports2, io2) {
-    exports2.SocketNamespace = SocketNamespace;
-    function SocketNamespace(socket, name) {
-      this.socket = socket;
-      this.name = name || "";
-      this.flags = {};
-      this.json = new Flag(this, "json");
-      this.ackPackets = 0;
-      this.acks = {};
-    }
-    io2.util.mixin(SocketNamespace, io2.EventEmitter);
-    SocketNamespace.prototype.$emit = io2.EventEmitter.prototype.emit;
-    SocketNamespace.prototype.of = function() {
-      return this.socket.of.apply(this.socket, arguments);
-    };
-    SocketNamespace.prototype.packet = function(packet) {
-      packet.endpoint = this.name;
-      this.socket.packet(packet);
-      this.flags = {};
-      return this;
-    };
-    SocketNamespace.prototype.send = function(data, fn) {
-      var packet = {
-        type: this.flags.json ? "json" : "message",
-        data
+        var encoded = [type, id + (ack == "data" ? "+" : ""), endpoint];
+        if (data !== null && data !== void 0)
+          encoded.push(data);
+        return encoded.join(":");
       };
-      if (typeof fn == "function") {
-        packet.id = ++this.ackPackets;
-        packet.ack = true;
-        this.acks[packet.id] = fn;
-      }
-      return this.packet(packet);
-    };
-    SocketNamespace.prototype.emit = function(name) {
-      var args = Array.prototype.slice.call(arguments, 1), lastArg = args[args.length - 1], packet = {
-        type: "event",
-        name
+      parser.encodePayload = function(packets2) {
+        var decoded = "";
+        if (packets2.length == 1)
+          return packets2[0];
+        for (var i2 = 0, l = packets2.length; i2 < l; i2++) {
+          var packet = packets2[i2];
+          decoded += "\uFFFD" + packet.length + "\uFFFD" + packets2[i2];
+        }
+        return decoded;
       };
-      if (typeof lastArg == "function") {
-        packet.id = ++this.ackPackets;
-        packet.ack = "data";
-        this.acks[packet.id] = lastArg;
-        args = args.slice(0, args.length - 1);
-      }
-      packet.args = args;
-      return this.packet(packet);
-    };
-    SocketNamespace.prototype.disconnect = function() {
-      if (this.name === "") {
-        this.socket.disconnect();
-      } else {
-        this.packet({ type: "disconnect" });
-        this.$emit("disconnect");
-      }
-      return this;
-    };
-    SocketNamespace.prototype.onPacket = function(packet) {
-      var self2 = this;
-      function ack() {
-        self2.packet({
-          type: "ack",
-          args: io2.util.toArray(arguments),
-          ackId: packet.id
-        });
-      }
-      switch (packet.type) {
-        case "connect":
-          this.$emit("connect");
-          break;
-        case "disconnect":
-          if (this.name === "") {
-            this.socket.onDisconnect(packet.reason || "booted");
-          } else {
-            this.$emit("disconnect", packet.reason);
-          }
-          break;
-        case "message":
-        case "json":
-          var params = ["message", packet.data];
-          if (packet.ack == "data") {
-            params.push(ack);
-          } else if (packet.ack) {
-            this.packet({ type: "ack", ackId: packet.id });
-          }
-          this.$emit.apply(this, params);
-          break;
-        case "event":
-          var params = [packet.name].concat(packet.args);
-          if (packet.ack == "data")
-            params.push(ack);
-          this.$emit.apply(this, params);
-          break;
-        case "ack":
-          if (this.acks[packet.ackId]) {
-            this.acks[packet.ackId].apply(this, packet.args);
-            delete this.acks[packet.ackId];
-          }
-          break;
-        case "error":
-          if (packet.advice) {
-            this.socket.onError(packet);
-          } else {
-            if (packet.reason == "unauthorized") {
-              this.$emit("connect_failed", packet.reason);
+      var regexp = /([^:]+):([0-9]+)?(\+)?:([^:]+)?:?([\s\S]*)?/;
+      parser.decodePacket = function(data) {
+        var pieces = data.match(regexp);
+        if (!pieces)
+          return {};
+        var id = pieces[2] || "", data = pieces[5] || "", packet = {
+          type: packets[pieces[1]],
+          endpoint: pieces[4] || ""
+        };
+        if (id) {
+          packet.id = id;
+          if (pieces[3])
+            packet.ack = "data";
+          else
+            packet.ack = true;
+        }
+        switch (packet.type) {
+          case "error":
+            var pieces = data.split("+");
+            packet.reason = reasons[pieces[0]] || "";
+            packet.advice = advice[pieces[1]] || "";
+            break;
+          case "message":
+            packet.data = data || "";
+            break;
+          case "event":
+            try {
+              var opts = JSON2.parse(data);
+              packet.name = opts.name;
+              packet.args = opts.args;
+            } catch (e) {
+            }
+            packet.args = packet.args || [];
+            break;
+          case "json":
+            try {
+              packet.data = JSON2.parse(data);
+            } catch (e) {
+            }
+            break;
+          case "connect":
+            packet.qs = data || "";
+            break;
+          case "ack":
+            var pieces = data.match(/^([0-9]+)(\+)?(.*)/);
+            if (pieces) {
+              packet.ackId = pieces[1];
+              packet.args = [];
+              if (pieces[3]) {
+                try {
+                  packet.args = pieces[3] ? JSON2.parse(pieces[3]) : [];
+                } catch (e) {
+                }
+              }
+            }
+            break;
+        }
+        return packet;
+      };
+      parser.decodePayload = function(data) {
+        if (data.charAt(0) == "\uFFFD") {
+          var ret = [];
+          for (var i2 = 1, length = ""; i2 < data.length; i2++) {
+            if (data.charAt(i2) == "\uFFFD") {
+              ret.push(parser.decodePacket(data.substr(i2 + 1).substr(0, length)));
+              i2 += Number(length) + 1;
+              length = "";
             } else {
-              this.$emit("error", packet.reason);
+              length += data.charAt(i2);
             }
           }
-          break;
+          return ret;
+        } else {
+          return [parser.decodePacket(data)];
+        }
+      };
+    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+    (function(exports2, io2) {
+      exports2.Transport = Transport;
+      function Transport(socket, sessid) {
+        this.socket = socket;
+        this.sessid = sessid;
       }
-    };
-    function Flag(nsp, name) {
-      this.namespace = nsp;
-      this.name = name;
-    }
-    Flag.prototype.send = function() {
-      this.namespace.flags[this.name] = true;
-      this.namespace.send.apply(this.namespace, arguments);
-    };
-    Flag.prototype.emit = function() {
-      this.namespace.flags[this.name] = true;
-      this.namespace.emit.apply(this.namespace, arguments);
-    };
-  })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
-  (function(exports2, io2, global2) {
-    exports2.websocket = WS;
-    function WS(socket) {
-      io2.Transport.apply(this, arguments);
-    }
-    io2.util.inherit(WS, io2.Transport);
-    WS.prototype.name = "websocket";
-    WS.prototype.open = function() {
-      var query = io2.util.query(this.socket.options.query), self2 = this, Socket;
-      if (!Socket) {
-        Socket = global2.MozWebSocket || global2.WebSocket;
+      io2.util.mixin(Transport, io2.EventEmitter);
+      Transport.prototype.heartbeats = function() {
+        return true;
+      };
+      Transport.prototype.onData = function(data) {
+        this.clearCloseTimeout();
+        if (this.socket.connected || this.socket.connecting || this.socket.reconnecting) {
+          this.setCloseTimeout();
+        }
+        if (data !== "") {
+          var msgs = io2.parser.decodePayload(data);
+          if (msgs && msgs.length) {
+            for (var i2 = 0, l = msgs.length; i2 < l; i2++) {
+              this.onPacket(msgs[i2]);
+            }
+          }
+        }
+        return this;
+      };
+      Transport.prototype.onPacket = function(packet) {
+        this.socket.setHeartbeatTimeout();
+        if (packet.type == "heartbeat") {
+          return this.onHeartbeat();
+        }
+        if (packet.type == "connect" && packet.endpoint == "") {
+          this.onConnect();
+        }
+        if (packet.type == "error" && packet.advice == "reconnect") {
+          this.isOpen = false;
+        }
+        this.socket.onPacket(packet);
+        return this;
+      };
+      Transport.prototype.setCloseTimeout = function() {
+        if (!this.closeTimeout) {
+          var self2 = this;
+          this.closeTimeout = setTimeout(function() {
+            self2.onDisconnect();
+          }, this.socket.closeTimeout);
+        }
+      };
+      Transport.prototype.onDisconnect = function() {
+        if (this.isOpen)
+          this.close();
+        this.clearTimeouts();
+        this.socket.onDisconnect();
+        return this;
+      };
+      Transport.prototype.onConnect = function() {
+        this.socket.onConnect();
+        return this;
+      };
+      Transport.prototype.clearCloseTimeout = function() {
+        if (this.closeTimeout) {
+          clearTimeout(this.closeTimeout);
+          this.closeTimeout = null;
+        }
+      };
+      Transport.prototype.clearTimeouts = function() {
+        this.clearCloseTimeout();
+        if (this.reopenTimeout) {
+          clearTimeout(this.reopenTimeout);
+        }
+      };
+      Transport.prototype.packet = function(packet) {
+        this.send(io2.parser.encodePacket(packet));
+      };
+      Transport.prototype.onHeartbeat = function(heartbeat) {
+        this.packet({ type: "heartbeat" });
+      };
+      Transport.prototype.onOpen = function() {
+        this.isOpen = true;
+        this.clearCloseTimeout();
+        this.socket.onOpen();
+      };
+      Transport.prototype.onClose = function() {
+        this.isOpen = false;
+        this.socket.onClose();
+        this.onDisconnect();
+      };
+      Transport.prototype.prepareUrl = function() {
+        var options = this.socket.options;
+        return this.scheme() + "://" + options.host + ":" + options.port + "/" + options.resource + "/" + io2.protocol + "/" + this.name + "/" + this.sessid;
+      };
+      Transport.prototype.ready = function(socket, fn) {
+        fn.call(this);
+      };
+    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+    (function(exports2, io2, global2) {
+      exports2.Socket = Socket;
+      function Socket(options) {
+        this.options = {
+          port: 80,
+          secure: false,
+          document: "document" in global2 ? document : false,
+          resource: "socket.io",
+          transports: io2.transports,
+          "connect timeout": 1e4,
+          "try multiple transports": true,
+          reconnect: true,
+          "reconnection delay": 500,
+          "reconnection limit": Infinity,
+          "reopen delay": 3e3,
+          "max reconnection attempts": 10,
+          "sync disconnect on unload": false,
+          "auto connect": true,
+          "flash policy port": 10843,
+          manualFlush: false
+        };
+        io2.util.merge(this.options, options);
+        this.connected = false;
+        this.open = false;
+        this.connecting = false;
+        this.reconnecting = false;
+        this.namespaces = {};
+        this.buffer = [];
+        this.doBuffer = false;
+        if (this.options["sync disconnect on unload"] && (!this.isXDomain() || io2.util.ua.hasCORS)) {
+          var self2 = this;
+          io2.util.on(global2, "beforeunload", function() {
+            self2.disconnectSync();
+          }, false);
+        }
+        if (this.options["auto connect"]) {
+          this.connect();
+        }
       }
-      this.websocket = new Socket(this.prepareUrl() + query);
-      this.websocket.onopen = function() {
-        self2.onOpen();
-        self2.socket.setBuffer(false);
+      io2.util.mixin(Socket, io2.EventEmitter);
+      Socket.prototype.of = function(name) {
+        if (!this.namespaces[name]) {
+          this.namespaces[name] = new io2.SocketNamespace(this, name);
+          if (name !== "") {
+            this.namespaces[name].packet({ type: "connect" });
+          }
+        }
+        return this.namespaces[name];
       };
-      this.websocket.onmessage = function(ev) {
-        self2.onData(ev.data);
+      Socket.prototype.publish = function() {
+        this.emit.apply(this, arguments);
+        var nsp;
+        for (var i2 in this.namespaces) {
+          if (this.namespaces.hasOwnProperty(i2)) {
+            nsp = this.of(i2);
+            nsp.$emit.apply(nsp, arguments);
+          }
+        }
       };
-      this.websocket.onclose = function() {
-        self2.onClose();
-        self2.socket.setBuffer(true);
+      function empty() {
+      }
+      Socket.prototype.handshake = function(fn) {
+        var self2 = this, options = this.options;
+        function complete(data) {
+          if (data instanceof Error) {
+            self2.connecting = false;
+            self2.onError(data.message);
+          } else {
+            fn.apply(null, data.split(":"));
+          }
+        }
+        var url = [
+          "http" + (options.secure ? "s" : "") + ":/",
+          options.host + ":" + options.port,
+          options.resource,
+          io2.protocol,
+          io2.util.query(this.options.query, "t=" + +new Date())
+        ].join("/");
+        if (this.isXDomain() && !io2.util.ua.hasCORS) {
+          var insertAt = document.getElementsByTagName("script")[0], script = document.createElement("script");
+          script.src = url + "&jsonp=" + io2.j.length;
+          insertAt.parentNode.insertBefore(script, insertAt);
+          io2.j.push(function(data) {
+            complete(data);
+            script.parentNode.removeChild(script);
+          });
+        } else {
+          var xhr = io2.util.request();
+          xhr.open("GET", url, true);
+          if (this.isXDomain()) {
+            xhr.withCredentials = true;
+          }
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+              xhr.onreadystatechange = empty;
+              if (xhr.status == 200) {
+                complete(xhr.responseText);
+              } else if (xhr.status == 403) {
+                self2.onError(xhr.responseText);
+              } else {
+                self2.connecting = false;
+                !self2.reconnecting && self2.onError(xhr.responseText);
+              }
+            }
+          };
+          xhr.send(null);
+        }
       };
-      this.websocket.onerror = function(e) {
-        self2.onError(e);
+      Socket.prototype.getTransport = function(override) {
+        var transports = override || this.transports;
+        for (var i2 = 0, transport; transport = transports[i2]; i2++) {
+          if (io2.Transport[transport] && io2.Transport[transport].check(this) && (!this.isXDomain() || io2.Transport[transport].xdomainCheck(this))) {
+            return new io2.Transport[transport](this, this.sessionid);
+          }
+        }
+        return null;
       };
-      return this;
-    };
-    if (io2.util.ua.iDevice) {
-      WS.prototype.send = function(data) {
+      Socket.prototype.connect = function(fn) {
+        if (this.connecting) {
+          return this;
+        }
         var self2 = this;
-        setTimeout(function() {
-          self2.websocket.send(data);
-        }, 0);
+        self2.connecting = true;
+        this.handshake(function(sid, heartbeat, close, transports) {
+          self2.sessionid = sid;
+          self2.closeTimeout = close * 1e3;
+          self2.heartbeatTimeout = heartbeat * 1e3;
+          if (!self2.transports)
+            self2.transports = self2.origTransports = transports ? io2.util.intersect(transports.split(","), self2.options.transports) : self2.options.transports;
+          self2.setHeartbeatTimeout();
+          function connect(transports2) {
+            if (self2.transport)
+              self2.transport.clearTimeouts();
+            self2.transport = self2.getTransport(transports2);
+            if (!self2.transport)
+              return self2.publish("connect_failed");
+            self2.transport.ready(self2, function() {
+              self2.connecting = true;
+              self2.publish("connecting", self2.transport.name);
+              self2.transport.open();
+              if (self2.options["connect timeout"]) {
+                self2.connectTimeoutTimer = setTimeout(function() {
+                  if (!self2.connected) {
+                    self2.connecting = false;
+                    if (self2.options["try multiple transports"]) {
+                      var remaining = self2.transports;
+                      while (remaining.length > 0 && remaining.splice(0, 1)[0] != self2.transport.name) {
+                      }
+                      if (remaining.length) {
+                        connect(remaining);
+                      } else {
+                        self2.publish("connect_failed");
+                      }
+                    }
+                  }
+                }, self2.options["connect timeout"]);
+              }
+            });
+          }
+          connect(self2.transports);
+          self2.once("connect", function() {
+            clearTimeout(self2.connectTimeoutTimer);
+            fn && typeof fn == "function" && fn();
+          });
+        });
         return this;
       };
-    } else {
-      WS.prototype.send = function(data) {
-        this.websocket.send(data);
+      Socket.prototype.setHeartbeatTimeout = function() {
+        clearTimeout(this.heartbeatTimeoutTimer);
+        if (this.transport && !this.transport.heartbeats())
+          return;
+        var self2 = this;
+        this.heartbeatTimeoutTimer = setTimeout(function() {
+          self2.transport.onClose();
+        }, this.heartbeatTimeout);
+      };
+      Socket.prototype.packet = function(data) {
+        if (this.connected && !this.doBuffer) {
+          this.transport.packet(data);
+        } else {
+          this.buffer.push(data);
+        }
         return this;
       };
-    }
-    WS.prototype.payload = function(arr) {
-      for (var i2 = 0, l = arr.length; i2 < l; i2++) {
-        this.packet(arr[i2]);
+      Socket.prototype.setBuffer = function(v) {
+        this.doBuffer = v;
+        if (!v && this.connected && this.buffer.length) {
+          if (!this.options["manualFlush"]) {
+            this.flushBuffer();
+          }
+        }
+      };
+      Socket.prototype.flushBuffer = function() {
+        this.transport.payload(this.buffer);
+        this.buffer = [];
+      };
+      Socket.prototype.disconnect = function() {
+        if (this.connected || this.connecting) {
+          if (this.open) {
+            this.of("").packet({ type: "disconnect" });
+          }
+          this.onDisconnect("booted");
+        }
+        return this;
+      };
+      Socket.prototype.disconnectSync = function() {
+        var xhr = io2.util.request();
+        var uri = [
+          "http" + (this.options.secure ? "s" : "") + ":/",
+          this.options.host + ":" + this.options.port,
+          this.options.resource,
+          io2.protocol,
+          "",
+          this.sessionid
+        ].join("/") + "/?disconnect=1";
+        xhr.open("GET", uri, false);
+        xhr.send(null);
+        this.onDisconnect("booted");
+      };
+      Socket.prototype.isXDomain = function() {
+        var port = global2.location.port || (global2.location.protocol == "https:" ? 443 : 80);
+        return this.options.host !== global2.location.hostname || this.options.port != port;
+      };
+      Socket.prototype.onConnect = function() {
+        if (!this.connected) {
+          this.connected = true;
+          this.connecting = false;
+          if (!this.doBuffer) {
+            this.setBuffer(false);
+          }
+          this.emit("connect");
+        }
+      };
+      Socket.prototype.onOpen = function() {
+        this.open = true;
+      };
+      Socket.prototype.onClose = function() {
+        this.open = false;
+        clearTimeout(this.heartbeatTimeoutTimer);
+      };
+      Socket.prototype.onPacket = function(packet) {
+        this.of(packet.endpoint).onPacket(packet);
+      };
+      Socket.prototype.onError = function(err) {
+        if (err && err.advice) {
+          if (err.advice === "reconnect" && (this.connected || this.connecting)) {
+            this.disconnect();
+            if (this.options.reconnect) {
+              this.reconnect();
+            }
+          }
+        }
+        this.publish("error", err && err.reason ? err.reason : err);
+      };
+      Socket.prototype.onDisconnect = function(reason) {
+        var wasConnected = this.connected, wasConnecting = this.connecting;
+        this.connected = false;
+        this.connecting = false;
+        this.open = false;
+        if (wasConnected || wasConnecting) {
+          this.transport.close();
+          this.transport.clearTimeouts();
+          if (wasConnected) {
+            this.publish("disconnect", reason);
+            if (reason != "booted" && this.options.reconnect && !this.reconnecting) {
+              this.reconnect();
+            }
+          }
+        }
+      };
+      Socket.prototype.reconnect = function() {
+        this.reconnecting = true;
+        this.reconnectionAttempts = 0;
+        this.reconnectionDelay = this.options["reconnection delay"];
+        var self2 = this, maxAttempts = this.options["max reconnection attempts"], tryMultiple = this.options["try multiple transports"], limit = this.options["reconnection limit"];
+        function reset() {
+          if (self2.connected) {
+            for (var i2 in self2.namespaces) {
+              if (self2.namespaces.hasOwnProperty(i2) && i2 !== "") {
+                self2.namespaces[i2].packet({ type: "connect" });
+              }
+            }
+            self2.publish("reconnect", self2.transport.name, self2.reconnectionAttempts);
+          }
+          clearTimeout(self2.reconnectionTimer);
+          self2.removeListener("connect_failed", maybeReconnect);
+          self2.removeListener("connect", maybeReconnect);
+          self2.reconnecting = false;
+          delete self2.reconnectionAttempts;
+          delete self2.reconnectionDelay;
+          delete self2.reconnectionTimer;
+          delete self2.redoTransports;
+          self2.options["try multiple transports"] = tryMultiple;
+        }
+        function maybeReconnect() {
+          if (!self2.reconnecting) {
+            return;
+          }
+          if (self2.connected) {
+            return reset();
+          }
+          if (self2.connecting && self2.reconnecting) {
+            return self2.reconnectionTimer = setTimeout(maybeReconnect, 1e3);
+          }
+          if (self2.reconnectionAttempts++ >= maxAttempts) {
+            if (!self2.redoTransports) {
+              self2.on("connect_failed", maybeReconnect);
+              self2.options["try multiple transports"] = true;
+              self2.transports = self2.origTransports;
+              self2.transport = self2.getTransport();
+              self2.redoTransports = true;
+              self2.connect();
+            } else {
+              self2.publish("reconnect_failed");
+              reset();
+            }
+          } else {
+            if (self2.reconnectionDelay < limit) {
+              self2.reconnectionDelay *= 2;
+            }
+            self2.connect();
+            self2.publish("reconnecting", self2.reconnectionDelay, self2.reconnectionAttempts);
+            self2.reconnectionTimer = setTimeout(maybeReconnect, self2.reconnectionDelay);
+          }
+        }
+        this.options["try multiple transports"] = false;
+        this.reconnectionTimer = setTimeout(maybeReconnect, this.reconnectionDelay);
+        this.on("connect", maybeReconnect);
+      };
+    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
+    (function(exports2, io2) {
+      exports2.SocketNamespace = SocketNamespace;
+      function SocketNamespace(socket, name) {
+        this.socket = socket;
+        this.name = name || "";
+        this.flags = {};
+        this.json = new Flag(this, "json");
+        this.ackPackets = 0;
+        this.acks = {};
       }
-      return this;
-    };
-    WS.prototype.close = function() {
-      this.websocket.close();
-      return this;
-    };
-    WS.prototype.onError = function(e) {
-      this.socket.onError(e);
-    };
-    WS.prototype.scheme = function() {
-      return this.socket.options.secure ? "wss" : "ws";
-    };
-    WS.check = function() {
-      return "WebSocket" in global2 && !("__addTask" in WebSocket) || "MozWebSocket" in global2;
-    };
-    WS.xdomainCheck = function() {
-      return true;
-    };
-    io2.transports.push("websocket");
-  })(typeof io != "undefined" ? io.Transport : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
-  if (typeof define === "function" && define.amd) {
-    define([], function() {
-      return io;
-    });
-  }
-}();
+      io2.util.mixin(SocketNamespace, io2.EventEmitter);
+      SocketNamespace.prototype.$emit = io2.EventEmitter.prototype.emit;
+      SocketNamespace.prototype.of = function() {
+        return this.socket.of.apply(this.socket, arguments);
+      };
+      SocketNamespace.prototype.packet = function(packet) {
+        packet.endpoint = this.name;
+        this.socket.packet(packet);
+        this.flags = {};
+        return this;
+      };
+      SocketNamespace.prototype.send = function(data, fn) {
+        var packet = {
+          type: this.flags.json ? "json" : "message",
+          data
+        };
+        if (typeof fn == "function") {
+          packet.id = ++this.ackPackets;
+          packet.ack = true;
+          this.acks[packet.id] = fn;
+        }
+        return this.packet(packet);
+      };
+      SocketNamespace.prototype.emit = function(name) {
+        var args = Array.prototype.slice.call(arguments, 1), lastArg = args[args.length - 1], packet = {
+          type: "event",
+          name
+        };
+        if (typeof lastArg == "function") {
+          packet.id = ++this.ackPackets;
+          packet.ack = "data";
+          this.acks[packet.id] = lastArg;
+          args = args.slice(0, args.length - 1);
+        }
+        packet.args = args;
+        return this.packet(packet);
+      };
+      SocketNamespace.prototype.disconnect = function() {
+        if (this.name === "") {
+          this.socket.disconnect();
+        } else {
+          this.packet({ type: "disconnect" });
+          this.$emit("disconnect");
+        }
+        return this;
+      };
+      SocketNamespace.prototype.onPacket = function(packet) {
+        var self2 = this;
+        function ack() {
+          self2.packet({
+            type: "ack",
+            args: io2.util.toArray(arguments),
+            ackId: packet.id
+          });
+        }
+        switch (packet.type) {
+          case "connect":
+            this.$emit("connect");
+            break;
+          case "disconnect":
+            if (this.name === "") {
+              this.socket.onDisconnect(packet.reason || "booted");
+            } else {
+              this.$emit("disconnect", packet.reason);
+            }
+            break;
+          case "message":
+          case "json":
+            var params = ["message", packet.data];
+            if (packet.ack == "data") {
+              params.push(ack);
+            } else if (packet.ack) {
+              this.packet({ type: "ack", ackId: packet.id });
+            }
+            this.$emit.apply(this, params);
+            break;
+          case "event":
+            var params = [packet.name].concat(packet.args);
+            if (packet.ack == "data")
+              params.push(ack);
+            this.$emit.apply(this, params);
+            break;
+          case "ack":
+            if (this.acks[packet.ackId]) {
+              this.acks[packet.ackId].apply(this, packet.args);
+              delete this.acks[packet.ackId];
+            }
+            break;
+          case "error":
+            if (packet.advice) {
+              this.socket.onError(packet);
+            } else {
+              if (packet.reason == "unauthorized") {
+                this.$emit("connect_failed", packet.reason);
+              } else {
+                this.$emit("error", packet.reason);
+              }
+            }
+            break;
+        }
+      };
+      function Flag(nsp, name) {
+        this.namespace = nsp;
+        this.name = name;
+      }
+      Flag.prototype.send = function() {
+        this.namespace.flags[this.name] = true;
+        this.namespace.send.apply(this.namespace, arguments);
+      };
+      Flag.prototype.emit = function() {
+        this.namespace.flags[this.name] = true;
+        this.namespace.emit.apply(this.namespace, arguments);
+      };
+    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+    (function(exports2, io2, global2) {
+      exports2.websocket = WS;
+      function WS(socket) {
+        io2.Transport.apply(this, arguments);
+      }
+      io2.util.inherit(WS, io2.Transport);
+      WS.prototype.name = "websocket";
+      WS.prototype.open = function() {
+        var query = io2.util.query(this.socket.options.query), self2 = this, Socket;
+        if (!Socket) {
+          Socket = global2.MozWebSocket || global2.WebSocket;
+        }
+        this.websocket = new Socket(this.prepareUrl() + query);
+        this.websocket.onopen = function() {
+          self2.onOpen();
+          self2.socket.setBuffer(false);
+        };
+        this.websocket.onmessage = function(ev) {
+          self2.onData(ev.data);
+        };
+        this.websocket.onclose = function() {
+          self2.onClose();
+          self2.socket.setBuffer(true);
+        };
+        this.websocket.onerror = function(e) {
+          self2.onError(e);
+        };
+        return this;
+      };
+      if (io2.util.ua.iDevice) {
+        WS.prototype.send = function(data) {
+          var self2 = this;
+          setTimeout(function() {
+            self2.websocket.send(data);
+          }, 0);
+          return this;
+        };
+      } else {
+        WS.prototype.send = function(data) {
+          this.websocket.send(data);
+          return this;
+        };
+      }
+      WS.prototype.payload = function(arr) {
+        for (var i2 = 0, l = arr.length; i2 < l; i2++) {
+          this.packet(arr[i2]);
+        }
+        return this;
+      };
+      WS.prototype.close = function() {
+        this.websocket.close();
+        return this;
+      };
+      WS.prototype.onError = function(e) {
+        this.socket.onError(e);
+      };
+      WS.prototype.scheme = function() {
+        return this.socket.options.secure ? "wss" : "ws";
+      };
+      WS.check = function() {
+        return "WebSocket" in global2 && !("__addTask" in WebSocket) || "MozWebSocket" in global2;
+      };
+      WS.xdomainCheck = function() {
+        return true;
+      };
+      io2.transports.push("websocket");
+    })(typeof io != "undefined" ? io.Transport : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
+  })();
+})(socket_ioWebsocketOnly);
+var io = socket_ioWebsocketOnly.exports;
 class Event {
   constructor(topic, data, options = {}) {
     this._data = Object.assign({
@@ -2808,7 +2807,7 @@ class EventHub {
     this._onSocketConnected = this._onSocketConnected.bind(this);
   }
   connect() {
-    this._socketIo = io$1.connect(this._serverUrl, {
+    this._socketIo = io.connect(this._serverUrl, {
       "max reconnection attempts": Infinity,
       "reconnection limit": 1e4,
       "reconnection delay": 5e3,
