@@ -12,13 +12,8 @@ module.exports = defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ["moment"],
+      external: ["moment", "uuid", "lodash", "loglevel"],
       plugins: [commonjs({ include: "./source/socket.io-websocket-only.cjs" })],
-      output: {
-        globals: {
-          moment: "moment",
-        },
-      },
     },
   },
 });

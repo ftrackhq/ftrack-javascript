@@ -1,4 +1,6 @@
 import moment from "moment";
+import loglevel from "loglevel";
+export { default as logger } from "loglevel";
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function createBaseFor$1(fromRight) {
   return function(object, iteratee, keysFunc) {
@@ -121,9 +123,8 @@ var stubFalse_1 = stubFalse;
 var MAX_SAFE_INTEGER$1 = 9007199254740991;
 var reIsUint = /^(?:0|[1-9]\d*)$/;
 function isIndex$2(value, length) {
-  var type = typeof value;
   length = length == null ? MAX_SAFE_INTEGER$1 : length;
-  return !!length && (type == "number" || type != "symbol" && reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
+  return !!length && (typeof value == "number" || reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
 }
 var _isIndex = isIndex$2;
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -156,10 +157,6 @@ var _nodeUtil = { exports: {} };
   var freeProcess = moduleExports && freeGlobal2.process;
   var nodeUtil2 = function() {
     try {
-      var types = freeModule && freeModule.require && freeModule.require("util").types;
-      if (types) {
-        return types;
-      }
       return freeProcess && freeProcess.binding && freeProcess.binding("util");
     } catch (e) {
     }
@@ -1057,15 +1054,15 @@ function memoizeCapped$1(func) {
 }
 var _memoizeCapped = memoizeCapped$1;
 var memoizeCapped = _memoizeCapped;
-var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+var reLeadingDot = /^\./, rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
 var reEscapeChar = /\\(\\)?/g;
 var stringToPath$1 = memoizeCapped(function(string) {
   var result = [];
-  if (string.charCodeAt(0) === 46) {
+  if (reLeadingDot.test(string)) {
     result.push("");
   }
-  string.replace(rePropName, function(match, number, quote2, subString) {
-    result.push(quote2 ? subString.replace(reEscapeChar, "$1") : number || match);
+  string.replace(rePropName, function(match, number, quote2, string2) {
+    result.push(quote2 ? string2.replace(reEscapeChar, "$1") : number || match);
   });
   return result;
 });
@@ -1294,188 +1291,6 @@ var findIndex_1 = findIndex$1;
 var createFind = _createFind, findIndex = findIndex_1;
 var find = createFind(findIndex);
 var find_1 = find;
-var loglevel$1 = { exports: {} };
-(function(module2) {
-  (function(root2, definition) {
-    if (module2.exports) {
-      module2.exports = definition();
-    } else {
-      root2.log = definition();
-    }
-  })(commonjsGlobal, function() {
-    var noop = function() {
-    };
-    var undefinedType = "undefined";
-    var logMethods = [
-      "trace",
-      "debug",
-      "info",
-      "warn",
-      "error"
-    ];
-    function bindMethod(obj, methodName) {
-      var method = obj[methodName];
-      if (typeof method.bind === "function") {
-        return method.bind(obj);
-      } else {
-        try {
-          return Function.prototype.bind.call(method, obj);
-        } catch (e) {
-          return function() {
-            return Function.prototype.apply.apply(method, [obj, arguments]);
-          };
-        }
-      }
-    }
-    function realMethod(methodName) {
-      if (methodName === "debug") {
-        methodName = "log";
-      }
-      if (typeof console === undefinedType) {
-        return false;
-      } else if (console[methodName] !== void 0) {
-        return bindMethod(console, methodName);
-      } else if (console.log !== void 0) {
-        return bindMethod(console, "log");
-      } else {
-        return noop;
-      }
-    }
-    function replaceLoggingMethods(level, loggerName) {
-      for (var i2 = 0; i2 < logMethods.length; i2++) {
-        var methodName = logMethods[i2];
-        this[methodName] = i2 < level ? noop : this.methodFactory(methodName, level, loggerName);
-      }
-      this.log = this.debug;
-    }
-    function enableLoggingWhenConsoleArrives(methodName, level, loggerName) {
-      return function() {
-        if (typeof console !== undefinedType) {
-          replaceLoggingMethods.call(this, level, loggerName);
-          this[methodName].apply(this, arguments);
-        }
-      };
-    }
-    function defaultMethodFactory(methodName, level, loggerName) {
-      return realMethod(methodName) || enableLoggingWhenConsoleArrives.apply(this, arguments);
-    }
-    function Logger(name, defaultLevel, factory) {
-      var self2 = this;
-      var currentLevel;
-      var storageKey = "loglevel";
-      if (name) {
-        storageKey += ":" + name;
-      }
-      function persistLevelIfPossible(levelNum) {
-        var levelName = (logMethods[levelNum] || "silent").toUpperCase();
-        if (typeof window === undefinedType)
-          return;
-        try {
-          window.localStorage[storageKey] = levelName;
-          return;
-        } catch (ignore) {
-        }
-        try {
-          window.document.cookie = encodeURIComponent(storageKey) + "=" + levelName + ";";
-        } catch (ignore) {
-        }
-      }
-      function getPersistedLevel() {
-        var storedLevel;
-        if (typeof window === undefinedType)
-          return;
-        try {
-          storedLevel = window.localStorage[storageKey];
-        } catch (ignore) {
-        }
-        if (typeof storedLevel === undefinedType) {
-          try {
-            var cookie = window.document.cookie;
-            var location = cookie.indexOf(encodeURIComponent(storageKey) + "=");
-            if (location !== -1) {
-              storedLevel = /^([^;]+)/.exec(cookie.slice(location))[1];
-            }
-          } catch (ignore) {
-          }
-        }
-        if (self2.levels[storedLevel] === void 0) {
-          storedLevel = void 0;
-        }
-        return storedLevel;
-      }
-      self2.name = name;
-      self2.levels = {
-        "TRACE": 0,
-        "DEBUG": 1,
-        "INFO": 2,
-        "WARN": 3,
-        "ERROR": 4,
-        "SILENT": 5
-      };
-      self2.methodFactory = factory || defaultMethodFactory;
-      self2.getLevel = function() {
-        return currentLevel;
-      };
-      self2.setLevel = function(level, persist) {
-        if (typeof level === "string" && self2.levels[level.toUpperCase()] !== void 0) {
-          level = self2.levels[level.toUpperCase()];
-        }
-        if (typeof level === "number" && level >= 0 && level <= self2.levels.SILENT) {
-          currentLevel = level;
-          if (persist !== false) {
-            persistLevelIfPossible(level);
-          }
-          replaceLoggingMethods.call(self2, level, name);
-          if (typeof console === undefinedType && level < self2.levels.SILENT) {
-            return "No console available for logging";
-          }
-        } else {
-          throw "log.setLevel() called with invalid level: " + level;
-        }
-      };
-      self2.setDefaultLevel = function(level) {
-        if (!getPersistedLevel()) {
-          self2.setLevel(level, false);
-        }
-      };
-      self2.enableAll = function(persist) {
-        self2.setLevel(self2.levels.TRACE, persist);
-      };
-      self2.disableAll = function(persist) {
-        self2.setLevel(self2.levels.SILENT, persist);
-      };
-      var initialLevel = getPersistedLevel();
-      if (initialLevel == null) {
-        initialLevel = defaultLevel == null ? "WARN" : defaultLevel;
-      }
-      self2.setLevel(initialLevel, false);
-    }
-    var defaultLogger = new Logger();
-    var _loggersByName = {};
-    defaultLogger.getLogger = function getLogger(name) {
-      if (typeof name !== "string" || name === "") {
-        throw new TypeError("You must supply a name when creating a logger.");
-      }
-      var logger2 = _loggersByName[name];
-      if (!logger2) {
-        logger2 = _loggersByName[name] = new Logger(name, defaultLogger.getLevel(), defaultLogger.methodFactory);
-      }
-      return logger2;
-    };
-    var _log = typeof window !== undefinedType ? window.log : void 0;
-    defaultLogger.noConflict = function() {
-      if (typeof window !== undefinedType && window.log === defaultLogger) {
-        window.log = _log;
-      }
-      return defaultLogger;
-    };
-    defaultLogger.getLoggers = function getLoggers() {
-      return _loggersByName;
-    };
-    return defaultLogger;
-  });
-})(loglevel$1);
-var loglevel = loglevel$1.exports;
 var rngBrowser = { exports: {} };
 var getRandomValues = typeof crypto != "undefined" && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto != "undefined" && typeof window.msCrypto.getRandomValues == "function" && msCrypto.getRandomValues.bind(msCrypto);
 if (getRandomValues) {
@@ -3562,4 +3377,4 @@ function getStatuses(session, projectSchemaId, entityType, typeId = null) {
 const exports = {
   getStatuses
 };
-export { Event, EventHub, Session, exports$2 as error, loglevel as logger, exports$1 as operation, exports as projectSchema };
+export { Event, EventHub, Session, exports$2 as error, exports$1 as operation, exports as projectSchema };

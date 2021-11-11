@@ -12,17 +12,13 @@ Release Notes
     :date: 2021-11-03
 
     .. change:: new
-        :tags: Babel
+        :tags: Babel, ESM
 
         Bumped Babel to version 7.16.
 
         Bumped core-js to version 3.
 
-
-        Removed support for UMD bundles.
-            This only affects those who have used the library by importing
-            the library using a HTML script tag from our CDN, something which we
-            never publicly exposed how to do.
+        ESM support.
 
 
 
