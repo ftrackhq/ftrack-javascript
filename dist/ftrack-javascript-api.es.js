@@ -3378,3 +3378,4 @@ const exports = {
   getStatuses
 };
 export { Event, EventHub, Session, exports$2 as error, exports$1 as operation, exports as projectSchema };
+//# sourceMappingURL=ftrack-javascript-api.es.js.map

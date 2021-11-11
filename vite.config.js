@@ -4,6 +4,7 @@ const commonjs = require("@rollup/plugin-commonjs");
 
 module.exports = defineConfig({
   build: {
+    sourcemap: true,
     lib: {
       entry: path.resolve(__dirname, "source/index.js"),
       name: "ftrack-javascript-api",
