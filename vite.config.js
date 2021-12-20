@@ -15,6 +15,13 @@ module.exports = defineConfig({
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: ["moment", "uuid", "lodash", "loglevel"],
+      output: {
+        globals: {
+          'ftrack-javascript-api': 'ftrack',
+          moment: 'moment',
+          loglevel: 'log',
+        },
+      },
       plugins: [commonjs({ include: "./source/socket.io-websocket-only.cjs" })],
     },
   },
