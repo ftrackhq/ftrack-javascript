@@ -3388,12 +3388,6 @@
   const exports$1 = {
     getStatuses
   };
-  Object.defineProperty(exports, "logger", {
-    enumerable: true,
-    get: function() {
-      return loglevel__default["default"];
-    }
-  });
   exports.Event = Event;
   exports.EventHub = EventHub;
   exports.SERVER_LOCATION_ID = SERVER_LOCATION_ID;
