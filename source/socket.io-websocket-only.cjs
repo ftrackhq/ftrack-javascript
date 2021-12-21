@@ -2,6 +2,7 @@
 const that = typeof window === "undefined" ? {} : window;
 
 var io = "undefined" === typeof module ? {} : module.exports;
+
 (function () {
   /**
    * socket.io

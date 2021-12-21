@@ -2,22 +2,30 @@
   "name": "ftrack-javascript-api",
   "version": "0.8.2",
   "description": "JavaScript API for ftrack.",
-  "main": "lib/index.js",
-  "types": "main.d.ts",
   "scripts": {
     "lint": "eslint . && prettier -c .",
     "test": "mocha test && yarn lint",
-    "clean": "rimraf ./lib",
-    "babel": "babel ./source --out-dir ./lib --copy-files",
-    "build": "cross-env NODE_ENV=production npm run babel"
+    "build": "vite build"
   },
+  "main": "./dist/ftrack-javascript-api.umd.js",
+  "module": "./dist/ftrack-javascript-api.es.js",
+  "types": "main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/ftrack-javascript-api.es.js",
+      "require": "./dist/ftrack-javascript-api.umd.js"
+    }
+  },
+  "files": [
+    "dist",
+    "main.d.ts"
+  ],
   "devDependencies": {
-    "@babel/cli": "^7.16.0",
     "@babel/core": "^7.16.0",
     "@babel/plugin-transform-runtime": "^7.16.0",
     "@babel/preset-env": "^7.16.0",
-    "@babel/preset-react": "^7.16.0",
     "@babel/register": "^7.16.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.3.1",
     "babel-eslint": "^10.0.0",
@@ -38,7 +46,8 @@
     "mocha": "^9.1.3",
     "msw": "^0.35.0",
     "prettier": "^2.4.1",
-    "typescript": "^4.4.4"
+    "typescript": "^4.4.4",
+    "vite": "^2.6.13"
   },
   "repository": {
     "type": "git",

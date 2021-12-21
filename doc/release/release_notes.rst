@@ -8,6 +8,20 @@ Release Notes
 *************
 
 
+.. release:: 0.9.0
+    :date: 2021-11-03
+
+    .. change:: new
+        :tags: Babel, ESM
+
+        Bumped Babel to version 7.16.
+
+        Bumped core-js to version 3.
+
+        ESM support.
+
+
+
 .. release:: 0.8.2
     :date: 2021-11-03
 
@@ -55,7 +69,7 @@ Release Notes
     .. change:: changed
         :tags: dependencies
 
-        Update `uuid` dependency to version 3.4.0. 
+        Update `uuid` dependency to version 3.4.0.
 
 .. release:: 0.7.1
     :date: 2019-06-12
