@@ -123,8 +123,9 @@ var stubFalse_1 = stubFalse;
 var MAX_SAFE_INTEGER$1 = 9007199254740991;
 var reIsUint = /^(?:0|[1-9]\d*)$/;
 function isIndex$2(value, length) {
+  var type = typeof value;
   length = length == null ? MAX_SAFE_INTEGER$1 : length;
-  return !!length && (typeof value == "number" || reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
+  return !!length && (type == "number" || type != "symbol" && reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
 }
 var _isIndex = isIndex$2;
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -157,6 +158,10 @@ var _nodeUtil = { exports: {} };
   var freeProcess = moduleExports && freeGlobal2.process;
   var nodeUtil2 = function() {
     try {
+      var types = freeModule && freeModule.require && freeModule.require("util").types;
+      if (types) {
+        return types;
+      }
       return freeProcess && freeProcess.binding && freeProcess.binding("util");
     } catch (e) {
     }
@@ -1054,15 +1059,15 @@ function memoizeCapped$1(func) {
 }
 var _memoizeCapped = memoizeCapped$1;
 var memoizeCapped = _memoizeCapped;
-var reLeadingDot = /^\./, rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
 var reEscapeChar = /\\(\\)?/g;
 var stringToPath$1 = memoizeCapped(function(string) {
   var result = [];
-  if (reLeadingDot.test(string)) {
+  if (string.charCodeAt(0) === 46) {
     result.push("");
   }
-  string.replace(rePropName, function(match, number, quote2, string2) {
-    result.push(quote2 ? string2.replace(reEscapeChar, "$1") : number || match);
+  string.replace(rePropName, function(match, number, quote2, subString) {
+    result.push(quote2 ? subString.replace(reEscapeChar, "$1") : number || match);
   });
   return result;
 });
@@ -3377,5 +3382,5 @@ function getStatuses(session, projectSchemaId, entityType, typeId = null) {
 const exports = {
   getStatuses
 };
-export { Event, EventHub, Session, exports$2 as error, exports$1 as operation, exports as projectSchema };
+export { Event, EventHub, SERVER_LOCATION_ID, Session, exports$2 as error, exports$1 as operation, exports as projectSchema };
 //# sourceMappingURL=ftrack-javascript-api.es.js.map

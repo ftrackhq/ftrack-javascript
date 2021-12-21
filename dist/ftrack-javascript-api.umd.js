@@ -1,5 +1,5 @@
 (function(global2, factory) {
-  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("moment"), require("loglevel")) : typeof define === "function" && define.amd ? define(["exports", "moment", "loglevel"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2["ftrack-javascript-api"] = {}, global2.moment, global2.loglevel));
+  typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("moment"), require("loglevel")) : typeof define === "function" && define.amd ? define(["exports", "moment", "loglevel"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.ftrack = {}, global2.moment, global2.log));
 })(this, function(exports, moment, loglevel) {
   "use strict";
   function _interopDefaultLegacy(e) {
@@ -129,8 +129,9 @@
   var MAX_SAFE_INTEGER$1 = 9007199254740991;
   var reIsUint = /^(?:0|[1-9]\d*)$/;
   function isIndex$2(value, length) {
+    var type = typeof value;
     length = length == null ? MAX_SAFE_INTEGER$1 : length;
-    return !!length && (typeof value == "number" || reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
+    return !!length && (type == "number" || type != "symbol" && reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
   }
   var _isIndex = isIndex$2;
   var MAX_SAFE_INTEGER = 9007199254740991;
@@ -163,6 +164,10 @@
     var freeProcess = moduleExports && freeGlobal2.process;
     var nodeUtil2 = function() {
       try {
+        var types = freeModule && freeModule.require && freeModule.require("util").types;
+        if (types) {
+          return types;
+        }
         return freeProcess && freeProcess.binding && freeProcess.binding("util");
       } catch (e) {
       }
@@ -1060,15 +1065,15 @@
   }
   var _memoizeCapped = memoizeCapped$1;
   var memoizeCapped = _memoizeCapped;
-  var reLeadingDot = /^\./, rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+  var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
   var reEscapeChar = /\\(\\)?/g;
   var stringToPath$1 = memoizeCapped(function(string) {
     var result = [];
-    if (reLeadingDot.test(string)) {
+    if (string.charCodeAt(0) === 46) {
       result.push("");
     }
-    string.replace(rePropName, function(match, number, quote2, string2) {
-      result.push(quote2 ? string2.replace(reEscapeChar, "$1") : number || match);
+    string.replace(rePropName, function(match, number, quote2, subString) {
+      result.push(quote2 ? subString.replace(reEscapeChar, "$1") : number || match);
     });
     return result;
   });
@@ -3391,6 +3396,7 @@
   });
   exports.Event = Event;
   exports.EventHub = EventHub;
+  exports.SERVER_LOCATION_ID = SERVER_LOCATION_ID;
   exports.Session = Session;
   exports.error = exports$3;
   exports.operation = exports$2;
