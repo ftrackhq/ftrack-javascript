@@ -9,6 +9,4 @@ export { default as error } from "./error";
 export { default as operation } from "./operation";
 export { default as projectSchema } from "./project_schema";
 
-export { default as logger } from "loglevel";
-
 export { SERVER_LOCATION_ID } from "./constant";
