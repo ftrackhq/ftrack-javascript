@@ -1,4 +1,4 @@
-image: rastasheep/alpine-node-chromium:latest
+image: node:16
 
 pipelines:
   default:
@@ -8,23 +8,3 @@ pipelines:
         script:
           - yarn install
           - yarn test
-  branches:
-    master:
-      - step:
-          caches:
-            - node
-          script:
-            - yarn install
-            - yarn test
-            - yarn dist
-            - npx s3-deploy@0.9 './lib/**' --cwd './lib/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/latest
-  tags:
-    "[0-9].[0-9]*.[0-9]*":
-      - step:
-          caches:
-            - node
-          script:
-            - yarn install
-            - yarn test
-            - yarn dist
-            - npx s3-deploy@0.9 './dist/**' --cwd './dist/' --region eu-west-1 --bucket ftrack-spark/ftrack-javascript-api/builds

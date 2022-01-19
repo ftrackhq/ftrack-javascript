@@ -1,5 +1,13 @@
 {
-  "presets": ["es2015"],
-  "plugins": ["babel-plugin-add-module-exports"],
-  "ignore": ["socket.io-websocket-only.js"]
+  "presets": ["@babel/preset-env"],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "regenerator": true,
+        "corejs": 3
+      }
+    ]
+  ],
+  "ignore": ["source/socket.io-websocket-only.cjs"]
 }

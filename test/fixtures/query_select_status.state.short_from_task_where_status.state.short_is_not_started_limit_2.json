@@ -1,0 +1,37 @@
+{
+  "action": "query",
+  "data": [
+    {
+      "status": {
+        "state": {
+          "__entity_type__": "State",
+          "id": "6c59abf8-4dbf-11e1-9902-f23c91df25eb",
+          "short": "NOT_STARTED"
+        },
+        "__entity_type__": "Status",
+        "id": "014a40a6-4e65-11e1-b8af-f23c91df25eb"
+      },
+      "context_type": "task",
+      "__entity_type__": "Task",
+      "object_type_id": "11c137c0-ee7e-4f9c-91c5-8c77cec22b2c",
+      "project_id": "95f5c536-4e65-11e1-afaa-f23c91df25eb",
+      "id": "200d08e6-4e67-11e1-8b21-f23c91df25eb"
+    },
+    {
+      "status": {
+        "__entity_type__": "Status",
+        "id": "014a40a6-4e65-11e1-b8af-f23c91df25eb"
+      },
+      "context_type": "task",
+      "__entity_type__": "Task",
+      "object_type_id": "11c137c0-ee7e-4f9c-91c5-8c77cec22b2c",
+      "project_id": "95f5c536-4e65-11e1-afaa-f23c91df25eb",
+      "id": "d9b69620-7cd5-11e2-808f-f23c91df25eb"
+    }
+  ],
+  "metadata": {
+    "next": {
+      "offset": 2
+    }
+  }
+}

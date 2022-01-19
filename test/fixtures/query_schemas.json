@@ -1,0 +1,8138 @@
+[
+  {
+    "properties": {
+      "list": {
+        "$ref": "List"
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "ListCustomAttributeLink"
+  },
+  {
+    "default_projections": ["id"],
+    "computed": ["latest_version"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "id": "Asset",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): AssetType.id",
+        "alias_for": "typeid"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "context_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "versions": {
+        "items": {
+          "$ref": "AssetVersion"
+        },
+        "type": "array"
+      },
+      "latest_version": {
+        "$ref": "AssetVersion"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "AssetCustomAttributeValue"
+        }
+      },
+      "type": {
+        "$ref": "AssetType"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "assetid"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      }
+    },
+    "system_projections": ["context_id"],
+    "primary_key": ["id"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["name", "id"],
+    "immutable": ["id"],
+    "id": "Scope",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["id", "entity_id", "list_id"],
+    "primary_key": ["id"],
+    "required": ["id", "entity_id", "list_id"],
+    "immutable": ["id"],
+    "id": "ListObject",
+    "type": "object",
+    "properties": {
+      "entity_id": {
+        "type": "string",
+        "alias_for": "entityid"
+      },
+      "list": {
+        "$ref": "List"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ListObjectCustomAttributeValue"
+        }
+      },
+      "list_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): List.id",
+        "alias_for": "listid"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "template_id", "task_type_id"],
+    "immutable": ["id"],
+    "id": "TaskTemplateItem",
+    "type": "object",
+    "properties": {
+      "task_type": {
+        "alias_for": "taskType",
+        "$ref": "Type"
+      },
+      "template_id": {
+        "type": "string",
+        "description": "Foreign key(s): TaskTemplate.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "task_type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "alias_for": "tasktype_id"
+      },
+      "template": {
+        "$ref": "TaskTemplate"
+      }
+    }
+  },
+  {
+    "properties": {
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "UserCustomAttributeLink"
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": [
+      "email",
+      "name",
+      "review_session_id",
+      "id",
+      "created_by_id",
+      "created_at"
+    ],
+    "immutable": ["id", "created_from_shared_url"],
+    "id": "ReviewSessionInvitee",
+    "type": "object",
+    "properties": {
+      "created_from_shared_url": {
+        "type": "boolean"
+      },
+      "name": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "review_session_id": {
+        "type": "string",
+        "description": "Foreign key(s): ReviewSession.id",
+        "format": "foreign_key"
+      },
+      "last_sent_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "created_by"
+      },
+      "email": {
+        "type": "string"
+      },
+      "statuses": {
+        "items": {
+          "$ref": "ReviewSessionObjectStatus"
+        },
+        "type": "array"
+      },
+      "review_session": {
+        "alias_for": "reviewSession",
+        "$ref": "ReviewSession"
+      }
+    },
+    "system_projections": ["review_session_id"]
+  },
+  {
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "type_id": {
+        "alias_for": "typeid",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "format": "foreign_key"
+      },
+      "priority_id": {
+        "default": "9661b320-3a0c-11e2-81c1-0800200c9a66",
+        "alias_for": "priorityid",
+        "type": "string",
+        "description": "Foreign key(s): Priority.id",
+        "format": "foreign_key"
+      },
+      "status_changes": {
+        "items": {
+          "$ref": "StatusChange"
+        },
+        "type": "array"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "incoming_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "predecessors"
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "ancestors": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "descendants": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "priority": {
+        "$ref": "Priority"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "project_id": {
+        "alias_for": "showid",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "type": {
+        "$ref": "Type"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "startdate",
+        "format": "date-time"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "sort": {
+        "type": "number"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "object_type": {
+        "alias_for": "objectType",
+        "$ref": "ObjectType"
+      },
+      "description": {
+        "type": "string"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "enddate",
+        "format": "date-time"
+      },
+      "status_id": {
+        "alias_for": "statusid",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "thumbid",
+        "description": "Foreign key(s): Component.id"
+      },
+      "bid": {
+        "type": "number"
+      },
+      "lists": {
+        "items": {
+          "$ref": "TypedContextList"
+        },
+        "type": "array",
+        "alias_for": "_lists"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "time_logged": {
+        "type": "number"
+      },
+      "bid_time_logged_difference": {
+        "type": "number"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "context_type": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "object_type_id": {
+        "default": "01decdd1-51cb-11e3-9d5b-20c9d0831e59",
+        "alias_for": "object_typeid",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "format": "foreign_key"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "created_by",
+        "description": "Foreign key(s): User.user_id"
+      },
+      "outgoing_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "successors"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      }
+    },
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["time_logged", "bid_time_logged_difference", "thumbnail_url"],
+    "required": [
+      "bid",
+      "status_id",
+      "type_id",
+      "priority_id",
+      "object_type_id",
+      "sort",
+      "context_type",
+      "id",
+      "name"
+    ],
+    "immutable": [
+      "object_type_id",
+      "object_type",
+      "bid_time_logged_difference",
+      "time_logged",
+      "start_date",
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "alias_for": {
+      "id": "Task",
+      "classifiers": {
+        "object_typeid": "01decdd1-51cb-11e3-9d5b-20c9d0831e59"
+      }
+    },
+    "type": "object",
+    "id": "Milestone",
+    "system_projections": ["showid", "context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "default_projections": ["id", "system_type"],
+    "primary_key": ["id"],
+    "required": ["system_type", "name", "id", "padding"],
+    "immutable": ["id"],
+    "id": "SequenceComponent",
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "ContainerComponent"
+      },
+      "name": {
+        "default": "main",
+        "type": "string"
+      },
+      "component_locations": {
+        "items": {
+          "$ref": "ComponentLocation"
+        },
+        "type": "array"
+      },
+      "file_type": {
+        "type": "string",
+        "alias_for": "filetype"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "container_id": {
+        "type": "string",
+        "description": "Foreign key(s): ContainerComponent.id",
+        "format": "foreign_key"
+      },
+      "version_id": {
+        "type": "string",
+        "description": "Foreign key(s): AssetVersion.id",
+        "format": "foreign_key"
+      },
+      "padding": {
+        "default": 0,
+        "type": "integer"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "version": {
+        "$ref": "AssetVersion"
+      },
+      "system_type": {
+        "type": "string"
+      },
+      "members": {
+        "items": {
+          "$ref": "Component"
+        },
+        "type": "array"
+      },
+      "size": {
+        "default": 0,
+        "type": "integer"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "format": "foreign_key"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      }
+    },
+    "system_projections": ["system_type", "version_id"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": [
+      "id",
+      "name",
+      "icon",
+      "sort",
+      "is_time_reportable",
+      "is_taskable",
+      "is_typeable",
+      "is_statusable",
+      "is_schedulable"
+    ],
+    "immutable": ["id"],
+    "id": "ObjectType",
+    "type": "object",
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer"
+      },
+      "is_leaf": {
+        "default": false,
+        "type": "boolean",
+        "alias_for": "isleaf"
+      },
+      "tasks": {
+        "items": {
+          "$ref": "Task"
+        },
+        "type": "array"
+      },
+      "is_typeable": {
+        "default": true,
+        "type": "boolean",
+        "alias_for": "istypeable"
+      },
+      "project_schemas": {
+        "items": {
+          "$ref": "ProjectSchema"
+        },
+        "type": "array"
+      },
+      "is_time_reportable": {
+        "default": false,
+        "type": "boolean",
+        "alias_for": "istimereportable"
+      },
+      "is_schedulable": {
+        "default": false,
+        "type": "boolean",
+        "alias_for": "isschedulable"
+      },
+      "is_statusable": {
+        "default": true,
+        "type": "boolean",
+        "alias_for": "isstatusable"
+      },
+      "is_taskable": {
+        "default": true,
+        "type": "boolean",
+        "alias_for": "istaskable"
+      },
+      "icon": {
+        "default": "default",
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "typeid"
+      },
+      "name": {
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "created_at"],
+    "immutable": ["id"],
+    "id": "ReviewSessionObjectStatus",
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string"
+      },
+      "review_session_object_id": {
+        "type": "string",
+        "description": "Foreign key(s): ReviewSessionObject.id",
+        "format": "foreign_key"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "invitee": {
+        "$ref": "ReviewSessionInvitee"
+      },
+      "review_session_object": {
+        "alias_for": "reviewSessionObject",
+        "$ref": "ReviewSessionObject"
+      },
+      "review_session_invitee_id": {
+        "type": "string",
+        "description": "Foreign key(s): ReviewSessionInvitee.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    },
+    "system_projections": ["review_session_object_id"]
+  },
+  {
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "type_id": {
+        "alias_for": "typeid",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "format": "foreign_key"
+      },
+      "priority_id": {
+        "default": "9661b320-3a0c-11e2-81c1-0800200c9a66",
+        "alias_for": "priorityid",
+        "type": "string",
+        "description": "Foreign key(s): Priority.id",
+        "format": "foreign_key"
+      },
+      "status_changes": {
+        "items": {
+          "$ref": "StatusChange"
+        },
+        "type": "array"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "incoming_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "predecessors"
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "ancestors": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "descendants": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "priority": {
+        "$ref": "Priority"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "project_id": {
+        "alias_for": "showid",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "type": {
+        "$ref": "Type"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "startdate",
+        "format": "date-time"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "sort": {
+        "type": "number"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "object_type": {
+        "alias_for": "objectType",
+        "$ref": "ObjectType"
+      },
+      "description": {
+        "type": "string"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "enddate",
+        "format": "date-time"
+      },
+      "status_id": {
+        "alias_for": "statusid",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "thumbid",
+        "description": "Foreign key(s): Component.id"
+      },
+      "bid": {
+        "type": "number"
+      },
+      "lists": {
+        "items": {
+          "$ref": "TypedContextList"
+        },
+        "type": "array",
+        "alias_for": "_lists"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "time_logged": {
+        "type": "number"
+      },
+      "bid_time_logged_difference": {
+        "type": "number"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "context_type": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "object_type_id": {
+        "default": "11c137c0-ee7e-4f9c-91c5-8c77cec22b2c",
+        "alias_for": "object_typeid",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "format": "foreign_key"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "created_by",
+        "description": "Foreign key(s): User.user_id"
+      },
+      "outgoing_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "successors"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      }
+    },
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["time_logged", "bid_time_logged_difference", "thumbnail_url"],
+    "required": [
+      "bid",
+      "status_id",
+      "type_id",
+      "priority_id",
+      "object_type_id",
+      "sort",
+      "context_type",
+      "id",
+      "name"
+    ],
+    "immutable": [
+      "object_type_id",
+      "object_type",
+      "bid_time_logged_difference",
+      "time_logged",
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "alias_for": {
+      "id": "Task",
+      "classifiers": {
+        "object_typeid": "11c137c0-ee7e-4f9c-91c5-8c77cec22b2c"
+      }
+    },
+    "type": "object",
+    "id": "Task",
+    "system_projections": ["showid", "context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "properties": {
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "asset_version": {
+        "$ref": "AssetVersion"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "AssetVersionCustomAttributeLink"
+  },
+  {
+    "properties": {
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "calendar_events": {
+        "items": {
+          "$ref": "CalendarEvent"
+        },
+        "type": "array"
+      },
+      "color": {
+        "type": "string"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "full_name": {
+        "type": "string",
+        "alias_for": "fullname"
+      },
+      "disk": {
+        "$ref": "Disk"
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "enddate",
+        "format": "date-time"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "disk_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Disk.id",
+        "alias_for": "diskid"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "user_security_role_projects": {
+        "items": {
+          "$ref": "UserSecurityRoleProject"
+        },
+        "type": "array",
+        "alias_for": "user_role_projects"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "startdate",
+        "format": "date-time"
+      },
+      "project_id": {
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "project_schema": {
+        "alias_for": "projectscheme",
+        "$ref": "ProjectSchema"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "status": {
+        "type": "string"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "project_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ProjectSchema.id",
+        "alias_for": "projectschemeid"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "descendants": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "thumbnail_id": {
+        "alias_for": "thumbid",
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "format": "foreign_key"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "review_sessions": {
+        "items": {
+          "$ref": "ReviewSession"
+        },
+        "type": "array",
+        "alias_for": "reviewSessions"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "is_private": {
+        "default": false,
+        "type": "boolean",
+        "alias_for": "private"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "is_global": {
+        "default": false,
+        "type": "boolean",
+        "alias_for": "isglobal"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "alias_for": "created_by",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "format": "foreign_key"
+      },
+      "root": {
+        "type": "string"
+      },
+      "context_type": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["thumbnail_url"],
+    "required": [
+      "is_global",
+      "status",
+      "project_schema_id",
+      "context_type",
+      "id",
+      "name"
+    ],
+    "immutable": [
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "alias_for": "Show",
+    "type": "object",
+    "id": "Project",
+    "system_projections": ["context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "created_by_id", "created_at"],
+    "immutable": ["id"],
+    "id": "Conversation",
+    "type": "object",
+    "properties": {
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "messages": {
+        "items": {
+          "$ref": "Message"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "participants": {
+        "items": {
+          "$ref": "Participant"
+        },
+        "type": "array"
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "created_by"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["component_id", "note_id"],
+    "computed": ["thumbnail_url", "url"],
+    "required": ["component_id", "note_id"],
+    "immutable": ["component_id", "note_id", "thumbnail_url", "url"],
+    "id": "NoteComponent",
+    "type": "object",
+    "properties": {
+      "component_id": {
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "format": "foreign_key"
+      },
+      "url": {
+        "type": "object"
+      },
+      "component": {
+        "$ref": "Component"
+      },
+      "note": {
+        "$ref": "Note"
+      },
+      "note_id": {
+        "type": "string",
+        "description": "Foreign key(s): Note.id",
+        "format": "foreign_key"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      }
+    },
+    "primary_key": ["component_id", "note_id"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["comment", "start", "duration", "id"],
+    "immutable": ["id"],
+    "id": "Timelog",
+    "type": "object",
+    "properties": {
+      "comment": {
+        "default": "",
+        "type": "string"
+      },
+      "time_zone_offset": {
+        "type": "number"
+      },
+      "user_id": {
+        "type": "string",
+        "description": "Foreign key(s): User.id",
+        "format": "foreign_key"
+      },
+      "name": {
+        "type": "string"
+      },
+      "context_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "start": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "context": {
+        "$ref": "Context"
+      },
+      "duration": {
+        "type": "number"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    },
+    "system_projections": ["user_id", "context_id"]
+  },
+  {
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "type_id": {
+        "alias_for": "typeid",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "format": "foreign_key"
+      },
+      "priority_id": {
+        "default": "9661b320-3a0c-11e2-81c1-0800200c9a66",
+        "alias_for": "priorityid",
+        "type": "string",
+        "description": "Foreign key(s): Priority.id",
+        "format": "foreign_key"
+      },
+      "status_changes": {
+        "items": {
+          "$ref": "StatusChange"
+        },
+        "type": "array"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "incoming_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "predecessors"
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "ancestors": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "descendants": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "priority": {
+        "$ref": "Priority"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "project_id": {
+        "alias_for": "showid",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "type": {
+        "$ref": "Type"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "startdate",
+        "format": "date-time"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "sort": {
+        "type": "number"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "object_type": {
+        "alias_for": "objectType",
+        "$ref": "ObjectType"
+      },
+      "description": {
+        "type": "string"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "enddate",
+        "format": "date-time"
+      },
+      "status_id": {
+        "alias_for": "statusid",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "thumbid",
+        "description": "Foreign key(s): Component.id"
+      },
+      "bid": {
+        "type": "number"
+      },
+      "lists": {
+        "items": {
+          "$ref": "TypedContextList"
+        },
+        "type": "array",
+        "alias_for": "_lists"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "time_logged": {
+        "type": "number"
+      },
+      "bid_time_logged_difference": {
+        "type": "number"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "context_type": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "object_type_id": {
+        "default": "bad911de-3bd6-47b9-8b46-3476e237cb36",
+        "alias_for": "object_typeid",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "format": "foreign_key"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "created_by",
+        "description": "Foreign key(s): User.user_id"
+      },
+      "outgoing_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "successors"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      }
+    },
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["time_logged", "bid_time_logged_difference", "thumbnail_url"],
+    "required": [
+      "bid",
+      "status_id",
+      "type_id",
+      "priority_id",
+      "object_type_id",
+      "sort",
+      "context_type",
+      "id",
+      "name"
+    ],
+    "immutable": [
+      "object_type_id",
+      "object_type",
+      "bid_time_logged_difference",
+      "time_logged",
+      "type_id",
+      "type",
+      "bid",
+      "start_date",
+      "end_date",
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "alias_for": {
+      "id": "Task",
+      "classifiers": {
+        "object_typeid": "bad911de-3bd6-47b9-8b46-3476e237cb36"
+      }
+    },
+    "type": "object",
+    "id": "Shot",
+    "system_projections": ["showid", "context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "default_projections": ["object_type_id", "project_schema_id"],
+    "primary_key": ["object_type_id", "project_schema_id"],
+    "required": ["object_type_id", "project_schema_id"],
+    "immutable": ["object_type_id", "project_schema_id"],
+    "id": "ProjectSchemaObjectType",
+    "type": "object",
+    "properties": {
+      "object_type": {
+        "$ref": "ObjectType"
+      },
+      "project_schema_id": {
+        "type": "string",
+        "description": "Foreign key(s): ProjectSchema.id",
+        "format": "foreign_key"
+      },
+      "project_schema": {
+        "$ref": "ProjectSchema"
+      },
+      "object_type_id": {
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "format": "foreign_key"
+      }
+    }
+  },
+  {
+    "properties": {
+      "entity_id": {
+        "type": "string",
+        "description": "Foreign key(s): List.id",
+        "format": "foreign_key"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeConfiguration"
+      },
+      "configuration_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeConfiguration.id",
+        "alias_for": "register_id"
+      },
+      "value": {
+        "type": "variable",
+        "alias_for": "casted_value"
+      },
+      "key": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["configuration_id", "entity_id", "key"],
+    "primary_key": ["configuration_id", "entity_id"],
+    "required": ["configuration_id", "entity_id"],
+    "immutable": ["configuration_id", "entity_id"],
+    "type": "object",
+    "id": "ListCustomAttributeValue",
+    "system_projections": ["entity_id", "key", "_casted_value", "project_id"]
+  },
+  {
+    "default_projections": ["task_type_schema_id", "type_id"],
+    "primary_key": ["task_type_schema_id", "type_id"],
+    "required": ["task_type_schema_id", "type_id"],
+    "immutable": ["task_type_schema_id", "type_id"],
+    "id": "TaskTypeSchemaType",
+    "type": "object",
+    "properties": {
+      "task_type_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): TaskTypeSchema.id",
+        "alias_for": "schemeid"
+      },
+      "type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "alias_for": "typeid"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "name"],
+    "immutable": ["id"],
+    "id": "Disk",
+    "type": "object",
+    "properties": {
+      "windows": {
+        "type": "string"
+      },
+      "unix": {
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "diskid"
+      },
+      "projects": {
+        "items": {
+          "$ref": "Project"
+        },
+        "type": "array",
+        "alias_for": "shows"
+      },
+      "name": {
+        "type": "string"
+      }
+    }
+  },
+  {
+    "properties": {
+      "insert": {
+        "type": "string",
+        "alias_for": "insert"
+      },
+      "user_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "userid"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "parent_type": {
+        "type": "string"
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "parent_id": {
+        "type": "string"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "action": {
+        "type": "string",
+        "alias_for": "action"
+      },
+      "feeds": {
+        "items": {
+          "$ref": "Feed"
+        },
+        "type": "array"
+      },
+      "project_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "alias_for": "showid"
+      },
+      "data": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer",
+        "alias_for": "socialid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "SocialEvent",
+    "type": "object",
+    "id": "Event",
+    "system_projections": ["showid"]
+  },
+  {
+    "default_projections": ["configuration_id", "from_id", "to_id"],
+    "primary_key": ["id"],
+    "required": ["configuration_id", "from_id", "to_id"],
+    "immutable": ["configuration_id", "id"],
+    "id": "CustomAttributeLinkFrom",
+    "type": "object",
+    "properties": {
+      "to_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "configuration_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "alias_for": "registerid"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "from_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "conversation_id", "resource_id"],
+    "immutable": ["id"],
+    "id": "Participant",
+    "type": "object",
+    "properties": {
+      "resource": {
+        "$ref": "Resource"
+      },
+      "last_visit": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "resource_id": {
+        "type": "string",
+        "description": "Foreign key(s): Resource.id",
+        "format": "foreign_key"
+      },
+      "conversation": {
+        "$ref": "Conversation"
+      },
+      "conversation_id": {
+        "type": "string",
+        "description": "Foreign key(s): Conversation.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["component_id", "job_id"],
+    "computed": ["url"],
+    "required": ["component_id", "job_id"],
+    "immutable": ["component_id", "job_id", "url"],
+    "id": "JobComponent",
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "object"
+      },
+      "job": {
+        "$ref": "Job"
+      },
+      "component_id": {
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "format": "foreign_key"
+      },
+      "component": {
+        "$ref": "Component"
+      },
+      "job_id": {
+        "type": "string",
+        "description": "Foreign key(s): Job.id",
+        "format": "foreign_key"
+      }
+    },
+    "primary_key": ["component_id", "job_id"]
+  },
+  {
+    "properties": {
+      "component": {
+        "$ref": "Component"
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "ComponentCustomAttributeLink"
+  },
+  {
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer"
+      },
+      "tasks": {
+        "items": {
+          "$ref": "Task"
+        },
+        "type": "array"
+      },
+      "name": {
+        "type": "string"
+      },
+      "color": {
+        "type": "string"
+      },
+      "value": {
+        "default": 0,
+        "type": "number"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "priorityid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "PriorityType",
+    "type": "object",
+    "id": "Priority"
+  },
+  {
+    "properties": {
+      "short": {
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "typeid"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "StatusType",
+    "type": "object",
+    "id": "State"
+  },
+  {
+    "default_projections": ["name", "group"],
+    "primary_key": ["name", "group"],
+    "required": ["name", "group"],
+    "immutable": ["name", "group"],
+    "id": "Setting",
+    "type": "object",
+    "properties": {
+      "group": {
+        "default": "default",
+        "type": "string"
+      },
+      "name": {
+        "default": "default",
+        "type": "string"
+      },
+      "value": {
+        "default": "default",
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["name", "id"],
+    "immutable": ["id"],
+    "id": "Location",
+    "type": "object",
+    "properties": {
+      "label": {
+        "type": "string"
+      },
+      "location_components": {
+        "items": {
+          "$ref": "ComponentLocation"
+        },
+        "type": "array"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string"
+      }
+    }
+  },
+  {
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "type_id": {
+        "alias_for": "typeid",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "format": "foreign_key"
+      },
+      "priority_id": {
+        "default": "9661b320-3a0c-11e2-81c1-0800200c9a66",
+        "alias_for": "priorityid",
+        "type": "string",
+        "description": "Foreign key(s): Priority.id",
+        "format": "foreign_key"
+      },
+      "status_changes": {
+        "items": {
+          "$ref": "StatusChange"
+        },
+        "type": "array"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "incoming_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "predecessors"
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "ancestors": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "descendants": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "priority": {
+        "$ref": "Priority"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "project_id": {
+        "alias_for": "showid",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "type": {
+        "$ref": "Type"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "startdate",
+        "format": "date-time"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "sort": {
+        "type": "number"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "object_type": {
+        "alias_for": "objectType",
+        "$ref": "ObjectType"
+      },
+      "description": {
+        "type": "string"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "enddate",
+        "format": "date-time"
+      },
+      "status_id": {
+        "alias_for": "statusid",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "thumbid",
+        "description": "Foreign key(s): Component.id"
+      },
+      "bid": {
+        "type": "number"
+      },
+      "lists": {
+        "items": {
+          "$ref": "TypedContextList"
+        },
+        "type": "array",
+        "alias_for": "_lists"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "time_logged": {
+        "type": "number"
+      },
+      "bid_time_logged_difference": {
+        "type": "number"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "context_type": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "object_type_id": {
+        "default": "22139355-61da-4c8f-9db4-3abc870166bc",
+        "alias_for": "object_typeid",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "format": "foreign_key"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "created_by",
+        "description": "Foreign key(s): User.user_id"
+      },
+      "outgoing_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "successors"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      }
+    },
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["time_logged", "bid_time_logged_difference", "thumbnail_url"],
+    "required": [
+      "bid",
+      "status_id",
+      "type_id",
+      "priority_id",
+      "object_type_id",
+      "sort",
+      "context_type",
+      "id",
+      "name"
+    ],
+    "immutable": [
+      "object_type_id",
+      "object_type",
+      "bid_time_logged_difference",
+      "time_logged",
+      "type_id",
+      "type",
+      "status_id",
+      "status",
+      "bid",
+      "start_date",
+      "end_date",
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "alias_for": {
+      "id": "Task",
+      "classifiers": {
+        "object_typeid": "22139355-61da-4c8f-9db4-3abc870166bc"
+      }
+    },
+    "type": "object",
+    "id": "Episode",
+    "system_projections": ["showid", "context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "default_projections": ["id", "start", "end"],
+    "primary_key": ["id"],
+    "required": ["name", "start", "end", "id"],
+    "immutable": ["id"],
+    "id": "CalendarEvent",
+    "type": "object",
+    "properties": {
+      "calendar_event_resources": {
+        "items": {
+          "$ref": "CalendarEventResource"
+        },
+        "type": "array"
+      },
+      "everyone": {
+        "type": "boolean"
+      },
+      "end": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "type_id": {
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "format": "foreign_key"
+      },
+      "leave": {
+        "type": "boolean"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "forecast": {
+        "type": "boolean"
+      },
+      "project": {
+        "$ref": "Project"
+      },
+      "start": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "effort": {
+        "type": "number"
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "created_by"
+      },
+      "estimate": {
+        "type": "number"
+      },
+      "project_id": {
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "type": {
+        "$ref": "Type"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      }
+    },
+    "system_projections": ["project_id"]
+  },
+  {
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer"
+      },
+      "tasks": {
+        "items": {
+          "$ref": "Task"
+        },
+        "type": "array"
+      },
+      "name": {
+        "type": "string"
+      },
+      "task_type_schemas": {
+        "items": {
+          "$ref": "TaskTypeSchema"
+        },
+        "type": "array",
+        "alias_for": "schemes"
+      },
+      "color": {
+        "default": "#510100",
+        "type": "string"
+      },
+      "is_billable": {
+        "default": true,
+        "type": "boolean",
+        "alias_for": "isbillable"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "typeid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "color", "sort", "is_billable"],
+    "immutable": ["id"],
+    "alias_for": "TaskType",
+    "type": "object",
+    "id": "Type"
+  },
+  {
+    "properties": {
+      "to_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "list": {
+        "$ref": "List"
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "from_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "ListCustomAttributeLinkFrom"
+  },
+  {
+    "properties": {
+      "user_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.id",
+        "alias_for": "userid"
+      },
+      "key": {
+        "type": "string"
+      },
+      "value": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["user_id", "key", "value"],
+    "primary_key": ["user_id", "key"],
+    "required": ["user_id", "key", "value"],
+    "immutable": ["user_id", "key"],
+    "alias_for": "UserSetting",
+    "type": "object",
+    "id": "UserApplicationState"
+  },
+  {
+    "properties": {
+      "to_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "component": {
+        "$ref": "Component"
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "from_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "ComponentCustomAttributeLinkFrom"
+  },
+  {
+    "properties": {
+      "to_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "from_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "context": {
+        "$ref": "Context"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "ContextCustomAttributeLinkFrom"
+  },
+  {
+    "properties": {
+      "entity_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeConfiguration"
+      },
+      "configuration_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeConfiguration.id",
+        "alias_for": "register_id"
+      },
+      "value": {
+        "type": "variable",
+        "alias_for": "casted_value"
+      },
+      "key": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["configuration_id", "entity_id", "key"],
+    "primary_key": ["configuration_id", "entity_id"],
+    "required": ["configuration_id", "entity_id"],
+    "immutable": ["configuration_id", "entity_id"],
+    "type": "object",
+    "id": "ContextCustomAttributeValue",
+    "system_projections": ["entity_id", "key", "_casted_value", "project_id"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id", "name"],
+    "id": "UserType",
+    "type": "object",
+    "properties": {
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "typeid"
+      },
+      "name": {
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "status", "type"],
+    "immutable": ["id", "type"],
+    "id": "Job",
+    "type": "object",
+    "properties": {
+      "status": {
+        "default": "queued",
+        "enum": ["queued", "running", "done", "failed"],
+        "type": "string"
+      },
+      "user_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "userid"
+      },
+      "finished_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "data": {
+        "type": "string",
+        "format": "json"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "type": {
+        "default": "api_job",
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "jobid"
+      },
+      "job_components": {
+        "items": {
+          "$ref": "JobComponent"
+        },
+        "type": "array"
+      }
+    }
+  },
+  {
+    "properties": {
+      "from": {
+        "alias_for": "fromTask",
+        "$ref": "TypedContext"
+      },
+      "to_id": {
+        "type": "string",
+        "description": "Foreign key(s): TypedContext.id",
+        "format": "foreign_key"
+      },
+      "to": {
+        "alias_for": "toTask",
+        "$ref": "TypedContext"
+      },
+      "from_id": {
+        "type": "string",
+        "description": "Foreign key(s): TypedContext.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "dependencyid"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      }
+    },
+    "default_projections": ["id", "from_id", "to_id"],
+    "primary_key": ["id"],
+    "required": ["id", "from_id", "to_id"],
+    "immutable": ["id"],
+    "alias_for": "Dependency",
+    "type": "object",
+    "id": "TypedContextLink"
+  },
+  {
+    "properties": {
+      "parent_id": {
+        "type": "string",
+        "alias_for": "meta_id"
+      },
+      "parent_type": {
+        "type": "string",
+        "alias_for": "meta_type",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "key": {
+        "type": "string",
+        "alias_for": "variable"
+      },
+      "value": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["parent_id", "key", "value", "parent_type"],
+    "primary_key": ["parent_id", "key"],
+    "required": ["parent_id", "key", "value", "parent_type"],
+    "immutable": ["parent_id", "key"],
+    "alias_for": "Meta",
+    "type": "object",
+    "id": "Metadata"
+  },
+  {
+    "properties": {
+      "to_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "group": {
+        "$ref": "Group"
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "from_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "GroupCustomAttributeLinkFrom"
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "name", "short"],
+    "immutable": ["id"],
+    "id": "AssetType",
+    "type": "object",
+    "properties": {
+      "short": {
+        "type": "string"
+      },
+      "component": {
+        "default": "main",
+        "type": "string"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "name": {
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "typeid"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["comment", "start", "user_id", "id"],
+    "immutable": ["id"],
+    "id": "Timer",
+    "type": "object",
+    "properties": {
+      "comment": {
+        "default": "",
+        "type": "string"
+      },
+      "user_id": {
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "format": "foreign_key"
+      },
+      "name": {
+        "type": "string"
+      },
+      "context_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "start": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "context": {
+        "$ref": "Context"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    }
+  },
+  {
+    "properties": {
+      "project": {
+        "$ref": "Project"
+      },
+      "project_id": {
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "user_security_role": {
+        "alias_for": "user_role",
+        "$ref": "UserSecurityRole"
+      },
+      "user_security_role_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): UserSecurityRole.id",
+        "alias_for": "user_role_id"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    },
+    "default_projections": ["id", "user_security_role_id", "project_id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "UserRoleProject",
+    "type": "object",
+    "id": "UserSecurityRoleProject"
+  },
+  {
+    "properties": {
+      "dashboard_id": {
+        "$ref": "Dashboard",
+        "type": "string",
+        "description": "Foreign key(s): Dashboard.id",
+        "format": "foreign_key"
+      },
+      "is_shared_with_everyone": {
+        "default": false,
+        "type": "boolean",
+        "alias_for": "isglobal"
+      },
+      "resource": {
+        "$ref": "Resource"
+      },
+      "dashboard": {
+        "$ref": "Dashboard"
+      },
+      "resource_id": {
+        "$ref": "Resource",
+        "type": "string",
+        "description": "Foreign key(s): Resource.id",
+        "format": "foreign_key"
+      }
+    },
+    "default_projections": ["dashboard_id", "resource_id"],
+    "primary_key": ["dashboard_id", "resource_id"],
+    "required": ["dashboard_id", "resource_id"],
+    "immutable": ["dashboard_id", "resource_id"],
+    "alias_for": "LinkDashboardResource",
+    "type": "object",
+    "id": "DashboardResource",
+    "system_projections": ["dashboard_id", "resource_id"]
+  },
+  {
+    "default_projections": ["note_id", "label_id"],
+    "primary_key": ["note_id", "label_id"],
+    "required": ["note_id", "label_id"],
+    "immutable": ["note_id", "label_id"],
+    "id": "NoteLabelLink",
+    "type": "object",
+    "properties": {
+      "note": {
+        "$ref": "Note"
+      },
+      "label_id": {
+        "type": "string",
+        "description": "Foreign key(s): NoteLabel.id",
+        "format": "foreign_key"
+      },
+      "note_id": {
+        "type": "string",
+        "description": "Foreign key(s): Note.id",
+        "format": "foreign_key"
+      },
+      "label": {
+        "$ref": "NoteLabel"
+      }
+    }
+  },
+  {
+    "properties": {
+      "custom_attribute_configurations": {
+        "items": {
+          "$ref": "CustomAttributeConfiguration"
+        },
+        "type": "array",
+        "alias_for": "registers"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "groupid"
+      },
+      "name": {
+        "type": "string",
+        "description": "Name of custom attribute group"
+      }
+    },
+    "default_projections": ["id", "name"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "AttributeGroup",
+    "type": "object",
+    "id": "CustomAttributeGroup"
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": [
+      "name",
+      "description",
+      "start_date",
+      "end_date",
+      "project_id",
+      "id",
+      "created_by_id",
+      "created_at"
+    ],
+    "immutable": ["id", "thumbnail_id", "thumbnail_url", "is_open"],
+    "id": "ReviewSession",
+    "type": "object",
+    "properties": {
+      "passphrase_enabled": {
+        "type": "boolean"
+      },
+      "is_open": {
+        "type": "boolean"
+      },
+      "passphrase": {
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "shareable_url_enabled": {
+        "type": "boolean"
+      },
+      "review_session_invitees": {
+        "items": {
+          "$ref": "ReviewSessionInvitee"
+        },
+        "type": "array",
+        "alias_for": "reviewSessionInvitees"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "availability": {
+        "type": "string"
+      },
+      "project_id": {
+        "type": "string",
+        "description": "Foreign key(s): Project.project_id",
+        "format": "foreign_key"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "description": {
+        "default": "",
+        "type": "string"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "end",
+        "format": "date-time"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "alias_for": "thumbid"
+      },
+      "name": {
+        "default": "New review session",
+        "type": "string"
+      },
+      "review_session_objects": {
+        "items": {
+          "$ref": "ReviewSessionObject"
+        },
+        "type": "array",
+        "alias_for": "reviewSessionObjects"
+      },
+      "settings": {
+        "items": {
+          "$ref": "EntitySetting"
+        },
+        "type": "array",
+        "alias_for": "settingOverrides"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "start",
+        "format": "date-time"
+      },
+      "project": {
+        "$ref": "Project"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "is_moderated": {
+        "type": "boolean"
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "created_by"
+      }
+    },
+    "computed": ["thumbnail_id", "thumbnail_url", "is_open"]
+  },
+  {
+    "default_projections": ["configuration_id", "from_id", "to_id"],
+    "primary_key": ["id"],
+    "required": ["configuration_id", "from_id", "to_id"],
+    "immutable": ["configuration_id", "id"],
+    "id": "CustomAttributeLink",
+    "type": "object",
+    "properties": {
+      "to_id": {
+        "type": "string"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "configuration_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "alias_for": "registerid"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "computed": ["thumbnail_url"],
+    "required": ["id", "is_published", "status_id"],
+    "immutable": ["id", "_link", "link", "is_latest_version", "thumbnail_url"],
+    "id": "AssetVersion",
+    "type": "object",
+    "properties": {
+      "comment": {
+        "default": "",
+        "type": "string"
+      },
+      "status_changes": {
+        "items": {
+          "$ref": "StatusChange"
+        },
+        "type": "array"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "incoming_links": {
+        "items": {
+          "$ref": "AssetVersionLink"
+        },
+        "type": "array",
+        "alias_for": "incoming_links"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "versionid"
+      },
+      "asset_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Asset.id",
+        "alias_for": "assetid"
+      },
+      "user_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "userid"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "AssetVersionCustomAttributeValue"
+        }
+      },
+      "version": {
+        "type": "integer"
+      },
+      "used_in_versions": {
+        "items": {
+          "$ref": "AssetVersion"
+        },
+        "type": "array",
+        "alias_for": "usedinversions"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "asset": {
+        "$ref": "Asset"
+      },
+      "status": {
+        "$ref": "Status"
+      },
+      "components": {
+        "items": {
+          "$ref": "Component"
+        },
+        "type": "array"
+      },
+      "status_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "alias_for": "statusid"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "alias_for": "thumbid"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "lists": {
+        "items": {
+          "$ref": "AssetVersionList"
+        },
+        "type": "array",
+        "alias_for": "_lists"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "date": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "uses_versions": {
+        "items": {
+          "$ref": "AssetVersion"
+        },
+        "type": "array",
+        "alias_for": "usesversions"
+      },
+      "task": {
+        "$ref": "Task"
+      },
+      "task_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Task.id",
+        "alias_for": "taskid"
+      },
+      "review_session_objects": {
+        "items": {
+          "$ref": "ReviewSessionObject"
+        },
+        "type": "array",
+        "alias_for": "reviewSessionObjects"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "is_latest_version": {
+        "type": "boolean"
+      },
+      "outgoing_links": {
+        "items": {
+          "$ref": "AssetVersionLink"
+        },
+        "type": "array",
+        "alias_for": "outgoing_links"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "is_published": {
+        "default": true,
+        "type": "boolean",
+        "alias_for": "ispublished"
+      }
+    },
+    "system_projections": ["assetid"],
+    "primary_key": ["id"]
+  },
+  {
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "type_id": {
+        "alias_for": "typeid",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "format": "foreign_key"
+      },
+      "priority_id": {
+        "default": "9661b320-3a0c-11e2-81c1-0800200c9a66",
+        "alias_for": "priorityid",
+        "type": "string",
+        "description": "Foreign key(s): Priority.id",
+        "format": "foreign_key"
+      },
+      "status_changes": {
+        "items": {
+          "$ref": "StatusChange"
+        },
+        "type": "array"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "incoming_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "predecessors"
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "ancestors": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "descendants": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "priority": {
+        "$ref": "Priority"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "project_id": {
+        "alias_for": "showid",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "type": {
+        "$ref": "Type"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "startdate",
+        "format": "date-time"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "sort": {
+        "type": "number"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "object_type": {
+        "alias_for": "objectType",
+        "$ref": "ObjectType"
+      },
+      "description": {
+        "type": "string"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "enddate",
+        "format": "date-time"
+      },
+      "status_id": {
+        "alias_for": "statusid",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "thumbid",
+        "description": "Foreign key(s): Component.id"
+      },
+      "bid": {
+        "type": "number"
+      },
+      "lists": {
+        "items": {
+          "$ref": "TypedContextList"
+        },
+        "type": "array",
+        "alias_for": "_lists"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "time_logged": {
+        "type": "number"
+      },
+      "bid_time_logged_difference": {
+        "type": "number"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "context_type": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "object_type_id": {
+        "default": "4be63b64-5010-42fb-bf1f-428af9d638f0",
+        "alias_for": "object_typeid",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "format": "foreign_key"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "created_by",
+        "description": "Foreign key(s): User.user_id"
+      },
+      "outgoing_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "successors"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      }
+    },
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["time_logged", "bid_time_logged_difference", "thumbnail_url"],
+    "required": [
+      "bid",
+      "status_id",
+      "type_id",
+      "priority_id",
+      "object_type_id",
+      "sort",
+      "context_type",
+      "id",
+      "name"
+    ],
+    "immutable": [
+      "object_type_id",
+      "object_type",
+      "bid_time_logged_difference",
+      "time_logged",
+      "bid",
+      "start_date",
+      "end_date",
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "alias_for": {
+      "id": "Task",
+      "classifiers": {
+        "object_typeid": "4be63b64-5010-42fb-bf1f-428af9d638f0"
+      }
+    },
+    "type": "object",
+    "id": "AssetBuild",
+    "system_projections": ["showid", "context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "properties": {
+      "entity_id": {
+        "type": "string",
+        "description": "Foreign key(s): User.id",
+        "format": "foreign_key"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeConfiguration"
+      },
+      "configuration_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeConfiguration.id",
+        "alias_for": "register_id"
+      },
+      "value": {
+        "type": "variable",
+        "alias_for": "casted_value"
+      },
+      "key": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["configuration_id", "entity_id", "key"],
+    "primary_key": ["configuration_id", "entity_id"],
+    "required": ["configuration_id", "entity_id"],
+    "immutable": ["configuration_id", "entity_id"],
+    "type": "object",
+    "id": "UserCustomAttributeValue",
+    "system_projections": ["entity_id", "key", "_casted_value"]
+  },
+  {
+    "default_projections": ["id", "system_type"],
+    "primary_key": ["id"],
+    "required": ["system_type", "name", "id"],
+    "immutable": ["id"],
+    "id": "ContainerComponent",
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "ContainerComponent"
+      },
+      "name": {
+        "default": "main",
+        "type": "string"
+      },
+      "component_locations": {
+        "items": {
+          "$ref": "ComponentLocation"
+        },
+        "type": "array"
+      },
+      "file_type": {
+        "type": "string",
+        "alias_for": "filetype"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "container_id": {
+        "type": "string",
+        "description": "Foreign key(s): ContainerComponent.id",
+        "format": "foreign_key"
+      },
+      "version_id": {
+        "type": "string",
+        "description": "Foreign key(s): AssetVersion.id",
+        "format": "foreign_key"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "version": {
+        "$ref": "AssetVersion"
+      },
+      "system_type": {
+        "type": "string"
+      },
+      "members": {
+        "items": {
+          "$ref": "Component"
+        },
+        "type": "array"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "format": "foreign_key"
+      },
+      "size": {
+        "default": 0,
+        "type": "integer"
+      }
+    },
+    "system_projections": ["system_type", "version_id"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "conversation_id", "created_at", "created_by_id"],
+    "immutable": ["id"],
+    "id": "Message",
+    "type": "object",
+    "properties": {
+      "text": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "conversation": {
+        "$ref": "Conversation"
+      },
+      "conversation_id": {
+        "type": "string",
+        "description": "Foreign key(s): Conversation.id",
+        "format": "foreign_key"
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "created_by"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    }
+  },
+  {
+    "properties": {
+      "to_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "from_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "asset": {
+        "$ref": "Asset"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "AssetCustomAttributeLinkFrom"
+  },
+  {
+    "properties": {
+      "entity_id": {
+        "type": "string",
+        "alias_for": "entityid"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeConfiguration"
+      },
+      "configuration_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeConfiguration.id",
+        "alias_for": "registerid"
+      },
+      "value": {
+        "type": "variable",
+        "alias_for": "casted_value"
+      }
+    },
+    "default_projections": ["configuration_id", "entity_id"],
+    "primary_key": ["configuration_id", "entity_id"],
+    "required": ["configuration_id", "entity_id"],
+    "immutable": ["configuration_id", "entity_id"],
+    "alias_for": "Variable_Value",
+    "type": "object",
+    "id": "CustomAttributeValue"
+  },
+  {
+    "properties": {
+      "sort": {
+        "type": "number"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "alias_for": "typeid"
+      },
+      "priority_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Priority.id",
+        "alias_for": "priorityid"
+      },
+      "status_changes": {
+        "items": {
+          "$ref": "StatusChange"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "incoming_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "predecessors"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "ancestors": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "enddate",
+        "format": "date-time"
+      },
+      "status_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "alias_for": "statusid"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "priority": {
+        "$ref": "Priority"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "project_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "alias_for": "showid"
+      },
+      "type": {
+        "$ref": "Type"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "startdate",
+        "format": "date-time"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "status": {
+        "$ref": "Status"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "object_type": {
+        "alias_for": "objectType",
+        "$ref": "ObjectType"
+      },
+      "description": {
+        "type": "string"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "descendants": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "thumbnail_id": {
+        "alias_for": "thumbid",
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "format": "foreign_key"
+      },
+      "bid": {
+        "type": "number"
+      },
+      "context_type": {
+        "type": "string"
+      },
+      "lists": {
+        "items": {
+          "$ref": "TypedContextList"
+        },
+        "type": "array",
+        "alias_for": "_lists"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "time_logged": {
+        "type": "number"
+      },
+      "bid_time_logged_difference": {
+        "type": "number"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "object_type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "alias_for": "object_typeid"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "alias_for": "created_by",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "format": "foreign_key"
+      },
+      "outgoing_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "successors"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      }
+    },
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["time_logged", "bid_time_logged_difference", "thumbnail_url"],
+    "required": [
+      "bid",
+      "status_id",
+      "type_id",
+      "priority_id",
+      "object_type_id",
+      "sort",
+      "context_type",
+      "id",
+      "name"
+    ],
+    "immutable": [
+      "time_logged",
+      "bid_time_logged_difference",
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "alias_for": "Task",
+    "type": "object",
+    "id": "TypedContext",
+    "system_projections": ["showid", "context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["name", "local", "resource_type", "id"],
+    "immutable": ["resource_type", "link", "id"],
+    "id": "Group",
+    "type": "object",
+    "properties": {
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "resource_assignments"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "parent": {
+        "$ref": "Group"
+      },
+      "parent_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Group.id",
+        "alias_for": "group_id"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "children": {
+        "items": {
+          "$ref": "Group"
+        },
+        "type": "array"
+      },
+      "memberships": {
+        "items": {
+          "$ref": "Membership"
+        },
+        "type": "array",
+        "alias_for": "group_memberships"
+      },
+      "dashboard_resources": {
+        "items": {
+          "$ref": "DashboardResource"
+        },
+        "type": "array"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "resource_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "api_link"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "resource_allocations"
+      },
+      "local": {
+        "type": "boolean"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "resource_type": {
+        "default": "group",
+        "type": "string"
+      }
+    },
+    "system_projections": ["resource_type"]
+  },
+  {
+    "properties": {
+      "to_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "from_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "UserCustomAttributeLinkFrom"
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "user_id"],
+    "immutable": ["id"],
+    "id": "Note",
+    "type": "object",
+    "properties": {
+      "category": {
+        "$ref": "NoteCategory"
+      },
+      "note_label_links": {
+        "items": {
+          "$ref": "NoteLabelLink"
+        },
+        "type": "array"
+      },
+      "category_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): NoteCategory.id",
+        "alias_for": "categoryid"
+      },
+      "user_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "userid"
+      },
+      "recipients": {
+        "items": {
+          "$ref": "Recipient"
+        },
+        "type": "array",
+        "alias_for": "note_recipients"
+      },
+      "in_reply_to_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Note.id",
+        "alias_for": "noteparentid"
+      },
+      "author": {
+        "alias_for": "user",
+        "$ref": "User"
+      },
+      "note_components": {
+        "items": {
+          "$ref": "NoteComponent"
+        },
+        "type": "array"
+      },
+      "parent_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "noteid"
+      },
+      "content": {
+        "type": "string",
+        "alias_for": "text"
+      },
+      "completed_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "is_todo": {
+        "default": false,
+        "type": "boolean"
+      },
+      "completed_by_id": {
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "format": "foreign_key"
+      },
+      "parent_id": {
+        "type": "string"
+      },
+      "replies": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array",
+        "alias_for": "notes"
+      },
+      "thread_activity": {
+        "type": "string",
+        "alias_for": "triggerdate",
+        "format": "date-time"
+      },
+      "in_reply_to": {
+        "alias_for": "noteparent",
+        "$ref": "Note"
+      },
+      "date": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "completed_by": {
+        "$ref": "User"
+      }
+    }
+  },
+  {
+    "properties": {
+      "overrides": {
+        "items": {
+          "$ref": "ProjectSchemaOverride"
+        },
+        "type": "array"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "schemeid"
+      },
+      "statuses": {
+        "items": {
+          "$ref": "Status"
+        },
+        "type": "array"
+      },
+      "name": {
+        "default": "Workflow Name",
+        "type": "string"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "WorkflowScheme",
+    "type": "object",
+    "id": "WorkflowSchema"
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "id": "DashboardWidget",
+    "type": "object",
+    "properties": {
+      "sort": {
+        "type": "number"
+      },
+      "type": {
+        "type": "string",
+        "alias_for": "widget_typeid"
+      },
+      "dashboard_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Dashboard.id",
+        "alias_for": "dashboardid"
+      },
+      "dashboard": {
+        "$ref": "Dashboard"
+      },
+      "config": {
+        "type": "string",
+        "description": "JSON blob of relevant widget options."
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "widgetid"
+      }
+    }
+  },
+  {
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer"
+      },
+      "tasks": {
+        "items": {
+          "$ref": "Task"
+        },
+        "type": "array"
+      },
+      "name": {
+        "type": "string"
+      },
+      "color": {
+        "type": "string"
+      },
+      "is_active": {
+        "type": "boolean",
+        "alias_for": "isactive"
+      },
+      "state": {
+        "alias_for": "statustype",
+        "$ref": "State"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "statusid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "is_active"],
+    "immutable": ["id"],
+    "alias_for": "TaskStatus",
+    "type": "object",
+    "id": "Status"
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "type", "resource_id", "context_id"],
+    "immutable": ["id"],
+    "id": "Appointment",
+    "type": "object",
+    "properties": {
+      "resource": {
+        "alias_for": "appointment_resource",
+        "$ref": "Resource"
+      },
+      "resource_id": {
+        "type": "string",
+        "description": "Foreign key(s): Resource.id",
+        "format": "foreign_key"
+      },
+      "context_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "context": {
+        "alias_for": "appointment_context",
+        "$ref": "Context"
+      },
+      "type": {
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "id": "ManagerType",
+    "type": "object",
+    "properties": {
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "typeid"
+      },
+      "name": {
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["id", "calendar_event_id", "resource_id"],
+    "primary_key": ["id"],
+    "required": ["calendar_event_id", "resource_id", "id"],
+    "immutable": ["id"],
+    "id": "CalendarEventResource",
+    "type": "object",
+    "properties": {
+      "resource": {
+        "$ref": "Resource"
+      },
+      "resource_id": {
+        "type": "string",
+        "description": "Foreign key(s): Resource.id",
+        "format": "foreign_key"
+      },
+      "calendar_event_id": {
+        "type": "string",
+        "description": "Foreign key(s): CalendarEvent.id",
+        "format": "foreign_key"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "calendar_event": {
+        "$ref": "CalendarEvent"
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "created_by"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["group_id", "user_id", "id"],
+    "immutable": ["id"],
+    "id": "Membership",
+    "type": "object",
+    "properties": {
+      "user_id": {
+        "type": "string",
+        "description": "Foreign key(s): User.id",
+        "format": "foreign_key"
+      },
+      "group_id": {
+        "type": "string",
+        "description": "Foreign key(s): Group.id",
+        "format": "foreign_key"
+      },
+      "group": {
+        "alias_for": "membership_group",
+        "$ref": "Group"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "user": {
+        "alias_for": "membership_user",
+        "$ref": "User"
+      }
+    }
+  },
+  {
+    "default_projections": ["workflow_schema_id", "status_id"],
+    "primary_key": ["workflow_schema_id", "status_id"],
+    "required": ["workflow_schema_id", "status_id"],
+    "immutable": ["workflow_schema_id", "status_id"],
+    "id": "WorkflowSchemaStatus",
+    "type": "object",
+    "properties": {
+      "workflow_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): WorkflowSchema.id",
+        "alias_for": "schemeid"
+      },
+      "status_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "alias_for": "statusid"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "computed": ["thumbnail_url"],
+    "required": ["username", "is_active", "resource_type", "id"],
+    "immutable": ["resource_type", "thumbnail_url", "id"],
+    "id": "User",
+    "type": "object",
+    "properties": {
+      "last_name": {
+        "type": "string",
+        "alias_for": "lastname"
+      },
+      "user_type": {
+        "alias_for": "type",
+        "$ref": "UserType"
+      },
+      "user_type_id": {
+        "format": "foreign_key",
+        "description": "Foreign key(s): UserType.id",
+        "alias_for": "typeid"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "is_otp_enabled": {
+        "type": "boolean",
+        "alias_for": "otp_enabled"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "UserCustomAttributeValue"
+        }
+      },
+      "require_details_update": {
+        "type": "boolean"
+      },
+      "is_totp_enabled": {
+        "type": "boolean",
+        "alias_for": "totp_enabled"
+      },
+      "email": {
+        "type": "string"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "username": {
+        "type": "string"
+      },
+      "user_security_roles": {
+        "items": {
+          "$ref": "UserSecurityRole"
+        },
+        "type": "array",
+        "alias_for": "userRoles"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "alias_for": "thumbid"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "is_active": {
+        "type": "boolean",
+        "alias_for": "isactive"
+      },
+      "first_name": {
+        "type": "string",
+        "alias_for": "firstname"
+      },
+      "dashboard_resources": {
+        "items": {
+          "$ref": "DashboardResource"
+        },
+        "type": "array"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "resource_appointments"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "memberships": {
+        "items": {
+          "$ref": "Membership"
+        },
+        "type": "array",
+        "alias_for": "user_memberships"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "resource_assignments"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "resource_allocations"
+      },
+      "resource_type": {
+        "default": "user",
+        "type": "string"
+      }
+    },
+    "system_projections": ["resource_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "properties": {
+      "project_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ProjectSchema.id",
+        "alias_for": "projectschemeid"
+      },
+      "workflow_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): WorkflowSchema.id",
+        "alias_for": "workflowschemeid"
+      },
+      "workflow_schema": {
+        "alias_for": "workflowscheme",
+        "$ref": "WorkflowSchema"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "overrideid"
+      },
+      "type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "alias_for": "typeid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "ProjectSchemeOverride",
+    "type": "object",
+    "id": "ProjectSchemaOverride"
+  },
+  {
+    "default_projections": ["note_id", "resource_id"],
+    "primary_key": ["note_id", "resource_id"],
+    "required": ["note_id", "resource_id"],
+    "immutable": ["note_id", "resource_id"],
+    "id": "Recipient",
+    "type": "object",
+    "properties": {
+      "note_id": {
+        "type": "string",
+        "description": "Foreign key(s): Note.id",
+        "format": "foreign_key"
+      },
+      "resource_id": {
+        "type": "string",
+        "description": "Foreign key(s): Resource.id",
+        "format": "foreign_key"
+      },
+      "text_mentioned": {
+        "type": "string"
+      },
+      "note": {
+        "alias_for": "recipient_note",
+        "$ref": "Note"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "recipient": {
+        "alias_for": "recipient_resource",
+        "$ref": "Resource"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "id": "TypedContextStatusChange",
+    "type": "object",
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "user_id": {
+        "alias_for": "userid",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "format": "foreign_key"
+      },
+      "parent": {
+        "$ref": "TypedContext"
+      },
+      "status_id": {
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "parent_type": {
+        "type": "string"
+      },
+      "parent_id": {
+        "type": "string"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "from_status": {
+        "$ref": "Status"
+      },
+      "date": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "from_status_id": {
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "type": "string",
+        "alias_for": "tracid"
+      }
+    }
+  },
+  {
+    "properties": {
+      "entity_id": {
+        "type": "string",
+        "description": "Foreign key(s): AssetVersion.id",
+        "format": "foreign_key"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeConfiguration"
+      },
+      "configuration_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeConfiguration.id",
+        "alias_for": "register_id"
+      },
+      "value": {
+        "type": "variable",
+        "alias_for": "casted_value"
+      },
+      "key": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["configuration_id", "entity_id", "key"],
+    "primary_key": ["configuration_id", "entity_id"],
+    "required": ["configuration_id", "entity_id"],
+    "immutable": ["configuration_id", "entity_id"],
+    "type": "object",
+    "id": "AssetVersionCustomAttributeValue",
+    "system_projections": ["entity_id", "key", "_casted_value", "project_id"]
+  },
+  {
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer"
+      },
+      "color": {
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "categoryid"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "NoteCategory",
+    "type": "object",
+    "id": "NoteLabel"
+  },
+  {
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer",
+        "description": "Graphical interface sort order."
+      },
+      "core": {
+        "default": false,
+        "type": "boolean",
+        "description": "Whether a non-alterable builtin."
+      },
+      "group_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeGroup.id",
+        "alias_for": "groupid"
+      },
+      "group": {
+        "$ref": "CustomAttributeGroup"
+      },
+      "object_type_id": {
+        "type": "string",
+        "alias_for": "entity_key",
+        "description": "Id of object type attribute applies to."
+      },
+      "entity_type": {
+        "type": "string",
+        "alias_for": "entity",
+        "description": "The entity type (table name)."
+      },
+      "object_type": {
+        "alias_for": "object_type",
+        "$ref": "ObjectType"
+      },
+      "label": {
+        "type": "string",
+        "description": "Display name for attribute."
+      },
+      "read_security_roles": {
+        "items": {
+          "$ref": "SecurityRole"
+        },
+        "type": "array",
+        "alias_for": "read_roles"
+      },
+      "key": {
+        "type": "string",
+        "description": "Attribute name unique to entity type."
+      },
+      "write_security_roles": {
+        "items": {
+          "$ref": "SecurityRole"
+        },
+        "type": "array",
+        "alias_for": "write_roles"
+      },
+      "project_id": {
+        "type": "string",
+        "alias_for": "topid",
+        "description": "Id of project attribute is configured for."
+      },
+      "config": {
+        "type": "string",
+        "description": "JSON blob of relevant menu options."
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "registerid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "core", "config"],
+    "immutable": ["id"],
+    "alias_for": "RegisterBase",
+    "type": "object",
+    "id": "CustomConfigurationBase",
+    "system_projections": ["write_permissionid", "permissionid", "topid"]
+  },
+  {
+    "properties": {
+      "_task_workflow": {
+        "alias_for": "taskworkflow",
+        "$ref": "WorkflowSchema"
+      },
+      "asset_version_workflow_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): WorkflowSchema.id",
+        "alias_for": "versionworkflowid"
+      },
+      "_schemas": {
+        "items": {
+          "$ref": "Schema"
+        },
+        "type": "array",
+        "alias_for": "schemas"
+      },
+      "task_workflow_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): WorkflowSchema.id",
+        "alias_for": "taskworkflowid"
+      },
+      "_overrides": {
+        "items": {
+          "$ref": "ProjectSchemaOverride"
+        },
+        "type": "array",
+        "alias_for": "overrides"
+      },
+      "_task_type_schema": {
+        "alias_for": "tasktypescheme",
+        "$ref": "TaskTypeSchema"
+      },
+      "task_workflow_schema": {
+        "alias_for": "taskworkflow",
+        "$ref": "WorkflowSchema"
+      },
+      "object_types": {
+        "items": {
+          "$ref": "ObjectType"
+        },
+        "type": "array"
+      },
+      "_version_workflow": {
+        "alias_for": "versionworkflow",
+        "$ref": "WorkflowSchema"
+      },
+      "asset_version_workflow_schema": {
+        "alias_for": "versionworkflow",
+        "$ref": "WorkflowSchema"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "schemeid"
+      },
+      "task_workflow_schema_overrides": {
+        "items": {
+          "$ref": "ProjectSchemaOverride"
+        },
+        "type": "array",
+        "alias_for": "overrides"
+      },
+      "task_type_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): TaskTypeSchema.id",
+        "alias_for": "tasktypeschemeid"
+      },
+      "task_type_schema": {
+        "alias_for": "tasktypescheme",
+        "$ref": "TaskTypeSchema"
+      },
+      "task_templates": {
+        "items": {
+          "$ref": "TaskTemplate"
+        },
+        "type": "array",
+        "alias_for": "templates"
+      },
+      "object_type_schemas": {
+        "items": {
+          "$ref": "Schema"
+        },
+        "type": "array",
+        "alias_for": "schemas"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "ProjectScheme",
+    "type": "object",
+    "id": "ProjectSchema"
+  },
+  {
+    "default_projections": ["id", "name"],
+    "primary_key": ["id"],
+    "required": ["id", "name", "project_schema_id"],
+    "immutable": ["id"],
+    "id": "TaskTemplate",
+    "type": "object",
+    "properties": {
+      "items": {
+        "items": {
+          "$ref": "TaskTemplateItem"
+        },
+        "type": "array"
+      },
+      "project_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ProjectSchema.id",
+        "alias_for": "projectschemeid"
+      },
+      "project_schema": {
+        "alias_for": "schema",
+        "$ref": "ProjectSchema"
+      },
+      "name": {
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    }
+  },
+  {
+    "properties": {
+      "parent_id": {
+        "type": "string"
+      },
+      "parent_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "name": {
+        "type": "string"
+      },
+      "value": {
+        "type": "string"
+      },
+      "group": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "parent_id",
+      "group",
+      "name",
+      "value",
+      "parent_type"
+    ],
+    "primary_key": ["parent_id", "group", "name"],
+    "required": ["parent_id", "group", "name", "value", "parent_type"],
+    "immutable": ["parent_id", "group", "name"],
+    "alias_for": "SettingOverride",
+    "type": "object",
+    "id": "EntitySetting"
+  },
+  {
+    "properties": {
+      "to_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "from_entity_type": {
+        "type": "string",
+        "transform": {
+          "client": "{schema_id}",
+          "server": "{table_name}"
+        }
+      },
+      "asset_version": {
+        "$ref": "AssetVersion"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "AssetVersionCustomAttributeLinkFrom"
+  },
+  {
+    "properties": {
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "typeid"
+      },
+      "lists": {
+        "items": {
+          "$ref": "List"
+        },
+        "type": "array"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "ListType",
+    "type": "object",
+    "id": "ListCategory"
+  },
+  {
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "user_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "userid"
+      },
+      "status_id": {
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "parent_type": {
+        "type": "string"
+      },
+      "parent_id": {
+        "type": "string"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "from_status": {
+        "$ref": "Status"
+      },
+      "date": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "from_status_id": {
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "type": "string",
+        "alias_for": "tracid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "Trac",
+    "type": "object",
+    "id": "StatusChange"
+  },
+  {
+    "properties": {
+      "distance": {
+        "default": 0,
+        "type": "integer",
+        "alias_for": "distance"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "relation": {
+        "type": "string",
+        "alias_for": "relation"
+      },
+      "social_id": {
+        "format": "foreign_key",
+        "type": "integer",
+        "description": "Foreign key(s): Event.social_id",
+        "alias_for": "socialid"
+      },
+      "cluster_id": {
+        "type": "string",
+        "alias_for": "clusterid"
+      },
+      "event": {
+        "$ref": "Event"
+      },
+      "owner_id": {
+        "type": "string",
+        "alias_for": "ownerid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "SocialFeed",
+    "type": "object",
+    "id": "Feed"
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer"
+      },
+      "color": {
+        "type": "string"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "categoryid"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "alias_for": "NoteCategory",
+    "type": "object",
+    "id": "NoteCategory"
+  },
+  {
+    "properties": {
+      "entity_id": {
+        "type": "string",
+        "description": "Foreign key(s): Asset.id",
+        "format": "foreign_key"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeConfiguration"
+      },
+      "configuration_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeConfiguration.id",
+        "alias_for": "register_id"
+      },
+      "value": {
+        "type": "variable",
+        "alias_for": "casted_value"
+      },
+      "key": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["configuration_id", "entity_id", "key"],
+    "primary_key": ["configuration_id", "entity_id"],
+    "required": ["configuration_id", "entity_id"],
+    "immutable": ["configuration_id", "entity_id"],
+    "type": "object",
+    "id": "AssetCustomAttributeValue",
+    "system_projections": ["entity_id", "key", "_casted_value", "project_id"]
+  },
+  {
+    "default_projections": ["id", "from_id", "to_id"],
+    "primary_key": ["id"],
+    "required": ["id", "from_id", "to_id"],
+    "immutable": ["id"],
+    "id": "AssetVersionLink",
+    "type": "object",
+    "properties": {
+      "from": {
+        "alias_for": "linked_version",
+        "$ref": "AssetVersion"
+      },
+      "to_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): AssetVersion.id",
+        "alias_for": "versionid"
+      },
+      "to": {
+        "alias_for": "version",
+        "$ref": "AssetVersion"
+      },
+      "from_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): AssetVersion.id",
+        "alias_for": "linkedversionid"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      }
+    }
+  },
+  {
+    "properties": {
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "asset": {
+        "$ref": "Asset"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "AssetCustomAttributeLink"
+  },
+  {
+    "properties": {
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "schemeid"
+      },
+      "types": {
+        "items": {
+          "$ref": "Type"
+        },
+        "type": "array"
+      },
+      "name": {
+        "default": "TaskType Schema Name",
+        "type": "string"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "TaskTypeScheme",
+    "type": "object",
+    "id": "TaskTypeSchema"
+  },
+  {
+    "properties": {
+      "category": {
+        "alias_for": "type",
+        "$ref": "ListCategory"
+      },
+      "project_id": {
+        "alias_for": "showid",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "user_id": {
+        "alias_for": "userid",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "format": "foreign_key"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "items": {
+        "items": {
+          "$ref": "Task"
+        },
+        "type": "array",
+        "alias_for": "_task_items"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ListCustomAttributeValue"
+        }
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "owner": {
+        "alias_for": "user",
+        "$ref": "User"
+      },
+      "is_open": {
+        "default": true,
+        "type": "boolean",
+        "alias_for": "isopen"
+      },
+      "system_type": {
+        "default": "task",
+        "type": "string",
+        "alias_for": "entity",
+        "description": "Defines the type of the items this list accepts."
+      },
+      "date": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "category_id": {
+        "alias_for": "typeid",
+        "type": "string",
+        "description": "Foreign key(s): ListCategory.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "listid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "is_open", "category_id", "project_id"],
+    "immutable": ["type", "id"],
+    "alias_for": {
+      "id": "List",
+      "classifiers": {
+        "entity": "task"
+      }
+    },
+    "type": "object",
+    "id": "TypedContextList",
+    "system_projections": ["showid"]
+  },
+  {
+    "properties": {
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "context": {
+        "$ref": "Context"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "ContextCustomAttributeLink"
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "id": "AssetVersionStatusChange",
+    "type": "object",
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "user_id": {
+        "alias_for": "userid",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "format": "foreign_key"
+      },
+      "parent": {
+        "$ref": "AssetVersion"
+      },
+      "status_id": {
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "parent_type": {
+        "type": "string"
+      },
+      "parent_id": {
+        "type": "string"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "from_status": {
+        "$ref": "Status"
+      },
+      "date": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "from_status_id": {
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "type": "string",
+        "alias_for": "tracid"
+      }
+    }
+  },
+  {
+    "properties": {
+      "is_all_open_projects": {
+        "type": "boolean",
+        "alias_for": "isallprojects"
+      },
+      "user_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.id",
+        "alias_for": "userid"
+      },
+      "is_all_projects": {
+        "type": "boolean",
+        "alias_for": "isallprojects",
+        "description": "This attribute has been deprecated, use `is_all_open_projects` attribute instead."
+      },
+      "security_role_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): SecurityRole.id",
+        "alias_for": "roleid"
+      },
+      "user_security_role_projects": {
+        "items": {
+          "$ref": "UserSecurityRoleProject"
+        },
+        "type": "array",
+        "alias_for": "user_role_projects"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "security_role": {
+        "alias_for": "role",
+        "$ref": "SecurityRole"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    },
+    "default_projections": ["id", "user_id", "security_role_id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "Auth_UserRole",
+    "type": "object",
+    "id": "UserSecurityRole"
+  },
+  {
+    "properties": {
+      "entity_id": {
+        "type": "string",
+        "description": "Foreign key(s): ListObject.id",
+        "format": "foreign_key"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeConfiguration"
+      },
+      "configuration_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeConfiguration.id",
+        "alias_for": "register_id"
+      },
+      "value": {
+        "type": "variable",
+        "alias_for": "casted_value"
+      },
+      "key": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["configuration_id", "entity_id", "key"],
+    "primary_key": ["configuration_id", "entity_id"],
+    "required": ["configuration_id", "entity_id"],
+    "immutable": ["configuration_id", "entity_id"],
+    "type": "object",
+    "id": "ListObjectCustomAttributeValue",
+    "system_projections": ["entity_id", "key", "_casted_value"]
+  },
+  {
+    "default_projections": ["id", "system_type"],
+    "primary_key": ["id"],
+    "required": ["system_type", "name", "id"],
+    "immutable": ["id"],
+    "id": "FileComponent",
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "ContainerComponent"
+      },
+      "name": {
+        "default": "main",
+        "type": "string"
+      },
+      "component_locations": {
+        "items": {
+          "$ref": "ComponentLocation"
+        },
+        "type": "array"
+      },
+      "file_type": {
+        "type": "string",
+        "alias_for": "filetype"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "container_id": {
+        "type": "string",
+        "description": "Foreign key(s): ContainerComponent.id",
+        "format": "foreign_key"
+      },
+      "version_id": {
+        "type": "string",
+        "description": "Foreign key(s): AssetVersion.id",
+        "format": "foreign_key"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "version": {
+        "$ref": "AssetVersion"
+      },
+      "system_type": {
+        "type": "string"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "format": "foreign_key"
+      },
+      "size": {
+        "default": 0,
+        "type": "integer"
+      }
+    },
+    "system_projections": ["system_type", "version_id"]
+  },
+  {
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "type_id": {
+        "alias_for": "typeid",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "format": "foreign_key"
+      },
+      "priority_id": {
+        "default": "9661b320-3a0c-11e2-81c1-0800200c9a66",
+        "alias_for": "priorityid",
+        "type": "string",
+        "description": "Foreign key(s): Priority.id",
+        "format": "foreign_key"
+      },
+      "status_changes": {
+        "items": {
+          "$ref": "StatusChange"
+        },
+        "type": "array"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "incoming_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "predecessors"
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "ancestors": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "descendants": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "priority": {
+        "$ref": "Priority"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "project_id": {
+        "alias_for": "showid",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "type": {
+        "$ref": "Type"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "startdate",
+        "format": "date-time"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "sort": {
+        "type": "number"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "object_type": {
+        "alias_for": "objectType",
+        "$ref": "ObjectType"
+      },
+      "description": {
+        "type": "string"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "enddate",
+        "format": "date-time"
+      },
+      "status_id": {
+        "alias_for": "statusid",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "thumbid",
+        "description": "Foreign key(s): Component.id"
+      },
+      "bid": {
+        "type": "number"
+      },
+      "lists": {
+        "items": {
+          "$ref": "TypedContextList"
+        },
+        "type": "array",
+        "alias_for": "_lists"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "time_logged": {
+        "type": "number"
+      },
+      "bid_time_logged_difference": {
+        "type": "number"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "context_type": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "object_type_id": {
+        "default": "3c133785-51cb-11e3-980a-20c9d0831e59",
+        "alias_for": "object_typeid",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "format": "foreign_key"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "created_by",
+        "description": "Foreign key(s): User.user_id"
+      },
+      "outgoing_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "successors"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      }
+    },
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["time_logged", "bid_time_logged_difference", "thumbnail_url"],
+    "required": [
+      "bid",
+      "status_id",
+      "type_id",
+      "priority_id",
+      "object_type_id",
+      "sort",
+      "context_type",
+      "id",
+      "name"
+    ],
+    "immutable": [
+      "object_type_id",
+      "object_type",
+      "bid_time_logged_difference",
+      "time_logged",
+      "type_id",
+      "type",
+      "status_id",
+      "status",
+      "bid",
+      "start_date",
+      "end_date",
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "alias_for": {
+      "id": "Task",
+      "classifiers": {
+        "object_typeid": "3c133785-51cb-11e3-980a-20c9d0831e59"
+      }
+    },
+    "type": "object",
+    "id": "Folder",
+    "system_projections": ["showid", "context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "type_id", "project_schema_id"],
+    "immutable": ["id"],
+    "id": "Schema",
+    "type": "object",
+    "properties": {
+      "project_schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ProjectSchema.id",
+        "alias_for": "projectschemeid"
+      },
+      "type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "alias_for": "typeid"
+      },
+      "statuses": {
+        "items": {
+          "$ref": "SchemaStatus"
+        },
+        "type": "array"
+      },
+      "object_type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "alias_for": "typeid"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "types": {
+        "items": {
+          "$ref": "SchemaType"
+        },
+        "type": "array"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "core"],
+    "immutable": ["id"],
+    "id": "CustomAttributeType",
+    "type": "object",
+    "properties": {
+      "form_config": {
+        "type": "string",
+        "alias_for": "formconfig"
+      },
+      "core": {
+        "default": false,
+        "type": "boolean",
+        "description": "Whether a non-alterable builtin."
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "typeid"
+      },
+      "name": {
+        "type": "string",
+        "description": "Name of custom attribute type"
+      },
+      "custom_attribute_configurations": {
+        "items": {
+          "$ref": "CustomAttributeConfiguration"
+        },
+        "type": "array",
+        "alias_for": "variables"
+      }
+    }
+  },
+  {
+    "default_projections": ["id", "system_type"],
+    "primary_key": ["id"],
+    "required": ["system_type", "name", "id"],
+    "immutable": ["id"],
+    "id": "Component",
+    "type": "object",
+    "properties": {
+      "container": {
+        "$ref": "ContainerComponent"
+      },
+      "name": {
+        "default": "main",
+        "type": "string"
+      },
+      "component_locations": {
+        "items": {
+          "$ref": "ComponentLocation"
+        },
+        "type": "array"
+      },
+      "file_type": {
+        "type": "string",
+        "alias_for": "filetype"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "container_id": {
+        "type": "string",
+        "description": "Foreign key(s): ContainerComponent.id",
+        "format": "foreign_key"
+      },
+      "version_id": {
+        "type": "string",
+        "description": "Foreign key(s): AssetVersion.id",
+        "format": "foreign_key"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "version": {
+        "$ref": "AssetVersion"
+      },
+      "system_type": {
+        "type": "string"
+      },
+      "size": {
+        "default": 0,
+        "type": "integer"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      }
+    },
+    "system_projections": ["system_type", "version_id"]
+  },
+  {
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer",
+        "description": "Graphical interface sort order."
+      },
+      "core": {
+        "default": false,
+        "type": "boolean",
+        "description": "Whether a non-alterable builtin."
+      },
+      "group_id": {
+        "alias_for": "groupid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeGroup.id",
+        "format": "foreign_key"
+      },
+      "group": {
+        "$ref": "CustomAttributeGroup"
+      },
+      "key": {
+        "type": "string",
+        "description": "Attribute name unique to entity type."
+      },
+      "one_to_one": {
+        "type": "boolean"
+      },
+      "object_type": {
+        "alias_for": "object_type",
+        "$ref": "ObjectType"
+      },
+      "object_type_id_to": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "alias_for": "entity_key_to"
+      },
+      "entity_type_to": {
+        "type": "string",
+        "alias_for": "entity_to",
+        "description": "The entity type (table name)."
+      },
+      "label": {
+        "type": "string",
+        "description": "Display name for attribute."
+      },
+      "read_security_roles": {
+        "items": {
+          "$ref": "SecurityRole"
+        },
+        "type": "array",
+        "alias_for": "read_roles"
+      },
+      "entity_type": {
+        "type": "string",
+        "alias_for": "entity",
+        "description": "The entity type (table name)."
+      },
+      "object_type_id": {
+        "type": "string",
+        "alias_for": "entity_key",
+        "description": "Id of object type attribute applies to."
+      },
+      "write_security_roles": {
+        "items": {
+          "$ref": "SecurityRole"
+        },
+        "type": "array",
+        "alias_for": "write_roles"
+      },
+      "object_type_to": {
+        "alias_for": "object_type_to",
+        "$ref": "ObjectType"
+      },
+      "project_id": {
+        "type": "string",
+        "alias_for": "topid",
+        "description": "Id of project attribute is configured for."
+      },
+      "config": {
+        "type": "string",
+        "description": "JSON blob of relevant menu options."
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "registerid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "entity_type", "entity_type_to", "core", "config"],
+    "immutable": ["id", "entity_type_to", "object_type_id_to"],
+    "alias_for": "LinkRegister",
+    "type": "object",
+    "id": "CustomAttributeLinkConfiguration",
+    "system_projections": ["write_permissionid", "permissionid", "topid"]
+  },
+  {
+    "default_projections": ["type_id", "schema_id"],
+    "primary_key": ["type_id", "schema_id"],
+    "required": ["type_id", "schema_id"],
+    "immutable": ["type_id", "schema_id"],
+    "id": "SchemaType",
+    "type": "object",
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer"
+      },
+      "schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Schema.id",
+        "alias_for": "schemaid"
+      },
+      "task_type": {
+        "alias_for": "tasktype",
+        "$ref": "Type"
+      },
+      "type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "alias_for": "typeid"
+      }
+    }
+  },
+  {
+    "default_projections": ["status_id", "schema_id"],
+    "primary_key": ["status_id", "schema_id"],
+    "required": ["status_id", "schema_id"],
+    "immutable": ["status_id", "schema_id"],
+    "id": "SchemaStatus",
+    "type": "object",
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer"
+      },
+      "schema_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Schema.id",
+        "alias_for": "schemaid"
+      },
+      "task_status": {
+        "alias_for": "taskstatus",
+        "$ref": "Status"
+      },
+      "status_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "alias_for": "statusid"
+      }
+    }
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["resource_type", "id"],
+    "immutable": ["id"],
+    "id": "Resource",
+    "type": "object",
+    "properties": {
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "resource_assignments"
+      },
+      "dashboard_resources": {
+        "items": {
+          "$ref": "DashboardResource"
+        },
+        "type": "array"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "resource_appointments"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "resource_allocations"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "resource_type": {
+        "type": "string"
+      }
+    },
+    "system_projections": ["resource_type"]
+  },
+  {
+    "properties": {
+      "user_security_roles": {
+        "items": {
+          "$ref": "UserSecurityRole"
+        },
+        "type": "array",
+        "alias_for": "userRoles"
+      },
+      "type": {
+        "description": "Foreign key(s): SecurityRoleType.id",
+        "type": "string",
+        "alias_for": "typeid",
+        "format": "foreign_key"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "roleid"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "default_projections": ["id", "name"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "alias_for": "Auth_Role",
+    "type": "object",
+    "id": "SecurityRole"
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "is_open", "category_id", "project_id"],
+    "immutable": ["id"],
+    "id": "List",
+    "type": "object",
+    "properties": {
+      "category": {
+        "alias_for": "type",
+        "$ref": "ListCategory"
+      },
+      "category_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ListCategory.id",
+        "alias_for": "typeid"
+      },
+      "user_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "userid"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ListCustomAttributeValue"
+        }
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "date": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "is_open": {
+        "default": true,
+        "type": "boolean",
+        "alias_for": "isopen"
+      },
+      "system_type": {
+        "default": "task",
+        "type": "string",
+        "alias_for": "entity",
+        "description": "Defines the type of the items this list accepts."
+      },
+      "owner": {
+        "alias_for": "user",
+        "$ref": "User"
+      },
+      "project_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "alias_for": "showid"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "listid"
+      }
+    },
+    "system_projections": ["showid"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": [
+      "name",
+      "description",
+      "version",
+      "version_id",
+      "review_session_id",
+      "id",
+      "created_at",
+      "sort_order"
+    ],
+    "immutable": ["id"],
+    "id": "ReviewSessionObject",
+    "type": "object",
+    "properties": {
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "description": {
+        "default": "",
+        "type": "string"
+      },
+      "version_id": {
+        "type": "string",
+        "description": "Foreign key(s): AssetVersion.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "review_session_id": {
+        "type": "string",
+        "description": "Foreign key(s): ReviewSession.id",
+        "format": "foreign_key"
+      },
+      "version": {
+        "default": "",
+        "type": "string"
+      },
+      "asset_version": {
+        "alias_for": "assetVersion",
+        "$ref": "AssetVersion"
+      },
+      "sort_order": {
+        "type": "number"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "statuses": {
+        "items": {
+          "$ref": "ReviewSessionObjectStatus"
+        },
+        "type": "array"
+      },
+      "review_session": {
+        "alias_for": "reviewSession",
+        "$ref": "ReviewSession"
+      }
+    },
+    "system_projections": ["review_session_id"]
+  },
+  {
+    "properties": {
+      "sort": {
+        "default": 0,
+        "type": "integer",
+        "description": "Graphical interface sort order."
+      },
+      "core": {
+        "default": false,
+        "type": "boolean",
+        "description": "Whether a non-alterable builtin."
+      },
+      "group_id": {
+        "alias_for": "groupid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeGroup.id",
+        "format": "foreign_key"
+      },
+      "group": {
+        "$ref": "CustomAttributeGroup"
+      },
+      "key": {
+        "type": "string",
+        "description": "Attribute name unique to entity type."
+      },
+      "type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeType.id",
+        "alias_for": "typeid"
+      },
+      "default": {
+        "default": "",
+        "type": "variable",
+        "alias_for": "casted_default",
+        "description": "Default value to use when no specific attribute value set on an instance."
+      },
+      "type": {
+        "$ref": "CustomAttributeType"
+      },
+      "object_type": {
+        "alias_for": "object_type",
+        "$ref": "ObjectType"
+      },
+      "label": {
+        "type": "string",
+        "description": "Display name for attribute."
+      },
+      "read_security_roles": {
+        "items": {
+          "$ref": "SecurityRole"
+        },
+        "type": "array",
+        "alias_for": "read_roles"
+      },
+      "entity_type": {
+        "type": "string",
+        "alias_for": "entity",
+        "description": "The entity type (table name)."
+      },
+      "values": {
+        "items": {
+          "$ref": "CustomAttributeValue"
+        },
+        "type": "array"
+      },
+      "object_type_id": {
+        "type": "string",
+        "alias_for": "entity_key",
+        "description": "Id of object type attribute applies to."
+      },
+      "write_security_roles": {
+        "items": {
+          "$ref": "SecurityRole"
+        },
+        "type": "array",
+        "alias_for": "write_roles"
+      },
+      "is_hierarchical": {
+        "default": false,
+        "type": "boolean",
+        "alias_for": "ishierarchical",
+        "description": "Whether overridable at different levels."
+      },
+      "project_id": {
+        "type": "string",
+        "alias_for": "topid",
+        "description": "Id of project attribute is configured for."
+      },
+      "config": {
+        "type": "string",
+        "description": "JSON blob of relevant menu options."
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "registerid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "core", "config"],
+    "immutable": ["id"],
+    "alias_for": "Variable_Register",
+    "type": "object",
+    "id": "CustomAttributeConfiguration",
+    "system_projections": ["write_permissionid", "permissionid", "topid"]
+  },
+  {
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["thumbnail_url"],
+    "required": ["context_type", "id", "name"],
+    "immutable": [
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "id": "Context",
+    "type": "object",
+    "properties": {
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "project_id": {
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "alias_for": "thumbid"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "created_by"
+      },
+      "context_type": {
+        "type": "string"
+      }
+    },
+    "system_projections": ["context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "default_projections": ["id"],
+    "computed": ["url"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "id": "ComponentLocation",
+    "type": "object",
+    "properties": {
+      "component_id": {
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "format": "foreign_key"
+      },
+      "url": {
+        "type": "object"
+      },
+      "component": {
+        "$ref": "Component"
+      },
+      "resource_identifier": {
+        "type": "string",
+        "alias_for": "resourceIdentifier"
+      },
+      "location": {
+        "$ref": "Location"
+      },
+      "location_id": {
+        "type": "string",
+        "description": "Foreign key(s): Location.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      }
+    },
+    "system_projections": ["location_id", "component_id"],
+    "primary_key": ["id"]
+  },
+  {
+    "properties": {
+      "category": {
+        "alias_for": "type",
+        "$ref": "ListCategory"
+      },
+      "project_id": {
+        "alias_for": "showid",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "user_id": {
+        "alias_for": "userid",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "format": "foreign_key"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "items": {
+        "items": {
+          "$ref": "AssetVersion"
+        },
+        "type": "array",
+        "alias_for": "_asset_version_items"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ListCustomAttributeValue"
+        }
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "owner": {
+        "alias_for": "user",
+        "$ref": "User"
+      },
+      "is_open": {
+        "default": true,
+        "type": "boolean",
+        "alias_for": "isopen"
+      },
+      "system_type": {
+        "default": "assetversion",
+        "type": "string",
+        "alias_for": "entity",
+        "description": "Defines the type of the items this list accepts."
+      },
+      "date": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "category_id": {
+        "alias_for": "typeid",
+        "type": "string",
+        "description": "Foreign key(s): ListCategory.id",
+        "format": "foreign_key"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "listid"
+      }
+    },
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id", "is_open", "category_id", "project_id"],
+    "immutable": ["type", "id"],
+    "alias_for": {
+      "id": "List",
+      "classifiers": {
+        "entity": "assetversion"
+      }
+    },
+    "type": "object",
+    "id": "AssetVersionList",
+    "system_projections": ["showid"]
+  },
+  {
+    "properties": {
+      "status": {
+        "$ref": "Status"
+      },
+      "managers": {
+        "items": {
+          "$ref": "Manager"
+        },
+        "type": "array"
+      },
+      "type_id": {
+        "alias_for": "typeid",
+        "type": "string",
+        "description": "Foreign key(s): Type.id",
+        "format": "foreign_key"
+      },
+      "priority_id": {
+        "default": "9661b320-3a0c-11e2-81c1-0800200c9a66",
+        "alias_for": "priorityid",
+        "type": "string",
+        "description": "Foreign key(s): Priority.id",
+        "format": "foreign_key"
+      },
+      "status_changes": {
+        "items": {
+          "$ref": "StatusChange"
+        },
+        "type": "array"
+      },
+      "_link": {
+        "type": "string",
+        "alias_for": "_api_link",
+        "description": "This attribute has been deprecated, use `link` attribute instead."
+      },
+      "incoming_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "predecessors"
+      },
+      "children": {
+        "items": {
+          "$ref": "Context"
+        },
+        "type": "array"
+      },
+      "timelogs": {
+        "items": {
+          "$ref": "Timelog"
+        },
+        "type": "array"
+      },
+      "ancestors": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "parent": {
+        "$ref": "Context"
+      },
+      "assignments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_assignments"
+      },
+      "descendants": {
+        "items": {
+          "$ref": "TypedContext"
+        },
+        "type": "array"
+      },
+      "created_by": {
+        "alias_for": "createdBy",
+        "$ref": "User"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "priority": {
+        "$ref": "Priority"
+      },
+      "parent_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "project_id": {
+        "alias_for": "showid",
+        "type": "string",
+        "description": "Foreign key(s): Project.id",
+        "format": "foreign_key"
+      },
+      "type": {
+        "$ref": "Type"
+      },
+      "start_date": {
+        "type": "string",
+        "alias_for": "startdate",
+        "format": "date-time"
+      },
+      "metadata": {
+        "key_value_attributes": {
+          "value": "value",
+          "key": "key"
+        },
+        "type": "mapped_array",
+        "alias_for": "meta",
+        "items": {
+          "$ref": "Metadata"
+        }
+      },
+      "sort": {
+        "type": "number"
+      },
+      "scopes": {
+        "items": {
+          "$ref": "Scope"
+        },
+        "type": "array"
+      },
+      "object_type": {
+        "alias_for": "objectType",
+        "$ref": "ObjectType"
+      },
+      "description": {
+        "type": "string"
+      },
+      "end_date": {
+        "type": "string",
+        "alias_for": "enddate",
+        "format": "date-time"
+      },
+      "status_id": {
+        "alias_for": "statusid",
+        "type": "string",
+        "description": "Foreign key(s): Status.id",
+        "format": "foreign_key"
+      },
+      "thumbnail_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "thumbid",
+        "description": "Foreign key(s): Component.id"
+      },
+      "bid": {
+        "type": "number"
+      },
+      "lists": {
+        "items": {
+          "$ref": "TypedContextList"
+        },
+        "type": "array",
+        "alias_for": "_lists"
+      },
+      "appointments": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_appointments"
+      },
+      "link": {
+        "type": "string",
+        "alias_for": "_api_link"
+      },
+      "time_logged": {
+        "type": "number"
+      },
+      "bid_time_logged_difference": {
+        "type": "number"
+      },
+      "name": {
+        "default": "",
+        "type": "string"
+      },
+      "assets": {
+        "items": {
+          "$ref": "Asset"
+        },
+        "type": "array"
+      },
+      "context_type": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "thumbnail": {
+        "$ref": "Component"
+      },
+      "project": {
+        "alias_for": "show",
+        "$ref": "Project"
+      },
+      "custom_attribute_links": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLink"
+        },
+        "type": "mapped_array"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      },
+      "object_type_id": {
+        "default": "e5139355-61da-4c8f-9db4-3abc870166bc",
+        "alias_for": "object_typeid",
+        "type": "string",
+        "description": "Foreign key(s): ObjectType.id",
+        "format": "foreign_key"
+      },
+      "custom_attributes": {
+        "key_value_attributes": {
+          "key": "key",
+          "value": "value"
+        },
+        "type": "mapped_array",
+        "alias_for": "custom_attribute_values",
+        "items": {
+          "$ref": "ContextCustomAttributeValue"
+        }
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "alias_for": "created_by",
+        "description": "Foreign key(s): User.user_id"
+      },
+      "outgoing_links": {
+        "items": {
+          "$ref": "TypedContextLink"
+        },
+        "type": "array",
+        "alias_for": "successors"
+      },
+      "custom_attribute_links_from": {
+        "restricted_projection": true,
+        "items": {
+          "$ref": "CustomAttributeLinkFrom"
+        },
+        "type": "mapped_array"
+      },
+      "notes": {
+        "items": {
+          "$ref": "Note"
+        },
+        "type": "array"
+      },
+      "allocations": {
+        "items": {
+          "$ref": "Appointment"
+        },
+        "type": "array",
+        "alias_for": "context_allocations"
+      }
+    },
+    "default_projections": ["context_type", "id", "name"],
+    "computed": ["time_logged", "bid_time_logged_difference", "thumbnail_url"],
+    "required": [
+      "bid",
+      "status_id",
+      "type_id",
+      "priority_id",
+      "object_type_id",
+      "sort",
+      "context_type",
+      "id",
+      "name"
+    ],
+    "immutable": [
+      "object_type_id",
+      "object_type",
+      "bid_time_logged_difference",
+      "time_logged",
+      "type_id",
+      "type",
+      "status_id",
+      "status",
+      "bid",
+      "start_date",
+      "end_date",
+      "id",
+      "_link",
+      "link",
+      "thumbnail_url",
+      "created_by_id",
+      "created_by",
+      "created_at"
+    ],
+    "alias_for": {
+      "id": "Task",
+      "classifiers": {
+        "object_typeid": "e5139355-61da-4c8f-9db4-3abc870166bc"
+      }
+    },
+    "type": "object",
+    "id": "Sequence",
+    "system_projections": ["showid", "context_type"],
+    "primary_key": ["id"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "id": "Manager",
+    "type": "object",
+    "properties": {
+      "user_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.id",
+        "alias_for": "userid"
+      },
+      "type_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): ManagerType.id",
+        "alias_for": "typeid"
+      },
+      "context_id": {
+        "type": "string",
+        "description": "Foreign key(s): Context.id",
+        "format": "foreign_key"
+      },
+      "user": {
+        "$ref": "User"
+      },
+      "context": {
+        "$ref": "Context"
+      },
+      "type": {
+        "$ref": "ManagerType"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "managerid"
+      }
+    }
+  },
+  {
+    "properties": {
+      "group": {
+        "$ref": "Group"
+      },
+      "configuration_id": {
+        "alias_for": "registerid",
+        "type": "string",
+        "description": "Foreign key(s): CustomAttributeLinkConfiguration.id",
+        "format": "foreign_key"
+      },
+      "to_id": {
+        "type": "string"
+      },
+      "configuration": {
+        "alias_for": "register",
+        "$ref": "CustomAttributeLinkConfiguration"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string"
+      },
+      "from_id": {
+        "type": "string"
+      }
+    },
+    "default_projections": [
+      "id",
+      "to_id",
+      "to_entity_type",
+      "configuration_id",
+      "from_id"
+    ],
+    "primary_key": ["id"],
+    "required": [
+      "configuration_id",
+      "from_id",
+      "to_id",
+      "from_entity_type",
+      "to_entity_type",
+      "id"
+    ],
+    "immutable": ["id", "configuration_id"],
+    "type": "object",
+    "id": "GroupCustomAttributeLink"
+  },
+  {
+    "default_projections": ["component_id", "name", "group"],
+    "computed": ["thumbnail_url", "url"],
+    "required": ["component_id", "name", "group"],
+    "immutable": ["component_id", "name", "group", "thumbnail_url", "url"],
+    "id": "SettingComponent",
+    "type": "object",
+    "properties": {
+      "component_id": {
+        "type": "string",
+        "description": "Foreign key(s): Component.id",
+        "format": "foreign_key"
+      },
+      "group": {
+        "type": "string",
+        "description": "Foreign key(s): Setting.group",
+        "format": "foreign_key"
+      },
+      "name": {
+        "type": "string",
+        "description": "Foreign key(s): Setting.name",
+        "format": "foreign_key"
+      },
+      "url": {
+        "type": "object"
+      },
+      "component": {
+        "$ref": "Component"
+      },
+      "setting": {
+        "$ref": "Setting"
+      },
+      "thumbnail_url": {
+        "type": "object"
+      }
+    },
+    "primary_key": ["component_id", "name", "group"]
+  },
+  {
+    "default_projections": ["id"],
+    "primary_key": ["id"],
+    "required": ["id"],
+    "immutable": ["id"],
+    "id": "Dashboard",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "created_by": {
+        "alias_for": "user",
+        "$ref": "User"
+      },
+      "dashboard_resources": {
+        "items": {
+          "$ref": "DashboardResource"
+        },
+        "type": "array"
+      },
+      "widgets": {
+        "items": {
+          "$ref": "DashboardWidget"
+        },
+        "type": "array"
+      },
+      "created_by_id": {
+        "format": "foreign_key",
+        "type": "string",
+        "description": "Foreign key(s): User.user_id",
+        "alias_for": "userid"
+      },
+      "is_shared_with_everyone": {
+        "default": false,
+        "type": "boolean",
+        "alias_for": "isglobal"
+      },
+      "id": {
+        "default": "{uid}",
+        "type": "string",
+        "alias_for": "dashboardid"
+      }
+    },
+    "system_projections": ["typeid"]
+  }
+]

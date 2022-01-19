@@ -1,0 +1,8 @@
+{
+  "url": "http://ftrack.test/file-url",
+  "headers": {
+    "Content-Length": "13",
+    "Content-Type": "application/json"
+  },
+  "component_id": "702b7e69-f6ef-4d13-8193-dcbb480f57f5"
+}

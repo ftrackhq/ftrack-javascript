@@ -1,0 +1,23 @@
+{
+  "action": "create",
+  "data": {
+    "name": "data",
+    "component_locations": [
+      {
+        "resource_identifier": "ebc0ace8-fe6f-497b-bf87-54f6f318014a",
+        "__entity_type__": "ComponentLocation",
+        "component": {
+          "__entity_type__": "FileComponent",
+          "id": "ebc0ace8-fe6f-497b-bf87-54f6f318014a"
+        },
+        "id": "beedc0e5-95f1-4902-a43e-6df5cc0ccf48",
+        "component_id": "ebc0ace8-fe6f-497b-bf87-54f6f318014a"
+      }
+    ],
+    "file_type": ".json",
+    "__entity_type__": "FileComponent",
+    "system_type": "file",
+    "id": "ebc0ace8-fe6f-497b-bf87-54f6f318014a",
+    "size": 13
+  }
+}

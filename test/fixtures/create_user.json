@@ -1,0 +1,16 @@
+{
+  "action": "create",
+  "data": {
+    "username": "25ba83d1-ef38-455e-9b75-17ace2ccabc1",
+    "is_otp_enabled": false,
+    "last_name": "last",
+    "is_active": false,
+    "first_name": "first",
+    "is_totp_enabled": false,
+    "require_details_update": false,
+    "__entity_type__": "User",
+    "user_type_id": "ac9fa5aa-4361-11e0-b7cc-0019bb4983d8",
+    "id": "5c6060d1-2dc7-11ec-b3b6-1e00da110726",
+    "resource_type": "user"
+  }
+}

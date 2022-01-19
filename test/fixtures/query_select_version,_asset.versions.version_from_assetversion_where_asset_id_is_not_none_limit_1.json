@@ -1,0 +1,39 @@
+{
+  "action": "query",
+  "data": [
+    {
+      "asset_id": "01cfdcaa-c5ea-11e1-adec-f23c91df25eb",
+      "__entity_type__": "AssetVersion",
+      "id": "01ac528a-c5ea-11e1-a6c6-f23c91df25eb",
+      "version": 1,
+      "asset": {
+        "context_id": "cb92066e-9811-11e1-b32d-f23c91df25eb",
+        "__entity_type__": "Asset",
+        "id": "01cfdcaa-c5ea-11e1-adec-f23c91df25eb",
+        "versions": [
+          {
+            "__entity_type__": "AssetVersion",
+            "id": "01ac528a-c5ea-11e1-a6c6-f23c91df25eb"
+          },
+          {
+            "asset_id": "01cfdcaa-c5ea-11e1-adec-f23c91df25eb",
+            "__entity_type__": "AssetVersion",
+            "id": "115ffa42-c5ea-11e1-b5a7-f23c91df25eb",
+            "version": 2
+          },
+          {
+            "asset_id": "01cfdcaa-c5ea-11e1-adec-f23c91df25eb",
+            "__entity_type__": "AssetVersion",
+            "id": "18458c96-c5ea-11e1-a5d9-f23c91df25eb",
+            "version": 3
+          }
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "next": {
+      "offset": 1
+    }
+  }
+}

@@ -1,5 +1,5 @@
 lib/
-socket.io-websocket-only.js
+socket.io-websocket-only.cjs
 doc/resource
 coverage/
 build/

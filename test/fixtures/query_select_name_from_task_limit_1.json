@@ -1,0 +1,18 @@
+{
+  "action": "query",
+  "data": [
+    {
+      "name": "Filters via \"At a glance\" rendered with different paddings in Filters panel",
+      "context_type": "task",
+      "__entity_type__": "Task",
+      "object_type_id": "11c137c0-ee7e-4f9c-91c5-8c77cec22b2c",
+      "project_id": "95f5c536-4e65-11e1-afaa-f23c91df25eb",
+      "id": "00a574b0-1c44-11e2-a9da-f23c91df25eb"
+    }
+  ],
+  "metadata": {
+    "next": {
+      "offset": 1
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "storage_scenario": {
+    "data": {},
+    "scenario": "ftrack.automatic"
+  },
+  "schema_hash": "23a1157b8b1730fd91c76f63dcd67a8f",
+  "version": "dev",
+  "is_timezone_support_enabled": true
+}
