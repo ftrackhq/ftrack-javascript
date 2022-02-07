@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import uuidV4 from "uuid/v4";
+import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
 import moment from "moment";
 import {

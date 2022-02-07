@@ -7,7 +7,7 @@ import isPlainObject from "lodash/isPlainObject";
 import find from "lodash/find";
 import moment from "moment";
 import loglevel from "loglevel";
-import uuidV4 from "uuid/v4";
+import { v4 as uuidV4 } from "uuid";
 
 import EventHub from "./event_hub";
 import {

@@ -19,6 +19,7 @@ module.exports = defineConfig({
         globals: {
           "ftrack-javascript-api": "ftrack",
           moment: "moment",
+          uuid: "uuid",
           loglevel: "log",
         },
       },

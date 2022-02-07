@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
-import uuidV4 from "uuid/v4";
+import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
 import io from "./socket.io-websocket-only";
 import Event from "./event";
