@@ -15,6 +15,7 @@ Release Notes
         :tags: Dependencies
 
         Bumped uuid to 8.3.2.
+        Bumped lodash to 4.17.21.
 
 
 .. release:: 0.9.0

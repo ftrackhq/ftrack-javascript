@@ -624,9 +624,10 @@ function equalArrays$2(array, other, bitmask, customizer, equalFunc, stack) {
   if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
     return false;
   }
-  var stacked = stack.get(array);
-  if (stacked && stack.get(other)) {
-    return stacked == other;
+  var arrStacked = stack.get(array);
+  var othStacked = stack.get(other);
+  if (arrStacked && othStacked) {
+    return arrStacked == other && othStacked == array;
   }
   var index = -1, result = true, seen = bitmask & COMPARE_UNORDERED_FLAG$3 ? new SetCache() : void 0;
   stack.set(array, other);
@@ -821,9 +822,10 @@ function equalObjects$1(object, other, bitmask, customizer, equalFunc, stack) {
       return false;
     }
   }
-  var stacked = stack.get(object);
-  if (stacked && stack.get(other)) {
-    return stacked == other;
+  var objStacked = stack.get(object);
+  var othStacked = stack.get(other);
+  if (objStacked && othStacked) {
+    return objStacked == other && othStacked == object;
   }
   var result = true;
   stack.set(object, other);
@@ -1233,9 +1235,22 @@ function baseFindIndex$1(array, predicate, fromIndex, fromRight) {
   return -1;
 }
 var _baseFindIndex = baseFindIndex$1;
-var isObject = isObject_1, isSymbol = isSymbol_1;
+var reWhitespace = /\s/;
+function trimmedEndIndex$1(string) {
+  var index = string.length;
+  while (index-- && reWhitespace.test(string.charAt(index))) {
+  }
+  return index;
+}
+var _trimmedEndIndex = trimmedEndIndex$1;
+var trimmedEndIndex = _trimmedEndIndex;
+var reTrimStart = /^\s+/;
+function baseTrim$1(string) {
+  return string ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, "") : string;
+}
+var _baseTrim = baseTrim$1;
+var baseTrim = _baseTrim, isObject = isObject_1, isSymbol = isSymbol_1;
 var NAN = 0 / 0;
-var reTrim = /^\s+|\s+$/g;
 var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
 var reIsBinary = /^0b[01]+$/i;
 var reIsOctal = /^0o[0-7]+$/i;
@@ -1254,7 +1269,7 @@ function toNumber$1(value) {
   if (typeof value != "string") {
     return value === 0 ? value : +value;
   }
-  value = value.replace(reTrim, "");
+  value = baseTrim(value);
   var isBinary = reIsBinary.test(value);
   return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
 }
