@@ -1,5 +1,6 @@
 import moment from "moment";
 import loglevel from "loglevel";
+import { v4 } from "uuid";
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function createBaseFor$1(fromRight) {
   return function(object, iteratee, keysFunc) {
@@ -623,9 +624,10 @@ function equalArrays$2(array, other, bitmask, customizer, equalFunc, stack) {
   if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
     return false;
   }
-  var stacked = stack.get(array);
-  if (stacked && stack.get(other)) {
-    return stacked == other;
+  var arrStacked = stack.get(array);
+  var othStacked = stack.get(other);
+  if (arrStacked && othStacked) {
+    return arrStacked == other && othStacked == array;
   }
   var index = -1, result = true, seen = bitmask & COMPARE_UNORDERED_FLAG$3 ? new SetCache() : void 0;
   stack.set(array, other);
@@ -662,8 +664,8 @@ function equalArrays$2(array, other, bitmask, customizer, equalFunc, stack) {
 }
 var _equalArrays = equalArrays$2;
 var root$4 = _root;
-var Uint8Array$2 = root$4.Uint8Array;
-var _Uint8Array = Uint8Array$2;
+var Uint8Array$1 = root$4.Uint8Array;
+var _Uint8Array = Uint8Array$1;
 function mapToArray$1(map) {
   var index = -1, result = Array(map.size);
   map.forEach(function(value, key) {
@@ -680,7 +682,7 @@ function setToArray$1(set) {
   return result;
 }
 var _setToArray = setToArray$1;
-var Symbol$2 = _Symbol, Uint8Array$1 = _Uint8Array, eq = eq_1, equalArrays$1 = _equalArrays, mapToArray = _mapToArray, setToArray = _setToArray;
+var Symbol$2 = _Symbol, Uint8Array = _Uint8Array, eq = eq_1, equalArrays$1 = _equalArrays, mapToArray = _mapToArray, setToArray = _setToArray;
 var COMPARE_PARTIAL_FLAG$4 = 1, COMPARE_UNORDERED_FLAG$2 = 2;
 var boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", mapTag$1 = "[object Map]", numberTag = "[object Number]", regexpTag = "[object RegExp]", setTag$1 = "[object Set]", stringTag = "[object String]", symbolTag$1 = "[object Symbol]";
 var arrayBufferTag = "[object ArrayBuffer]", dataViewTag$1 = "[object DataView]";
@@ -694,7 +696,7 @@ function equalByTag$1(object, other, tag, bitmask, customizer, equalFunc, stack)
       object = object.buffer;
       other = other.buffer;
     case arrayBufferTag:
-      if (object.byteLength != other.byteLength || !equalFunc(new Uint8Array$1(object), new Uint8Array$1(other))) {
+      if (object.byteLength != other.byteLength || !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
         return false;
       }
       return true;
@@ -820,9 +822,10 @@ function equalObjects$1(object, other, bitmask, customizer, equalFunc, stack) {
       return false;
     }
   }
-  var stacked = stack.get(object);
-  if (stacked && stack.get(other)) {
-    return stacked == other;
+  var objStacked = stack.get(object);
+  var othStacked = stack.get(other);
+  if (objStacked && othStacked) {
+    return objStacked == other && othStacked == object;
   }
   var result = true;
   stack.set(object, other);
@@ -1232,9 +1235,22 @@ function baseFindIndex$1(array, predicate, fromIndex, fromRight) {
   return -1;
 }
 var _baseFindIndex = baseFindIndex$1;
-var isObject = isObject_1, isSymbol = isSymbol_1;
+var reWhitespace = /\s/;
+function trimmedEndIndex$1(string) {
+  var index = string.length;
+  while (index-- && reWhitespace.test(string.charAt(index))) {
+  }
+  return index;
+}
+var _trimmedEndIndex = trimmedEndIndex$1;
+var trimmedEndIndex = _trimmedEndIndex;
+var reTrimStart = /^\s+/;
+function baseTrim$1(string) {
+  return string ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, "") : string;
+}
+var _baseTrim = baseTrim$1;
+var baseTrim = _baseTrim, isObject = isObject_1, isSymbol = isSymbol_1;
 var NAN = 0 / 0;
-var reTrim = /^\s+|\s+$/g;
 var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
 var reIsBinary = /^0b[01]+$/i;
 var reIsOctal = /^0o[0-7]+$/i;
@@ -1253,7 +1269,7 @@ function toNumber$1(value) {
   if (typeof value != "string") {
     return value === 0 ? value : +value;
   }
-  value = value.replace(reTrim, "");
+  value = baseTrim(value);
   var isBinary = reIsBinary.test(value);
   return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
 }
@@ -1295,76 +1311,6 @@ var findIndex_1 = findIndex$1;
 var createFind = _createFind, findIndex = findIndex_1;
 var find = createFind(findIndex);
 var find_1 = find;
-var rngBrowser = { exports: {} };
-var getRandomValues = typeof crypto != "undefined" && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto != "undefined" && typeof window.msCrypto.getRandomValues == "function" && msCrypto.getRandomValues.bind(msCrypto);
-if (getRandomValues) {
-  var rnds8 = new Uint8Array(16);
-  rngBrowser.exports = function whatwgRNG() {
-    getRandomValues(rnds8);
-    return rnds8;
-  };
-} else {
-  var rnds = new Array(16);
-  rngBrowser.exports = function mathRNG() {
-    for (var i2 = 0, r; i2 < 16; i2++) {
-      if ((i2 & 3) === 0)
-        r = Math.random() * 4294967296;
-      rnds[i2] = r >>> ((i2 & 3) << 3) & 255;
-    }
-    return rnds;
-  };
-}
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 256).toString(16).substr(1);
-}
-function bytesToUuid$1(buf, offset) {
-  var i2 = offset || 0;
-  var bth = byteToHex;
-  return [
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    "-",
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    "-",
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    "-",
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    "-",
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    bth[buf[i2++]],
-    bth[buf[i2++]]
-  ].join("");
-}
-var bytesToUuid_1 = bytesToUuid$1;
-var rng = rngBrowser.exports;
-var bytesToUuid = bytesToUuid_1;
-function v4(options, buf, offset) {
-  var i2 = buf && offset || 0;
-  if (typeof options == "string") {
-    buf = options === "binary" ? new Array(16) : null;
-    options = null;
-  }
-  options = options || {};
-  var rnds2 = options.random || (options.rng || rng)();
-  rnds2[6] = rnds2[6] & 15 | 64;
-  rnds2[8] = rnds2[8] & 63 | 128;
-  if (buf) {
-    for (var ii = 0; ii < 16; ++ii) {
-      buf[i2 + ii] = rnds2[ii];
-    }
-  }
-  return buf || bytesToUuid(rnds2);
-}
-var v4_1 = v4;
 var socket_ioWebsocketOnly = { exports: {} };
 /*! Socket.IO.js build:0.9.17, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
 (function(module) {
@@ -1423,9 +1369,9 @@ var socket_ioWebsocketOnly = { exports: {} };
         "anchor"
       ];
       util.parseUri = function(str2) {
-        var m = re.exec(str2 || ""), uri = {}, i2 = 14;
-        while (i2--) {
-          uri[parts[i2]] = m[i2] || "";
+        var m = re.exec(str2 || ""), uri = {}, i = 14;
+        while (i--) {
+          uri[parts[i]] = m[i] || "";
         }
         return uri;
       };
@@ -1453,9 +1399,9 @@ var socket_ioWebsocketOnly = { exports: {} };
         return components.length ? "?" + components.join("&") : "";
       };
       util.chunkQuery = function(qs) {
-        var query = {}, params = qs.split("&"), i2 = 0, l = params.length, kv;
-        for (; i2 < l; ++i2) {
-          kv = params[i2].split("=");
+        var query = {}, params = qs.split("&"), i = 0, l = params.length, kv;
+        for (; i < l; ++i) {
+          kv = params[i].split("=");
           if (kv[0]) {
             query[kv[0]] = kv[1];
           }
@@ -1532,21 +1478,21 @@ var socket_ioWebsocketOnly = { exports: {} };
       };
       util.intersect = function(arr, arr2) {
         var ret = [], longest = arr.length > arr2.length ? arr : arr2, shortest = arr.length > arr2.length ? arr2 : arr;
-        for (var i2 = 0, l = shortest.length; i2 < l; i2++) {
-          if (~util.indexOf(longest, shortest[i2]))
-            ret.push(shortest[i2]);
+        for (var i = 0, l = shortest.length; i < l; i++) {
+          if (~util.indexOf(longest, shortest[i]))
+            ret.push(shortest[i]);
         }
         return ret;
       };
-      util.indexOf = function(arr, o, i2) {
-        for (var j2 = arr.length, i2 = i2 < 0 ? i2 + j2 < 0 ? 0 : i2 + j2 : i2 || 0; i2 < j2 && arr[i2] !== o; i2++) {
+      util.indexOf = function(arr, o, i) {
+        for (var j2 = arr.length, i = i < 0 ? i + j2 < 0 ? 0 : i + j2 : i || 0; i < j2 && arr[i] !== o; i++) {
         }
-        return j2 <= i2 ? -1 : i2;
+        return j2 <= i ? -1 : i;
       };
       util.toArray = function(enu) {
         var arr = [];
-        for (var i2 = 0, l = enu.length; i2 < l; i2++)
-          arr.push(enu[i2]);
+        for (var i = 0, l = enu.length; i < l; i++)
+          arr.push(enu[i]);
         return arr;
       };
       util.ua = {};
@@ -1594,9 +1540,9 @@ var socket_ioWebsocketOnly = { exports: {} };
           var list = this.$events[name];
           if (io2.util.isArray(list)) {
             var pos = -1;
-            for (var i2 = 0, l = list.length; i2 < l; i2++) {
-              if (list[i2] === fn || list[i2].listener && list[i2].listener === fn) {
-                pos = i2;
+            for (var i = 0, l = list.length; i < l; i++) {
+              if (list[i] === fn || list[i].listener && list[i].listener === fn) {
+                pos = i;
                 break;
               }
             }
@@ -1648,8 +1594,8 @@ var socket_ioWebsocketOnly = { exports: {} };
           handler.apply(this, args);
         } else if (io2.util.isArray(handler)) {
           var listeners = handler.slice();
-          for (var i2 = 0, l = listeners.length; i2 < l; i2++) {
-            listeners[i2].apply(this, args);
+          for (var i = 0, l = listeners.length; i < l; i++) {
+            listeners[i].apply(this, args);
           }
         } else {
           return false;
@@ -1688,7 +1634,7 @@ var socket_ioWebsocketOnly = { exports: {} };
         }) + '"' : '"' + string + '"';
       }
       function str(key, holder) {
-        var i2, k, v, length, mind = gap, partial, value = holder[key];
+        var i, k, v, length, mind = gap, partial, value = holder[key];
         if (value instanceof Date) {
           value = date(key);
         }
@@ -1711,8 +1657,8 @@ var socket_ioWebsocketOnly = { exports: {} };
             partial = [];
             if (Object.prototype.toString.apply(value) === "[object Array]") {
               length = value.length;
-              for (i2 = 0; i2 < length; i2 += 1) {
-                partial[i2] = str(i2, value) || "null";
+              for (i = 0; i < length; i += 1) {
+                partial[i] = str(i, value) || "null";
               }
               v = partial.length === 0 ? "[]" : gap ? "[\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "]" : "[" + partial.join(",") + "]";
               gap = mind;
@@ -1720,9 +1666,9 @@ var socket_ioWebsocketOnly = { exports: {} };
             }
             if (rep && typeof rep === "object") {
               length = rep.length;
-              for (i2 = 0; i2 < length; i2 += 1) {
-                if (typeof rep[i2] === "string") {
-                  k = rep[i2];
+              for (i = 0; i < length; i += 1) {
+                if (typeof rep[i] === "string") {
+                  k = rep[i];
                   v = str(k, value);
                   if (v) {
                     partial.push(quote(k) + (gap ? ": " : ":") + v);
@@ -1745,11 +1691,11 @@ var socket_ioWebsocketOnly = { exports: {} };
         }
       }
       JSON.stringify = function(value, replacer, space) {
-        var i2;
+        var i;
         gap = "";
         indent = "";
         if (typeof space === "number") {
-          for (i2 = 0; i2 < space; i2 += 1) {
+          for (i = 0; i < space; i += 1) {
             indent += " ";
           }
         } else if (typeof space === "string") {
@@ -1852,9 +1798,9 @@ var socket_ioWebsocketOnly = { exports: {} };
         var decoded = "";
         if (packets2.length == 1)
           return packets2[0];
-        for (var i2 = 0, l = packets2.length; i2 < l; i2++) {
-          var packet = packets2[i2];
-          decoded += "\uFFFD" + packet.length + "\uFFFD" + packets2[i2];
+        for (var i = 0, l = packets2.length; i < l; i++) {
+          var packet = packets2[i];
+          decoded += "\uFFFD" + packet.length + "\uFFFD" + packets2[i];
         }
         return decoded;
       };
@@ -1920,13 +1866,13 @@ var socket_ioWebsocketOnly = { exports: {} };
       parser.decodePayload = function(data) {
         if (data.charAt(0) == "\uFFFD") {
           var ret = [];
-          for (var i2 = 1, length = ""; i2 < data.length; i2++) {
-            if (data.charAt(i2) == "\uFFFD") {
-              ret.push(parser.decodePacket(data.substr(i2 + 1).substr(0, length)));
-              i2 += Number(length) + 1;
+          for (var i = 1, length = ""; i < data.length; i++) {
+            if (data.charAt(i) == "\uFFFD") {
+              ret.push(parser.decodePacket(data.substr(i + 1).substr(0, length)));
+              i += Number(length) + 1;
               length = "";
             } else {
-              length += data.charAt(i2);
+              length += data.charAt(i);
             }
           }
           return ret;
@@ -1953,8 +1899,8 @@ var socket_ioWebsocketOnly = { exports: {} };
         if (data !== "") {
           var msgs = io2.parser.decodePayload(data);
           if (msgs && msgs.length) {
-            for (var i2 = 0, l = msgs.length; i2 < l; i2++) {
-              this.onPacket(msgs[i2]);
+            for (var i = 0, l = msgs.length; i < l; i++) {
+              this.onPacket(msgs[i]);
             }
           }
         }
@@ -2081,9 +2027,9 @@ var socket_ioWebsocketOnly = { exports: {} };
       Socket.prototype.publish = function() {
         this.emit.apply(this, arguments);
         var nsp;
-        for (var i2 in this.namespaces) {
-          if (this.namespaces.hasOwnProperty(i2)) {
-            nsp = this.of(i2);
+        for (var i in this.namespaces) {
+          if (this.namespaces.hasOwnProperty(i)) {
+            nsp = this.of(i);
             nsp.$emit.apply(nsp, arguments);
           }
         }
@@ -2139,7 +2085,7 @@ var socket_ioWebsocketOnly = { exports: {} };
       };
       Socket.prototype.getTransport = function(override) {
         var transports = override || this.transports;
-        for (var i2 = 0, transport; transport = transports[i2]; i2++) {
+        for (var i = 0, transport; transport = transports[i]; i++) {
           if (io2.Transport[transport] && io2.Transport[transport].check(this) && (!this.isXDomain() || io2.Transport[transport].xdomainCheck(this))) {
             return new io2.Transport[transport](this, this.sessionid);
           }
@@ -2306,9 +2252,9 @@ var socket_ioWebsocketOnly = { exports: {} };
         var self2 = this, maxAttempts = this.options["max reconnection attempts"], tryMultiple = this.options["try multiple transports"], limit = this.options["reconnection limit"];
         function reset() {
           if (self2.connected) {
-            for (var i2 in self2.namespaces) {
-              if (self2.namespaces.hasOwnProperty(i2) && i2 !== "") {
-                self2.namespaces[i2].packet({ type: "connect" });
+            for (var i in self2.namespaces) {
+              if (self2.namespaces.hasOwnProperty(i) && i !== "") {
+                self2.namespaces[i].packet({ type: "connect" });
               }
             }
             self2.publish("reconnect", self2.transport.name, self2.reconnectionAttempts);
@@ -2527,8 +2473,8 @@ var socket_ioWebsocketOnly = { exports: {} };
         };
       }
       WS.prototype.payload = function(arr) {
-        for (var i2 = 0, l = arr.length; i2 < l; i2++) {
-          this.packet(arr[i2]);
+        for (var i = 0, l = arr.length; i < l; i++) {
+          this.packet(arr[i]);
         }
         return this;
       };
@@ -2561,7 +2507,7 @@ class Event {
       target: "",
       inReplyToEvent: null
     }, options, {
-      id: v4_1(),
+      id: v4(),
       sent: null
     });
   }
@@ -2616,7 +2562,7 @@ class EventHub {
       const port = serverUrl.lastIndexOf("https", 0) === 0 ? "443" : "80";
       this._serverUrl = `${serverUrl}:${port}`;
     }
-    this._id = v4_1();
+    this._id = v4();
     this._replyCallbacks = {};
     this._unsentEvents = [];
     this._subscribers = [];
@@ -2743,7 +2689,7 @@ class EventHub {
   _addSubscriber(subscription, callback, metadata = {}) {
     this._getExpressionTopic(subscription);
     if (!metadata.id) {
-      metadata.id = v4_1();
+      metadata.id = v4();
     }
     const existingSubscriber = this.getSubscriberByIdentifier(metadata.id);
     if (existingSubscriber) {
@@ -2904,7 +2850,7 @@ class Session {
     if (clientToken) {
       this.clientToken = clientToken;
     } else {
-      this.clientToken = `ftrack-javascript-api--${v4_1()}`;
+      this.clientToken = `ftrack-javascript-api--${v4()}`;
     }
     if (serverInformationValues && !serverInformationValues.includes("is_timezone_support_enabled")) {
       serverInformationValues.push("is_timezone_support_enabled");
@@ -3241,8 +3187,8 @@ class Session {
     const fileType = data.file_type || fileNameParts[1];
     const fileName = data.name || fileNameParts[0];
     const fileSize = data.size || file.size;
-    const componentId = data.id || v4_1();
-    const componentLocationId = v4_1();
+    const componentId = data.id || v4();
+    const componentLocationId = v4();
     let url;
     let headers;
     const updateOnProgressCallback = (oEvent) => {

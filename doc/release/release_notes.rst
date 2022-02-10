@@ -8,6 +8,16 @@ Release Notes
 *************
 
 
+.. release:: 0.9.1
+    :date: 2021-11-03
+
+    .. change:: new
+        :tags: Dependencies
+
+        Bumped uuid to 8.3.2.
+        Bumped lodash to 4.17.21.
+
+
 .. release:: 0.9.0
     :date: 2021-11-03
 
