@@ -247,6 +247,26 @@ export class EventHub {
   }
 
   /**
+   * Unsubscribe from *subscription* events.
+   *
+   * @param  {String}   identifier  Subscriber ID returned from subscribe method.
+   * @return {Boolean}              True if a subscriber was removed, false otherwise
+   */
+  unsubscribe(identifier) {
+    let hasFoundSubscriberToRemove = false;
+    this._subscribers = this._subscribers.filter((subscriber) => {
+      if (subscriber.metadata.id === identifier) {
+        this._notifyServerAboutUnsubscribe(hasFoundSubscriberToRemove);
+        hasFoundSubscriberToRemove = true;
+        return false;
+      }
+      return true;
+    });
+
+    return hasFoundSubscriberToRemove;
+  }
+
+  /**
    * Return topic from *subscription* expression.
    *
    * Raises an error if expression is in an unsupported format. Currently,
@@ -315,6 +335,13 @@ export class EventHub {
       subscription: subscriber.subscription,
     });
     this.publish(subscribeEvent);
+  }
+
+  _notifyServerAboutUnsubscribe(subscriber) {
+    const unsubscribeEvent = new Event("ftrack.meta.unsubscribe", {
+      subscriber,
+    });
+    this.publish(unsubscribeEvent);
   }
 
   /**
