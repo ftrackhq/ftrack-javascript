@@ -2678,6 +2678,18 @@ class EventHub {
     this._notifyServerAboutSubscriber(subscriber);
     return subscriber.metadata.id;
   }
+  unsubscribe(identifier) {
+    let hasFoundSubscriberToRemove = false;
+    this._subscribers = this._subscribers.filter((subscriber) => {
+      if (subscriber.metadata.id === identifier) {
+        this._notifyServerAboutUnsubscribe(hasFoundSubscriberToRemove);
+        hasFoundSubscriberToRemove = true;
+        return false;
+      }
+      return true;
+    });
+    return hasFoundSubscriberToRemove;
+  }
   _getExpressionTopic(subscription) {
     const regex = new RegExp(`^topic[ ]?=[ '"]?([\\w-,./*@+]+)['"]?$`);
     const matches = subscription.trim().match(regex);
@@ -2709,6 +2721,12 @@ class EventHub {
       subscription: subscriber.subscription
     });
     this.publish(subscribeEvent);
+  }
+  _notifyServerAboutUnsubscribe(subscriber) {
+    const unsubscribeEvent = new Event("ftrack.meta.unsubscribe", {
+      subscriber
+    });
+    this.publish(unsubscribeEvent);
   }
   getSubscriberByIdentifier(identifier) {
     for (const subscriber of this._subscribers.slice()) {
