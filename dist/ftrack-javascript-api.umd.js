@@ -3358,7 +3358,6 @@
   exports.error = exports$3;
   exports.operation = exports$2;
   exports.projectSchema = exports$1;
-  Object.defineProperty(exports, "__esModule", { value: true });
-  exports[Symbol.toStringTag] = "Module";
+  Object.defineProperties(exports, { __esModule: { value: true }, [Symbol.toStringTag]: { value: "Module" } });
 });
 //# sourceMappingURL=ftrack-javascript-api.umd.js.map
