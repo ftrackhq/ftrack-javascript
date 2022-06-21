@@ -7,6 +7,12 @@
 Release Notes
 *************
 
+.. release:: upcoming
+    .. change:: new
+        :tags: Event hub, Dependencies
+
+        Added unsubscribe function to event hub.
+        Bumped dependencies
 
 .. release:: 0.9.1
     :date: 2021-11-03
