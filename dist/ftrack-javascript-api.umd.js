@@ -2688,7 +2688,7 @@
       let hasFoundSubscriberToRemove = false;
       this._subscribers = this._subscribers.filter((subscriber) => {
         if (subscriber.metadata.id === identifier) {
-          this._notifyServerAboutUnsubscribe(hasFoundSubscriberToRemove);
+          this._notifyServerAboutUnsubscribe(identifier);
           hasFoundSubscriberToRemove = true;
           return false;
         }
