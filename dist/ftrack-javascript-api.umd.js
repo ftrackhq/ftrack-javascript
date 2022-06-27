@@ -2,11 +2,9 @@
   typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require("moment"), require("loglevel"), require("uuid")) : typeof define === "function" && define.amd ? define(["exports", "moment", "loglevel", "uuid"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.ftrack = {}, global2.moment, global2.log, global2.uuid));
 })(this, function(exports, moment, loglevel, uuid) {
   "use strict";
-  function _interopDefaultLegacy(e) {
-    return e && typeof e === "object" && "default" in e ? e : { "default": e };
-  }
-  var moment__default = /* @__PURE__ */ _interopDefaultLegacy(moment);
-  var loglevel__default = /* @__PURE__ */ _interopDefaultLegacy(loglevel);
+  const _interopDefaultLegacy = (e) => e && typeof e === "object" && "default" in e ? e : { default: e };
+  const moment__default = /* @__PURE__ */ _interopDefaultLegacy(moment);
+  const loglevel__default = /* @__PURE__ */ _interopDefaultLegacy(loglevel);
   var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
   function createBaseFor$1(fromRight) {
     return function(object, iteratee, keysFunc) {
@@ -416,7 +414,9 @@
   var funcProto = Function.prototype, objectProto$6 = Object.prototype;
   var funcToString = funcProto.toString;
   var hasOwnProperty$5 = objectProto$6.hasOwnProperty;
-  var reIsNative = RegExp("^" + funcToString.call(hasOwnProperty$5).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$");
+  var reIsNative = RegExp(
+    "^" + funcToString.call(hasOwnProperty$5).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
+  );
   function baseIsNative$1(value) {
     if (!isObject$2(value) || isMasked(value)) {
       return false;
@@ -1340,8 +1340,8 @@
           uuri = io2.util.uniqueUri(uri);
           var options = {
             host: uri.host,
-            secure: uri.protocol == "https",
-            port: uri.port || (uri.protocol == "https" ? 443 : 80),
+            secure: "https" == uri.protocol,
+            port: uri.port || ("https" == uri.protocol ? 443 : 80),
             query: uri.query || ""
           };
           io2.util.merge(options, details);
@@ -1429,27 +1429,29 @@
           }
         };
         util.request = function(xdomain) {
-          if (xdomain && typeof XDomainRequest != "undefined" && !util.ua.hasCORS) {
+          if (xdomain && "undefined" != typeof XDomainRequest && !util.ua.hasCORS) {
             return new XDomainRequest();
           }
-          if (typeof XMLHttpRequest != "undefined" && (!xdomain || util.ua.hasCORS)) {
+          if ("undefined" != typeof XMLHttpRequest && (!xdomain || util.ua.hasCORS)) {
             return new XMLHttpRequest();
           }
           if (!xdomain) {
             try {
-              return new window[["Active"].concat("Object").join("X")]("Microsoft.XMLHTTP");
+              return new window[["Active"].concat("Object").join("X")](
+                "Microsoft.XMLHTTP"
+              );
             } catch (e) {
             }
           }
           return null;
         };
-        if (typeof window != "undefined") {
+        if ("undefined" != typeof window) {
           util.load(function() {
             pageLoaded = true;
           });
         }
         util.defer = function(fn) {
-          if (!util.ua.webkit || typeof importScripts != "undefined") {
+          if (!util.ua.webkit || "undefined" != typeof importScripts) {
             return fn();
           }
           util.load(function() {
@@ -1502,7 +1504,7 @@
           return arr;
         };
         util.ua = {};
-        util.ua.hasCORS = typeof XMLHttpRequest != "undefined" && function() {
+        util.ua.hasCORS = "undefined" != typeof XMLHttpRequest && function() {
           try {
             var a = new XMLHttpRequest();
           } catch (e) {
@@ -1510,9 +1512,9 @@
           }
           return a.withCredentials != void 0;
         }();
-        util.ua.webkit = typeof navigator != "undefined" && /webkit/i.test(navigator.userAgent);
-        util.ua.iDevice = typeof navigator != "undefined" && /iPad|iPhone|iPod/i.test(navigator.userAgent);
-      })(typeof io != "undefined" ? io : module.exports, that);
+        util.ua.webkit = "undefined" != typeof navigator && /webkit/i.test(navigator.userAgent);
+        util.ua.iDevice = "undefined" != typeof navigator && /iPad|iPhone|iPod/i.test(navigator.userAgent);
+      })("undefined" != typeof io ? io : module.exports, that);
       (function(exports2, io2) {
         exports2.EventEmitter = EventEmitter;
         function EventEmitter() {
@@ -1596,7 +1598,7 @@
             return false;
           }
           var args = Array.prototype.slice.call(arguments, 1);
-          if (typeof handler == "function") {
+          if ("function" == typeof handler) {
             handler.apply(this, args);
           } else if (io2.util.isArray(handler)) {
             var listeners = handler.slice();
@@ -1608,7 +1610,10 @@
           }
           return true;
         };
-      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+      })(
+        "undefined" != typeof io ? io : module.exports,
+        "undefined" != typeof io ? io : module.parent.exports
+      );
       (function(exports, nativeJSON) {
         if (nativeJSON && nativeJSON.parse) {
           return exports.JSON = {
@@ -1738,13 +1743,21 @@
               return "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
             });
           }
-          if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
+          if (/^[\],:{}\s]*$/.test(
+            text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(
+              /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+              "]"
+            ).replace(/(?:^|:|,)(?:\s*\[)+/g, "")
+          )) {
             j = eval("(" + text + ")");
             return typeof reviver === "function" ? walk({ "": j }, "") : j;
           }
           throw new SyntaxError("JSON.parse");
         };
-      })(typeof io != "undefined" ? io : module.exports, typeof JSON !== "undefined" ? JSON : void 0);
+      })(
+        "undefined" != typeof io ? io : module.exports,
+        typeof JSON !== "undefined" ? JSON : void 0
+      );
       (function(exports2, io2) {
         var parser = exports2.parser = {};
         var packets = parser.packets = [
@@ -1886,7 +1899,10 @@
             return [parser.decodePacket(data)];
           }
         };
-      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+      })(
+        "undefined" != typeof io ? io : module.exports,
+        "undefined" != typeof io ? io : module.parent.exports
+      );
       (function(exports2, io2) {
         exports2.Transport = Transport;
         function Transport(socket, sessid) {
@@ -1980,7 +1996,10 @@
         Transport.prototype.ready = function(socket, fn) {
           fn.call(this);
         };
-      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+      })(
+        "undefined" != typeof io ? io : module.exports,
+        "undefined" != typeof io ? io : module.parent.exports
+      );
       (function(exports2, io2, global2) {
         exports2.Socket = Socket;
         function Socket(options) {
@@ -2012,9 +2031,14 @@
           this.doBuffer = false;
           if (this.options["sync disconnect on unload"] && (!this.isXDomain() || io2.util.ua.hasCORS)) {
             var self2 = this;
-            io2.util.on(global2, "beforeunload", function() {
-              self2.disconnectSync();
-            }, false);
+            io2.util.on(
+              global2,
+              "beforeunload",
+              function() {
+                self2.disconnectSync();
+              },
+              false
+            );
           }
           if (this.options["auto connect"]) {
             this.connect();
@@ -2201,7 +2225,7 @@
           this.onDisconnect("booted");
         };
         Socket.prototype.isXDomain = function() {
-          var port = global2.location.port || (global2.location.protocol == "https:" ? 443 : 80);
+          var port = global2.location.port || ("https:" == global2.location.protocol ? 443 : 80);
           return this.options.host !== global2.location.hostname || this.options.port != port;
         };
         Socket.prototype.onConnect = function() {
@@ -2245,7 +2269,7 @@
             this.transport.clearTimeouts();
             if (wasConnected) {
               this.publish("disconnect", reason);
-              if (reason != "booted" && this.options.reconnect && !this.reconnecting) {
+              if ("booted" != reason && this.options.reconnect && !this.reconnecting) {
                 this.reconnect();
               }
             }
@@ -2259,11 +2283,15 @@
           function reset() {
             if (self2.connected) {
               for (var i in self2.namespaces) {
-                if (self2.namespaces.hasOwnProperty(i) && i !== "") {
+                if (self2.namespaces.hasOwnProperty(i) && "" !== i) {
                   self2.namespaces[i].packet({ type: "connect" });
                 }
               }
-              self2.publish("reconnect", self2.transport.name, self2.reconnectionAttempts);
+              self2.publish(
+                "reconnect",
+                self2.transport.name,
+                self2.reconnectionAttempts
+              );
             }
             clearTimeout(self2.reconnectionTimer);
             self2.removeListener("connect_failed", maybeReconnect);
@@ -2302,15 +2330,29 @@
                 self2.reconnectionDelay *= 2;
               }
               self2.connect();
-              self2.publish("reconnecting", self2.reconnectionDelay, self2.reconnectionAttempts);
-              self2.reconnectionTimer = setTimeout(maybeReconnect, self2.reconnectionDelay);
+              self2.publish(
+                "reconnecting",
+                self2.reconnectionDelay,
+                self2.reconnectionAttempts
+              );
+              self2.reconnectionTimer = setTimeout(
+                maybeReconnect,
+                self2.reconnectionDelay
+              );
             }
           }
           this.options["try multiple transports"] = false;
-          this.reconnectionTimer = setTimeout(maybeReconnect, this.reconnectionDelay);
+          this.reconnectionTimer = setTimeout(
+            maybeReconnect,
+            this.reconnectionDelay
+          );
           this.on("connect", maybeReconnect);
         };
-      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
+      })(
+        "undefined" != typeof io ? io : module.exports,
+        "undefined" != typeof io ? io : module.parent.exports,
+        that
+      );
       (function(exports2, io2) {
         exports2.SocketNamespace = SocketNamespace;
         function SocketNamespace(socket, name) {
@@ -2337,7 +2379,7 @@
             type: this.flags.json ? "json" : "message",
             data
           };
-          if (typeof fn == "function") {
+          if ("function" == typeof fn) {
             packet.id = ++this.ackPackets;
             packet.ack = true;
             this.acks[packet.id] = fn;
@@ -2349,7 +2391,7 @@
             type: "event",
             name
           };
-          if (typeof lastArg == "function") {
+          if ("function" == typeof lastArg) {
             packet.id = ++this.ackPackets;
             packet.ack = "data";
             this.acks[packet.id] = lastArg;
@@ -2434,7 +2476,10 @@
           this.namespace.flags[this.name] = true;
           this.namespace.emit.apply(this.namespace, arguments);
         };
-      })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+      })(
+        "undefined" != typeof io ? io : module.exports,
+        "undefined" != typeof io ? io : module.parent.exports
+      );
       (function(exports2, io2, global2) {
         exports2.websocket = WS;
         function WS(socket) {
@@ -2501,21 +2546,29 @@
           return true;
         };
         io2.transports.push("websocket");
-      })(typeof io != "undefined" ? io.Transport : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
+      })(
+        "undefined" != typeof io ? io.Transport : module.exports,
+        "undefined" != typeof io ? io : module.parent.exports,
+        that
+      );
     })();
   })(socket_ioWebsocketOnly);
-  var io = socket_ioWebsocketOnly.exports;
+  const io = socket_ioWebsocketOnly.exports;
   class Event {
     constructor(topic, data, options = {}) {
-      this._data = Object.assign({
-        topic,
-        data,
-        target: "",
-        inReplyToEvent: null
-      }, options, {
-        id: uuid.v4(),
-        sent: null
-      });
+      this._data = Object.assign(
+        {
+          topic,
+          data,
+          target: "",
+          inReplyToEvent: null
+        },
+        options,
+        {
+          id: uuid.v4(),
+          sent: null
+        }
+      );
     }
     getData() {
       return this._data;
@@ -2535,10 +2588,16 @@
     return CustomError;
   }
   const ServerError = errorFactory("ServerError");
-  const ServerPermissionDeniedError = errorFactory("ServerPermissionDeniedError");
+  const ServerPermissionDeniedError = errorFactory(
+    "ServerPermissionDeniedError"
+  );
   const ServerValidationError = errorFactory("ServerValidationError");
-  const EventServerReplyTimeoutError = errorFactory("EventServerReplyTimeoutError");
-  const EventServerConnectionTimeoutError = errorFactory("EventServerConnectionTimeoutError");
+  const EventServerReplyTimeoutError = errorFactory(
+    "EventServerReplyTimeoutError"
+  );
+  const EventServerConnectionTimeoutError = errorFactory(
+    "EventServerConnectionTimeoutError"
+  );
   const EventServerPublishError = errorFactory("EventServerPublishError");
   const NotUniqueError = errorFactory("NotUniqueError");
   const CreateComponentError = errorFactory("CreateComponentError");
@@ -2559,7 +2618,7 @@
   }
   class EventHub {
     constructor(serverUrl, apiUser, apiKey, { applicationId = "ftrack.api.javascript" } = {}) {
-      this.logger = loglevel__default["default"].getLogger("ftrack_api:EventHub");
+      this.logger = loglevel__default.default.getLogger("ftrack_api:EventHub");
       this._applicationId = applicationId;
       this._apiUser = apiUser;
       this._apiKey = apiKey;
@@ -2621,9 +2680,11 @@
         }
       }
     }
-    publish(event, { onReply = null, timeout = 10 } = {}) {
+    publish(event, { onReply = null, timeout = 30 } = {}) {
       if (!this._socketIo) {
-        throw new EventServerPublishError("Unable to publish event, not connected to server.");
+        throw new EventServerPublishError(
+          "Unable to publish event, not connected to server."
+        );
       }
       event.addSource({
         id: this._id,
@@ -2638,7 +2699,9 @@
         this._runWhenConnected(resolve);
         if (timeout) {
           setTimeout(() => {
-            const error = new EventServerConnectionTimeoutError("Unable to connect to event server within timeout.");
+            const error = new EventServerConnectionTimeoutError(
+              "Unable to connect to event server within timeout."
+            );
             reject(error);
           }, timeout * 1e3);
         }
@@ -2662,7 +2725,9 @@
         this.publish(event, { timeout, onReply });
         if (timeout) {
           setTimeout(() => {
-            const error = new EventServerReplyTimeoutError("No reply event received within timeout.");
+            const error = new EventServerReplyTimeoutError(
+              "No reply event received within timeout."
+            );
             reject(error);
             this._removeReplyCallback(event.id);
           }, timeout * 1e3);
@@ -2707,7 +2772,9 @@
       if (matches && matches.length === 2) {
         return matches[1];
       }
-      throw new Error('Only subscriptions on the format "topic=value" are supported.');
+      throw new Error(
+        'Only subscriptions on the format "topic=value" are supported.'
+      );
     }
     _addSubscriber(subscription, callback, metadata = {}) {
       this._getExpressionTopic(subscription);
@@ -2716,7 +2783,9 @@
       }
       const existingSubscriber = this.getSubscriberByIdentifier(metadata.id);
       if (existingSubscriber) {
-        throw new NotUniqueError(`Subscriber with identifier "${metadata.id}" already exists.`);
+        throw new NotUniqueError(
+          `Subscriber with identifier "${metadata.id}" already exists.`
+        );
       }
       const subscriber = {
         subscription,
@@ -2764,7 +2833,12 @@
         try {
           response = subscriber.callback(event);
         } catch (error) {
-          this.logger.error("Error calling subscriber for event.", error, subscriber, event);
+          this.logger.error(
+            "Error calling subscriber for event.",
+            error,
+            subscriber,
+            event
+          );
         }
         if (response != null) {
           this.publishReply(event, response, subscriber.metadata);
@@ -2842,11 +2916,11 @@
     try {
       result = value.normalize();
     } catch (error) {
-      loglevel__default["default"].warn("Failed to normalize string", value, error);
+      loglevel__default.default.warn("Failed to normalize string", value, error);
     }
     return result;
   }
-  const logger = loglevel__default["default"].getLogger("ftrack_api");
+  const logger = loglevel__default.default.getLogger("ftrack_api");
   const ENCODE_DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
   function splitFileExtension(fileName) {
     let basename = fileName || "";
@@ -2866,7 +2940,9 @@
       apiEndpoint = "/api"
     } = {}) {
       if (!serverUrl || !apiUser || !apiKey) {
-        throw new Error("Invalid arguments, please construct Session with *serverUrl*, *apiUser* and *apiKey*.");
+        throw new Error(
+          "Invalid arguments, please construct Session with *serverUrl*, *apiUser* and *apiKey*."
+        );
       }
       this.apiUser = apiUser;
       this.apiKey = apiKey;
@@ -2974,9 +3050,9 @@
     }
     _decodeDateTime(data) {
       if (this.serverInformation && this.serverInformation.is_timezone_support_enabled) {
-        return moment__default["default"].utc(data.value);
+        return moment__default.default.utc(data.value);
       }
-      return moment__default["default"](data.value);
+      return moment__default.default(data.value);
     }
     _decodePlainObject(object, identityMap) {
       return Object.keys(object).reduce((previous, key) => {
@@ -3016,20 +3092,22 @@
           resolve();
         }
       });
-      request = request.then(() => fetch(url, {
-        method: "post",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "ftrack-api-key": this.apiKey,
-          "ftrack-user": this.apiUser,
-          "ftrack-Clienttoken": this.clientToken,
-          "ftrack-pushtoken": pushToken
-        },
-        body: this.encodeOperations(operations),
-        signal: abortController && abortController.signal
-      }));
+      request = request.then(
+        () => fetch(url, {
+          method: "post",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "ftrack-api-key": this.apiKey,
+            "ftrack-user": this.apiUser,
+            "ftrack-Clienttoken": this.clientToken,
+            "ftrack-pushtoken": pushToken
+          },
+          body: this.encodeOperations(operations),
+          signal: abortController && abortController.signal
+        })
+      );
       request = request.catch((reason) => {
         logger.warn("Failed to perform request. ", reason);
         if (reason.name === "AbortError") {
@@ -3043,7 +3121,9 @@
           content: reason.message
         });
       });
-      request = request.then((response) => response.json && response.json() || response);
+      request = request.then(
+        (response) => response.json && response.json() || response
+      );
       request = request.then((data) => {
         if (this.initialized) {
           return this.decode(data);
@@ -3068,21 +3148,30 @@
     }
     ensure(entityType, data, identifyingKeys = []) {
       let keys2 = identifyingKeys;
-      logger.info("Ensuring entity with data using identifying keys: ", entityType, data, identifyingKeys);
+      logger.info(
+        "Ensuring entity with data using identifying keys: ",
+        entityType,
+        data,
+        identifyingKeys
+      );
       if (!keys2.length) {
         keys2 = Object.keys(data);
       }
       if (!keys2.length) {
-        throw new Error(`Could not determine any identifying data to check against when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`);
+        throw new Error(
+          `Could not determine any identifying data to check against when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`
+        );
       }
       const primaryKeys = this.getPrimaryKeyAttributes(entityType);
-      let expression = `select ${primaryKeys.join(", ")} from ${entityType} where`;
+      let expression = `select ${primaryKeys.join(
+        ", "
+      )} from ${entityType} where`;
       const criteria = keys2.map((identifyingKey) => {
         let value = data[identifyingKey];
         if (isString_1(value)) {
           value = `"${value}"`;
         } else if (value && value._isAMomentObject) {
-          value = moment__default["default"](value).utc().format(ENCODE_DATETIME_FORMAT);
+          value = moment__default.default(value).utc().format(ENCODE_DATETIME_FORMAT);
           value = `"${value}"`;
         }
         return `${identifyingKey} is ${value}`;
@@ -3090,10 +3179,14 @@
       expression = `${expression} ${criteria.join(" and ")}`;
       return this.query(expression).then((response) => {
         if (response.data.length === 0) {
-          return this.create(entityType, data).then(({ data: responseData }) => Promise.resolve(responseData));
+          return this.create(entityType, data).then(
+            ({ data: responseData }) => Promise.resolve(responseData)
+          );
         }
         if (response.data.length !== 1) {
-          throw new Error(`Expected single or no item to be found but got multiple when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`);
+          throw new Error(
+            `Expected single or no item to be found but got multiple when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`
+          );
         }
         const updateEntity = response.data[0];
         let updated = false;
@@ -3104,12 +3197,16 @@
           }
         });
         if (updated) {
-          return this.update(entityType, primaryKeys.map((key) => updateEntity[key]), Object.keys(data).reduce((accumulator, key) => {
-            if (primaryKeys.indexOf(key) === -1) {
-              accumulator[key] = data[key];
-            }
-            return accumulator;
-          }, {})).then(({ data: responseData }) => Promise.resolve(responseData));
+          return this.update(
+            entityType,
+            primaryKeys.map((key) => updateEntity[key]),
+            Object.keys(data).reduce((accumulator, key) => {
+              if (primaryKeys.indexOf(key) === -1) {
+                accumulator[key] = data[key];
+              }
+              return accumulator;
+            }, {})
+          ).then(({ data: responseData }) => Promise.resolve(responseData));
         }
         return Promise.resolve(response.data[0]);
       });
@@ -3202,7 +3299,9 @@
         username: this.apiUser,
         apiKey: this.apiKey
       };
-      return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(params)}`;
+      return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(
+        params
+      )}`;
     }
     createComponent(file, options = {}) {
       const normalizedFileName = normalizeString(file.name);
@@ -3261,7 +3360,12 @@
           xhr.onabort = () => {
             onAborted();
             this.delete("FileComponent", [componentId]).then(() => {
-              reject(new CreateComponentError("Upload aborted by client", "UPLOAD_ABORTED"));
+              reject(
+                new CreateComponentError(
+                  "Upload aborted by client",
+                  "UPLOAD_ABORTED"
+                )
+              );
             });
           };
           for (const key in headers) {
@@ -3271,13 +3375,17 @@
           }
           xhr.onload = () => {
             if (xhr.status >= 400) {
-              reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+              reject(
+                new CreateComponentError(`Failed to upload file: ${xhr.status}`)
+              );
             }
             resolve(xhr.response);
           };
           xhr.onerror = () => {
             this.delete("FileComponent", [componentId]).then(() => {
-              reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+              reject(
+                new CreateComponentError(`Failed to upload file: ${xhr.status}`)
+              );
             });
           };
           xhr.send(file);
@@ -3319,7 +3427,13 @@
     } else {
       groupedAttributes = [schemasAttributes];
     }
-    const operations = groupedAttributes.map((select) => exports$2.query(`select ${select.join(", ")} from ProjectSchema where id is ${projectSchemaId}`));
+    const operations = groupedAttributes.map(
+      (select) => exports$2.query(
+        `select ${select.join(
+          ", "
+        )} from ProjectSchema where id is ${projectSchemaId}`
+      )
+    );
     response = session.call(operations);
     response = response.then((results) => {
       const data = results[0].data[0];
@@ -3345,7 +3459,9 @@
           const objectTypeId = schema.alias_for.classifiers.object_typeid;
           for (const index in data._schemas) {
             if (data._schemas[index].type_id === objectTypeId) {
-              statuses = data._schemas[index].statuses.map((status) => status.task_status);
+              statuses = data._schemas[index].statuses.map(
+                (status) => status.task_status
+              );
             }
           }
         }

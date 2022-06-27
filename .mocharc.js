@@ -7,8 +7,8 @@ chai.use(chaiAsPromised);
 module.exports = {
   require: [
     "@babel/register",
-    "chai/register-expect",
-    "chai/register-should",
+    "chai/register-expect.js",
+    "chai/register-should.js",
     "jsdom-global/register",
   ],
 };

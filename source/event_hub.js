@@ -133,10 +133,10 @@ export class EventHub {
    * @param  {Event}  event               Event instance to publish
    * @param  {Function} [options.onReply] Function to be invoked when a reply
    *                                      is received.
-   * @param  {Number}  [options.timeout]  Timeout in seconds
+   * @param  {Number}  [options.timeout]  Timeout in seconds. Defaults to 30.
    * @return {Promise}
    */
-  publish(event, { onReply = null, timeout = 10 } = {}) {
+  publish(event, { onReply = null, timeout = 30 } = {}) {
     if (!this._socketIo) {
       throw new EventServerPublishError(
         "Unable to publish event, not connected to server."
