@@ -415,7 +415,7 @@ export class Session {
    * @param {Object} options.abortController - Abort controller
    *
    */
-  call(operations, { abortController } = {}) {
+  call(operations, { abortController, pushToken } = {}) {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
     // Delay call until session is initialized if initialization is in
@@ -440,6 +440,7 @@ export class Session {
           "ftrack-api-key": this.apiKey,
           "ftrack-user": this.apiUser,
           "ftrack-Clienttoken": this.clientToken,
+          "ftrack-pushtoken": pushToken,
         },
         body: this.encodeOperations(operations),
         signal: abortController && abortController.signal,
@@ -646,6 +647,8 @@ export class Session {
    * @param {String[]} options.terms          Search terms
    * @param {String}   [options.contextId]    Context id to limit the search result to
    * @param {String[]} [options.objectTypeIds] Object type ids to limit the search result to
+   * @param {object} additionalOptions
+   * @param {object} additionalOptions.abortController - abortController used for aborting requests prematurely
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
@@ -682,12 +685,14 @@ export class Session {
    *
    * @param {string} type entity type name.
    * @param {Object} data data which should be used to populate attributes on the entity.
+   * @param {Object} options
+   * @param {string} options.pushToken - push token to associate with the request
    * @return {Promise} Promise which will be resolved with the response.
    */
-  create(type, data) {
-    logger.debug("Create", type, data);
+  create(type, data, { pushToken } = {}) {
+    logger.debug("Create", type, data, pushToken);
 
-    let request = this.call([createOperation(type, data)]);
+    let request = this.call([createOperation(type, data)], { pushToken });
     request = request.then((responses) => {
       const response = responses[0];
       return response;
@@ -702,12 +707,14 @@ export class Session {
    * @param  {string} type Entity type
    * @param  {Array} keys Identifying keys, typically [<entity id>]
    * @param  {Object} data
+   * @param {Object} options
+   * @param {string} options.pushToken - push token to associate with the request
    * @return {Promise} Promise resolved with the response.
    */
-  update(type, keys, data) {
-    logger.debug("Update", type, keys, data);
+  update(type, keys, data, { pushToken } = {}) {
+    logger.debug("Update", type, keys, data, pushToken);
 
-    let request = this.call([updateOperation(type, keys, data)]);
+    let request = this.call([updateOperation(type, keys, data)], { pushToken });
     request = request.then((responses) => {
       const response = responses[0];
       return response;
@@ -721,12 +728,14 @@ export class Session {
    *
    * @param  {string} type Entity type
    * @param  {Array} keys Identifying keys, typically [<entity id>]
+   * @param {Object} options
+   * @param {string} options.pushToken - push token to associate with the request
    * @return {Promise} Promise resolved with the response.
    */
-  delete(type, id) {
-    logger.debug("Delete", type, id);
+  delete(type, id, { pushToken } = {}) {
+    logger.debug("Delete", type, id, pushToken);
 
-    let request = this.call([deleteOperation(type, id)]);
+    let request = this.call([deleteOperation(type, id)], { pushToken });
     request = request.then((responses) => {
       const response = responses[0];
       return response;

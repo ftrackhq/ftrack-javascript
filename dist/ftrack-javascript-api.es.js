@@ -2999,7 +2999,7 @@ class Session {
   encodeOperations(operations) {
     return JSON.stringify(this.encode(operations));
   }
-  call(operations, { abortController } = {}) {
+  call(operations, { abortController, pushToken } = {}) {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
     let request = new Promise((resolve) => {
       if (this.initializing && !this.initialized) {
@@ -3018,7 +3018,8 @@ class Session {
         "Content-Type": "application/json",
         "ftrack-api-key": this.apiKey,
         "ftrack-user": this.apiUser,
-        "ftrack-Clienttoken": this.clientToken
+        "ftrack-Clienttoken": this.clientToken,
+        "ftrack-pushtoken": pushToken
       },
       body: this.encodeOperations(operations),
       signal: abortController && abortController.signal
@@ -3147,27 +3148,27 @@ class Session {
     });
     return request;
   }
-  create(type, data) {
-    logger.debug("Create", type, data);
-    let request = this.call([createOperation(type, data)]);
+  create(type, data, { pushToken } = {}) {
+    logger.debug("Create", type, data, pushToken);
+    let request = this.call([createOperation(type, data)], { pushToken });
     request = request.then((responses) => {
       const response = responses[0];
       return response;
     });
     return request;
   }
-  update(type, keys2, data) {
-    logger.debug("Update", type, keys2, data);
-    let request = this.call([updateOperation(type, keys2, data)]);
+  update(type, keys2, data, { pushToken } = {}) {
+    logger.debug("Update", type, keys2, data, pushToken);
+    let request = this.call([updateOperation(type, keys2, data)], { pushToken });
     request = request.then((responses) => {
       const response = responses[0];
       return response;
     });
     return request;
   }
-  delete(type, id) {
-    logger.debug("Delete", type, id);
-    let request = this.call([deleteOperation(type, id)]);
+  delete(type, id, { pushToken } = {}) {
+    logger.debug("Delete", type, id, pushToken);
+    let request = this.call([deleteOperation(type, id)], { pushToken });
     request = request.then((responses) => {
       const response = responses[0];
       return response;
