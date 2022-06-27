@@ -2533,6 +2533,7 @@ const ServerPermissionDeniedError = errorFactory("ServerPermissionDeniedError");
 const ServerValidationError = errorFactory("ServerValidationError");
 const EventServerReplyTimeoutError = errorFactory("EventServerReplyTimeoutError");
 const EventServerConnectionTimeoutError = errorFactory("EventServerConnectionTimeoutError");
+const EventServerPublishError = errorFactory("EventServerPublishError");
 const NotUniqueError = errorFactory("NotUniqueError");
 const CreateComponentError = errorFactory("CreateComponentError");
 const AbortError = errorFactory("AbortError");
@@ -2542,6 +2543,7 @@ const exports$2 = {
   ServerValidationError,
   EventServerReplyTimeoutError,
   EventServerConnectionTimeoutError,
+  EventServerPublishError,
   NotUniqueError,
   CreateComponentError,
   AbortError
@@ -2614,6 +2616,9 @@ class EventHub {
     }
   }
   publish(event, { onReply = null, timeout = 10 } = {}) {
+    if (!this._socketIo) {
+      throw new EventServerPublishError("Unable to publish event, not connected to server.");
+    }
     event.addSource({
       id: this._id,
       applicationId: this._applicationId,

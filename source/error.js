@@ -67,6 +67,13 @@ export const EventServerConnectionTimeoutError = errorFactory(
 );
 
 /**
+ * Throw when event hub hasn't been connected to the event server.
+ * @class
+ * @memberof error
+ */
+export const EventServerPublishError = errorFactory("EventServerPublishError");
+
+/**
  * Throw when event server connection timeout occurs.
  * @class
  * @memberof error
@@ -88,6 +95,7 @@ const exports = {
   ServerValidationError,
   EventServerReplyTimeoutError,
   EventServerConnectionTimeoutError,
+  EventServerPublishError,
   NotUniqueError,
   CreateComponentError,
   AbortError,

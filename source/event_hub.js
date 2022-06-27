@@ -6,6 +6,7 @@ import Event from "./event";
 import {
   EventServerConnectionTimeoutError,
   EventServerReplyTimeoutError,
+  EventServerPublishError,
   NotUniqueError,
 } from "./error";
 import encodeUriParameters from "./util/encode_uri_parameters";
@@ -136,6 +137,12 @@ export class EventHub {
    * @return {Promise}
    */
   publish(event, { onReply = null, timeout = 10 } = {}) {
+    if (!this._socketIo) {
+      throw new EventServerPublishError(
+        "Unable to publish event, not connected to server."
+      );
+    }
+
     event.addSource({
       id: this._id,
       applicationId: this._applicationId,
