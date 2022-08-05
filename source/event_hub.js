@@ -263,7 +263,7 @@ export class EventHub {
     let hasFoundSubscriberToRemove = false;
     this._subscribers = this._subscribers.filter((subscriber) => {
       if (subscriber.metadata.id === identifier) {
-        this._notifyServerAboutUnsubscribe(identifier);
+        this._notifyServerAboutUnsubscribe(subscriber.metadata);
         hasFoundSubscriberToRemove = true;
         return false;
       }

@@ -413,6 +413,7 @@ export class Session {
    * @param {Array} operations - API operations.
    * @param {Object} options
    * @param {Object} options.abortController - Abort controller
+   * @param {string} options.pushToken - push token to associate with the request
    *
    */
   call(operations, { abortController, pushToken } = {}) {
