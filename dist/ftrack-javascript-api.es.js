@@ -410,7 +410,9 @@ var reIsHostCtor = /^\[object .+?Constructor\]$/;
 var funcProto = Function.prototype, objectProto$6 = Object.prototype;
 var funcToString = funcProto.toString;
 var hasOwnProperty$5 = objectProto$6.hasOwnProperty;
-var reIsNative = RegExp("^" + funcToString.call(hasOwnProperty$5).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$");
+var reIsNative = RegExp(
+  "^" + funcToString.call(hasOwnProperty$5).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
+);
 function baseIsNative$1(value) {
   if (!isObject$2(value) || isMasked(value)) {
     return false;
@@ -1334,8 +1336,8 @@ var socket_ioWebsocketOnly = { exports: {} };
         uuri = io2.util.uniqueUri(uri);
         var options = {
           host: uri.host,
-          secure: uri.protocol == "https",
-          port: uri.port || (uri.protocol == "https" ? 443 : 80),
+          secure: "https" == uri.protocol,
+          port: uri.port || ("https" == uri.protocol ? 443 : 80),
           query: uri.query || ""
         };
         io2.util.merge(options, details);
@@ -1423,27 +1425,29 @@ var socket_ioWebsocketOnly = { exports: {} };
         }
       };
       util.request = function(xdomain) {
-        if (xdomain && typeof XDomainRequest != "undefined" && !util.ua.hasCORS) {
+        if (xdomain && "undefined" != typeof XDomainRequest && !util.ua.hasCORS) {
           return new XDomainRequest();
         }
-        if (typeof XMLHttpRequest != "undefined" && (!xdomain || util.ua.hasCORS)) {
+        if ("undefined" != typeof XMLHttpRequest && (!xdomain || util.ua.hasCORS)) {
           return new XMLHttpRequest();
         }
         if (!xdomain) {
           try {
-            return new window[["Active"].concat("Object").join("X")]("Microsoft.XMLHTTP");
+            return new window[["Active"].concat("Object").join("X")](
+              "Microsoft.XMLHTTP"
+            );
           } catch (e) {
           }
         }
         return null;
       };
-      if (typeof window != "undefined") {
+      if ("undefined" != typeof window) {
         util.load(function() {
           pageLoaded = true;
         });
       }
       util.defer = function(fn) {
-        if (!util.ua.webkit || typeof importScripts != "undefined") {
+        if (!util.ua.webkit || "undefined" != typeof importScripts) {
           return fn();
         }
         util.load(function() {
@@ -1496,7 +1500,7 @@ var socket_ioWebsocketOnly = { exports: {} };
         return arr;
       };
       util.ua = {};
-      util.ua.hasCORS = typeof XMLHttpRequest != "undefined" && function() {
+      util.ua.hasCORS = "undefined" != typeof XMLHttpRequest && function() {
         try {
           var a = new XMLHttpRequest();
         } catch (e) {
@@ -1504,9 +1508,9 @@ var socket_ioWebsocketOnly = { exports: {} };
         }
         return a.withCredentials != void 0;
       }();
-      util.ua.webkit = typeof navigator != "undefined" && /webkit/i.test(navigator.userAgent);
-      util.ua.iDevice = typeof navigator != "undefined" && /iPad|iPhone|iPod/i.test(navigator.userAgent);
-    })(typeof io != "undefined" ? io : module.exports, that);
+      util.ua.webkit = "undefined" != typeof navigator && /webkit/i.test(navigator.userAgent);
+      util.ua.iDevice = "undefined" != typeof navigator && /iPad|iPhone|iPod/i.test(navigator.userAgent);
+    })("undefined" != typeof io ? io : module.exports, that);
     (function(exports2, io2) {
       exports2.EventEmitter = EventEmitter;
       function EventEmitter() {
@@ -1590,7 +1594,7 @@ var socket_ioWebsocketOnly = { exports: {} };
           return false;
         }
         var args = Array.prototype.slice.call(arguments, 1);
-        if (typeof handler == "function") {
+        if ("function" == typeof handler) {
           handler.apply(this, args);
         } else if (io2.util.isArray(handler)) {
           var listeners = handler.slice();
@@ -1602,7 +1606,10 @@ var socket_ioWebsocketOnly = { exports: {} };
         }
         return true;
       };
-    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+    })(
+      "undefined" != typeof io ? io : module.exports,
+      "undefined" != typeof io ? io : module.parent.exports
+    );
     (function(exports, nativeJSON) {
       if (nativeJSON && nativeJSON.parse) {
         return exports.JSON = {
@@ -1732,13 +1739,21 @@ var socket_ioWebsocketOnly = { exports: {} };
             return "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
           });
         }
-        if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
+        if (/^[\],:{}\s]*$/.test(
+          text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(
+            /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+            "]"
+          ).replace(/(?:^|:|,)(?:\s*\[)+/g, "")
+        )) {
           j = eval("(" + text + ")");
           return typeof reviver === "function" ? walk({ "": j }, "") : j;
         }
         throw new SyntaxError("JSON.parse");
       };
-    })(typeof io != "undefined" ? io : module.exports, typeof JSON !== "undefined" ? JSON : void 0);
+    })(
+      "undefined" != typeof io ? io : module.exports,
+      typeof JSON !== "undefined" ? JSON : void 0
+    );
     (function(exports2, io2) {
       var parser = exports2.parser = {};
       var packets = parser.packets = [
@@ -1880,7 +1895,10 @@ var socket_ioWebsocketOnly = { exports: {} };
           return [parser.decodePacket(data)];
         }
       };
-    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+    })(
+      "undefined" != typeof io ? io : module.exports,
+      "undefined" != typeof io ? io : module.parent.exports
+    );
     (function(exports2, io2) {
       exports2.Transport = Transport;
       function Transport(socket, sessid) {
@@ -1974,7 +1992,10 @@ var socket_ioWebsocketOnly = { exports: {} };
       Transport.prototype.ready = function(socket, fn) {
         fn.call(this);
       };
-    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+    })(
+      "undefined" != typeof io ? io : module.exports,
+      "undefined" != typeof io ? io : module.parent.exports
+    );
     (function(exports2, io2, global2) {
       exports2.Socket = Socket;
       function Socket(options) {
@@ -2006,9 +2027,14 @@ var socket_ioWebsocketOnly = { exports: {} };
         this.doBuffer = false;
         if (this.options["sync disconnect on unload"] && (!this.isXDomain() || io2.util.ua.hasCORS)) {
           var self2 = this;
-          io2.util.on(global2, "beforeunload", function() {
-            self2.disconnectSync();
-          }, false);
+          io2.util.on(
+            global2,
+            "beforeunload",
+            function() {
+              self2.disconnectSync();
+            },
+            false
+          );
         }
         if (this.options["auto connect"]) {
           this.connect();
@@ -2195,7 +2221,7 @@ var socket_ioWebsocketOnly = { exports: {} };
         this.onDisconnect("booted");
       };
       Socket.prototype.isXDomain = function() {
-        var port = global2.location.port || (global2.location.protocol == "https:" ? 443 : 80);
+        var port = global2.location.port || ("https:" == global2.location.protocol ? 443 : 80);
         return this.options.host !== global2.location.hostname || this.options.port != port;
       };
       Socket.prototype.onConnect = function() {
@@ -2239,7 +2265,7 @@ var socket_ioWebsocketOnly = { exports: {} };
           this.transport.clearTimeouts();
           if (wasConnected) {
             this.publish("disconnect", reason);
-            if (reason != "booted" && this.options.reconnect && !this.reconnecting) {
+            if ("booted" != reason && this.options.reconnect && !this.reconnecting) {
               this.reconnect();
             }
           }
@@ -2253,11 +2279,15 @@ var socket_ioWebsocketOnly = { exports: {} };
         function reset() {
           if (self2.connected) {
             for (var i in self2.namespaces) {
-              if (self2.namespaces.hasOwnProperty(i) && i !== "") {
+              if (self2.namespaces.hasOwnProperty(i) && "" !== i) {
                 self2.namespaces[i].packet({ type: "connect" });
               }
             }
-            self2.publish("reconnect", self2.transport.name, self2.reconnectionAttempts);
+            self2.publish(
+              "reconnect",
+              self2.transport.name,
+              self2.reconnectionAttempts
+            );
           }
           clearTimeout(self2.reconnectionTimer);
           self2.removeListener("connect_failed", maybeReconnect);
@@ -2296,15 +2326,29 @@ var socket_ioWebsocketOnly = { exports: {} };
               self2.reconnectionDelay *= 2;
             }
             self2.connect();
-            self2.publish("reconnecting", self2.reconnectionDelay, self2.reconnectionAttempts);
-            self2.reconnectionTimer = setTimeout(maybeReconnect, self2.reconnectionDelay);
+            self2.publish(
+              "reconnecting",
+              self2.reconnectionDelay,
+              self2.reconnectionAttempts
+            );
+            self2.reconnectionTimer = setTimeout(
+              maybeReconnect,
+              self2.reconnectionDelay
+            );
           }
         }
         this.options["try multiple transports"] = false;
-        this.reconnectionTimer = setTimeout(maybeReconnect, this.reconnectionDelay);
+        this.reconnectionTimer = setTimeout(
+          maybeReconnect,
+          this.reconnectionDelay
+        );
         this.on("connect", maybeReconnect);
       };
-    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
+    })(
+      "undefined" != typeof io ? io : module.exports,
+      "undefined" != typeof io ? io : module.parent.exports,
+      that
+    );
     (function(exports2, io2) {
       exports2.SocketNamespace = SocketNamespace;
       function SocketNamespace(socket, name) {
@@ -2331,7 +2375,7 @@ var socket_ioWebsocketOnly = { exports: {} };
           type: this.flags.json ? "json" : "message",
           data
         };
-        if (typeof fn == "function") {
+        if ("function" == typeof fn) {
           packet.id = ++this.ackPackets;
           packet.ack = true;
           this.acks[packet.id] = fn;
@@ -2343,7 +2387,7 @@ var socket_ioWebsocketOnly = { exports: {} };
           type: "event",
           name
         };
-        if (typeof lastArg == "function") {
+        if ("function" == typeof lastArg) {
           packet.id = ++this.ackPackets;
           packet.ack = "data";
           this.acks[packet.id] = lastArg;
@@ -2428,7 +2472,10 @@ var socket_ioWebsocketOnly = { exports: {} };
         this.namespace.flags[this.name] = true;
         this.namespace.emit.apply(this.namespace, arguments);
       };
-    })(typeof io != "undefined" ? io : module.exports, typeof io != "undefined" ? io : module.parent.exports);
+    })(
+      "undefined" != typeof io ? io : module.exports,
+      "undefined" != typeof io ? io : module.parent.exports
+    );
     (function(exports2, io2, global2) {
       exports2.websocket = WS;
       function WS(socket) {
@@ -2495,21 +2542,29 @@ var socket_ioWebsocketOnly = { exports: {} };
         return true;
       };
       io2.transports.push("websocket");
-    })(typeof io != "undefined" ? io.Transport : module.exports, typeof io != "undefined" ? io : module.parent.exports, that);
+    })(
+      "undefined" != typeof io ? io.Transport : module.exports,
+      "undefined" != typeof io ? io : module.parent.exports,
+      that
+    );
   })();
 })(socket_ioWebsocketOnly);
-var io = socket_ioWebsocketOnly.exports;
+const io = socket_ioWebsocketOnly.exports;
 class Event {
   constructor(topic, data, options = {}) {
-    this._data = Object.assign({
-      topic,
-      data,
-      target: "",
-      inReplyToEvent: null
-    }, options, {
-      id: v4(),
-      sent: null
-    });
+    this._data = Object.assign(
+      {
+        topic,
+        data,
+        target: "",
+        inReplyToEvent: null
+      },
+      options,
+      {
+        id: v4(),
+        sent: null
+      }
+    );
   }
   getData() {
     return this._data;
@@ -2529,10 +2584,17 @@ function errorFactory(name) {
   return CustomError;
 }
 const ServerError = errorFactory("ServerError");
-const ServerPermissionDeniedError = errorFactory("ServerPermissionDeniedError");
+const ServerPermissionDeniedError = errorFactory(
+  "ServerPermissionDeniedError"
+);
 const ServerValidationError = errorFactory("ServerValidationError");
-const EventServerReplyTimeoutError = errorFactory("EventServerReplyTimeoutError");
-const EventServerConnectionTimeoutError = errorFactory("EventServerConnectionTimeoutError");
+const EventServerReplyTimeoutError = errorFactory(
+  "EventServerReplyTimeoutError"
+);
+const EventServerConnectionTimeoutError = errorFactory(
+  "EventServerConnectionTimeoutError"
+);
+const EventServerPublishError = errorFactory("EventServerPublishError");
 const NotUniqueError = errorFactory("NotUniqueError");
 const CreateComponentError = errorFactory("CreateComponentError");
 const AbortError = errorFactory("AbortError");
@@ -2542,6 +2604,7 @@ const exports$2 = {
   ServerValidationError,
   EventServerReplyTimeoutError,
   EventServerConnectionTimeoutError,
+  EventServerPublishError,
   NotUniqueError,
   CreateComponentError,
   AbortError
@@ -2613,7 +2676,12 @@ class EventHub {
       }
     }
   }
-  publish(event, { onReply = null, timeout = 10 } = {}) {
+  publish(event, { onReply = null, timeout = 30 } = {}) {
+    if (!this._socketIo) {
+      throw new EventServerPublishError(
+        "Unable to publish event, not connected to server."
+      );
+    }
     event.addSource({
       id: this._id,
       applicationId: this._applicationId,
@@ -2627,7 +2695,9 @@ class EventHub {
       this._runWhenConnected(resolve);
       if (timeout) {
         setTimeout(() => {
-          const error = new EventServerConnectionTimeoutError("Unable to connect to event server within timeout.");
+          const error = new EventServerConnectionTimeoutError(
+            "Unable to connect to event server within timeout."
+          );
           reject(error);
         }, timeout * 1e3);
       }
@@ -2651,7 +2721,9 @@ class EventHub {
       this.publish(event, { timeout, onReply });
       if (timeout) {
         setTimeout(() => {
-          const error = new EventServerReplyTimeoutError("No reply event received within timeout.");
+          const error = new EventServerReplyTimeoutError(
+            "No reply event received within timeout."
+          );
           reject(error);
           this._removeReplyCallback(event.id);
         }, timeout * 1e3);
@@ -2678,13 +2750,27 @@ class EventHub {
     this._notifyServerAboutSubscriber(subscriber);
     return subscriber.metadata.id;
   }
+  unsubscribe(identifier) {
+    let hasFoundSubscriberToRemove = false;
+    this._subscribers = this._subscribers.filter((subscriber) => {
+      if (subscriber.metadata.id === identifier) {
+        this._notifyServerAboutUnsubscribe(identifier);
+        hasFoundSubscriberToRemove = true;
+        return false;
+      }
+      return true;
+    });
+    return hasFoundSubscriberToRemove;
+  }
   _getExpressionTopic(subscription) {
     const regex = new RegExp(`^topic[ ]?=[ '"]?([\\w-,./*@+]+)['"]?$`);
     const matches = subscription.trim().match(regex);
     if (matches && matches.length === 2) {
       return matches[1];
     }
-    throw new Error('Only subscriptions on the format "topic=value" are supported.');
+    throw new Error(
+      'Only subscriptions on the format "topic=value" are supported.'
+    );
   }
   _addSubscriber(subscription, callback, metadata = {}) {
     this._getExpressionTopic(subscription);
@@ -2693,7 +2779,9 @@ class EventHub {
     }
     const existingSubscriber = this.getSubscriberByIdentifier(metadata.id);
     if (existingSubscriber) {
-      throw new NotUniqueError(`Subscriber with identifier "${metadata.id}" already exists.`);
+      throw new NotUniqueError(
+        `Subscriber with identifier "${metadata.id}" already exists.`
+      );
     }
     const subscriber = {
       subscription,
@@ -2709,6 +2797,12 @@ class EventHub {
       subscription: subscriber.subscription
     });
     this.publish(subscribeEvent);
+  }
+  _notifyServerAboutUnsubscribe(subscriber) {
+    const unsubscribeEvent = new Event("ftrack.meta.unsubscribe", {
+      subscriber
+    });
+    this.publish(unsubscribeEvent);
   }
   getSubscriberByIdentifier(identifier) {
     for (const subscriber of this._subscribers.slice()) {
@@ -2735,7 +2829,12 @@ class EventHub {
       try {
         response = subscriber.callback(event);
       } catch (error) {
-        this.logger.error("Error calling subscriber for event.", error, subscriber, event);
+        this.logger.error(
+          "Error calling subscriber for event.",
+          error,
+          subscriber,
+          event
+        );
       }
       if (response != null) {
         this.publishReply(event, response, subscriber.metadata);
@@ -2837,7 +2936,9 @@ class Session {
     apiEndpoint = "/api"
   } = {}) {
     if (!serverUrl || !apiUser || !apiKey) {
-      throw new Error("Invalid arguments, please construct Session with *serverUrl*, *apiUser* and *apiKey*.");
+      throw new Error(
+        "Invalid arguments, please construct Session with *serverUrl*, *apiUser* and *apiKey*."
+      );
     }
     this.apiUser = apiUser;
     this.apiKey = apiKey;
@@ -2976,7 +3077,7 @@ class Session {
   encodeOperations(operations) {
     return JSON.stringify(this.encode(operations));
   }
-  call(operations, { abortController } = {}) {
+  call(operations, { abortController, pushToken } = {}) {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
     let request = new Promise((resolve) => {
       if (this.initializing && !this.initialized) {
@@ -2987,19 +3088,22 @@ class Session {
         resolve();
       }
     });
-    request = request.then(() => fetch(url, {
-      method: "post",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "ftrack-api-key": this.apiKey,
-        "ftrack-user": this.apiUser,
-        "ftrack-Clienttoken": this.clientToken
-      },
-      body: this.encodeOperations(operations),
-      signal: abortController && abortController.signal
-    }));
+    request = request.then(
+      () => fetch(url, {
+        method: "post",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "ftrack-api-key": this.apiKey,
+          "ftrack-user": this.apiUser,
+          "ftrack-Clienttoken": this.clientToken,
+          "ftrack-pushtoken": pushToken
+        },
+        body: this.encodeOperations(operations),
+        signal: abortController && abortController.signal
+      })
+    );
     request = request.catch((reason) => {
       logger.warn("Failed to perform request. ", reason);
       if (reason.name === "AbortError") {
@@ -3013,7 +3117,9 @@ class Session {
         content: reason.message
       });
     });
-    request = request.then((response) => response.json && response.json() || response);
+    request = request.then(
+      (response) => response.json && response.json() || response
+    );
     request = request.then((data) => {
       if (this.initialized) {
         return this.decode(data);
@@ -3038,15 +3144,24 @@ class Session {
   }
   ensure(entityType, data, identifyingKeys = []) {
     let keys2 = identifyingKeys;
-    logger.info("Ensuring entity with data using identifying keys: ", entityType, data, identifyingKeys);
+    logger.info(
+      "Ensuring entity with data using identifying keys: ",
+      entityType,
+      data,
+      identifyingKeys
+    );
     if (!keys2.length) {
       keys2 = Object.keys(data);
     }
     if (!keys2.length) {
-      throw new Error(`Could not determine any identifying data to check against when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`);
+      throw new Error(
+        `Could not determine any identifying data to check against when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`
+      );
     }
     const primaryKeys = this.getPrimaryKeyAttributes(entityType);
-    let expression = `select ${primaryKeys.join(", ")} from ${entityType} where`;
+    let expression = `select ${primaryKeys.join(
+      ", "
+    )} from ${entityType} where`;
     const criteria = keys2.map((identifyingKey) => {
       let value = data[identifyingKey];
       if (isString_1(value)) {
@@ -3060,10 +3175,14 @@ class Session {
     expression = `${expression} ${criteria.join(" and ")}`;
     return this.query(expression).then((response) => {
       if (response.data.length === 0) {
-        return this.create(entityType, data).then(({ data: responseData }) => Promise.resolve(responseData));
+        return this.create(entityType, data).then(
+          ({ data: responseData }) => Promise.resolve(responseData)
+        );
       }
       if (response.data.length !== 1) {
-        throw new Error(`Expected single or no item to be found but got multiple when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`);
+        throw new Error(
+          `Expected single or no item to be found but got multiple when ensuring ${entityType} with data ${data}. Identifying keys: ${identifyingKeys}`
+        );
       }
       const updateEntity = response.data[0];
       let updated = false;
@@ -3074,12 +3193,16 @@ class Session {
         }
       });
       if (updated) {
-        return this.update(entityType, primaryKeys.map((key) => updateEntity[key]), Object.keys(data).reduce((accumulator, key) => {
-          if (primaryKeys.indexOf(key) === -1) {
-            accumulator[key] = data[key];
-          }
-          return accumulator;
-        }, {})).then(({ data: responseData }) => Promise.resolve(responseData));
+        return this.update(
+          entityType,
+          primaryKeys.map((key) => updateEntity[key]),
+          Object.keys(data).reduce((accumulator, key) => {
+            if (primaryKeys.indexOf(key) === -1) {
+              accumulator[key] = data[key];
+            }
+            return accumulator;
+          }, {})
+        ).then(({ data: responseData }) => Promise.resolve(responseData));
       }
       return Promise.resolve(response.data[0]);
     });
@@ -3124,27 +3247,27 @@ class Session {
     });
     return request;
   }
-  create(type, data) {
-    logger.debug("Create", type, data);
-    let request = this.call([createOperation(type, data)]);
+  create(type, data, { pushToken } = {}) {
+    logger.debug("Create", type, data, pushToken);
+    let request = this.call([createOperation(type, data)], { pushToken });
     request = request.then((responses) => {
       const response = responses[0];
       return response;
     });
     return request;
   }
-  update(type, keys2, data) {
-    logger.debug("Update", type, keys2, data);
-    let request = this.call([updateOperation(type, keys2, data)]);
+  update(type, keys2, data, { pushToken } = {}) {
+    logger.debug("Update", type, keys2, data, pushToken);
+    let request = this.call([updateOperation(type, keys2, data)], { pushToken });
     request = request.then((responses) => {
       const response = responses[0];
       return response;
     });
     return request;
   }
-  delete(type, id) {
-    logger.debug("Delete", type, id);
-    let request = this.call([deleteOperation(type, id)]);
+  delete(type, id, { pushToken } = {}) {
+    logger.debug("Delete", type, id, pushToken);
+    let request = this.call([deleteOperation(type, id)], { pushToken });
     request = request.then((responses) => {
       const response = responses[0];
       return response;
@@ -3172,7 +3295,9 @@ class Session {
       username: this.apiUser,
       apiKey: this.apiKey
     };
-    return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(params)}`;
+    return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(
+      params
+    )}`;
   }
   createComponent(file, options = {}) {
     const normalizedFileName = normalizeString(file.name);
@@ -3231,7 +3356,12 @@ class Session {
         xhr.onabort = () => {
           onAborted();
           this.delete("FileComponent", [componentId]).then(() => {
-            reject(new CreateComponentError("Upload aborted by client", "UPLOAD_ABORTED"));
+            reject(
+              new CreateComponentError(
+                "Upload aborted by client",
+                "UPLOAD_ABORTED"
+              )
+            );
           });
         };
         for (const key in headers) {
@@ -3241,13 +3371,17 @@ class Session {
         }
         xhr.onload = () => {
           if (xhr.status >= 400) {
-            reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+            reject(
+              new CreateComponentError(`Failed to upload file: ${xhr.status}`)
+            );
           }
           resolve(xhr.response);
         };
         xhr.onerror = () => {
           this.delete("FileComponent", [componentId]).then(() => {
-            reject(new CreateComponentError(`Failed to upload file: ${xhr.status}`));
+            reject(
+              new CreateComponentError(`Failed to upload file: ${xhr.status}`)
+            );
           });
         };
         xhr.send(file);
@@ -3289,7 +3423,13 @@ function getStatuses(session, projectSchemaId, entityType, typeId = null) {
   } else {
     groupedAttributes = [schemasAttributes];
   }
-  const operations = groupedAttributes.map((select) => exports$1.query(`select ${select.join(", ")} from ProjectSchema where id is ${projectSchemaId}`));
+  const operations = groupedAttributes.map(
+    (select) => exports$1.query(
+      `select ${select.join(
+        ", "
+      )} from ProjectSchema where id is ${projectSchemaId}`
+    )
+  );
   response = session.call(operations);
   response = response.then((results) => {
     const data = results[0].data[0];
@@ -3315,7 +3455,9 @@ function getStatuses(session, projectSchemaId, entityType, typeId = null) {
         const objectTypeId = schema.alias_for.classifiers.object_typeid;
         for (const index in data._schemas) {
           if (data._schemas[index].type_id === objectTypeId) {
-            statuses = data._schemas[index].statuses.map((status) => status.task_status);
+            statuses = data._schemas[index].statuses.map(
+              (status) => status.task_status
+            );
           }
         }
       }
@@ -3327,5 +3469,13 @@ function getStatuses(session, projectSchemaId, entityType, typeId = null) {
 const exports = {
   getStatuses
 };
-export { Event, EventHub, SERVER_LOCATION_ID, Session, exports$2 as error, exports$1 as operation, exports as projectSchema };
+export {
+  Event,
+  EventHub,
+  SERVER_LOCATION_ID,
+  Session,
+  exports$2 as error,
+  exports$1 as operation,
+  exports as projectSchema
+};
 //# sourceMappingURL=ftrack-javascript-api.es.js.map

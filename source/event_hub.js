@@ -6,6 +6,7 @@ import Event from "./event";
 import {
   EventServerConnectionTimeoutError,
   EventServerReplyTimeoutError,
+  EventServerPublishError,
   NotUniqueError,
 } from "./error";
 import encodeUriParameters from "./util/encode_uri_parameters";
@@ -132,10 +133,16 @@ export class EventHub {
    * @param  {Event}  event               Event instance to publish
    * @param  {Function} [options.onReply] Function to be invoked when a reply
    *                                      is received.
-   * @param  {Number}  [options.timeout]  Timeout in seconds
+   * @param  {Number}  [options.timeout]  Timeout in seconds. Defaults to 30.
    * @return {Promise}
    */
-  publish(event, { onReply = null, timeout = 10 } = {}) {
+  publish(event, { onReply = null, timeout = 30 } = {}) {
+    if (!this._socketIo) {
+      throw new EventServerPublishError(
+        "Unable to publish event, not connected to server."
+      );
+    }
+
     event.addSource({
       id: this._id,
       applicationId: this._applicationId,
@@ -247,6 +254,26 @@ export class EventHub {
   }
 
   /**
+   * Unsubscribe from *subscription* events.
+   *
+   * @param  {String}   identifier  Subscriber ID returned from subscribe method.
+   * @return {Boolean}              True if a subscriber was removed, false otherwise
+   */
+  unsubscribe(identifier) {
+    let hasFoundSubscriberToRemove = false;
+    this._subscribers = this._subscribers.filter((subscriber) => {
+      if (subscriber.metadata.id === identifier) {
+        this._notifyServerAboutUnsubscribe(subscriber.metadata);
+        hasFoundSubscriberToRemove = true;
+        return false;
+      }
+      return true;
+    });
+
+    return hasFoundSubscriberToRemove;
+  }
+
+  /**
    * Return topic from *subscription* expression.
    *
    * Raises an error if expression is in an unsupported format. Currently,
@@ -315,6 +342,13 @@ export class EventHub {
       subscription: subscriber.subscription,
     });
     this.publish(subscribeEvent);
+  }
+
+  _notifyServerAboutUnsubscribe(subscriber) {
+    const unsubscribeEvent = new Event("ftrack.meta.unsubscribe", {
+      subscriber,
+    });
+    this.publish(unsubscribeEvent);
   }
 
   /**
