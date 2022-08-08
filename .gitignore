@@ -47,6 +47,8 @@ node_modules
 
 # Build
 build/
+dist/
+package.tgz
 .eggs/
 
 # Yarn

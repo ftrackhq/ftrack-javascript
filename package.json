@@ -1,11 +1,13 @@
 {
-  "name": "ftrack-javascript-api",
+  "name": "@ftrack/api",
   "version": "0.9.0",
   "description": "JavaScript API for ftrack.",
   "scripts": {
     "lint": "eslint . && prettier -c .",
     "test": "mocha test && yarn lint",
-    "build": "vite build"
+    "build": "vite build",
+    "prepack": "yarn build",
+    "prepublish": "yarn test"
   },
   "main": "./dist/ftrack-javascript-api.umd.js",
   "module": "./dist/ftrack-javascript-api.es.js",
@@ -43,7 +45,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/ftrack/ftrack-javascript-api.git"
+    "url": "https://github.com/ftrackhq/javascript-api.git"
   },
   "keywords": [
     "ftrack",
@@ -54,7 +56,7 @@
   "author": "ftrack",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://bitbucket.org/ftrack/ftrack-javascript-api/issues"
+    "url": "https://github.com/ftrackhq/javascript-api/issues"
   },
   "homepage": "http://ftrack.com",
   "dependencies": {
