@@ -13,10 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          # Check out the referred tag in the release
-          # In case we want to publish something other than HEAD
-          ref: ${{GITHUB_REF}}
       - uses: actions/setup-node@v3
         with:
           node-version-file: ".nvmrc"
