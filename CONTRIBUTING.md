@@ -20,8 +20,8 @@ To publish a new release, follow these steps:
 Locally:
 
 - `git switch -c release/<new-release-tag>`
-- `yarn version <new-release-tag>`
-- `git push --tags`
+- `npm version <new-release-tag>`
+- `git push --follow-tags`
 
 On Github:
 
