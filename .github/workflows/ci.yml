@@ -1,27 +1,23 @@
-# This workflow will run tests using node and then publish a package to NPM when a release is created
-# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+# This workflow will do a clean installation of node dependencies, build the source code and run tests
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Publish to NPM
+name: Run tests
 
 on:
-  release:
-    # Run this on both stable and pre-release
-    types: [published]
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
-  publish-npm:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          # Check out the referred tag in the release
-          # In case we want to publish somethign other than HEAD
-          ref: $GITHUB_SHA
-      - uses: actions/setup-node@v3
+      - name: Using Node.js from .nvmrc
+        uses: actions/setup-node@v3
         with:
           node-version-file: ".nvmrc"
-          registry-url: https://registry.npmjs.org/
-          scope: "@ftrack"
 
       # caching with actions/setup-node isn't supported with yarn 3
       # so we use this workaround https://github.com/actions/setup-node/issues/488
@@ -38,6 +34,5 @@ jobs:
             yarn-cache-folder-
 
       - run: yarn install --immutable
-      - run: yarn npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - run: yarn build
+      - run: yarn test
