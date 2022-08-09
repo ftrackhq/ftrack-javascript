@@ -28,7 +28,7 @@ setup(
     description='Javascript api for ftrack.com',
     long_description=open(README_PATH).read(),
     keywords='ftrack',
-    url='https://bitbucket.org/ftrack/ftrack-javascript-api',
+    url='https://github.com/ftrackhq/javascript-api',
     author='ftrack',
     author_email='support@ftrack.com',
     license='Apache License (2.0)',

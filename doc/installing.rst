@@ -17,16 +17,16 @@ Usage with Webpack or Browserify
 
 Install the package using NPM::
 
-    npm install --save git+http://bitbucket.org/ftrack/ftrack-javascript-api.git
+    npm install --save @ftrack/api
 
-You can then import or require the `ftrack-javascript-api` package::
+You can then import or require the `@ftrack/api` package::
 
-    var ftrack = require('ftrack-javascript-api');
+    var ftrack = require('@ftrack/api');
     var session = new ftrack.Session(...)
 
 Or, using ES2015-style imports::
 
-    import { Session } from 'ftrack-javascript-api';
+    import { Session } from '@ftrack/api';
     var session = new Session(...);
 
 Usage with Node
@@ -35,13 +35,13 @@ Usage with Node
 To use the API with node, you will need to install the a polyfill for the fetch
 API, `isomorphic-fetch <https://github.com/matthew-andrews/isomorphic-fetch>`_::
 
-    npm install --save isomorphic-fetch git+http://bitbucket.org/ftrack/ftrack-javascript-api.git
+    npm install --save isomorphic-fetch @ftrack/api
 
-Require `isomorphic-fetch` to add the polyfill, then require the API and 
+Require `isomorphic-fetch` to add the polyfill, then require the API and
 instantiate a Session.::
 
     require('isomorphic-fetch');
-    var ftrack = require('ftrack-javascript-api');
+    var ftrack = require('@ftrack/api');
     var session = new ftrack.Session(...)
 
 .. note::
@@ -55,11 +55,9 @@ Building distribution bundle from source
 You can also build manually from the source for more control. First, make sure
 you have node (v5+) installed, see :ref:`installing/node` for instructions.
 
-Obtain a copy of the source by either downloading the
-`zipball <https://bitbucket.org/ftrack/ftrack-javascript-api/get/master.zip>`_ or
-cloning the public repository::
+Obtain a copy of the source by cloning the public repository::
 
-    git clone git@bitbucket.org:ftrack/ftrack-javascript-api.git
+    git clone git@github.com:ftrackhq/javascript-api.git
 
 Then you can build the package ::
 
@@ -79,7 +77,7 @@ To build the documentation from source::
 
 Then view in your browser::
 
-    file:///path/to/ftrack-javascript-api/build/doc/html/index.html
+    file:///path/to/@ftrack/api/build/doc/html/index.html
 
 Dependencies building docs
 --------------------------
