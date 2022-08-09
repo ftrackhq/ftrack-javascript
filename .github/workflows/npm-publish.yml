@@ -23,6 +23,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
           scope: "@ftrack"
       - run: yarn install --immutable
-      - run: yarn publish --access public
+      run: yarn npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

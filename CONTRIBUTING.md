@@ -1,6 +1,6 @@
 # Contributing to @ftrack/api
 
-Thank you for wanting to contribute to our Javascript API!
+Thank you for wanting to contribute to our JavaScript API!
 
 Please clone this repository, and follow these instructions to make sure you are in a clean spot before coding:
 
