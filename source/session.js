@@ -799,14 +799,18 @@ export class Session {
   /**
    * Create component from *file* and add to server location.
    *
-   * @param  {File} The file object to upload.
+   * @param  {Blob} The file object to upload.
    * @param {?object} [options = {}] - Options
+   * @param {?string} options.name - Component name. Defaults get from file object.
    * @param {?number} options.data - Component data. Defaults to {}.
    * @return {Promise} Promise resolved with the response when creating
    * Component and ComponentLocation.
    */
   createComponent(file, options = {}) {
-    const normalizedFileName = normalizeString(file.name);
+    const normalizedFileName = normalizeString(options.name ?? file.name);
+    if (!normalizedFileName) {
+      throw new CreateComponentError("Component name is missing.");
+    }
     const fileNameParts = splitFileExtension(normalizedFileName);
     const defaultProgress = (progress) => progress;
     const defaultAbort = () => {};
