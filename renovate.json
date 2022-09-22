@@ -8,6 +8,6 @@
   ],
   "rangeStrategy": "update-lockfile",
   "schedule": [
-    "every 3 months on the first day of the month"
+    "every month on the first day of the month"
   ]
 }
