@@ -127,7 +127,7 @@ export class Session {
     data: Data,
     identifyingKeys?: string[]
   ): Promise<Response<T>>;
-  createComponent<T>(file: File, options: Data): Promise<Response<T>>;
+  createComponent<T>(file: Blob, options: Data): Promise<Response<T>>;
 
   getSchema(entityType: string): Data;
   getComponentUrl(componentId: string | null): string | null;
