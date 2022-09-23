@@ -829,9 +829,13 @@ export class Session {
     let headers;
 
     const updateOnProgressCallback = (oEvent) => {
+      let progress = 0;
+
       if (oEvent.lengthComputable) {
-        onProgress(parseInt((oEvent.loaded / oEvent.total) * 100, 10));
+        progress = parseInt((oEvent.loaded / oEvent.total) * 100, 10);
       }
+
+      onProgress(progress);
     };
 
     logger.debug("Registering component and fetching upload metadata.");

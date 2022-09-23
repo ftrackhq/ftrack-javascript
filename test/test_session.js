@@ -295,12 +295,11 @@ describe("Session", () => {
 
   it("Should support uploading files", (done) => {
     const data = { foo: "bar" };
-    const blob = new Blob([JSON.stringify(data)], {
+    const file = new File([JSON.stringify(data)], "data.json", {
       type: "application/json",
     });
-    blob.name = "data.json";
 
-    const promise = session.createComponent(blob);
+    const promise = session.createComponent(file);
     promise
       .then((response) => {
         response[0].data.__entity_type__.should.equal("FileComponent");
@@ -313,12 +312,23 @@ describe("Session", () => {
       .then(done);
   });
 
-  it.skip("Should support abort of uploading file", (done) => {
+  it("Should support uploading blob", () => {
     const data = { foo: "bar" };
     const blob = new Blob([JSON.stringify(data)], {
       type: "application/json",
     });
-    blob.name = "data.json";
+
+    return session.createComponent(blob, {
+      name: "data.json",
+    });
+  });
+
+  it("Should support abort of uploading file", (done) => {
+    const data = { foo: "bar" };
+    const blob = new Blob([JSON.stringify(data)], {
+      type: "application/json",
+    });
+
     const xhr = new XMLHttpRequest();
     const onAborted = () => {
       done();
@@ -326,6 +336,7 @@ describe("Session", () => {
 
     session.createComponent(blob, {
       xhr,
+      name: "data.json",
       onProgress: () => {
         xhr.abort();
       },
@@ -457,22 +468,19 @@ describe("Session", () => {
       .then(done);
   });
 
-  it.skip("Should support uploading files with custom component id", (done) => {
+  it("Should support uploading files with custom component id", async () => {
     const componentId = uuidV4();
     const data = { foo: "bar" };
     const blob = new Blob([JSON.stringify(data)], {
       type: "application/json",
     });
-    blob.name = "data.json";
 
-    const promise = session.createComponent(blob, {
+    const response = await session.createComponent(blob, {
+      name: "data.json",
       data: { id: componentId },
     });
-    promise
-      .then((response) => {
-        response[0].data.id.should.equal(componentId);
-      })
-      .then(done);
+
+    response[0].data.id.should.equal(componentId);
   });
 
   it("Should support generating thumbnail URL with + in username", () => {
