@@ -1,6 +1,7 @@
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import fs from "fs/promises";
+import { pick } from "lodash";
 import querySchemas from "./fixtures/query_schemas.json";
 import queryServerInformation from "./fixtures/query_server_information.json";
 import getUploadMetadata from "./fixtures/get_upload_metadata.json";
@@ -27,55 +28,68 @@ const handlers = [
       );
     }
     const body = await Promise.all(
-      req.body.map(async ({ action, expression, entity_type: entityType }) => {
-        switch (action) {
-          case "query_server_information":
-            return queryServerInformation;
-          case "query_schemas":
-            return querySchemas;
-          case "create":
-            // create are fetched from test/fixtures where the file name matches the full expression
-            return JSON.parse(
-              await fs.readFile(
+      req.body.map(
+        async ({
+          action,
+          expression,
+          entity_type: entityType,
+          entity_data: entityData,
+        }) => {
+          switch (action) {
+            case "query_server_information":
+              return queryServerInformation;
+            case "query_schemas":
+              return querySchemas;
+            case "create":
+              // create are fetched from test/fixtures where the file name matches the full expression
+              const createFixture = await fs.readFile(
                 `${__dirname}/fixtures/create_${entityType.toLowerCase()}.json`,
                 {
                   encoding: "utf-8",
                 }
-              )
-            );
-          case "delete":
-            return {
-              action: "delete",
-              data: true,
-            };
-          case "update":
-            // update are fetched from test/fixtures where the file name matches the full expression
-            return JSON.parse(
-              await fs.readFile(
-                `${__dirname}/fixtures/update_${entityType.toLowerCase()}.json`,
-                {
-                  encoding: "utf-8",
-                }
-              )
-            );
-          case "query":
-            // queries are fetched from test/fixtures where the file name matches the full expression
-            return JSON.parse(
-              await fs.readFile(
-                `${__dirname}/fixtures/query_${expression
-                  .toLowerCase()
-                  .split(" ")
-                  .join("_")}.json`,
-                { encoding: "utf-8" }
-              )
-            );
-          case "get_upload_metadata":
-            return getUploadMetadata;
+              );
+              const response = JSON.parse(createFixture);
+              return {
+                ...response,
+                data: {
+                  ...response.data,
+                  ...pick(entityData, ["id"]),
+                },
+              };
+            case "delete":
+              return {
+                action: "delete",
+                data: true,
+              };
+            case "update":
+              // update are fetched from test/fixtures where the file name matches the full expression
+              return JSON.parse(
+                await fs.readFile(
+                  `${__dirname}/fixtures/update_${entityType.toLowerCase()}.json`,
+                  {
+                    encoding: "utf-8",
+                  }
+                )
+              );
+            case "query":
+              // queries are fetched from test/fixtures where the file name matches the full expression
+              return JSON.parse(
+                await fs.readFile(
+                  `${__dirname}/fixtures/query_${expression
+                    .toLowerCase()
+                    .split(" ")
+                    .join("_")}.json`,
+                  { encoding: "utf-8" }
+                )
+              );
+            case "get_upload_metadata":
+              return getUploadMetadata;
 
-          default:
-            throw new Error("Action not supported by test server.");
+            default:
+              throw new Error("Action not supported by test server.");
+          }
         }
-      })
+      )
     );
     return res(ctx.json(body));
   }),
