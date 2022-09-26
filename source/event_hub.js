@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-import io from "./socket.io-websocket-only";
+import io from "./socket.io-websocket-only.cjs";
 import Event from "./event";
 import {
   EventServerConnectionTimeoutError,

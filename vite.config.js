@@ -26,4 +26,12 @@ module.exports = defineConfig({
       plugins: [commonjs({ include: "./source/socket.io-websocket-only.cjs" })],
     },
   },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./vitest.setup.js"],
+    deps: {
+      fallbackCJS: true,
+    },
+  },
 });

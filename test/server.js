@@ -91,6 +91,4 @@ const handlers = [
   }),
 ];
 
-const server = setupServer(...handlers);
-
-export { server, rest };
+export { handlers };
