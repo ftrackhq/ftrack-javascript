@@ -4,18 +4,30 @@ import { handlers } from "./test/server";
 
 const server = setupServer(...handlers);
 
-global.fetch = fetch;
-// Start server before all tests
+// Very simple mock of XmlHttpRequest with only the parts we use
+class MockXmlHttpRequest {
+  open() {}
+  send() {
+    this.upload.dispatchEvent(new Event("progress"));
+    this.onload();
+  }
+  abort() {
+    this.onabort();
+  }
+  setRequestHeader() {}
+  upload = new EventTarget();
+}
+
 beforeAll(() => {
   server.listen({ onUnhandledRequest: "error" });
+  global.fetch = fetch;
+  global.XMLHttpRequest = MockXmlHttpRequest;
 });
 
-//  Close server after all tests
 afterAll(() => {
   server.close();
 });
 
-// Reset handlers after each test `important for test isolation`
 afterEach(() => {
   server.resetHandlers();
 });

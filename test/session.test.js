@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
-import { beforeAll, afterAll, vi } from "vitest";
+import { beforeAll } from "vitest";
 
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
@@ -11,7 +11,6 @@ import {
 } from "../source/error";
 import { Session } from "../source/session";
 import operation from "../source/operation";
-import { server } from "./server";
 import { expect } from "chai";
 
 const logger = loglevel.getLogger("test_session");
@@ -258,28 +257,35 @@ describe("Session", () => {
     expect(versionNumber).toEqual(versionNumber2);
   });
 
-  it.skip("Should support uploading files", async () => {
+  it("Should support uploading files", async () => {
     const data = { foo: "bar" };
-    const blob = new Blob([JSON.stringify(data)], {
+    const file = new File([JSON.stringify(data)], "data.json", {
       type: "application/json",
     });
-    blob.name = "data.json";
 
-    const response = await session.createComponent(blob);
+    const response = await session.createComponent(file);
     expect(response[0].data.__entity_type__).toEqual("FileComponent");
     expect(response[0].data.file_type).toEqual(".json");
     expect(response[0].data.name).toEqual("data");
-
-    // TODO: Read file back and verify the data. This is currently not
-    // possible due to being a cors request.
   });
 
-  it.skip("Should support abort of uploading file", async () => {
+  it("Should support uploading blob", () => {
     const data = { foo: "bar" };
     const blob = new Blob([JSON.stringify(data)], {
       type: "application/json",
     });
-    blob.name = "data.json";
+
+    return session.createComponent(blob, {
+      name: "data.json",
+    });
+  });
+
+  it("Should support abort of uploading file", async () => {
+    const data = { foo: "bar" };
+    const blob = new Blob([JSON.stringify(data)], {
+      type: "application/json",
+    });
+
     const xhr = new XMLHttpRequest();
     const promise = new Promise((resolve) => {
       const onAborted = () => {
@@ -288,13 +294,14 @@ describe("Session", () => {
 
       session.createComponent(blob, {
         xhr,
+        name: "data.json",
         onProgress: () => {
           xhr.abort();
         },
         onAborted,
       });
     });
-    expect(promise).resolves.toBeTruthy();
+    await expect(promise).resolves.toEqual(true);
   });
 
   it.skip("Should support ensure with create", async () => {
@@ -409,22 +416,19 @@ describe("Session", () => {
       .then(done);
   });
 
-  it.skip("Should support uploading files with custom component id", async (done) => {
+  it("Should support uploading files with custom component id", async () => {
     const componentId = uuidV4();
     const data = { foo: "bar" };
     const blob = new Blob([JSON.stringify(data)], {
       type: "application/json",
     });
-    blob.name = "data.json";
 
-    const promise = session.createComponent(blob, {
+    const response = await session.createComponent(blob, {
+      name: "data.json",
       data: { id: componentId },
     });
-    promise
-      .then((response) => {
-        response[0].data.id.should.equal(componentId);
-      })
-      .then(done);
+
+    expect(response[0].data.id).toEqual(componentId);
   });
 
   it("Should support generating thumbnail URL with + in username", () => {
