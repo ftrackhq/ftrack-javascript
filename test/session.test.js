@@ -1,4 +1,4 @@
-// :copyright: Copyright (c) 2016 ftrack
+// :copyright: Copyright (c) 2022 ftrack
 import { beforeAll } from "vitest";
 
 import { v4 as uuidV4 } from "uuid";

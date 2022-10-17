@@ -1,3 +1,4 @@
+// :copyright: Copyright (c) 2022 ftrack
 import { rest } from "msw";
 import fs from "fs/promises";
 import { pick } from "lodash";
