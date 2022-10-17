@@ -1,5 +1,5 @@
+// :copyright: Copyright (c) 2022 ftrack
 import { rest } from "msw";
-import { setupServer } from "msw/node";
 import fs from "fs/promises";
 import { pick } from "lodash";
 import querySchemas from "./fixtures/query_schemas.json";
@@ -105,6 +105,4 @@ const handlers = [
   }),
 ];
 
-const server = setupServer(...handlers);
-
-export { server, rest };
+export { handlers };
