@@ -1,7 +1,7 @@
 {
   "action": "update",
   "data": {
-    "username": "3e21c60e-33ac-4242-aaf8-b04a089821c7",
+    "username": "testName-3e21c60e-33ac-4242-aaf8-b04a089821c7",
     "__entity_type__": "User",
     "id": "8b0cabd6-2b93-4a6e-9aff-e163bea8844e",
     "resource_type": "user"
