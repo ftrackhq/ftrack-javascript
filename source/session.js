@@ -1,10 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
-
-import forIn from "lodash/forIn";
-import isArray from "lodash/isArray";
-import isString from "lodash/isString";
-import isPlainObject from "lodash/isPlainObject";
-import find from "lodash/find";
+import {isPlainObject} from "lodash-es";
 import moment from "moment";
 import loglevel from "loglevel";
 import { v4 as uuidV4 } from "uuid";
@@ -189,7 +184,7 @@ export class Session {
    * @return {Array|null} List of primary key attributes.
    */
   getPrimaryKeyAttributes(entityType) {
-    const schema = find(this.schemas, (item) => item.id === entityType);
+    const schema = this.schemas.find((item) => item.id === entityType);
     if (!schema || !schema.primary_key) {
       logger.warn("Primary key could not be found for: ", entityType);
       return null;
@@ -231,9 +226,11 @@ export class Session {
 
     if (data && data.constructor === Object) {
       const out = {};
-      forIn(data, (value, key) => {
-        out[key] = this.encode(value);
-      });
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          out[key] = this.encode(data[key]);
+        }
+      }
 
       return out;
     }
@@ -304,10 +301,11 @@ export class Session {
    * @param  {*} data  The data to decode.
    * @return {*}      Decoded data
    */
+
   decode(data, identityMap = {}) {
     if (data == null) {
       return data;
-    } else if (isArray(data)) {
+    } else if (Array.isArray(data)) {
       return this._decodeArray(data, identityMap);
     } else if (isPlainObject(data)) {
       if (data.__entity_type__) {
@@ -382,11 +380,12 @@ export class Session {
     // TODO: Should we duplicate the information between the instances
     // instead of pointing them to the same instance?
     const mergedEntity = identityMap[identifier];
-
-    forIn(entity, (value, key) => {
-      mergedEntity[key] = this.decode(value, identityMap);
-    });
-
+    
+    for (const key in entity) {
+      if (entity.hasOwnProperty(key)) {
+        mergedEntity[key] = this.decode(entity[key], identityMap);
+      }
+    }
     return mergedEntity;
   }
 
@@ -546,7 +545,7 @@ export class Session {
     const criteria = keys.map((identifyingKey) => {
       let value = data[identifyingKey];
 
-      if (isString(value)) {
+      if (value != null && typeof value.valueOf() === "string") {
         value = `"${value}"`;
       } else if (value && value._isAMomentObject) {
         // Server does not store microsecond or timezone currently so
