@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2022 ftrack
 import { rest } from "msw";
 import fs from "fs/promises";
-import { pick } from "lodash";
 import querySchemas from "./fixtures/query_schemas.json";
 import queryServerInformation from "./fixtures/query_server_information.json";
 import getUploadMetadata from "./fixtures/get_upload_metadata.json";
@@ -14,7 +13,14 @@ function authenticate(req) {
   }
   return true;
 }
-
+function pick(object, keys) {
+  return keys.reduce((obj, key) => {
+    if (object && object.hasOwnProperty(key)) {
+      obj[key] = object[key];
+    }
+    return obj;
+  }, {});
+}
 const handlers = [
   rest.post("http://ftrack.test/api", async (req, res, ctx) => {
     if (!authenticate(req)) {

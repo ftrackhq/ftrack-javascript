@@ -1,5 +1,4 @@
 // :copyright: Copyright (c) 2016 ftrack
-import {isPlainObject} from "lodash-es";
 import moment from "moment";
 import loglevel from "loglevel";
 import { v4 as uuidV4 } from "uuid";
@@ -303,15 +302,14 @@ export class Session {
    */
 
   decode(data, identityMap = {}) {
-    if (data == null) {
-      return data;
-    } else if (Array.isArray(data)) {
+    if (Array.isArray(data)) {
       return this._decodeArray(data, identityMap);
     }
     if (typeof data === "object" && data?.constructor === Object) {
       if (data.__entity_type__) {
         return this._mergeEntity(data, identityMap);
-      } else if (data.__type__ === "datetime") {
+      }
+      if (data.__type__ === "datetime") {
         return this._decodeDateTime(data);
       }
       return this._decodePlainObject(data, identityMap);
@@ -381,7 +379,7 @@ export class Session {
     // TODO: Should we duplicate the information between the instances
     // instead of pointing them to the same instance?
     const mergedEntity = identityMap[identifier];
-    
+
     for (const key in entity) {
       if (entity.hasOwnProperty(key)) {
         mergedEntity[key] = this.decode(entity[key], identityMap);
