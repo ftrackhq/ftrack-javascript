@@ -307,7 +307,8 @@ export class Session {
       return data;
     } else if (Array.isArray(data)) {
       return this._decodeArray(data, identityMap);
-    } else if (isPlainObject(data)) {
+    }
+    if (typeof data === "object" && data?.constructor === Object) {
       if (data.__entity_type__) {
         return this._mergeEntity(data, identityMap);
       } else if (data.__type__ === "datetime") {
