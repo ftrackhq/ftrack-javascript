@@ -1,0 +1,14 @@
+name: CD
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  cd:
+    name: Publish to NPM
+    uses: ftrackhq/ftrack-actions/.github/workflows/publish-npm.yml@main
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
+      npmToken: ${{ secrets.NPM_TOKEN }}
