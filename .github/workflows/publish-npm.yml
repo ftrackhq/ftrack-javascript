@@ -12,3 +12,4 @@ jobs:
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NPM_TOKEN }}
+      packageUrl: https://www.npmjs.com/package/@ftrack/api
