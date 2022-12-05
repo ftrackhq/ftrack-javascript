@@ -6697,8 +6697,8 @@ __metadata:
   linkType: hard
 
 "vitest@npm:^0.25.1":
-  version: 0.25.1
-  resolution: "vitest@npm:0.25.1"
+  version: 0.25.3
+  resolution: "vitest@npm:0.25.3"
   dependencies:
     "@types/chai": ^4.3.3
     "@types/chai-subset": ^1.3.3
@@ -6733,7 +6733,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 9f0bfc8a55fe71722a63c4c85d6d41a1ac08b2d5fb6bfeafbed4af1364e53e7a94d6768aa49c4c5940d863726a6a06f11ff9da05de40ef8a1bc2236e209246a9
+  checksum: cd54de758f41295ef8a5304318b0de37f3182ec9b179d983cb0199dac89d51b80ee30124754703ef77ce4a1b675f3b02094ef96790889d5c9212dbab7490b4d0
   languageName: node
   linkType: hard
 
