@@ -1,6 +1,5 @@
 {
   "name": "@ftrack/api",
-  "version": "1.0.0",
   "description": "JavaScript API for ftrack.",
   "scripts": {
     "lint": "eslint . && prettier -c .",
