@@ -9,7 +9,8 @@ jobs:
   cd:
     name: Publish to NPM
     uses: ftrackhq/ftrack-actions/.github/workflows/publish-npm.yml@main
+    with:
+      packageUrl: https://www.npmjs.com/package/@ftrack/api
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
       npmToken: ${{ secrets.NPM_TOKEN }}
-      packageUrl: https://www.npmjs.com/package/@ftrack/api
