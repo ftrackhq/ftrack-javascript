@@ -1776,6 +1776,7 @@ __metadata:
   resolution: "@ftrack/api@workspace:."
   dependencies:
     "@rollup/plugin-commonjs": ^24.0.1
+    "@types/uuid": ^9.0.0
     cross-fetch: ^3.1.5
     eslint: ^8.33.0
     eslint-config-react-app: ^7.0.1
@@ -2227,6 +2228,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: c31bf04eb9620829dc3c91bced74ac934ad039d20d20893fb5acac0f08769cbd4eef3bf7502a0289c7be59c3e9cfa456147b4e88bff47dd1b9efb4995ba5d5a3
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@types/uuid@npm:9.0.0"
+  checksum: 59ae56d9547c8758588659da2a2b4c97cce79c2aae1798c892bb29452ef08e87859dea2ec3a66bfa88d0d2153147520be2b1893be920f9f0bc9c53a3207ea6aa
   languageName: node
   linkType: hard
 
