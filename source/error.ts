@@ -1,8 +1,4 @@
 // :copyright: Copyright (c) 2016 ftrack
-/**
- * Error namespace
- * @namespace error
- */
 
 /**
  *
@@ -12,15 +8,16 @@
  * @param  {string} name name of error class
  * @return {CustomError}      Custom error object
  */
-function errorFactory(name) {
-  function CustomError(message, errorCode) {
-    this.name = name;
-    this.message = message;
-    this.errorCode = errorCode;
-    this.stack = new Error().stack;
-  }
+function errorFactory(name: string) {
+  class CustomError extends Error {
+    errorCode: any;
 
-  CustomError.prototype = new Error();
+    constructor(message: string, errorCode?: number | string) {
+      super(message);
+      this.name = name;
+      this.errorCode = errorCode;
+    }
+  }
 
   return CustomError;
 }
