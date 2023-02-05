@@ -4,6 +4,8 @@
  * @namespace operation
  */
 
+export interface Operation {}
+
 /**
  * Return create operation object for entity *type* and *data*.
  *
@@ -13,10 +15,12 @@
  * @param  {Object} data Entity data to use for creation
  * @return {Object}      API operation
  */
-export function createOperation(type, data) {
-  const operation = { action: "create", entity_type: type };
-  operation.entity_data = Object.assign({}, data, { __entity_type__: type });
-  return operation;
+export function createOperation(type: string, data: any) {
+  return {
+    action: "create",
+    entity_type: type,
+    entity_data: { ...data, __entity_type__: type },
+  };
 }
 
 /**
@@ -27,8 +31,16 @@ export function createOperation(type, data) {
  * @param  {string} expression API query expression
  * @return {Object}            API operation
  */
-export function queryOperation(expression) {
+export function queryOperation(expression: string) {
   return { action: "query", expression };
+}
+
+export interface SearchOperationOptions {
+  expression?: string;
+  entityType?: string;
+  terms?: string[];
+  contextId?: string;
+  objectTypeIds?: string[];
 }
 
 /**
@@ -45,7 +57,7 @@ export function searchOperation({
   terms,
   contextId,
   objectTypeIds,
-}) {
+}: SearchOperationOptions) {
   return {
     action: "search",
     expression,
@@ -66,14 +78,13 @@ export function searchOperation({
  * @param  {Object} data values to update
  * @return {Object}      API operation
  */
-export function updateOperation(type, keys, data) {
-  const operation = {
+export function updateOperation(type: string, keys: string[], data: any) {
+  return {
     action: "update",
     entity_type: type,
     entity_key: keys,
+    entity_data: { ...data, __entity_type__: type },
   };
-  operation.entity_data = Object.assign({}, data, { __entity_type__: type });
-  return operation;
 }
 
 /**
@@ -85,13 +96,12 @@ export function updateOperation(type, keys, data) {
  * @param  {Array} keys Identifying keys, typically [<entity id>]
  * @return {Object}      API operation
  */
-export function deleteOperation(type, keys) {
-  const operation = {
+export function deleteOperation(type: string, keys: string[]) {
+  return {
     action: "delete",
     entity_type: type,
     entity_key: keys,
   };
-  return operation;
 }
 
 const exports = {
