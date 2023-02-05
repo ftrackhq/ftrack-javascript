@@ -10,6 +10,7 @@ import {
   updateOperation,
   deleteOperation,
   searchOperation,
+  Operation,
 } from "./operation";
 import {
   ServerPermissionDeniedError,
@@ -33,7 +34,7 @@ const ENCODE_DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
  * @param  {fileName} The name of the file.
  * @return {array} Array with [basename, extension] from filename.
  */
-function splitFileExtension(fileName) {
+function splitFileExtension(fileName: string) {
   let basename = fileName || "";
   let extension =
     fileName.slice((Math.max(0, fileName.lastIndexOf(".")) || Infinity) + 1) ||
@@ -47,12 +48,76 @@ function splitFileExtension(fileName) {
   return [basename, extension];
 }
 
+export interface EventHubOptions {
+  applicationId?: string;
+}
+
+export interface SessionOptions {
+  autoConnectEventHub?: boolean;
+  serverInformationValues?: string[];
+  eventHubOptions?: EventHubOptions;
+  clientToken?: string;
+  apiEndpoint?: string;
+}
+
+export interface CreateComponentOptions {
+  name?: any;
+  data?: Data;
+  onProgress?: (progress: any) => any;
+  xhr?: XMLHttpRequest;
+  onAborted?: () => void;
+}
+
+export interface Entity {
+  id: string;
+  __entity_type__: string;
+}
+
+export interface SearchOptions {
+  expression: string;
+  entityType: string;
+  terms?: string[];
+  contextId?: string;
+  objectTypeIds?: string[];
+}
+
+export interface QueryOptions {
+  abortController?: AbortController;
+}
+
+export type Data = Record<string, any>;
+
+export interface Response<T> {
+  url: any;
+  headers: any;
+  action: string;
+  metadata: Data;
+  data: T;
+}
+
+export interface CallOptions {
+  abortController?: AbortController;
+  pushToken?: string;
+}
+
 /**
  * ftrack API session
  * @class  Session
  *
  */
 export class Session {
+  apiUser: string;
+  apiKey: string;
+  serverUrl: string;
+  apiEndpoint: string;
+  eventHub: EventHub;
+  clientToken: string | null;
+  initialized: boolean;
+  initializing: Promise<Session>;
+  serverInformation?: Data;
+  schemas?: Data;
+  serverVersion?: string;
+
   /**
    * Construct Session instance with API credentials.
    *
@@ -69,16 +134,16 @@ export class Session {
    * @constructs Session
    */
   constructor(
-    serverUrl,
-    apiUser,
-    apiKey,
+    serverUrl: string,
+    apiUser: string,
+    apiKey: string,
     {
       autoConnectEventHub = false,
-      serverInformationValues = null,
+      serverInformationValues,
       eventHubOptions = {},
-      clientToken = null,
+      clientToken,
       apiEndpoint = "/api",
-    } = {}
+    }: SessionOptions = {}
   ) {
     if (!serverUrl || !apiUser || !apiKey) {
       throw new Error(
@@ -182,8 +247,12 @@ export class Session {
    *
    * @return {Array|null} List of primary key attributes.
    */
-  getPrimaryKeyAttributes(entityType) {
-    const schema = this.schemas.find((item) => item.id === entityType);
+  getPrimaryKeyAttributes(entityType: string) {
+    if (!this.schemas) {
+      logger.warn("Schemas not available.");
+      return null;
+    }
+    const schema = this.schemas.find((item: any) => item.id === entityType);
     if (!schema || !schema.primary_key) {
       logger.warn("Primary key could not be found for: ", entityType);
       return null;
@@ -196,12 +265,12 @@ export class Session {
    *
    * @return {String|null} Identifying key for *entity*
    */
-  getIdentifyingKey(entity) {
+  getIdentifyingKey(entity: Data) {
     const primaryKeys = this.getPrimaryKeyAttributes(entity.__entity_type__);
     if (primaryKeys) {
       return [
         entity.__entity_type__,
-        ...primaryKeys.map((attribute) => entity[attribute]),
+        ...primaryKeys.map((attribute: string) => entity[attribute]),
       ].join(",");
     }
     return null;
@@ -218,13 +287,13 @@ export class Session {
    * @param  {*} data  The data to encode.
    * @return {*}      Encoded data
    */
-  encode(data) {
+  private encode(data: any): any {
     if (data && data.constructor === Array) {
       return data.map((item) => this.encode(item));
     }
 
     if (data && data.constructor === Object) {
-      const out = {};
+      const out: Data = {};
       for (const key in data) {
         if (data.hasOwnProperty(key)) {
           out[key] = this.encode(data[key]);
@@ -264,7 +333,7 @@ export class Session {
    * @param  {*} response  A server error response object.
    * @return {*}      error instance.
    */
-  getErrorFromResponse(response) {
+  private getErrorFromResponse(response: any) {
     let ErrorClass;
 
     if (response.exception === "AbortError") {
@@ -301,7 +370,7 @@ export class Session {
    * @return {*}      Decoded data
    */
 
-  decode(data, identityMap = {}) {
+  private decode(data: any, identityMap = {}) {
     if (Array.isArray(data)) {
       return this._decodeArray(data, identityMap);
     }
@@ -325,7 +394,7 @@ export class Session {
    * will be assumed to be UTC and the moment will be in utc.
    * @private
    */
-  _decodeDateTime(data) {
+  private _decodeDateTime(data: any) {
     if (
       this.serverInformation &&
       this.serverInformation.is_timezone_support_enabled
@@ -342,8 +411,8 @@ export class Session {
    * Return new object where all values have been decoded.
    * @private
    */
-  _decodePlainObject(object, identityMap) {
-    return Object.keys(object).reduce((previous, key) => {
+  private _decodePlainObject(object: any, identityMap: any) {
+    return Object.keys(object).reduce<any>((previous, key) => {
       previous[key] = this.decode(object[key], identityMap);
       return previous;
     }, {});
@@ -353,15 +422,15 @@ export class Session {
    * Return new Array where all items have been decoded.
    * @private
    */
-  _decodeArray(collection, identityMap) {
-    return collection.map((item) => this.decode(item, identityMap));
+  private _decodeArray(collection: any, identityMap: any) {
+    return collection.map((item: any) => this.decode(item, identityMap));
   }
 
   /**
    * Return merged *entity* using *identityMap*.
    * @private
    */
-  _mergeEntity(entity, identityMap) {
+  private _mergeEntity(entity: Data, identityMap: any) {
     const identifier = this.getIdentifyingKey(entity);
     if (!identifier) {
       logger.warn("Identifier could not be determined for: ", identifier);
@@ -389,7 +458,7 @@ export class Session {
   }
 
   /** Return encoded *operations*. */
-  encodeOperations(operations) {
+  encodeOperations(operations: Operation[]) {
     return JSON.stringify(this.encode(operations));
   }
 
@@ -414,12 +483,15 @@ export class Session {
    * @param {string} options.pushToken - push token to associate with the request
    *
    */
-  call(operations, { abortController, pushToken } = {}) {
+  call(
+    operations: Operation[],
+    { abortController, pushToken }: CallOptions = {}
+  ): Promise<Response<any>[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
     // Delay call until session is initialized if initialization is in
     // progress.
-    let request = new Promise((resolve) => {
+    let request = new Promise<void>((resolve) => {
       if (this.initializing && !this.initialized) {
         this.initializing.then(() => {
           resolve();
@@ -427,43 +499,42 @@ export class Session {
       } else {
         resolve();
       }
-    });
-
-    request = request.then(() =>
-      fetch(url, {
-        method: "post",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "ftrack-api-key": this.apiKey,
-          "ftrack-user": this.apiUser,
-          "ftrack-Clienttoken": this.clientToken,
-          "ftrack-pushtoken": pushToken,
-        },
-        body: this.encodeOperations(operations),
-        signal: abortController && abortController.signal,
-      })
-    );
-
-    // Catch network errors
-    request = request.catch((reason) => {
-      logger.warn("Failed to perform request. ", reason);
-      if (reason.name === "AbortError") {
+    })
+      .then(() =>
+        fetch(url, {
+          method: "post",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "ftrack-api-key": this.apiKey,
+            "ftrack-user": this.apiUser,
+            "ftrack-Clienttoken": this.clientToken,
+            "ftrack-pushtoken": pushToken,
+          } as HeadersInit,
+          body: this.encodeOperations(operations),
+          signal: abortController && abortController.signal,
+        })
+      )
+      .catch((reason) => {
+        logger.warn("Failed to perform request. ", reason);
+        if (reason.name === "AbortError") {
+          return Promise.resolve({
+            exception: "AbortError",
+            content: reason.message,
+          });
+        }
         return Promise.resolve({
-          exception: "AbortError",
+          exception: "NetworkError",
           content: reason.message,
         });
-      }
-      return Promise.resolve({
-        exception: "NetworkError",
-        content: reason.message,
+      })
+      .then((response) => {
+        if (response instanceof Response) {
+          return (response.json && response.json()) || response;
+        }
+        return response;
       });
-    });
-
-    request = request.then(
-      (response) => (response.json && response.json()) || response
-    );
 
     request = request.then((data) => {
       if (this.initialized) {
@@ -515,7 +586,11 @@ export class Session {
    *
    *   Return update or create promise.
    */
-  ensure(entityType, data, identifyingKeys = []) {
+  ensure<T extends Entity>(
+    entityType: string,
+    data: Data,
+    identifyingKeys: string[] = []
+  ): Promise<Response<T>> {
     let keys = identifyingKeys;
 
     logger.info(
@@ -586,8 +661,8 @@ export class Session {
       if (updated) {
         return this.update(
           entityType,
-          primaryKeys.map((key) => updateEntity[key]),
-          Object.keys(data).reduce((accumulator, key) => {
+          primaryKeys.map((key: string) => updateEntity[key]),
+          Object.keys(data).reduce<Data>((accumulator, key) => {
             if (primaryKeys.indexOf(key) === -1) {
               accumulator[key] = data[key];
             }
@@ -605,7 +680,7 @@ export class Session {
    * @param  {string} schemaId Id of schema model, e.g. `AssetVersion`.
    * @return {Object|null} Schema definition
    */
-  getSchema(schemaId) {
+  getSchema(schemaId: string): Data | null {
     for (const index in this.schemas) {
       if (this.schemas[index].id === schemaId) {
         return this.schemas[index];
@@ -624,15 +699,16 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
-  query(expression, { abortController } = {}) {
+  query(expression: string, { abortController }: QueryOptions = {}) {
     logger.debug("Query", expression);
 
     const operation = queryOperation(expression);
-    let request = this.call([operation], abortController);
-    request = request.then((responses) => {
-      const response = responses[0];
-      return response;
-    });
+    let request = this.call([operation], { abortController }).then(
+      (responses) => {
+        const response = responses[0];
+        return response;
+      }
+    );
 
     return request;
   }
@@ -652,8 +728,14 @@ export class Session {
    * containing data and metadata
    */
   search(
-    { expression, entityType, terms = [], contextId, objectTypeIds },
-    { abortController } = {}
+    {
+      expression,
+      entityType,
+      terms = [],
+      contextId,
+      objectTypeIds,
+    }: SearchOptions,
+    { abortController }: CallOptions = {}
   ) {
     logger.debug("Search", {
       expression,
@@ -670,11 +752,12 @@ export class Session {
       contextId,
       objectTypeIds,
     });
-    let request = this.call([operation], abortController);
-    request = request.then((responses) => {
-      const response = responses[0];
-      return response;
-    });
+    let request = this.call([operation], { abortController }).then(
+      (responses) => {
+        const response = responses[0];
+        return response;
+      }
+    );
 
     return request;
   }
@@ -682,17 +765,18 @@ export class Session {
   /**
    * Perform a single create operation with *type* and *data*.
    *
-   * @param {string} type entity type name.
+   * @param {string} entityType entity type name.
    * @param {Object} data data which should be used to populate attributes on the entity.
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @return {Promise} Promise which will be resolved with the response.
    */
-  create(type, data, { pushToken } = {}) {
-    logger.debug("Create", type, data, pushToken);
+  create(entityType: string, data: Data, { pushToken }: CallOptions = {}) {
+    logger.debug("Create", entityType, data, pushToken);
 
-    let request = this.call([createOperation(type, data)], { pushToken });
-    request = request.then((responses) => {
+    let request = this.call([createOperation(entityType, data)], {
+      pushToken,
+    }).then((responses) => {
       const response = responses[0];
       return response;
     });
@@ -710,11 +794,17 @@ export class Session {
    * @param {string} options.pushToken - push token to associate with the request
    * @return {Promise} Promise resolved with the response.
    */
-  update(type, keys, data, { pushToken } = {}) {
+  update(
+    type: string,
+    keys: string[],
+    data: Data,
+    { pushToken }: CallOptions = {}
+  ) {
     logger.debug("Update", type, keys, data, pushToken);
 
-    let request = this.call([updateOperation(type, keys, data)], { pushToken });
-    request = request.then((responses) => {
+    const request = this.call([updateOperation(type, keys, data)], {
+      pushToken,
+    }).then((responses) => {
       const response = responses[0];
       return response;
     });
@@ -731,14 +821,15 @@ export class Session {
    * @param {string} options.pushToken - push token to associate with the request
    * @return {Promise} Promise resolved with the response.
    */
-  delete(type, id, { pushToken } = {}) {
-    logger.debug("Delete", type, id, pushToken);
+  delete(type: string, keys: string[], { pushToken }: CallOptions = {}) {
+    logger.debug("Delete", type, keys, pushToken);
 
-    let request = this.call([deleteOperation(type, id)], { pushToken });
-    request = request.then((responses) => {
-      const response = responses[0];
-      return response;
-    });
+    let request = this.call([deleteOperation(type, keys)], { pushToken }).then(
+      (responses) => {
+        const response = responses[0];
+        return response;
+      }
+    );
 
     return request;
   }
@@ -751,7 +842,7 @@ export class Session {
    * @return {String|null} URL where *componentId* can be downloaded, null
    *                       if component id is not specified.
    */
-  getComponentUrl(componentId) {
+  getComponentUrl(componentId: string) {
     if (!componentId) {
       return null;
     }
@@ -777,7 +868,7 @@ export class Session {
    *                  URL to a default thumbnail if component id is not
    *                  specified.
    */
-  thumbnailUrl(componentId, { size = 300 } = {}) {
+  thumbnailUrl(componentId: string, { size = 300 } = {}) {
     if (!componentId) {
       return `${this.serverUrl}/img/thumbnail2.png`;
     }
@@ -797,20 +888,25 @@ export class Session {
   /**
    * Create component from *file* and add to server location.
    *
-   * @param  {Blob} The file object to upload.
+   * @param  {Blob} - The file object to upload.
    * @param {?object} [options = {}] - Options
    * @param {?string} options.name - Component name. Defaults get from file object.
    * @param {?number} options.data - Component data. Defaults to {}.
    * @return {Promise} Promise resolved with the response when creating
    * Component and ComponentLocation.
    */
-  createComponent(file, options = {}) {
-    const normalizedFileName = normalizeString(options.name ?? file.name);
+  createComponent(
+    file: Blob,
+    options: CreateComponentOptions = {}
+  ): Promise<Response<any>[]> {
+    const normalizedFileName = normalizeString(
+      options.name ?? (file instanceof File ? file.name : "component")
+    );
     if (!normalizedFileName) {
       throw new CreateComponentError("Component name is missing.");
     }
     const fileNameParts = splitFileExtension(normalizedFileName);
-    const defaultProgress = (progress) => progress;
+    const defaultProgress = (progress: number) => progress;
     const defaultAbort = () => {};
 
     const data = options.data || {};
@@ -823,14 +919,16 @@ export class Session {
     const fileSize = data.size || file.size;
     const componentId = data.id || uuidV4();
     const componentLocationId = uuidV4();
-    let url;
-    let headers;
+    let url: string;
+    let headers: Record<string, string> = {};
 
-    const updateOnProgressCallback = (oEvent) => {
+    const updateOnProgressCallback = (
+      oEvent: ProgressEvent<XMLHttpRequestEventTarget>
+    ) => {
       let progress = 0;
 
       if (oEvent.lengthComputable) {
-        progress = parseInt((oEvent.loaded / oEvent.total) * 100, 10);
+        progress = Math.round((oEvent.loaded / oEvent.total) * 100);
       }
 
       onProgress(progress);
