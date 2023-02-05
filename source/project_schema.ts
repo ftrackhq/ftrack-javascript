@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import operation from "./operation";
+import Session from "./session";
 
 /**
  * Project schema namespace
@@ -18,10 +19,10 @@ import operation from "./operation";
  * @memberof project_schema
  */
 export function getStatuses(
-  session,
-  projectSchemaId,
-  entityType,
-  typeId = null
+  session: Session,
+  projectSchemaId: string,
+  entityType: string,
+  typeId: string | null = null
 ) {
   let response;
 
@@ -78,24 +79,25 @@ export function getStatuses(
 
     let statuses = [];
     if (entityType === "Task") {
-      statuses = null;
+      let useTaskworkflowStatuses = true;
 
       if (typeId !== null && data._overrides.length > 0) {
         for (const index in data._overrides) {
           if (data._overrides[index].type_id === typeId) {
             statuses = data._overrides[index].workflow_schema.statuses;
+            useTaskworkflowStatuses = false;
             break;
           }
         }
       }
 
-      if (statuses === null) {
+      if (useTaskworkflowStatuses) {
         statuses = data._task_workflow.statuses;
       }
     } else if (entityType === "AssetVersion") {
       statuses = data._version_workflow.statuses;
     } else {
-      const schema = session.getSchema(entityType);
+      const schema = session.getSchema(entityType) as any;
 
       if (schema && schema.alias_for && schema.alias_for.id === "Task") {
         const objectTypeId = schema.alias_for.classifiers.object_typeid;
@@ -103,7 +105,7 @@ export function getStatuses(
         for (const index in data._schemas) {
           if (data._schemas[index].type_id === objectTypeId) {
             statuses = data._schemas[index].statuses.map(
-              (status) => status.task_status
+              (status: any) => status.task_status
             );
           }
         }
