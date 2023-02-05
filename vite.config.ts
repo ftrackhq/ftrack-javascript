@@ -1,13 +1,27 @@
-const path = require("path");
-const { defineConfig } = require("vite");
-const commonjs = require("@rollup/plugin-commonjs");
+import { defineConfig, UserConfig } from "vite";
+import { InlineConfig } from "vitest";
+import path from "path";
+import dts from "vite-plugin-dts";
+import commonjs from "@rollup/plugin-commonjs";
 
-module.exports = defineConfig({
+interface VitestConfigExport extends UserConfig {
+  test: InlineConfig;
+}
+
+export default defineConfig({
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./vitest.setup.js"],
+    deps: {
+      fallbackCJS: true,
+    },
+  },
   build: {
     minify: false,
     sourcemap: true,
     lib: {
-      entry: path.resolve(__dirname, "source/index.js"),
+      entry: path.resolve(__dirname, "source/index.ts"),
       name: "ftrack-javascript-api",
       fileName: (format) => `ftrack-javascript-api.${format}.js`,
     },
@@ -26,12 +40,5 @@ module.exports = defineConfig({
       plugins: [commonjs({ include: "./source/socket.io-websocket-only.cjs" })],
     },
   },
-  test: {
-    environment: "jsdom",
-    globals: true,
-    setupFiles: ["./vitest.setup.js"],
-    deps: {
-      fallbackCJS: true,
-    },
-  },
-});
+  plugins: [dts()],
+} as VitestConfigExport);
