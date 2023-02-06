@@ -22,20 +22,20 @@ export class Event {
    *
    * *data* should be an object with the event payload.
    */
-  constructor(topic: string, data: any, options: { [key: string]: any } = {}) {
-    this._data = Object.assign(
-      {
-        topic,
-        data,
-        target: "",
-        inReplyToEvent: null,
-      },
-      options,
-      {
-        id: uuidV4(),
-        sent: null,
-      }
-    );
+  constructor(
+    topic: string,
+    data: object,
+    options: { [key: string]: object } = {}
+  ) {
+    this._data = {
+      topic,
+      data,
+      target: "",
+      inReplyToEvent: null,
+      ...options,
+      id: uuidV4(),
+      sent: null,
+    };
   }
 
   /** Return event data. */
