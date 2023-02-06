@@ -9,7 +9,7 @@ export class Event {
     topic: string;
     data: object;
     target: string;
-    inReplyToEvent: Event | null;
+    inReplyToEvent: string | null;
     id: string;
     source?: any;
   };
