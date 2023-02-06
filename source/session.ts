@@ -209,7 +209,7 @@ export class Session {
       serverInformationValues.push("is_timezone_support_enabled");
     }
 
-    const operations = [
+    const operations: Operation[] = [
       {
         action: "query_server_information",
         values: serverInformationValues,
@@ -876,7 +876,7 @@ export class Session {
 
     const params = {
       id: componentId,
-      size,
+      size: String(size),
       username: this.apiUser,
       apiKey: this.apiKey,
     };
@@ -929,7 +929,7 @@ export class Session {
       let progress = 0;
 
       if (oEvent.lengthComputable) {
-        progress = Math.round((oEvent.loaded / oEvent.total) * 100);
+        progress = Math.floor((oEvent.loaded / oEvent.total) * 100);
       }
 
       onProgress(progress);
