@@ -4,7 +4,45 @@
  * @namespace operation
  */
 
-export interface Operation {}
+export interface CreateOperation {
+  action: "create";
+  entity_type: string;
+  entity_data: any;
+}
+
+export interface QueryOperation {
+  action: "query";
+  expression: string;
+}
+
+export interface SearchOperation {
+  action: "search";
+  expression?: string;
+  entity_type?: string;
+  terms?: string[];
+  context_id?: string;
+  object_type_ids?: string[];
+}
+
+export interface UpdateOperation {
+  action: "update";
+  entity_type: string;
+  entity_key: string[];
+  entity_data: any;
+}
+
+export interface DeleteOperation {
+  action: "delete";
+  entity_type: string;
+  entity_key: string[];
+}
+
+export type Operation =
+  | CreateOperation
+  | QueryOperation
+  | SearchOperation
+  | UpdateOperation
+  | DeleteOperation;
 
 /**
  * Return create operation object for entity *type* and *data*.
@@ -57,7 +95,7 @@ export function searchOperation({
   terms,
   contextId,
   objectTypeIds,
-}: SearchOperationOptions) {
+}: SearchOperationOptions): SearchOperation {
   return {
     action: "search",
     expression,
