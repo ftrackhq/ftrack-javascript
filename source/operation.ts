@@ -81,14 +81,6 @@ export function queryOperation(expression: string) {
   return { action: "query", expression };
 }
 
-export interface SearchOperationOptions {
-  expression?: string;
-  entityType?: string;
-  terms?: string[];
-  contextId?: string;
-  objectTypeIds?: string[];
-}
-
 /**
  * Return search operation object for *expression*.
  *
