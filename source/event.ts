@@ -7,11 +7,10 @@ import { v4 as uuidV4 } from "uuid";
 export class Event {
   private readonly _data: {
     topic: string;
-    data: any;
+    data: object;
     target: string;
     inReplyToEvent: Event | null;
     id: string;
-    sent: Date | null;
     source?: any;
   };
 
@@ -34,7 +33,6 @@ export class Event {
       inReplyToEvent: null,
       ...options,
       id: uuidV4(),
-      sent: null,
     };
   }
 
