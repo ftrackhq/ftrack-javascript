@@ -4,7 +4,53 @@
  * @namespace operation
  */
 
-export interface Operation {}
+export interface CreateOperation {
+  action: "create";
+  entity_type: string;
+  entity_data: any;
+}
+
+export interface QueryOperation {
+  action: "query";
+  expression: string;
+}
+
+export interface SearchOperationOptions {
+  expression?: string;
+  entityType?: string;
+  terms?: string[];
+  contextId?: string;
+  objectTypeIds?: string[];
+}
+
+export interface SearchOperation {
+  action: "search";
+  expression?: string;
+  entity_type?: string;
+  terms?: string[];
+  context_id?: string;
+  object_type_ids?: string[];
+}
+
+export interface UpdateOperation {
+  action: "update";
+  entity_type: string;
+  entity_key: string[];
+  entity_data: any;
+}
+
+export interface DeleteOperation {
+  action: "delete";
+  entity_type: string;
+  entity_key: string[];
+}
+
+export type Operation =
+  | CreateOperation
+  | QueryOperation
+  | SearchOperation
+  | UpdateOperation
+  | DeleteOperation;
 
 /**
  * Return create operation object for entity *type* and *data*.
@@ -15,7 +61,7 @@ export interface Operation {}
  * @param  {Object} data Entity data to use for creation
  * @return {Object}      API operation
  */
-export function createOperation(type: string, data: any) {
+export function createOperation(type: string, data: any): CreateOperation {
   return {
     action: "create",
     entity_type: type,
@@ -57,7 +103,7 @@ export function searchOperation({
   terms,
   contextId,
   objectTypeIds,
-}: SearchOperationOptions) {
+}: SearchOperationOptions): SearchOperation {
   return {
     action: "search",
     expression,
@@ -78,7 +124,11 @@ export function searchOperation({
  * @param  {Object} data values to update
  * @return {Object}      API operation
  */
-export function updateOperation(type: string, keys: string[], data: any) {
+export function updateOperation(
+  type: string,
+  keys: string[],
+  data: any
+): UpdateOperation {
   return {
     action: "update",
     entity_type: type,
@@ -96,7 +146,7 @@ export function updateOperation(type: string, keys: string[], data: any) {
  * @param  {Array} keys Identifying keys, typically [<entity id>]
  * @return {Object}      API operation
  */
-export function deleteOperation(type: string, keys: string[]) {
+export function deleteOperation(type: string, keys: string[]): DeleteOperation {
   return {
     action: "delete",
     entity_type: type,
