@@ -45,12 +45,23 @@ export interface DeleteOperation {
   entity_key: string[];
 }
 
+export interface QueryServerInformationOperation {
+  action: "query_server_information";
+  values?: string[];
+}
+
+export interface QuerySchemasOperation {
+  action: "query_schemas";
+}
+
 export type Operation =
   | CreateOperation
   | QueryOperation
   | SearchOperation
   | UpdateOperation
-  | DeleteOperation;
+  | DeleteOperation
+  | QueryServerInformationOperation
+  | QuerySchemasOperation;
 
 /**
  * Return create operation object for entity *type* and *data*.
@@ -77,7 +88,7 @@ export function createOperation(type: string, data: any): CreateOperation {
  * @param  {string} expression API query expression
  * @return {Object}            API operation
  */
-export function queryOperation(expression: string) {
+export function queryOperation(expression: string): QueryOperation {
   return { action: "query", expression };
 }
 
