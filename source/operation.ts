@@ -15,6 +15,14 @@ export interface QueryOperation {
   expression: string;
 }
 
+export interface SearchOperationOptions {
+  expression?: string;
+  entityType?: string;
+  terms?: string[];
+  contextId?: string;
+  objectTypeIds?: string[];
+}
+
 export interface SearchOperation {
   action: "search";
   expression?: string;
@@ -71,14 +79,6 @@ export function createOperation(type: string, data: any): CreateOperation {
  */
 export function queryOperation(expression: string) {
   return { action: "query", expression };
-}
-
-export interface SearchOperationOptions {
-  expression?: string;
-  entityType?: string;
-  terms?: string[];
-  contextId?: string;
-  objectTypeIds?: string[];
 }
 
 /**
