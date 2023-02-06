@@ -5,6 +5,15 @@ import { v4 as uuidV4 } from "uuid";
  * ftrack API Event class.
  */
 export class Event {
+  private readonly _data: {
+    topic: string;
+    data: object;
+    target: string;
+    inReplyToEvent: string | null;
+    id: string;
+    source?: any;
+  };
+
   /**
    * Construct Event instance with *topic*, *data* and additional *options*.
    *
@@ -12,29 +21,28 @@ export class Event {
    *
    * *data* should be an object with the event payload.
    */
-  constructor(topic, data, options = {}) {
-    this._data = Object.assign(
-      {
-        topic,
-        data,
-        target: "",
-        inReplyToEvent: null,
-      },
-      options,
-      {
-        id: uuidV4(),
-        sent: null,
-      }
-    );
+  constructor(
+    topic: string,
+    data: object,
+    options: { [key: string]: object } = {}
+  ) {
+    this._data = {
+      topic,
+      data,
+      target: "",
+      inReplyToEvent: null,
+      ...options,
+      id: uuidV4(),
+    };
   }
 
   /** Return event data. */
-  getData() {
+  getData(): { [key: string]: any } {
     return this._data;
   }
 
   /** Add source to event data. */
-  addSource(source) {
+  addSource(source: any): void {
     this._data.source = source;
   }
 }

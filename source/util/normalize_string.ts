@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2019 ftrack
 import log from "loglevel";
 
-function normalizeString(value) {
+function normalizeString(value: string) {
   let result = value;
   try {
     result = value.normalize();

@@ -9,7 +9,6 @@ import {
   EventServerPublishError,
   NotUniqueError,
 } from "./error";
-import encodeUriParameters from "./util/encode_uri_parameters";
 
 /**
  * ftrack API Event hub.
@@ -63,10 +62,10 @@ export class EventHub {
       "reconnection limit": 10000,
       "reconnection delay": 5000,
       transports: ["websocket"],
-      query: encodeUriParameters({
+      query: new URLSearchParams({
         api_user: this._apiUser,
         api_key: this._apiKey,
-      }),
+      }).toString(),
     });
 
     this._socketIo.on("connect", this._onSocketConnected);
