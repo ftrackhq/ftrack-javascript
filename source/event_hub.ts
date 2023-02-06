@@ -532,7 +532,7 @@ export class EventHub {
       ...data,
       target: `id=${sourceEventPayload.source.id}`,
       inReplyToEvent: sourceEventPayload.id,
-      source,
+      source: source ?? data.source,
     });
 
     return this.publish(replyEvent);
