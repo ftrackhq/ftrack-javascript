@@ -125,7 +125,6 @@ export class EventHub {
 
   /** Connect to the event server. */
   connect() {
-    // @ts-ignore TODO: how to propertly type this?
     this._socketIo = io.connect(this._serverUrl, {
       "max reconnection attempts": Infinity,
       "reconnection limit": 10000,
