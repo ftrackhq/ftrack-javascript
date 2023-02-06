@@ -1,9 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-
-import io from "./socket.io-websocket-only.cjs";
-
+import io, { SocketIO } from "./socket.io-websocket-only.cjs";
 import Event from "./event";
 import {
   EventServerConnectionTimeoutError,
@@ -11,15 +9,15 @@ import {
   EventServerPublishError,
   NotUniqueError,
 } from "./error";
+import { Data } from "./types";
 
 export interface EventPayload {
   target: string;
-  inReplyToEvent: any;
+  inReplyToEvent: string;
   topic: string;
   source: EventSource;
   data: EventData;
   id: string;
-  sent: any;
 }
 
 export interface EventSource {
@@ -57,29 +55,44 @@ export interface EventEntity {
   parentId: string;
   action: string;
   entityId: string;
-  changes: any;
+  changes: Data;
 }
 
-interface Subscriber {
-  metadata: any;
-  callback(eventPayload: EventPayload): any;
-  subscription: any;
+export interface SubscriberMetadata {
+  id?: string;
+  [key: string]: any;
+}
+
+export interface Subscriber {
+  metadata: SubscriberMetadata;
+  callback: EventCallback;
+  subscription: string;
+}
+
+export interface EventCallback {
+  (eventPayload: EventPayload): any;
+}
+
+export interface ConnectionCallback {
+  (): any;
 }
 
 /**
  * ftrack API Event hub.
  */
 export class EventHub {
-  private logger: any;
+  private logger: loglevel.Logger;
   private _applicationId: string;
   private _apiUser: string;
   private _apiKey: string;
   private _serverUrl: string;
   private _id: string;
-  private _replyCallbacks: any;
-  private _unsentEvents: any[];
+  private _replyCallbacks: {
+    [key: string]: EventCallback;
+  };
+  private _unsentEvents: ConnectionCallback[];
   private _subscribers: Subscriber[];
-  private _socketIo: any;
+  private _socketIo: SocketIO | null;
 
   /**
    * Construct EventHub instance with API credentials.
@@ -208,7 +221,7 @@ export class EventHub {
       onReply,
       timeout = 30,
     }: {
-      onReply?: (event: Event) => void;
+      onReply?: EventCallback;
       timeout?: number;
     } = {}
   ): Promise<string> {
@@ -249,6 +262,11 @@ export class EventHub {
       }
 
       this.logger.debug("Publishing event.", eventData);
+      if (!this._socketIo) {
+        throw new EventServerPublishError(
+          "Unable to publish event, not connected to server."
+        );
+      }
       this._socketIo.emit("ftrack.event", eventData);
       return Promise.resolve(eventId);
     });
@@ -268,7 +286,7 @@ export class EventHub {
   publishAndWaitForReply(event: Event, { timeout = 30 }: { timeout: number }) {
     const eventId = event.getData().id;
     const response = new Promise((resolve, reject) => {
-      const onReply = (replyEvent: Event) => {
+      const onReply: EventCallback = (replyEvent) => {
         resolve(replyEvent);
         this._removeReplyCallback(eventId);
       };
@@ -298,15 +316,17 @@ export class EventHub {
    * Run *callback* if event hub is connected to server.
    * @param  {Function} callback
    */
-  _runWhenConnected(callback: () => void) {
+  _runWhenConnected(callback: ConnectionCallback) {
     if (!this.isConnected()) {
       this.logger.debug("Event hub is not connected, event is delayed.");
       this._unsentEvents.push(callback);
 
-      // Force reconnect socket if not automatically reconnected. This
-      // happens for example in Adobe After Effects when rendering a
-      // sequence takes longer than ~30s and the JS thread is blocked.
-      this._socketIo.socket.reconnect();
+      if (this._socketIo) {
+        // Force reconnect socket if not automatically reconnected. This
+        // happens for example in Adobe After Effects when rendering a
+        // sequence takes longer than ~30s and the JS thread is blocked.
+        this._socketIo.socket.reconnect();
+      }
     } else {
       callback();
     }
@@ -325,8 +345,8 @@ export class EventHub {
    */
   subscribe(
     subscription: string,
-    callback: (eventPayload: EventPayload) => any,
-    metadata = {}
+    callback: EventCallback,
+    metadata: SubscriberMetadata = {}
   ) {
     const subscriber = this._addSubscriber(subscription, callback, metadata);
     this._notifyServerAboutSubscriber(subscriber);
@@ -387,8 +407,8 @@ export class EventHub {
    */
   _addSubscriber(
     subscription: string,
-    callback: (eventPayload: EventPayload) => any,
-    metadata: { id?: string } = {}
+    callback: EventCallback,
+    metadata: SubscriberMetadata = {}
   ) {
     // Ensure subscription is on supported format.
     // TODO: Remove once subscription parsing is supported.
@@ -428,7 +448,7 @@ export class EventHub {
     this.publish(subscribeEvent);
   }
 
-  _notifyServerAboutUnsubscribe(subscriber: Subscriber) {
+  _notifyServerAboutUnsubscribe(subscriber: SubscriberMetadata) {
     const unsubscribeEvent = new Event("ftrack.meta.unsubscribe", {
       subscriber,
     });
@@ -526,7 +546,11 @@ export class EventHub {
    * @param  {Object} data        Response event data
    * @param  {Object} [source]    Response event source information
    */
-  publishReply(sourceEventPayload: EventPayload, data: any, source = null) {
+  publishReply(
+    sourceEventPayload: EventPayload,
+    data: Data,
+    source: Data | null = null
+  ) {
     const replyEvent = new Event("ftrack.meta.reply", {
       ...data,
       target: `id=${sourceEventPayload.source.id}`,
