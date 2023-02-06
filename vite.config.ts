@@ -9,14 +9,6 @@ interface VitestConfigExport extends UserConfig {
 }
 
 export default defineConfig({
-  test: {
-    environment: "jsdom",
-    globals: true,
-    setupFiles: ["./vitest.setup.js"],
-    deps: {
-      fallbackCJS: true,
-    },
-  },
   build: {
     minify: false,
     sourcemap: true,
@@ -41,4 +33,12 @@ export default defineConfig({
     },
   },
   plugins: [dts()],
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./vitest.setup.js"],
+    deps: {
+      fallbackCJS: true,
+    },
+  },
 } as VitestConfigExport);

@@ -7,11 +7,10 @@ import { v4 as uuidV4 } from "uuid";
 export class Event {
   private readonly _data: {
     topic: string;
-    data: any;
+    data: object;
     target: string;
-    inReplyToEvent: Event | null;
+    inReplyToEvent: string | null;
     id: string;
-    sent: Date | null;
     source?: any;
   };
 
@@ -22,20 +21,19 @@ export class Event {
    *
    * *data* should be an object with the event payload.
    */
-  constructor(topic: string, data: any, options: { [key: string]: any } = {}) {
-    this._data = Object.assign(
-      {
-        topic,
-        data,
-        target: "",
-        inReplyToEvent: null,
-      },
-      options,
-      {
-        id: uuidV4(),
-        sent: null,
-      }
-    );
+  constructor(
+    topic: string,
+    data: object,
+    options: { [key: string]: object } = {}
+  ) {
+    this._data = {
+      topic,
+      data,
+      target: "",
+      inReplyToEvent: null,
+      ...options,
+      id: uuidV4(),
+    };
   }
 
   /** Return event data. */

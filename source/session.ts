@@ -21,7 +21,6 @@ import {
 } from "./error";
 import { SERVER_LOCATION_ID } from "./constant";
 
-import encodeUriParameters from "./util/encode_uri_parameters";
 import normalizeString from "./util/normalize_string";
 
 const logger = loglevel.getLogger("ftrack_api");
@@ -853,7 +852,9 @@ export class Session {
       apiKey: this.apiKey,
     };
 
-    return `${this.serverUrl}/component/get?${encodeUriParameters(params)}`;
+    return `${this.serverUrl}/component/get?${new URLSearchParams(
+      params
+    ).toString()}`;
   }
 
   /**
@@ -880,9 +881,9 @@ export class Session {
       apiKey: this.apiKey,
     };
 
-    return `${this.serverUrl}/component/thumbnail?${encodeUriParameters(
+    return `${this.serverUrl}/component/thumbnail?${new URLSearchParams(
       params
-    )}`;
+    ).toString()}`;
   }
 
   /**

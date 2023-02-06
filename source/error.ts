@@ -10,9 +10,9 @@
  */
 function errorFactory(name: string) {
   class CustomError extends Error {
-    errorCode: any;
+    errorCode?: string;
 
-    constructor(message: string, errorCode?: number | string) {
+    constructor(message: string, errorCode?: string) {
       super(message);
       this.name = name;
       this.errorCode = errorCode;
