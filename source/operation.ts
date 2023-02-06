@@ -53,7 +53,7 @@ export type Operation =
  * @param  {Object} data Entity data to use for creation
  * @return {Object}      API operation
  */
-export function createOperation(type: string, data: any) {
+export function createOperation(type: string, data: any): CreateOperation {
   return {
     action: "create",
     entity_type: type,
@@ -116,7 +116,11 @@ export function searchOperation({
  * @param  {Object} data values to update
  * @return {Object}      API operation
  */
-export function updateOperation(type: string, keys: string[], data: any) {
+export function updateOperation(
+  type: string,
+  keys: string[],
+  data: any
+): UpdateOperation {
   return {
     action: "update",
     entity_type: type,
@@ -134,7 +138,7 @@ export function updateOperation(type: string, keys: string[], data: any) {
  * @param  {Array} keys Identifying keys, typically [<entity id>]
  * @return {Object}      API operation
  */
-export function deleteOperation(type: string, keys: string[]) {
+export function deleteOperation(type: string, keys: string[]): DeleteOperation {
   return {
     action: "delete",
     entity_type: type,
