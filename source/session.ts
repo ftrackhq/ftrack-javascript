@@ -529,7 +529,7 @@ export class Session {
         });
       })
       .then((response) => {
-        if (response instanceof Response) {
+        if ("json" in response) {
           return (response.json && response.json()) || response;
         }
         return response;
