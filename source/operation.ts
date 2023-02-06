@@ -54,6 +54,13 @@ export interface QuerySchemasOperation {
   action: "query_schemas";
 }
 
+export interface GetUploadMetadataOperation {
+  action: "get_upload_metadata";
+  file_name: string;
+  file_size: number;
+  component_id: string;
+}
+
 export type Operation =
   | CreateOperation
   | QueryOperation
@@ -61,7 +68,9 @@ export type Operation =
   | UpdateOperation
   | DeleteOperation
   | QueryServerInformationOperation
-  | QuerySchemasOperation;
+  | QuerySchemasOperation
+  | GetUploadMetadataOperation
+  | { action: string; [key: string]: any };
 
 /**
  * Return create operation object for entity *type* and *data*.
