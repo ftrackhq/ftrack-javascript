@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-import io from "./socket.io-websocket-only.cjs";
+import io, { SocketIO } from "./socket.io-websocket-only.cjs";
 import Event from "./event";
 import {
   EventServerConnectionTimeoutError,
@@ -9,11 +9,91 @@ import {
   EventServerPublishError,
   NotUniqueError,
 } from "./error";
+import { Data } from "./types";
+
+export interface EventPayload {
+  target: string;
+  inReplyToEvent: string;
+  topic: string;
+  source: EventSource;
+  data: EventData;
+  id: string;
+}
+
+export interface EventSource {
+  clientToken: string;
+  applicationId: string;
+  user: {
+    username: string;
+    id: string;
+  };
+  id: string;
+}
+
+export interface EventData {
+  entities: EventEntity[];
+  pushToken: string;
+  parents: string[];
+  user: {
+    userid: string;
+    name: string;
+  };
+  clientToken: string;
+}
+
+export interface EventEntity {
+  entity_type: string;
+  keys: string[];
+  objectTypeId: string;
+  entityType: string;
+  parents: {
+    entityId: string;
+    entityType: string;
+    entity_type: string;
+    parentId?: string;
+  }[];
+  parentId: string;
+  action: string;
+  entityId: string;
+  changes: Data;
+}
+
+export interface SubscriberMetadata {
+  id?: string;
+  [key: string]: any;
+}
+
+export interface Subscriber {
+  metadata: SubscriberMetadata;
+  callback: EventCallback;
+  subscription: string;
+}
+
+export interface EventCallback {
+  (eventPayload: EventPayload): any;
+}
+
+export interface ConnectionCallback {
+  (): any;
+}
 
 /**
  * ftrack API Event hub.
  */
 export class EventHub {
+  private logger: loglevel.Logger;
+  private _applicationId: string;
+  private _apiUser: string;
+  private _apiKey: string;
+  private _serverUrl: string;
+  private _id: string;
+  private _replyCallbacks: {
+    [key: string]: EventCallback;
+  };
+  private _unsentEvents: ConnectionCallback[];
+  private _subscribers: Subscriber[];
+  private _socketIo: SocketIO | null;
+
   /**
    * Construct EventHub instance with API credentials.
    * @param  {String} serverUrl             Server URL
@@ -23,10 +103,10 @@ export class EventHub {
    * @constructs EventHub
    */
   constructor(
-    serverUrl,
-    apiUser,
-    apiKey,
-    { applicationId = "ftrack.api.javascript" } = {}
+    serverUrl: string,
+    apiUser: string,
+    apiKey: string,
+    { applicationId = "ftrack.api.javascript" }: { applicationId?: string } = {}
   ) {
     this.logger = loglevel.getLogger("ftrack_api:EventHub");
     this._applicationId = applicationId;
@@ -76,7 +156,7 @@ export class EventHub {
    * Return true if connected to event server.
    * @return {Boolean}
    */
-  isConnected() {
+  isConnected(): boolean {
     return (this._socketIo && this._socketIo.socket.connected) || false;
   }
 
@@ -85,7 +165,7 @@ export class EventHub {
    *
    * Subscribe to replies and send any queued events.
    */
-  _onSocketConnected() {
+  private _onSocketConnected() {
     this.logger.debug("Connected to event server.");
 
     // Subscribe to reply events, if not already subscribed.
@@ -135,7 +215,16 @@ export class EventHub {
    * @param  {Number}  [options.timeout]  Timeout in seconds. Defaults to 30.
    * @return {Promise}
    */
-  publish(event, { onReply = null, timeout = 30 } = {}) {
+  publish(
+    event: Event,
+    {
+      onReply,
+      timeout = 30,
+    }: {
+      onReply?: EventCallback;
+      timeout?: number;
+    } = {}
+  ): Promise<string> {
     if (!this._socketIo) {
       throw new EventServerPublishError(
         "Unable to publish event, not connected to server."
@@ -154,7 +243,7 @@ export class EventHub {
     const eventData = Object.assign({}, event.getData());
     const eventId = eventData.id;
 
-    const onConnected = new Promise((resolve, reject) => {
+    const onConnected = new Promise<void>((resolve, reject) => {
       this._runWhenConnected(resolve);
 
       if (timeout) {
@@ -173,6 +262,11 @@ export class EventHub {
       }
 
       this.logger.debug("Publishing event.", eventData);
+      if (!this._socketIo) {
+        throw new EventServerPublishError(
+          "Unable to publish event, not connected to server."
+        );
+      }
       this._socketIo.emit("ftrack.event", eventData);
       return Promise.resolve(eventId);
     });
@@ -189,11 +283,12 @@ export class EventHub {
    * @param  {Number}  [options.timeout]  Timeout in seconds [30]
    * @return {Promise}
    */
-  publishAndWaitForReply(event, { timeout = 30 }) {
+  publishAndWaitForReply(event: Event, { timeout = 30 }: { timeout: number }) {
+    const eventId = event.getData().id;
     const response = new Promise((resolve, reject) => {
-      const onReply = (replyEvent) => {
+      const onReply: EventCallback = (replyEvent) => {
         resolve(replyEvent);
-        this._removeReplyCallback(event.id);
+        this._removeReplyCallback(eventId);
       };
       this.publish(event, { timeout, onReply });
 
@@ -203,7 +298,7 @@ export class EventHub {
             "No reply event received within timeout."
           );
           reject(error);
-          this._removeReplyCallback(event.id);
+          this._removeReplyCallback(eventId);
         }, timeout * 1000);
       }
     });
@@ -211,7 +306,7 @@ export class EventHub {
     return response;
   }
 
-  _removeReplyCallback(eventId) {
+  _removeReplyCallback(eventId: string) {
     if (this._replyCallbacks[eventId]) {
       delete this._replyCallbacks[eventId];
     }
@@ -221,15 +316,17 @@ export class EventHub {
    * Run *callback* if event hub is connected to server.
    * @param  {Function} callback
    */
-  _runWhenConnected(callback) {
+  _runWhenConnected(callback: ConnectionCallback) {
     if (!this.isConnected()) {
       this.logger.debug("Event hub is not connected, event is delayed.");
       this._unsentEvents.push(callback);
 
-      // Force reconnect socket if not automatically reconnected. This
-      // happens for example in Adobe After Effects when rendering a
-      // sequence takes longer than ~30s and the JS thread is blocked.
-      this._socketIo.socket.reconnect();
+      if (this._socketIo) {
+        // Force reconnect socket if not automatically reconnected. This
+        // happens for example in Adobe After Effects when rendering a
+        // sequence takes longer than ~30s and the JS thread is blocked.
+        this._socketIo.socket.reconnect();
+      }
     } else {
       callback();
     }
@@ -246,7 +343,11 @@ export class EventHub {
    * @param  {Object}   [metadata]    Optional information about subscriber.
    * @return {String}                 Subscriber ID.
    */
-  subscribe(subscription, callback, metadata = {}) {
+  subscribe(
+    subscription: string,
+    callback: EventCallback,
+    metadata: SubscriberMetadata = {}
+  ) {
     const subscriber = this._addSubscriber(subscription, callback, metadata);
     this._notifyServerAboutSubscriber(subscriber);
     return subscriber.metadata.id;
@@ -258,7 +359,7 @@ export class EventHub {
    * @param  {String}   identifier  Subscriber ID returned from subscribe method.
    * @return {Boolean}              True if a subscriber was removed, false otherwise
    */
-  unsubscribe(identifier) {
+  unsubscribe(identifier: string) {
     let hasFoundSubscriberToRemove = false;
     this._subscribers = this._subscribers.filter((subscriber) => {
       if (subscriber.metadata.id === identifier) {
@@ -281,7 +382,7 @@ export class EventHub {
    * @param  {String} subscription    expression
    * @return {String}                 topic
    */
-  _getExpressionTopic(subscription) {
+  _getExpressionTopic(subscription: string) {
     // retreive the value of a topic on the format "topic=value"
     const regex = new RegExp("^topic[ ]?=[ '\"]?([\\w-,./*@+]+)['\"]?$");
     const matches = subscription.trim().match(regex);
@@ -304,7 +405,11 @@ export class EventHub {
    * @param {Object}   metadata       Optional information about subscriber.
    * @return {Object}                 subscriber information.
    */
-  _addSubscriber(subscription, callback, metadata = {}) {
+  _addSubscriber(
+    subscription: string,
+    callback: EventCallback,
+    metadata: SubscriberMetadata = {}
+  ) {
     // Ensure subscription is on supported format.
     // TODO: Remove once subscription parsing is supported.
     this._getExpressionTopic(subscription);
@@ -335,7 +440,7 @@ export class EventHub {
    * Notify server of new *subscriber*.
    * @param  {Object} subscriber      subscriber information
    */
-  _notifyServerAboutSubscriber(subscriber) {
+  _notifyServerAboutSubscriber(subscriber: Subscriber) {
     const subscribeEvent = new Event("ftrack.meta.subscribe", {
       subscriber: subscriber.metadata,
       subscription: subscriber.subscription,
@@ -343,7 +448,7 @@ export class EventHub {
     this.publish(subscribeEvent);
   }
 
-  _notifyServerAboutUnsubscribe(subscriber) {
+  _notifyServerAboutUnsubscribe(subscriber: SubscriberMetadata) {
     const unsubscribeEvent = new Event("ftrack.meta.unsubscribe", {
       subscriber,
     });
@@ -358,7 +463,7 @@ export class EventHub {
    * @param  {String} identifier
    * @return {String|null}
    */
-  getSubscriberByIdentifier(identifier) {
+  getSubscriberByIdentifier(identifier: string) {
     for (const subscriber of this._subscribers.slice()) {
       if (subscriber.metadata.id === identifier) {
         return subscriber;
@@ -375,12 +480,15 @@ export class EventHub {
    * TODO: Support the full event expression format.
    *
    * @param  {Object} subscriber
-   * @param  {Object} event
+   * @param  {Object} eventPayload
    * @return {Boolean}
    */
-  _IsSubscriberInterestedIn(subscriber, event) {
+  _IsSubscriberInterestedIn(
+    subscriber: Subscriber,
+    eventPayload: EventPayload
+  ) {
     const topic = this._getExpressionTopic(subscriber.subscription);
-    if (topic === event.topic) {
+    if (topic === eventPayload.topic) {
       return true;
     }
     return false;
@@ -388,64 +496,68 @@ export class EventHub {
 
   /**
    * Handle Events.
-   * @param  {Object} event   Event payload
+   * @param  {Object} eventPayload   Event payload
    */
-  _handle(event) {
-    this.logger.debug("Event received", event);
+  _handle(eventPayload: EventPayload) {
+    this.logger.debug("Event received", eventPayload);
 
     for (const subscriber of this._subscribers) {
       // TODO: Parse event target and check that it matches subscriber.
 
       // TODO: Support full expression format as used in Python.
-      if (!this._IsSubscriberInterestedIn(subscriber, event)) {
+      if (!this._IsSubscriberInterestedIn(subscriber, eventPayload)) {
         continue;
       }
 
       let response = null;
       try {
-        response = subscriber.callback(event);
+        response = subscriber.callback(eventPayload);
       } catch (error) {
         this.logger.error(
           "Error calling subscriber for event.",
           error,
           subscriber,
-          event
+          eventPayload
         );
       }
 
       // Publish reply if response isn't null or undefined.
       if (response != null) {
-        this.publishReply(event, response, subscriber.metadata);
+        this.publishReply(eventPayload, response, subscriber.metadata);
       }
     }
   }
 
   /**
    * Handle reply event.
-   * @param  {Object} event  Event payload
+   * @param  {Object} eventPayload  Event payload
    */
-  _handleReply(event) {
-    this.logger.debug("Reply received", event);
-    const onReplyCallback = this._replyCallbacks[event.inReplyToEvent];
+  _handleReply(eventPayload: EventPayload) {
+    this.logger.debug("Reply received", eventPayload);
+    const onReplyCallback = this._replyCallbacks[eventPayload.inReplyToEvent];
     if (onReplyCallback) {
-      onReplyCallback(event);
+      onReplyCallback(eventPayload);
     }
   }
 
   /**
    * Publish reply event.
-   * @param  {Object} sourceEvent Source event payload
+   * @param  {Object} sourceEventPayload Source event payload
    * @param  {Object} data        Response event data
    * @param  {Object} [source]    Response event source information
    */
-  publishReply(sourceEvent, data, source = null) {
-    const replyEvent = new Event("ftrack.meta.reply", data);
+  publishReply(
+    sourceEventPayload: EventPayload,
+    data: Data,
+    source: Data | null = null
+  ) {
+    const replyEvent = new Event("ftrack.meta.reply", {
+      ...data,
+      target: `id=${sourceEventPayload.source.id}`,
+      inReplyToEvent: sourceEventPayload.id,
+      source: source ?? data.source,
+    });
 
-    replyEvent._data.target = `id=${sourceEvent.source.id}`;
-    replyEvent._data.inReplyToEvent = sourceEvent.id;
-    if (source) {
-      replyEvent._data.source = source;
-    }
     return this.publish(replyEvent);
   }
 }
