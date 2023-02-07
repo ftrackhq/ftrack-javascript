@@ -22,6 +22,7 @@ import {
 import { SERVER_LOCATION_ID } from "./constant";
 
 import normalizeString from "./util/normalize_string";
+import { Data } from "./types";
 
 const logger = loglevel.getLogger("ftrack_api");
 
@@ -83,8 +84,6 @@ export interface SearchOptions {
 export interface QueryOptions {
   abortController?: AbortController;
 }
-
-export type Data = Record<string, any>;
 
 export interface Response<T> {
   url: any;
