@@ -10,7 +10,7 @@
   },
   "main": "./dist/ftrack-javascript-api.umd.js",
   "module": "./dist/ftrack-javascript-api.es.js",
-  "types": "main.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/ftrack-javascript-api.es.js",
@@ -18,8 +18,7 @@
     }
   },
   "files": [
-    "dist",
-    "main.d.ts"
+    "dist"
   ],
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",

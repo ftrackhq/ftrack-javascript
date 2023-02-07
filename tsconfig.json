@@ -14,7 +14,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "allowJs": true
+    "allowJs": false
   },
   "include": ["source"],
   "exclude": ["source/socket.io-websocket-only.cjs"]
