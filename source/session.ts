@@ -3,15 +3,8 @@ import moment from "moment";
 import loglevel from "loglevel";
 import { v4 as uuidV4 } from "uuid";
 
-import EventHub from "./event_hub";
-import {
-  queryOperation,
-  createOperation,
-  updateOperation,
-  deleteOperation,
-  searchOperation,
-  Operation,
-} from "./operation";
+import { EventHub } from "./event_hub";
+import * as operation from "./operation";
 import {
   ServerPermissionDeniedError,
   ServerValidationError,
@@ -89,7 +82,11 @@ export interface Response<T> {
   url?: any;
   headers?: any;
   action: string;
-  metadata: Data;
+  metadata: {
+    next: {
+      offset: number | null;
+    };
+  };
   data: T;
 }
 
@@ -215,7 +212,7 @@ export class Session {
       serverInformationValues.push("is_timezone_support_enabled");
     }
 
-    const operations: Operation[] = [
+    const operations: operation.Operation[] = [
       {
         action: "query_server_information",
         values: serverInformationValues,
@@ -463,7 +460,7 @@ export class Session {
   }
 
   /** Return encoded *operations*. */
-  encodeOperations(operations: Operation[]) {
+  encodeOperations(operations: operation.Operation[]) {
     return JSON.stringify(this.encode(operations));
   }
 
@@ -489,7 +486,7 @@ export class Session {
    *
    */
   call(
-    operations: Operation[],
+    operations: operation.Operation[],
     { abortController, pushToken }: CallOptions = {}
   ): Promise<Response<Data>[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
@@ -706,8 +703,8 @@ export class Session {
   query(expression: string, { abortController }: QueryOptions = {}) {
     logger.debug("Query", expression);
 
-    const operation = queryOperation(expression);
-    let request = this.call([operation], { abortController }).then(
+    const queryOperation = operation.query(expression);
+    let request = this.call([queryOperation], { abortController }).then(
       (responses) => {
         const response = responses[0];
         return response;
@@ -749,14 +746,14 @@ export class Session {
       objectTypeIds,
     });
 
-    const operation = searchOperation({
+    const searchOperation = operation.search({
       expression,
       entityType,
       terms,
       contextId,
       objectTypeIds,
     });
-    let request = this.call([operation], { abortController }).then(
+    let request = this.call([searchOperation], { abortController }).then(
       (responses) => {
         const response = responses[0];
         return response;
@@ -778,7 +775,7 @@ export class Session {
   create(entityType: string, data: Data, { pushToken }: CallOptions = {}) {
     logger.debug("Create", entityType, data, pushToken);
 
-    let request = this.call([createOperation(entityType, data)], {
+    let request = this.call([operation.create(entityType, data)], {
       pushToken,
     }).then((responses) => {
       const response = responses[0];
@@ -806,7 +803,7 @@ export class Session {
   ) {
     logger.debug("Update", type, keys, data, pushToken);
 
-    const request = this.call([updateOperation(type, keys, data)], {
+    const request = this.call([operation.update(type, keys, data)], {
       pushToken,
     }).then((responses) => {
       const response = responses[0];
@@ -828,7 +825,7 @@ export class Session {
   delete(type: string, keys: string[], { pushToken }: CallOptions = {}) {
     logger.debug("Delete", type, keys, pushToken);
 
-    let request = this.call([deleteOperation(type, keys)], { pushToken }).then(
+    let request = this.call([operation.delete(type, keys)], { pushToken }).then(
       (responses) => {
         const response = responses[0];
         return response;
@@ -956,8 +953,8 @@ export class Session {
     };
 
     const componentAndLocationPromise = this.call([
-      createOperation("FileComponent", component),
-      createOperation("ComponentLocation", componentLocation),
+      operation.create("FileComponent", component),
+      operation.create("ComponentLocation", componentLocation),
       {
         action: "get_upload_metadata",
         file_name: `${fileName}${fileType}`,
@@ -1014,5 +1011,3 @@ export class Session {
     });
   }
 }
-
-export default Session;

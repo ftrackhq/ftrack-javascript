@@ -2,7 +2,7 @@
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
 import io, { SocketIO } from "./socket.io-websocket-only.cjs";
-import Event from "./event";
+import { Event } from "./event";
 import {
   EventServerConnectionTimeoutError,
   EventServerReplyTimeoutError,
@@ -561,5 +561,3 @@ export class EventHub {
     return this.publish(replyEvent);
   }
 }
-
-export default EventHub;

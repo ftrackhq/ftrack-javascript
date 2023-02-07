@@ -46,5 +46,3 @@ export class Event {
     this._data.source = source;
   }
 }
-
-export default Event;

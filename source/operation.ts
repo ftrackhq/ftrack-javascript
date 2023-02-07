@@ -61,16 +61,7 @@ export interface GetUploadMetadataOperation {
   component_id: string;
 }
 
-export type Operation =
-  | CreateOperation
-  | QueryOperation
-  | SearchOperation
-  | UpdateOperation
-  | DeleteOperation
-  | QueryServerInformationOperation
-  | QuerySchemasOperation
-  | GetUploadMetadataOperation
-  | { action: string; [key: string]: any };
+export type Operation = { action: string; [key: string]: any };
 
 /**
  * Return create operation object for entity *type* and *data*.
@@ -81,7 +72,7 @@ export type Operation =
  * @param  {Object} data Entity data to use for creation
  * @return {Object}      API operation
  */
-export function createOperation(type: string, data: any): CreateOperation {
+export function create(type: string, data: any): CreateOperation {
   return {
     action: "create",
     entity_type: type,
@@ -97,7 +88,7 @@ export function createOperation(type: string, data: any): CreateOperation {
  * @param  {string} expression API query expression
  * @return {Object}            API operation
  */
-export function queryOperation(expression: string): QueryOperation {
+export function query(expression: string): QueryOperation {
   return { action: "query", expression };
 }
 
@@ -109,7 +100,7 @@ export function queryOperation(expression: string): QueryOperation {
  * @param  {string} expression API query expression
  * @return {Object}            API operation
  */
-export function searchOperation({
+export function search({
   expression,
   entityType,
   terms,
@@ -136,7 +127,7 @@ export function searchOperation({
  * @param  {Object} data values to update
  * @return {Object}      API operation
  */
-export function updateOperation(
+export function update(
   type: string,
   keys: string[],
   data: any
@@ -158,7 +149,7 @@ export function updateOperation(
  * @param  {Array} keys Identifying keys, typically [<entity id>]
  * @return {Object}      API operation
  */
-export function deleteOperation(type: string, keys: string[]): DeleteOperation {
+function deleteOperation(type: string, keys: string[]): DeleteOperation {
   return {
     action: "delete",
     entity_type: type,
@@ -166,12 +157,4 @@ export function deleteOperation(type: string, keys: string[]): DeleteOperation {
   };
 }
 
-const exports = {
-  query: queryOperation,
-  create: createOperation,
-  update: updateOperation,
-  delete: deleteOperation,
-  search: searchOperation,
-};
-
-export default exports;
+export { deleteOperation as delete };

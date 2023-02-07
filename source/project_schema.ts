@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import operation from "./operation";
-import Session from "./session";
+import * as operation from "./operation";
+import { Session } from "./session";
 
 /**
  * Project schema namespace
@@ -117,9 +117,3 @@ export function getStatuses(
 
   return response;
 }
-
-const exports = {
-  getStatuses,
-};
-
-export default exports;
