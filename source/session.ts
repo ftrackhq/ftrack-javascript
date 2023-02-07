@@ -61,11 +61,11 @@ export interface SessionOptions {
 }
 
 export interface CreateComponentOptions {
-  name?: any;
+  name?: string;
   data?: Data;
-  onProgress?: (progress: any) => any;
+  onProgress?: (progress: number) => unknown;
   xhr?: XMLHttpRequest;
-  onAborted?: () => void;
+  onAborted?: () => unknown;
 }
 
 export interface Entity {
