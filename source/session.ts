@@ -86,11 +86,18 @@ export interface QueryOptions {
 }
 
 export interface Response<T> {
-  url: any;
-  headers: any;
+  url?: any;
+  headers?: any;
   action: string;
   metadata: Data;
   data: T;
+}
+
+export interface ResponseError {
+  exception: string;
+  content: string;
+  error_code?: string;
+  error?: Data;
 }
 
 export interface CallOptions {
@@ -124,7 +131,7 @@ export class Session {
    * @param  {string}  apiKey -                     User API Key
    * @param  {Object}  options  -                   options
    * @param  {Boolean} [options.autoConnectEventHub=false] - Automatically connect to event hub,
-   * @param  {Array|null} [options.serverInformationValues=null] - List of server information values to retrieve.
+   * @param  {Array|null} [options.serverInformationValues] - List of server information values to retrieve.
    * @param  {Object}  [options.eventHubOptions={}] - Options to configure event hub with.
    * @param  {string} [options.clientToken] - Client token for update events.
    * @param  {string} [options.apiEndpoint=/api] - API endpoint.
@@ -331,7 +338,7 @@ export class Session {
    * @param  {*} response  A server error response object.
    * @return {*}      error instance.
    */
-  private getErrorFromResponse(response: any) {
+  private getErrorFromResponse(response: ResponseError) {
     let ErrorClass;
 
     if (response.exception === "AbortError") {
@@ -368,7 +375,7 @@ export class Session {
    * @return {*}      Decoded data
    */
 
-  private decode(data: any, identityMap = {}) {
+  private decode(data: any, identityMap: Data = {}): any {
     if (Array.isArray(data)) {
       return this._decodeArray(data, identityMap);
     }
@@ -409,8 +416,8 @@ export class Session {
    * Return new object where all values have been decoded.
    * @private
    */
-  private _decodePlainObject(object: any, identityMap: any) {
-    return Object.keys(object).reduce<any>((previous, key) => {
+  private _decodePlainObject(object: Data, identityMap: Data) {
+    return Object.keys(object).reduce<Data>((previous, key) => {
       previous[key] = this.decode(object[key], identityMap);
       return previous;
     }, {});
@@ -420,15 +427,15 @@ export class Session {
    * Return new Array where all items have been decoded.
    * @private
    */
-  private _decodeArray(collection: any, identityMap: any) {
-    return collection.map((item: any) => this.decode(item, identityMap));
+  private _decodeArray(collection: any[], identityMap: Data): any[] {
+    return collection.map((item) => this.decode(item, identityMap));
   }
 
   /**
    * Return merged *entity* using *identityMap*.
    * @private
    */
-  private _mergeEntity(entity: Data, identityMap: any) {
+  private _mergeEntity(entity: Data, identityMap: Data) {
     const identifier = this.getIdentifyingKey(entity);
     if (!identifier) {
       logger.warn("Identifier could not be determined for: ", identifier);
@@ -484,7 +491,7 @@ export class Session {
   call(
     operations: Operation[],
     { abortController, pushToken }: CallOptions = {}
-  ): Promise<Response<any>[]> {
+  ): Promise<Response<Data>[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
     // Delay call until session is initialized if initialization is in
@@ -517,12 +524,12 @@ export class Session {
       .catch((reason) => {
         logger.warn("Failed to perform request. ", reason);
         if (reason.name === "AbortError") {
-          return Promise.resolve({
+          return Promise.resolve<ResponseError>({
             exception: "AbortError",
             content: reason.message,
           });
         }
-        return Promise.resolve({
+        return Promise.resolve<ResponseError>({
           exception: "NetworkError",
           content: reason.message,
         });
@@ -532,33 +539,32 @@ export class Session {
           return (response.json && response.json()) || response;
         }
         return response;
+      })
+      .then((data) => {
+        if (this.initialized) {
+          return this.decode(data);
+        }
+
+        return data;
+      })
+      // Catch badly formatted responses
+      .catch((reason) => {
+        logger.warn("Server reported error in unexpected format. ", reason);
+        return Promise.resolve<ResponseError>({
+          exception: "MalformedResponseError",
+          content: reason.message,
+          error: reason,
+        });
+      })
+      // Reject promise on API exception.
+      .then((response) => {
+        if (response.exception) {
+          return Promise.reject<ResponseError>(
+            this.getErrorFromResponse(response as ResponseError)
+          );
+        }
+        return Promise.resolve(response);
       });
-
-    request = request.then((data) => {
-      if (this.initialized) {
-        return this.decode(data);
-      }
-
-      return data;
-    });
-
-    // Catch badly formatted responses
-    request = request.catch((reason) => {
-      logger.warn("Server reported error in unexpected format. ", reason);
-      return Promise.resolve({
-        exception: "MalformedResponseError",
-        content: reason.message,
-        error: reason,
-      });
-    });
-
-    // Reject promise on API exception.
-    request = request.then((response) => {
-      if (response.exception) {
-        return Promise.reject(this.getErrorFromResponse(response));
-      }
-      return Promise.resolve(response);
-    });
 
     return request;
   }
@@ -695,7 +701,7 @@ export class Session {
    * @param {object} options
    * @param {object} options.abortController - abortController used for aborting requests prematurely
    * @return {Promise} Promise which will be resolved with an object
-   * containing data and metadata
+   * containing action, data and metadata
    */
   query(expression: string, { abortController }: QueryOptions = {}) {
     logger.debug("Query", expression);
@@ -898,7 +904,7 @@ export class Session {
   createComponent(
     file: Blob,
     options: CreateComponentOptions = {}
-  ): Promise<Response<any>[]> {
+  ): Promise<Response<Data>[]> {
     const normalizedFileName = normalizeString(
       options.name ?? (file instanceof File ? file.name : "component")
     );
