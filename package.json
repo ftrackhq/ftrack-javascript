@@ -2,7 +2,7 @@
   "name": "@ftrack/api",
   "description": "JavaScript API for ftrack.",
   "scripts": {
-    "lint": "eslint . && prettier -c .",
+    "lint": "tsc && eslint . && prettier -c .",
     "test": "vitest --run test && yarn lint",
     "build": "vite build",
     "prepack": "yarn build",
@@ -10,7 +10,7 @@
   },
   "main": "./dist/ftrack-javascript-api.umd.js",
   "module": "./dist/ftrack-javascript-api.es.js",
-  "types": "main.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/ftrack-javascript-api.es.js",
@@ -18,11 +18,11 @@
     }
   },
   "files": [
-    "dist",
-    "main.d.ts"
+    "dist"
   ],
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
+    "@types/uuid": "^9.0.0",
     "cross-fetch": "^3.1.5",
     "eslint": "^8.33.0",
     "eslint-config-react-app": "^7.0.1",
@@ -31,8 +31,9 @@
     "msw": "^1.0.0",
     "prettier": "^2.8.3",
     "typescript": "^4.9.5",
-    "vite": "^4.0.4",
-    "vitest": "^0.28.3"
+    "vite": "^4.1.1",
+    "vite-plugin-dts": "^1.7.2",
+    "vitest": "^0.28.4"
   },
   "repository": {
     "type": "git",

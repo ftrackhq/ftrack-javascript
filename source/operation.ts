@@ -4,6 +4,74 @@
  * @namespace operation
  */
 
+export interface CreateOperation {
+  action: "create";
+  entity_type: string;
+  entity_data: any;
+}
+
+export interface QueryOperation {
+  action: "query";
+  expression: string;
+}
+
+export interface SearchOperationOptions {
+  expression?: string;
+  entityType?: string;
+  terms?: string[];
+  contextId?: string;
+  objectTypeIds?: string[];
+}
+
+export interface SearchOperation {
+  action: "search";
+  expression?: string;
+  entity_type?: string;
+  terms?: string[];
+  context_id?: string;
+  object_type_ids?: string[];
+}
+
+export interface UpdateOperation {
+  action: "update";
+  entity_type: string;
+  entity_key: string[];
+  entity_data: any;
+}
+
+export interface DeleteOperation {
+  action: "delete";
+  entity_type: string;
+  entity_key: string[];
+}
+
+export interface QueryServerInformationOperation {
+  action: "query_server_information";
+  values?: string[];
+}
+
+export interface QuerySchemasOperation {
+  action: "query_schemas";
+}
+
+export interface GetUploadMetadataOperation {
+  action: "get_upload_metadata";
+  file_name: string;
+  file_size: number;
+  component_id: string;
+}
+
+export type Operation =
+  | CreateOperation
+  | QueryOperation
+  | SearchOperation
+  | UpdateOperation
+  | DeleteOperation
+  | QueryServerInformationOperation
+  | QuerySchemasOperation
+  | GetUploadMetadataOperation
+  | { action: string; [key: string]: any };
+
 /**
  * Return create operation object for entity *type* and *data*.
  *
@@ -13,10 +81,12 @@
  * @param  {Object} data Entity data to use for creation
  * @return {Object}      API operation
  */
-export function createOperation(type, data) {
-  const operation = { action: "create", entity_type: type };
-  operation.entity_data = Object.assign({}, data, { __entity_type__: type });
-  return operation;
+export function createOperation(type: string, data: any): CreateOperation {
+  return {
+    action: "create",
+    entity_type: type,
+    entity_data: { ...data, __entity_type__: type },
+  };
 }
 
 /**
@@ -27,7 +97,7 @@ export function createOperation(type, data) {
  * @param  {string} expression API query expression
  * @return {Object}            API operation
  */
-export function queryOperation(expression) {
+export function queryOperation(expression: string): QueryOperation {
   return { action: "query", expression };
 }
 
@@ -45,7 +115,7 @@ export function searchOperation({
   terms,
   contextId,
   objectTypeIds,
-}) {
+}: SearchOperationOptions): SearchOperation {
   return {
     action: "search",
     expression,
@@ -66,14 +136,17 @@ export function searchOperation({
  * @param  {Object} data values to update
  * @return {Object}      API operation
  */
-export function updateOperation(type, keys, data) {
-  const operation = {
+export function updateOperation(
+  type: string,
+  keys: string[],
+  data: any
+): UpdateOperation {
+  return {
     action: "update",
     entity_type: type,
     entity_key: keys,
+    entity_data: { ...data, __entity_type__: type },
   };
-  operation.entity_data = Object.assign({}, data, { __entity_type__: type });
-  return operation;
 }
 
 /**
@@ -85,13 +158,12 @@ export function updateOperation(type, keys, data) {
  * @param  {Array} keys Identifying keys, typically [<entity id>]
  * @return {Object}      API operation
  */
-export function deleteOperation(type, keys) {
-  const operation = {
+export function deleteOperation(type: string, keys: string[]): DeleteOperation {
+  return {
     action: "delete",
     entity_type: type,
     entity_key: keys,
   };
-  return operation;
 }
 
 const exports = {
