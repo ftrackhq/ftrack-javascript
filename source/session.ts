@@ -87,7 +87,7 @@ export interface Response<T> {
       offset: number | null;
     };
   };
-  data: T;
+  data: T[];
 }
 
 export interface ResponseError {
@@ -587,11 +587,11 @@ export class Session {
    *
    *   Return update or create promise.
    */
-  ensure<T extends Entity>(
+  ensure(
     entityType: string,
     data: Data,
     identifyingKeys: string[] = []
-  ): Promise<Response<T>> {
+  ): Promise<Data> {
     let keys = identifyingKeys;
 
     logger.info(
