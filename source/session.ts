@@ -74,10 +74,6 @@ export interface SearchOptions {
   objectTypeIds?: string[];
 }
 
-export interface QueryOptions {
-  abortController?: AbortController;
-}
-
 export interface Response<T> {
   url?: any;
   headers?: any;
@@ -97,10 +93,16 @@ export interface ResponseError {
   error?: Data;
 }
 
-export interface CallOptions {
-  abortController?: AbortController;
+export interface MutatationOptions {
   pushToken?: string;
 }
+
+export interface QueryOptions {
+  abortController?: AbortController;
+  signal?: AbortSignal;
+}
+
+export interface CallOptions extends MutatationOptions, QueryOptions {}
 
 /**
  * ftrack API session
@@ -481,13 +483,14 @@ export class Session {
    *
    * @param {Array} operations - API operations.
    * @param {Object} options
-   * @param {Object} options.abortController - Abort controller
+   * @param {AbortController} options.abortController - Abort controller, deprecated in favor of options.signal
+   * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
    *
    */
   call(
     operations: operation.Operation[],
-    { abortController, pushToken }: CallOptions = {}
+    { abortController, pushToken, signal }: CallOptions = {}
   ): Promise<Response<Data>[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
@@ -515,7 +518,7 @@ export class Session {
             "ftrack-pushtoken": pushToken,
           } as HeadersInit,
           body: this.encodeOperations(operations),
-          signal: abortController && abortController.signal,
+          signal: abortController ? abortController.signal : signal,
         })
       )
       .catch((reason) => {
@@ -696,20 +699,19 @@ export class Session {
    *
    * @param {string} expression - API query expression.
    * @param {object} options
-   * @param {object} options.abortController - abortController used for aborting requests prematurely
+   * @param {object} options.abortController - Deprecated in favour of options.signal
+   * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  query(expression: string, { abortController }: QueryOptions = {}) {
+  query(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
 
     const queryOperation = operation.query(expression);
-    let request = this.call([queryOperation], { abortController }).then(
-      (responses) => {
-        const response = responses[0];
-        return response;
-      }
-    );
+    let request = this.call([queryOperation], options).then((responses) => {
+      const response = responses[0];
+      return response;
+    });
 
     return request;
   }
@@ -724,7 +726,8 @@ export class Session {
    * @param {String}   [options.contextId]    Context id to limit the search result to
    * @param {String[]} [options.objectTypeIds] Object type ids to limit the search result to
    * @param {object} additionalOptions
-   * @param {object} additionalOptions.abortController - abortController used for aborting requests prematurely
+   * @param {object} options.abortController - Deprecated in favour of options.signal
+   * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
@@ -736,7 +739,7 @@ export class Session {
       contextId,
       objectTypeIds,
     }: SearchOptions,
-    { abortController }: CallOptions = {}
+    options: QueryOptions = {}
   ) {
     logger.debug("Search", {
       expression,
@@ -753,12 +756,10 @@ export class Session {
       contextId,
       objectTypeIds,
     });
-    let request = this.call([searchOperation], { abortController }).then(
-      (responses) => {
-        const response = responses[0];
-        return response;
-      }
-    );
+    let request = this.call([searchOperation], options).then((responses) => {
+      const response = responses[0];
+      return response;
+    });
 
     return request;
   }
@@ -799,7 +800,7 @@ export class Session {
     type: string,
     keys: string[],
     data: Data,
-    { pushToken }: CallOptions = {}
+    { pushToken }: MutatationOptions = {}
   ) {
     logger.debug("Update", type, keys, data, pushToken);
 
@@ -822,7 +823,7 @@ export class Session {
    * @param {string} options.pushToken - push token to associate with the request
    * @return {Promise} Promise resolved with the response.
    */
-  delete(type: string, keys: string[], { pushToken }: CallOptions = {}) {
+  delete(type: string, keys: string[], { pushToken }: MutatationOptions = {}) {
     logger.debug("Delete", type, keys, pushToken);
 
     let request = this.call([operation.delete(type, keys)], { pushToken }).then(
