@@ -61,7 +61,16 @@ export interface GetUploadMetadataOperation {
   component_id: string;
 }
 
-export type Operation = { action: string; [key: string]: any };
+export type Operation =
+  | CreateOperation
+  | QueryOperation
+  | SearchOperation
+  | UpdateOperation
+  | DeleteOperation
+  | QueryServerInformationOperation
+  | QuerySchemasOperation
+  | GetUploadMetadataOperation
+  | { action: string; [key: string]: any };
 
 /**
  * Return create operation object for entity *type* and *data*.
