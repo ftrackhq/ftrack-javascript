@@ -3,15 +3,8 @@ import moment from "moment";
 import loglevel from "loglevel";
 import { v4 as uuidV4 } from "uuid";
 
-import EventHub from "./event_hub";
-import {
-  queryOperation,
-  createOperation,
-  updateOperation,
-  deleteOperation,
-  searchOperation,
-  Operation,
-} from "./operation";
+import { EventHub } from "./event_hub";
+import * as operation from "./operation";
 import {
   ServerPermissionDeniedError,
   ServerValidationError,
@@ -81,16 +74,16 @@ export interface SearchOptions {
   objectTypeIds?: string[];
 }
 
-export interface QueryOptions {
-  abortController?: AbortController;
-}
-
 export interface Response<T> {
   url?: any;
   headers?: any;
   action: string;
-  metadata: Data;
-  data: T;
+  metadata: {
+    next: {
+      offset: number | null;
+    };
+  };
+  data: T[];
 }
 
 export interface ResponseError {
@@ -100,10 +93,16 @@ export interface ResponseError {
   error?: Data;
 }
 
-export interface CallOptions {
-  abortController?: AbortController;
+export interface MutatationOptions {
   pushToken?: string;
 }
+
+export interface QueryOptions {
+  abortController?: AbortController;
+  signal?: AbortSignal;
+}
+
+export interface CallOptions extends MutatationOptions, QueryOptions {}
 
 /**
  * ftrack API session
@@ -215,7 +214,7 @@ export class Session {
       serverInformationValues.push("is_timezone_support_enabled");
     }
 
-    const operations: Operation[] = [
+    const operations: operation.Operation[] = [
       {
         action: "query_server_information",
         values: serverInformationValues,
@@ -463,7 +462,7 @@ export class Session {
   }
 
   /** Return encoded *operations*. */
-  encodeOperations(operations: Operation[]) {
+  encodeOperations(operations: operation.Operation[]) {
     return JSON.stringify(this.encode(operations));
   }
 
@@ -484,13 +483,14 @@ export class Session {
    *
    * @param {Array} operations - API operations.
    * @param {Object} options
-   * @param {Object} options.abortController - Abort controller
+   * @param {AbortController} options.abortController - Abort controller, deprecated in favor of options.signal
+   * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
    *
    */
   call(
-    operations: Operation[],
-    { abortController, pushToken }: CallOptions = {}
+    operations: operation.Operation[],
+    { abortController, pushToken, signal }: CallOptions = {}
   ): Promise<Response<Data>[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
@@ -518,7 +518,7 @@ export class Session {
             "ftrack-pushtoken": pushToken,
           } as HeadersInit,
           body: this.encodeOperations(operations),
-          signal: abortController && abortController.signal,
+          signal: abortController ? abortController.signal : signal,
         })
       )
       .catch((reason) => {
@@ -590,11 +590,11 @@ export class Session {
    *
    *   Return update or create promise.
    */
-  ensure<T extends Entity>(
+  ensure(
     entityType: string,
     data: Data,
     identifyingKeys: string[] = []
-  ): Promise<Response<T>> {
+  ): Promise<Data> {
     let keys = identifyingKeys;
 
     logger.info(
@@ -699,20 +699,19 @@ export class Session {
    *
    * @param {string} expression - API query expression.
    * @param {object} options
-   * @param {object} options.abortController - abortController used for aborting requests prematurely
+   * @param {object} options.abortController - Deprecated in favour of options.signal
+   * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  query(expression: string, { abortController }: QueryOptions = {}) {
+  query(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
 
-    const operation = queryOperation(expression);
-    let request = this.call([operation], { abortController }).then(
-      (responses) => {
-        const response = responses[0];
-        return response;
-      }
-    );
+    const queryOperation = operation.query(expression);
+    let request = this.call([queryOperation], options).then((responses) => {
+      const response = responses[0];
+      return response;
+    });
 
     return request;
   }
@@ -727,7 +726,8 @@ export class Session {
    * @param {String}   [options.contextId]    Context id to limit the search result to
    * @param {String[]} [options.objectTypeIds] Object type ids to limit the search result to
    * @param {object} additionalOptions
-   * @param {object} additionalOptions.abortController - abortController used for aborting requests prematurely
+   * @param {object} options.abortController - Deprecated in favour of options.signal
+   * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
@@ -739,7 +739,7 @@ export class Session {
       contextId,
       objectTypeIds,
     }: SearchOptions,
-    { abortController }: CallOptions = {}
+    options: QueryOptions = {}
   ) {
     logger.debug("Search", {
       expression,
@@ -749,19 +749,17 @@ export class Session {
       objectTypeIds,
     });
 
-    const operation = searchOperation({
+    const searchOperation = operation.search({
       expression,
       entityType,
       terms,
       contextId,
       objectTypeIds,
     });
-    let request = this.call([operation], { abortController }).then(
-      (responses) => {
-        const response = responses[0];
-        return response;
-      }
-    );
+    let request = this.call([searchOperation], options).then((responses) => {
+      const response = responses[0];
+      return response;
+    });
 
     return request;
   }
@@ -778,7 +776,7 @@ export class Session {
   create(entityType: string, data: Data, { pushToken }: CallOptions = {}) {
     logger.debug("Create", entityType, data, pushToken);
 
-    let request = this.call([createOperation(entityType, data)], {
+    let request = this.call([operation.create(entityType, data)], {
       pushToken,
     }).then((responses) => {
       const response = responses[0];
@@ -802,11 +800,11 @@ export class Session {
     type: string,
     keys: string[],
     data: Data,
-    { pushToken }: CallOptions = {}
+    { pushToken }: MutatationOptions = {}
   ) {
     logger.debug("Update", type, keys, data, pushToken);
 
-    const request = this.call([updateOperation(type, keys, data)], {
+    const request = this.call([operation.update(type, keys, data)], {
       pushToken,
     }).then((responses) => {
       const response = responses[0];
@@ -825,10 +823,10 @@ export class Session {
    * @param {string} options.pushToken - push token to associate with the request
    * @return {Promise} Promise resolved with the response.
    */
-  delete(type: string, keys: string[], { pushToken }: CallOptions = {}) {
+  delete(type: string, keys: string[], { pushToken }: MutatationOptions = {}) {
     logger.debug("Delete", type, keys, pushToken);
 
-    let request = this.call([deleteOperation(type, keys)], { pushToken }).then(
+    let request = this.call([operation.delete(type, keys)], { pushToken }).then(
       (responses) => {
         const response = responses[0];
         return response;
@@ -956,8 +954,8 @@ export class Session {
     };
 
     const componentAndLocationPromise = this.call([
-      createOperation("FileComponent", component),
-      createOperation("ComponentLocation", componentLocation),
+      operation.create("FileComponent", component),
+      operation.create("ComponentLocation", componentLocation),
       {
         action: "get_upload_metadata",
         file_name: `${fileName}${fileType}`,
@@ -1014,5 +1012,3 @@ export class Session {
     });
   }
 }
-
-export default Session;

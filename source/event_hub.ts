@@ -2,7 +2,7 @@
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
 import io, { SocketIO } from "./socket.io-websocket-only.cjs";
-import Event from "./event";
+import { Event } from "./event";
 import {
   EventServerConnectionTimeoutError,
   EventServerReplyTimeoutError,
@@ -59,7 +59,7 @@ export interface EventEntity {
 }
 
 export interface SubscriberMetadata {
-  id?: string;
+  id: string;
   [key: string]: any;
 }
 
@@ -136,7 +136,7 @@ export class EventHub {
   }
 
   /** Connect to the event server. */
-  connect() {
+  connect(): void {
     this._socketIo = io.connect(this._serverUrl, {
       "max reconnection attempts": Infinity,
       "reconnection limit": 10000,
@@ -283,7 +283,10 @@ export class EventHub {
    * @param  {Number}  [options.timeout]  Timeout in seconds [30]
    * @return {Promise}
    */
-  publishAndWaitForReply(event: Event, { timeout = 30 }: { timeout: number }) {
+  publishAndWaitForReply(
+    event: Event,
+    { timeout = 30 }: { timeout: number }
+  ): Promise<unknown> {
     const eventId = event.getData().id;
     const response = new Promise((resolve, reject) => {
       const onReply: EventCallback = (replyEvent) => {
@@ -346,8 +349,8 @@ export class EventHub {
   subscribe(
     subscription: string,
     callback: EventCallback,
-    metadata: SubscriberMetadata = {}
-  ) {
+    metadata?: SubscriberMetadata
+  ): string {
     const subscriber = this._addSubscriber(subscription, callback, metadata);
     this._notifyServerAboutSubscriber(subscriber);
     return subscriber.metadata.id;
@@ -359,7 +362,7 @@ export class EventHub {
    * @param  {String}   identifier  Subscriber ID returned from subscribe method.
    * @return {Boolean}              True if a subscriber was removed, false otherwise
    */
-  unsubscribe(identifier: string) {
+  unsubscribe(identifier: string): boolean {
     let hasFoundSubscriberToRemove = false;
     this._subscribers = this._subscribers.filter((subscriber) => {
       if (subscriber.metadata.id === identifier) {
@@ -408,7 +411,9 @@ export class EventHub {
   _addSubscriber(
     subscription: string,
     callback: EventCallback,
-    metadata: SubscriberMetadata = {}
+    metadata: SubscriberMetadata = {
+      id: uuidV4(),
+    }
   ) {
     // Ensure subscription is on supported format.
     // TODO: Remove once subscription parsing is supported.
@@ -461,9 +466,9 @@ export class EventHub {
    * Return null if no subscriber with *identifier* found.
    *
    * @param  {String} identifier
-   * @return {String|null}
+   * @return {Subscriber|null}
    */
-  getSubscriberByIdentifier(identifier: string) {
+  getSubscriberByIdentifier(identifier: string): Subscriber | null {
     for (const subscriber of this._subscribers.slice()) {
       if (subscriber.metadata.id === identifier) {
         return subscriber;
@@ -550,7 +555,7 @@ export class EventHub {
     sourceEventPayload: EventPayload,
     data: Data,
     source: Data | null = null
-  ) {
+  ): Promise<string> {
     const replyEvent = new Event("ftrack.meta.reply", {
       ...data,
       target: `id=${sourceEventPayload.source.id}`,
@@ -561,5 +566,3 @@ export class EventHub {
     return this.publish(replyEvent);
   }
 }
-
-export default EventHub;

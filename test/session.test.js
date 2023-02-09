@@ -10,7 +10,7 @@ import {
   ServerError,
 } from "../source/error";
 import { Session } from "../source/session";
-import operation from "../source/operation";
+import * as operation from "../source/operation";
 import { expect } from "chai";
 
 const logger = loglevel.getLogger("test_session");
