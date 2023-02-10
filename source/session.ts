@@ -51,6 +51,8 @@ export interface SessionOptions {
   eventHubOptions?: EventHubOptions;
   clientToken?: string;
   apiEndpoint?: string;
+  additionalHeaders?: Data;
+  strictApi?: boolean;
 }
 
 export interface CreateComponentOptions {
@@ -95,11 +97,13 @@ export interface ResponseError {
 
 export interface MutatationOptions {
   pushToken?: string;
+  additionalHeaders?: Data;
 }
 
 export interface QueryOptions {
   abortController?: AbortController;
   signal?: AbortSignal;
+  additionalHeaders?: Data;
 }
 
 export interface CallOptions extends MutatationOptions, QueryOptions {}
@@ -121,6 +125,7 @@ export class Session {
   serverInformation?: Data;
   schemas?: Data;
   serverVersion?: string;
+  additionalHeaders: Data;
 
   /**
    * Construct Session instance with API credentials.
@@ -147,6 +152,8 @@ export class Session {
       eventHubOptions = {},
       clientToken,
       apiEndpoint = "/api",
+      additionalHeaders = {},
+      strictApi = false,
     }: SessionOptions = {}
   ) {
     if (!serverUrl || !apiUser || !apiKey) {
@@ -187,6 +194,21 @@ export class Session {
      * @type {string}
      */
     this.apiEndpoint = apiEndpoint;
+
+    /**
+     * allows setting additional headers to be sent with each request
+     * @memberof Session
+     * @instance
+     * @type {Data}
+     */
+    this.additionalHeaders = additionalHeaders;
+
+    if (strictApi) {
+      this.additionalHeaders = {
+        ...additionalHeaders,
+        "ftrack-strict-api": "true",
+      };
+    }
 
     /**
      * session event hub
@@ -490,7 +512,12 @@ export class Session {
    */
   call(
     operations: operation.Operation[],
-    { abortController, pushToken, signal }: CallOptions = {}
+    {
+      abortController,
+      pushToken,
+      signal,
+      additionalHeaders = {},
+    }: CallOptions = {}
   ): Promise<Response<Data>[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
@@ -516,6 +543,8 @@ export class Session {
             "ftrack-user": this.apiUser,
             "ftrack-Clienttoken": this.clientToken,
             "ftrack-pushtoken": pushToken,
+            ...this.additionalHeaders,
+            ...additionalHeaders,
           } as HeadersInit,
           body: this.encodeOperations(operations),
           signal: abortController ? abortController.signal : signal,
@@ -706,7 +735,6 @@ export class Session {
    */
   query(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
-
     const queryOperation = operation.query(expression);
     let request = this.call([queryOperation], options).then((responses) => {
       const response = responses[0];

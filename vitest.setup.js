@@ -1,8 +1,5 @@
 import { fetch } from "cross-fetch";
-import { setupServer } from "msw/node";
-import { handlers } from "./test/server";
-
-const server = setupServer(...handlers);
+import { server } from "./test/server";
 
 // Very simple mock of XmlHttpRequest with only the parts we use
 class MockXmlHttpRequest {
