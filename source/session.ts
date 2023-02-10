@@ -139,6 +139,8 @@ export class Session {
    * @param  {Object}  [options.eventHubOptions={}] - Options to configure event hub with.
    * @param  {string} [options.clientToken] - Client token for update events.
    * @param  {string} [options.apiEndpoint=/api] - API endpoint.
+   * @param {object} [options.headers] - Additional headers to send with the request
+   * @param {object} [options.strictApi] - Turn on strict API mode
    *
    * @constructs Session
    */
@@ -508,6 +510,7 @@ export class Session {
    * @param {AbortController} options.abortController - Abort controller, deprecated in favor of options.signal
    * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
+   * @param {object} options.headers - Additional headers to send with the request
    *
    */
   call(
@@ -730,6 +733,7 @@ export class Session {
    * @param {object} options
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
@@ -756,6 +760,7 @@ export class Session {
    * @param {object} additionalOptions
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
@@ -799,6 +804,7 @@ export class Session {
    * @param {Object} data data which should be used to populate attributes on the entity.
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise which will be resolved with the response.
    */
   create(entityType: string, data: Data, { pushToken }: CallOptions = {}) {
@@ -822,6 +828,7 @@ export class Session {
    * @param  {Object} data
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise resolved with the response.
    */
   update(
@@ -849,6 +856,7 @@ export class Session {
    * @param  {Array} keys Identifying keys, typically [<entity id>]
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise resolved with the response.
    */
   delete(type: string, keys: string[], { pushToken }: MutatationOptions = {}) {
