@@ -1,9 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-export * from "./session";
-
 export * from "./event";
 export * from "./event_hub";
+export * from "./session";
+export * from "./types";
 
 export * as error from "./error";
 export * as operation from "./operation";
