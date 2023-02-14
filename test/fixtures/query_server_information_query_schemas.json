@@ -41,9 +41,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -52,26 +50,15 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "ListCustomAttributeLink"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "computed": [
-        "latest_version"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "computed": ["latest_version"],
+      "required": ["id"],
+      "immutable": ["id"],
       "id": "Asset",
       "type": "object",
       "properties": {
@@ -146,27 +133,14 @@
           }
         }
       },
-      "system_projections": [
-        "context_id"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["context_id"],
+      "primary_key": ["id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "name",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["name", "id"],
+      "immutable": ["id"],
       "id": "Scope",
       "type": "object",
       "properties": {
@@ -180,22 +154,10 @@
       }
     },
     {
-      "default_projections": [
-        "id",
-        "entity_id",
-        "list_id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "entity_id",
-        "list_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "entity_id", "list_id"],
+      "primary_key": ["id"],
+      "required": ["id", "entity_id", "list_id"],
+      "immutable": ["id"],
       "id": "ListObject",
       "type": "object",
       "properties": {
@@ -230,20 +192,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "template_id",
-        "task_type_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "template_id", "task_type_id"],
+      "immutable": ["id"],
       "id": "TaskTemplateItem",
       "type": "object",
       "properties": {
@@ -304,9 +256,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -315,20 +265,13 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "UserCustomAttributeLink"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
       "required": [
         "email",
         "name",
@@ -337,10 +280,7 @@
         "created_by_id",
         "created_at"
       ],
-      "immutable": [
-        "id",
-        "created_from_shared_url"
-      ],
+      "immutable": ["id", "created_from_shared_url"],
       "id": "ReviewSessionInvitee",
       "type": "object",
       "properties": {
@@ -391,9 +331,7 @@
           "$ref": "ReviewSession"
         }
       },
-      "system_projections": [
-        "review_session_id"
-      ]
+      "system_projections": ["review_session_id"]
     },
     {
       "properties": {
@@ -658,11 +596,7 @@
           "alias_for": "context_allocations"
         }
       },
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
+      "default_projections": ["context_type", "id", "name"],
       "computed": [
         "time_logged",
         "bid_time_logged_difference",
@@ -701,31 +635,14 @@
       },
       "type": "object",
       "id": "Milestone",
-      "system_projections": [
-        "showid",
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["showid", "context_type"],
+      "primary_key": ["id"]
     },
     {
-      "default_projections": [
-        "id",
-        "system_type"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "system_type",
-        "name",
-        "id",
-        "padding"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "system_type"],
+      "primary_key": ["id"],
+      "required": ["system_type", "name", "id", "padding"],
+      "immutable": ["id"],
       "id": "SequenceComponent",
       "type": "object",
       "properties": {
@@ -808,18 +725,11 @@
           }
         }
       },
-      "system_projections": [
-        "system_type",
-        "version_id"
-      ]
+      "system_projections": ["system_type", "version_id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
       "required": [
         "id",
         "name",
@@ -831,9 +741,7 @@
         "is_statusable",
         "is_schedulable"
       ],
-      "immutable": [
-        "id"
-      ],
+      "immutable": ["id"],
       "id": "ObjectType",
       "type": "object",
       "properties": {
@@ -898,19 +806,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "created_at"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "created_at"],
+      "immutable": ["id"],
       "id": "ReviewSessionObjectStatus",
       "type": "object",
       "properties": {
@@ -943,9 +842,7 @@
           "type": "string"
         }
       },
-      "system_projections": [
-        "review_session_object_id"
-      ]
+      "system_projections": ["review_session_object_id"]
     },
     {
       "properties": {
@@ -1210,11 +1107,7 @@
           "alias_for": "context_allocations"
         }
       },
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
+      "default_projections": ["context_type", "id", "name"],
       "computed": [
         "time_logged",
         "bid_time_logged_difference",
@@ -1252,13 +1145,8 @@
       },
       "type": "object",
       "id": "Task",
-      "system_projections": [
-        "showid",
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["showid", "context_type"],
+      "primary_key": ["id"]
     },
     {
       "properties": {
@@ -1293,9 +1181,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -1304,10 +1190,7 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "AssetVersionCustomAttributeLink"
     },
@@ -1544,14 +1427,8 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
-      "computed": [
-        "thumbnail_url"
-      ],
+      "default_projections": ["context_type", "id", "name"],
+      "computed": ["thumbnail_url"],
       "required": [
         "is_global",
         "status",
@@ -1572,28 +1449,14 @@
       "alias_for": "Show",
       "type": "object",
       "id": "Project",
-      "system_projections": [
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["context_type"],
+      "primary_key": ["id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "created_by_id",
-        "created_at"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "created_by_id", "created_at"],
+      "immutable": ["id"],
       "id": "Conversation",
       "type": "object",
       "properties": {
@@ -1630,24 +1493,10 @@
       }
     },
     {
-      "default_projections": [
-        "component_id",
-        "note_id"
-      ],
-      "computed": [
-        "thumbnail_url",
-        "url"
-      ],
-      "required": [
-        "component_id",
-        "note_id"
-      ],
-      "immutable": [
-        "component_id",
-        "note_id",
-        "thumbnail_url",
-        "url"
-      ],
+      "default_projections": ["component_id", "note_id"],
+      "computed": ["thumbnail_url", "url"],
+      "required": ["component_id", "note_id"],
+      "immutable": ["component_id", "note_id", "thumbnail_url", "url"],
       "id": "NoteComponent",
       "type": "object",
       "properties": {
@@ -1674,27 +1523,13 @@
           "type": "object"
         }
       },
-      "primary_key": [
-        "component_id",
-        "note_id"
-      ]
+      "primary_key": ["component_id", "note_id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "comment",
-        "start",
-        "duration",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["comment", "start", "duration", "id"],
+      "immutable": ["id"],
       "id": "Timelog",
       "type": "object",
       "properties": {
@@ -1736,10 +1571,7 @@
           "type": "string"
         }
       },
-      "system_projections": [
-        "user_id",
-        "context_id"
-      ]
+      "system_projections": ["user_id", "context_id"]
     },
     {
       "properties": {
@@ -2004,11 +1836,7 @@
           "alias_for": "context_allocations"
         }
       },
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
+      "default_projections": ["context_type", "id", "name"],
       "computed": [
         "time_logged",
         "bid_time_logged_difference",
@@ -2051,31 +1879,14 @@
       },
       "type": "object",
       "id": "Shot",
-      "system_projections": [
-        "showid",
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["showid", "context_type"],
+      "primary_key": ["id"]
     },
     {
-      "default_projections": [
-        "object_type_id",
-        "project_schema_id"
-      ],
-      "primary_key": [
-        "object_type_id",
-        "project_schema_id"
-      ],
-      "required": [
-        "object_type_id",
-        "project_schema_id"
-      ],
-      "immutable": [
-        "object_type_id",
-        "project_schema_id"
-      ],
+      "default_projections": ["object_type_id", "project_schema_id"],
+      "primary_key": ["object_type_id", "project_schema_id"],
+      "required": ["object_type_id", "project_schema_id"],
+      "immutable": ["object_type_id", "project_schema_id"],
       "id": "ProjectSchemaObjectType",
       "type": "object",
       "properties": {
@@ -2122,49 +1933,19 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "configuration_id",
-        "entity_id",
-        "key"
-      ],
-      "primary_key": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "required": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "immutable": [
-        "configuration_id",
-        "entity_id"
-      ],
+      "default_projections": ["configuration_id", "entity_id", "key"],
+      "primary_key": ["configuration_id", "entity_id"],
+      "required": ["configuration_id", "entity_id"],
+      "immutable": ["configuration_id", "entity_id"],
       "type": "object",
       "id": "ListCustomAttributeValue",
-      "system_projections": [
-        "entity_id",
-        "key",
-        "_casted_value",
-        "project_id"
-      ]
+      "system_projections": ["entity_id", "key", "_casted_value", "project_id"]
     },
     {
-      "default_projections": [
-        "task_type_schema_id",
-        "type_id"
-      ],
-      "primary_key": [
-        "task_type_schema_id",
-        "type_id"
-      ],
-      "required": [
-        "task_type_schema_id",
-        "type_id"
-      ],
-      "immutable": [
-        "task_type_schema_id",
-        "type_id"
-      ],
+      "default_projections": ["task_type_schema_id", "type_id"],
+      "primary_key": ["task_type_schema_id", "type_id"],
+      "required": ["task_type_schema_id", "type_id"],
+      "immutable": ["task_type_schema_id", "type_id"],
       "id": "TaskTypeSchemaType",
       "type": "object",
       "properties": {
@@ -2183,19 +1964,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "name"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "name"],
+      "immutable": ["id"],
       "id": "Disk",
       "type": "object",
       "properties": {
@@ -2275,43 +2047,20 @@
           "alias_for": "socialid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "SocialEvent",
       "type": "object",
       "id": "Event",
-      "system_projections": [
-        "showid"
-      ]
+      "system_projections": ["showid"]
     },
     {
-      "default_projections": [
-        "configuration_id",
-        "from_id",
-        "to_id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "configuration_id",
-        "from_id",
-        "to_id"
-      ],
-      "immutable": [
-        "configuration_id",
-        "id"
-      ],
+      "default_projections": ["configuration_id", "from_id", "to_id"],
+      "primary_key": ["id"],
+      "required": ["configuration_id", "from_id", "to_id"],
+      "immutable": ["configuration_id", "id"],
       "id": "CustomAttributeLinkFrom",
       "type": "object",
       "properties": {
@@ -2352,20 +2101,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "conversation_id",
-        "resource_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "conversation_id", "resource_id"],
+      "immutable": ["id"],
       "id": "Participant",
       "type": "object",
       "properties": {
@@ -2396,22 +2135,10 @@
       }
     },
     {
-      "default_projections": [
-        "component_id",
-        "job_id"
-      ],
-      "computed": [
-        "url"
-      ],
-      "required": [
-        "component_id",
-        "job_id"
-      ],
-      "immutable": [
-        "component_id",
-        "job_id",
-        "url"
-      ],
+      "default_projections": ["component_id", "job_id"],
+      "computed": ["url"],
+      "required": ["component_id", "job_id"],
+      "immutable": ["component_id", "job_id", "url"],
       "id": "JobComponent",
       "type": "object",
       "properties": {
@@ -2435,10 +2162,7 @@
           "format": "foreign_key"
         }
       },
-      "primary_key": [
-        "component_id",
-        "job_id"
-      ]
+      "primary_key": ["component_id", "job_id"]
     },
     {
       "properties": {
@@ -2473,9 +2197,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -2484,10 +2206,7 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "ComponentCustomAttributeLink"
     },
@@ -2519,18 +2238,10 @@
           "alias_for": "priorityid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "PriorityType",
       "type": "object",
       "id": "Priority"
@@ -2549,39 +2260,19 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "StatusType",
       "type": "object",
       "id": "State"
     },
     {
-      "default_projections": [
-        "name",
-        "group"
-      ],
-      "primary_key": [
-        "name",
-        "group"
-      ],
-      "required": [
-        "name",
-        "group"
-      ],
-      "immutable": [
-        "name",
-        "group"
-      ],
+      "default_projections": ["name", "group"],
+      "primary_key": ["name", "group"],
+      "required": ["name", "group"],
+      "immutable": ["name", "group"],
       "id": "Setting",
       "type": "object",
       "properties": {
@@ -2600,19 +2291,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "name",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["name", "id"],
+      "immutable": ["id"],
       "id": "Location",
       "type": "object",
       "properties": {
@@ -2900,11 +2582,7 @@
           "alias_for": "context_allocations"
         }
       },
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
+      "default_projections": ["context_type", "id", "name"],
       "computed": [
         "time_logged",
         "bid_time_logged_difference",
@@ -2949,32 +2627,14 @@
       },
       "type": "object",
       "id": "Episode",
-      "system_projections": [
-        "showid",
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["showid", "context_type"],
+      "primary_key": ["id"]
     },
     {
-      "default_projections": [
-        "id",
-        "start",
-        "end"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "name",
-        "start",
-        "end",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "start", "end"],
+      "primary_key": ["id"],
+      "required": ["name", "start", "end", "id"],
+      "immutable": ["id"],
       "id": "CalendarEvent",
       "type": "object",
       "properties": {
@@ -3057,9 +2717,7 @@
           }
         }
       },
-      "system_projections": [
-        "project_id"
-      ]
+      "system_projections": ["project_id"]
     },
     {
       "properties": {
@@ -3098,21 +2756,10 @@
           "alias_for": "typeid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "color",
-        "sort",
-        "is_billable"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "color", "sort", "is_billable"],
+      "immutable": ["id"],
       "alias_for": "TaskType",
       "type": "object",
       "id": "Type"
@@ -3164,9 +2811,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -3175,10 +2820,7 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "ListCustomAttributeLinkFrom"
     },
@@ -3197,24 +2839,10 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "user_id",
-        "key",
-        "value"
-      ],
-      "primary_key": [
-        "user_id",
-        "key"
-      ],
-      "required": [
-        "user_id",
-        "key",
-        "value"
-      ],
-      "immutable": [
-        "user_id",
-        "key"
-      ],
+      "default_projections": ["user_id", "key", "value"],
+      "primary_key": ["user_id", "key"],
+      "required": ["user_id", "key", "value"],
+      "immutable": ["user_id", "key"],
       "alias_for": "UserSetting",
       "type": "object",
       "id": "UserApplicationState"
@@ -3266,9 +2894,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -3277,10 +2903,7 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "ComponentCustomAttributeLinkFrom"
     },
@@ -3331,9 +2954,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -3342,10 +2963,7 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "ContextCustomAttributeLinkFrom"
     },
@@ -3374,46 +2992,19 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "configuration_id",
-        "entity_id",
-        "key"
-      ],
-      "primary_key": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "required": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "immutable": [
-        "configuration_id",
-        "entity_id"
-      ],
+      "default_projections": ["configuration_id", "entity_id", "key"],
+      "primary_key": ["configuration_id", "entity_id"],
+      "required": ["configuration_id", "entity_id"],
+      "immutable": ["configuration_id", "entity_id"],
       "type": "object",
       "id": "ContextCustomAttributeValue",
-      "system_projections": [
-        "entity_id",
-        "key",
-        "_casted_value",
-        "project_id"
-      ]
+      "system_projections": ["entity_id", "key", "_casted_value", "project_id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id",
-        "name"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id", "name"],
       "id": "UserType",
       "type": "object",
       "properties": {
@@ -3428,32 +3019,16 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "status",
-        "type"
-      ],
-      "immutable": [
-        "id",
-        "type"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "status", "type"],
+      "immutable": ["id", "type"],
       "id": "Job",
       "type": "object",
       "properties": {
         "status": {
           "default": "queued",
-          "enum": [
-            "queued",
-            "running",
-            "done",
-            "failed"
-          ],
+          "enum": ["queued", "running", "done", "failed"],
           "type": "string"
         },
         "user_id": {
@@ -3531,22 +3106,10 @@
           }
         }
       },
-      "default_projections": [
-        "id",
-        "from_id",
-        "to_id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "from_id",
-        "to_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "from_id", "to_id"],
+      "primary_key": ["id"],
+      "required": ["id", "from_id", "to_id"],
+      "immutable": ["id"],
       "alias_for": "Dependency",
       "type": "object",
       "id": "TypedContextLink"
@@ -3573,26 +3136,10 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "parent_id",
-        "key",
-        "value",
-        "parent_type"
-      ],
-      "primary_key": [
-        "parent_id",
-        "key"
-      ],
-      "required": [
-        "parent_id",
-        "key",
-        "value",
-        "parent_type"
-      ],
-      "immutable": [
-        "parent_id",
-        "key"
-      ],
+      "default_projections": ["parent_id", "key", "value", "parent_type"],
+      "primary_key": ["parent_id", "key"],
+      "required": ["parent_id", "key", "value", "parent_type"],
+      "immutable": ["parent_id", "key"],
       "alias_for": "Meta",
       "type": "object",
       "id": "Metadata"
@@ -3644,9 +3191,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -3655,28 +3200,15 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "GroupCustomAttributeLinkFrom"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "name",
-        "short"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "name", "short"],
+      "immutable": ["id"],
       "id": "AssetType",
       "type": "object",
       "properties": {
@@ -3704,21 +3236,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "comment",
-        "start",
-        "user_id",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["comment", "start", "user_id", "id"],
+      "immutable": ["id"],
       "id": "Timer",
       "type": "object",
       "properties": {
@@ -3780,20 +3301,10 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "id",
-        "user_security_role_id",
-        "project_id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "user_security_role_id", "project_id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "UserRoleProject",
       "type": "object",
       "id": "UserSecurityRoleProject"
@@ -3824,47 +3335,20 @@
           "format": "foreign_key"
         }
       },
-      "default_projections": [
-        "dashboard_id",
-        "resource_id"
-      ],
-      "primary_key": [
-        "dashboard_id",
-        "resource_id"
-      ],
-      "required": [
-        "dashboard_id",
-        "resource_id"
-      ],
-      "immutable": [
-        "dashboard_id",
-        "resource_id"
-      ],
+      "default_projections": ["dashboard_id", "resource_id"],
+      "primary_key": ["dashboard_id", "resource_id"],
+      "required": ["dashboard_id", "resource_id"],
+      "immutable": ["dashboard_id", "resource_id"],
       "alias_for": "LinkDashboardResource",
       "type": "object",
       "id": "DashboardResource",
-      "system_projections": [
-        "dashboard_id",
-        "resource_id"
-      ]
+      "system_projections": ["dashboard_id", "resource_id"]
     },
     {
-      "default_projections": [
-        "note_id",
-        "label_id"
-      ],
-      "primary_key": [
-        "note_id",
-        "label_id"
-      ],
-      "required": [
-        "note_id",
-        "label_id"
-      ],
-      "immutable": [
-        "note_id",
-        "label_id"
-      ],
+      "default_projections": ["note_id", "label_id"],
+      "primary_key": ["note_id", "label_id"],
+      "required": ["note_id", "label_id"],
+      "immutable": ["note_id", "label_id"],
       "id": "NoteLabelLink",
       "type": "object",
       "properties": {
@@ -3905,30 +3389,17 @@
           "description": "Name of custom attribute group"
         }
       },
-      "default_projections": [
-        "id",
-        "name"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "name"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "AttributeGroup",
       "type": "object",
       "id": "CustomAttributeGroup"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
       "required": [
         "name",
         "description",
@@ -3939,12 +3410,7 @@
         "created_by_id",
         "created_at"
       ],
-      "immutable": [
-        "id",
-        "thumbnail_id",
-        "thumbnail_url",
-        "is_open"
-      ],
+      "immutable": ["id", "thumbnail_id", "thumbnail_url", "is_open"],
       "id": "ReviewSession",
       "type": "object",
       "properties": {
@@ -4044,30 +3510,13 @@
           "alias_for": "created_by"
         }
       },
-      "computed": [
-        "thumbnail_id",
-        "thumbnail_url",
-        "is_open"
-      ]
+      "computed": ["thumbnail_id", "thumbnail_url", "is_open"]
     },
     {
-      "default_projections": [
-        "configuration_id",
-        "from_id",
-        "to_id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "configuration_id",
-        "from_id",
-        "to_id"
-      ],
-      "immutable": [
-        "configuration_id",
-        "id"
-      ],
+      "default_projections": ["configuration_id", "from_id", "to_id"],
+      "primary_key": ["id"],
+      "required": ["configuration_id", "from_id", "to_id"],
+      "immutable": ["configuration_id", "id"],
       "id": "CustomAttributeLink",
       "type": "object",
       "properties": {
@@ -4094,17 +3543,9 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "computed": [
-        "thumbnail_url"
-      ],
-      "required": [
-        "id",
-        "is_published",
-        "status_id"
-      ],
+      "default_projections": ["id"],
+      "computed": ["thumbnail_url"],
+      "required": ["id", "is_published", "status_id"],
       "immutable": [
         "id",
         "_link",
@@ -4293,12 +3734,8 @@
           "alias_for": "ispublished"
         }
       },
-      "system_projections": [
-        "assetid"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["assetid"],
+      "primary_key": ["id"]
     },
     {
       "properties": {
@@ -4563,11 +4000,7 @@
           "alias_for": "context_allocations"
         }
       },
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
+      "default_projections": ["context_type", "id", "name"],
       "computed": [
         "time_logged",
         "bid_time_logged_difference",
@@ -4608,13 +4041,8 @@
       },
       "type": "object",
       "id": "AssetBuild",
-      "system_projections": [
-        "showid",
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["showid", "context_type"],
+      "primary_key": ["id"]
     },
     {
       "properties": {
@@ -4641,47 +4069,19 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "configuration_id",
-        "entity_id",
-        "key"
-      ],
-      "primary_key": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "required": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "immutable": [
-        "configuration_id",
-        "entity_id"
-      ],
+      "default_projections": ["configuration_id", "entity_id", "key"],
+      "primary_key": ["configuration_id", "entity_id"],
+      "required": ["configuration_id", "entity_id"],
+      "immutable": ["configuration_id", "entity_id"],
       "type": "object",
       "id": "UserCustomAttributeValue",
-      "system_projections": [
-        "entity_id",
-        "key",
-        "_casted_value"
-      ]
+      "system_projections": ["entity_id", "key", "_casted_value"]
     },
     {
-      "default_projections": [
-        "id",
-        "system_type"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "system_type",
-        "name",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "system_type"],
+      "primary_key": ["id"],
+      "required": ["system_type", "name", "id"],
+      "immutable": ["id"],
       "id": "ContainerComponent",
       "type": "object",
       "properties": {
@@ -4760,27 +4160,13 @@
           "type": "integer"
         }
       },
-      "system_projections": [
-        "system_type",
-        "version_id"
-      ]
+      "system_projections": ["system_type", "version_id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "conversation_id",
-        "created_at",
-        "created_by_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "conversation_id", "created_at", "created_by_id"],
+      "immutable": ["id"],
       "id": "Message",
       "type": "object",
       "properties": {
@@ -4862,9 +4248,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -4873,10 +4257,7 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "AssetCustomAttributeLinkFrom"
     },
@@ -4901,22 +4282,10 @@
           "alias_for": "casted_value"
         }
       },
-      "default_projections": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "primary_key": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "required": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "immutable": [
-        "configuration_id",
-        "entity_id"
-      ],
+      "default_projections": ["configuration_id", "entity_id"],
+      "primary_key": ["configuration_id", "entity_id"],
+      "required": ["configuration_id", "entity_id"],
+      "immutable": ["configuration_id", "entity_id"],
       "alias_for": "Variable_Value",
       "type": "object",
       "id": "CustomAttributeValue"
@@ -5182,11 +4551,7 @@
           "alias_for": "context_allocations"
         }
       },
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
+      "default_projections": ["context_type", "id", "name"],
       "computed": [
         "time_logged",
         "bid_time_logged_difference",
@@ -5217,32 +4582,14 @@
       "alias_for": "Task",
       "type": "object",
       "id": "TypedContext",
-      "system_projections": [
-        "showid",
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["showid", "context_type"],
+      "primary_key": ["id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "name",
-        "local",
-        "resource_type",
-        "id"
-      ],
-      "immutable": [
-        "resource_type",
-        "link",
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["name", "local", "resource_type", "id"],
+      "immutable": ["resource_type", "link", "id"],
       "id": "Group",
       "type": "object",
       "properties": {
@@ -5329,9 +4676,7 @@
           "type": "string"
         }
       },
-      "system_projections": [
-        "resource_type"
-      ]
+      "system_projections": ["resource_type"]
     },
     {
       "properties": {
@@ -5380,9 +4725,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -5391,27 +4734,15 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "UserCustomAttributeLinkFrom"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "user_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "user_id"],
+      "immutable": ["id"],
       "id": "Note",
       "type": "object",
       "properties": {
@@ -5551,35 +4882,19 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "WorkflowScheme",
       "type": "object",
       "id": "WorkflowSchema"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "id": "DashboardWidget",
       "type": "object",
       "properties": {
@@ -5642,39 +4957,19 @@
           "alias_for": "statusid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "is_active"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "is_active"],
+      "immutable": ["id"],
       "alias_for": "TaskStatus",
       "type": "object",
       "id": "Status"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "type",
-        "resource_id",
-        "context_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "type", "resource_id", "context_id"],
+      "immutable": ["id"],
       "id": "Appointment",
       "type": "object",
       "properties": {
@@ -5706,18 +5001,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "id": "ManagerType",
       "type": "object",
       "properties": {
@@ -5732,22 +5019,10 @@
       }
     },
     {
-      "default_projections": [
-        "id",
-        "calendar_event_id",
-        "resource_id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "calendar_event_id",
-        "resource_id",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "calendar_event_id", "resource_id"],
+      "primary_key": ["id"],
+      "required": ["calendar_event_id", "resource_id", "id"],
+      "immutable": ["id"],
       "id": "CalendarEventResource",
       "type": "object",
       "properties": {
@@ -5788,20 +5063,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "group_id",
-        "user_id",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["group_id", "user_id", "id"],
+      "immutable": ["id"],
       "id": "Membership",
       "type": "object",
       "properties": {
@@ -5830,22 +5095,10 @@
       }
     },
     {
-      "default_projections": [
-        "workflow_schema_id",
-        "status_id"
-      ],
-      "primary_key": [
-        "workflow_schema_id",
-        "status_id"
-      ],
-      "required": [
-        "workflow_schema_id",
-        "status_id"
-      ],
-      "immutable": [
-        "workflow_schema_id",
-        "status_id"
-      ],
+      "default_projections": ["workflow_schema_id", "status_id"],
+      "primary_key": ["workflow_schema_id", "status_id"],
+      "required": ["workflow_schema_id", "status_id"],
+      "immutable": ["workflow_schema_id", "status_id"],
       "id": "WorkflowSchemaStatus",
       "type": "object",
       "properties": {
@@ -5864,23 +5117,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "computed": [
-        "thumbnail_url"
-      ],
-      "required": [
-        "username",
-        "is_active",
-        "resource_type",
-        "id"
-      ],
-      "immutable": [
-        "resource_type",
-        "thumbnail_url",
-        "id"
-      ],
+      "default_projections": ["id"],
+      "computed": ["thumbnail_url"],
+      "required": ["username", "is_active", "resource_type", "id"],
+      "immutable": ["resource_type", "thumbnail_url", "id"],
       "id": "User",
       "type": "object",
       "properties": {
@@ -6026,12 +5266,8 @@
           "type": "string"
         }
       },
-      "system_projections": [
-        "resource_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["resource_type"],
+      "primary_key": ["id"]
     },
     {
       "properties": {
@@ -6063,39 +5299,19 @@
           "alias_for": "typeid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "ProjectSchemeOverride",
       "type": "object",
       "id": "ProjectSchemaOverride"
     },
     {
-      "default_projections": [
-        "note_id",
-        "resource_id"
-      ],
-      "primary_key": [
-        "note_id",
-        "resource_id"
-      ],
-      "required": [
-        "note_id",
-        "resource_id"
-      ],
-      "immutable": [
-        "note_id",
-        "resource_id"
-      ],
+      "default_projections": ["note_id", "resource_id"],
+      "primary_key": ["note_id", "resource_id"],
+      "required": ["note_id", "resource_id"],
+      "immutable": ["note_id", "resource_id"],
       "id": "Recipient",
       "type": "object",
       "properties": {
@@ -6126,18 +5342,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "id": "TypedContextStatusChange",
       "type": "object",
       "properties": {
@@ -6210,31 +5418,13 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "configuration_id",
-        "entity_id",
-        "key"
-      ],
-      "primary_key": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "required": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "immutable": [
-        "configuration_id",
-        "entity_id"
-      ],
+      "default_projections": ["configuration_id", "entity_id", "key"],
+      "primary_key": ["configuration_id", "entity_id"],
+      "required": ["configuration_id", "entity_id"],
+      "immutable": ["configuration_id", "entity_id"],
       "type": "object",
       "id": "AssetVersionCustomAttributeValue",
-      "system_projections": [
-        "entity_id",
-        "key",
-        "_casted_value",
-        "project_id"
-      ]
+      "system_projections": ["entity_id", "key", "_casted_value", "project_id"]
     },
     {
       "properties": {
@@ -6254,18 +5444,10 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "NoteCategory",
       "type": "object",
       "id": "NoteLabel"
@@ -6342,28 +5524,14 @@
           "alias_for": "registerid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "core",
-        "config"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "core", "config"],
+      "immutable": ["id"],
       "alias_for": "RegisterBase",
       "type": "object",
       "id": "CustomConfigurationBase",
-      "system_projections": [
-        "write_permissionid",
-        "permissionid",
-        "topid"
-      ]
+      "system_projections": ["write_permissionid", "permissionid", "topid"]
     },
     {
       "properties": {
@@ -6459,38 +5627,19 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "ProjectScheme",
       "type": "object",
       "id": "ProjectSchema"
     },
     {
-      "default_projections": [
-        "id",
-        "name"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "name",
-        "project_schema_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "name"],
+      "primary_key": ["id"],
+      "required": ["id", "name", "project_schema_id"],
+      "immutable": ["id"],
       "id": "TaskTemplate",
       "type": "object",
       "properties": {
@@ -6548,23 +5697,9 @@
         "value",
         "parent_type"
       ],
-      "primary_key": [
-        "parent_id",
-        "group",
-        "name"
-      ],
-      "required": [
-        "parent_id",
-        "group",
-        "name",
-        "value",
-        "parent_type"
-      ],
-      "immutable": [
-        "parent_id",
-        "group",
-        "name"
-      ],
+      "primary_key": ["parent_id", "group", "name"],
+      "required": ["parent_id", "group", "name", "value", "parent_type"],
+      "immutable": ["parent_id", "group", "name"],
       "alias_for": "SettingOverride",
       "type": "object",
       "id": "EntitySetting"
@@ -6616,9 +5751,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -6627,10 +5760,7 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "AssetVersionCustomAttributeLinkFrom"
     },
@@ -6651,18 +5781,10 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "ListType",
       "type": "object",
       "id": "ListCategory"
@@ -6709,18 +5831,10 @@
           "alias_for": "tracid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "Trac",
       "type": "object",
       "id": "StatusChange"
@@ -6762,35 +5876,19 @@
           "alias_for": "ownerid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "SocialFeed",
       "type": "object",
       "id": "Feed"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "properties": {
         "sort": {
           "default": 0,
@@ -6837,49 +5935,19 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "configuration_id",
-        "entity_id",
-        "key"
-      ],
-      "primary_key": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "required": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "immutable": [
-        "configuration_id",
-        "entity_id"
-      ],
+      "default_projections": ["configuration_id", "entity_id", "key"],
+      "primary_key": ["configuration_id", "entity_id"],
+      "required": ["configuration_id", "entity_id"],
+      "immutable": ["configuration_id", "entity_id"],
       "type": "object",
       "id": "AssetCustomAttributeValue",
-      "system_projections": [
-        "entity_id",
-        "key",
-        "_casted_value",
-        "project_id"
-      ]
+      "system_projections": ["entity_id", "key", "_casted_value", "project_id"]
     },
     {
-      "default_projections": [
-        "id",
-        "from_id",
-        "to_id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "from_id",
-        "to_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "from_id", "to_id"],
+      "primary_key": ["id"],
+      "required": ["id", "from_id", "to_id"],
+      "immutable": ["id"],
       "id": "AssetVersionLink",
       "type": "object",
       "properties": {
@@ -6953,9 +6021,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -6964,10 +6030,7 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "AssetCustomAttributeLink"
     },
@@ -6989,18 +6052,10 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "TaskTypeScheme",
       "type": "object",
       "id": "TaskTypeSchema"
@@ -7094,22 +6149,10 @@
           "alias_for": "listid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "is_open",
-        "category_id",
-        "project_id"
-      ],
-      "immutable": [
-        "type",
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "is_open", "category_id", "project_id"],
+      "immutable": ["type", "id"],
       "alias_for": {
         "id": "List",
         "classifiers": {
@@ -7118,9 +6161,7 @@
       },
       "type": "object",
       "id": "TypedContextList",
-      "system_projections": [
-        "showid"
-      ]
+      "system_projections": ["showid"]
     },
     {
       "properties": {
@@ -7155,9 +6196,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -7166,26 +6205,15 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "ContextCustomAttributeLink"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "id": "AssetVersionStatusChange",
       "type": "object",
       "properties": {
@@ -7275,20 +6303,10 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "id",
-        "user_id",
-        "security_role_id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "user_id", "security_role_id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "Auth_UserRole",
       "type": "object",
       "id": "UserSecurityRole"
@@ -7318,47 +6336,19 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "configuration_id",
-        "entity_id",
-        "key"
-      ],
-      "primary_key": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "required": [
-        "configuration_id",
-        "entity_id"
-      ],
-      "immutable": [
-        "configuration_id",
-        "entity_id"
-      ],
+      "default_projections": ["configuration_id", "entity_id", "key"],
+      "primary_key": ["configuration_id", "entity_id"],
+      "required": ["configuration_id", "entity_id"],
+      "immutable": ["configuration_id", "entity_id"],
       "type": "object",
       "id": "ListObjectCustomAttributeValue",
-      "system_projections": [
-        "entity_id",
-        "key",
-        "_casted_value"
-      ]
+      "system_projections": ["entity_id", "key", "_casted_value"]
     },
     {
-      "default_projections": [
-        "id",
-        "system_type"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "system_type",
-        "name",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "system_type"],
+      "primary_key": ["id"],
+      "required": ["system_type", "name", "id"],
+      "immutable": ["id"],
       "id": "FileComponent",
       "type": "object",
       "properties": {
@@ -7431,10 +6421,7 @@
           "type": "integer"
         }
       },
-      "system_projections": [
-        "system_type",
-        "version_id"
-      ]
+      "system_projections": ["system_type", "version_id"]
     },
     {
       "properties": {
@@ -7699,11 +6686,7 @@
           "alias_for": "context_allocations"
         }
       },
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
+      "default_projections": ["context_type", "id", "name"],
       "computed": [
         "time_logged",
         "bid_time_logged_difference",
@@ -7748,29 +6731,14 @@
       },
       "type": "object",
       "id": "Folder",
-      "system_projections": [
-        "showid",
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["showid", "context_type"],
+      "primary_key": ["id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "type_id",
-        "project_schema_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "type_id", "project_schema_id"],
+      "immutable": ["id"],
       "id": "Schema",
       "type": "object",
       "properties": {
@@ -7811,19 +6779,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "core"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "core"],
+      "immutable": ["id"],
       "id": "CustomAttributeType",
       "type": "object",
       "properties": {
@@ -7855,21 +6814,10 @@
       }
     },
     {
-      "default_projections": [
-        "id",
-        "system_type"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "system_type",
-        "name",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "system_type"],
+      "primary_key": ["id"],
+      "required": ["system_type", "name", "id"],
+      "immutable": ["id"],
       "id": "Component",
       "type": "object",
       "properties": {
@@ -7940,10 +6888,7 @@
           }
         }
       },
-      "system_projections": [
-        "system_type",
-        "version_id"
-      ]
+      "system_projections": ["system_type", "version_id"]
     },
     {
       "properties": {
@@ -8035,50 +6980,20 @@
           "alias_for": "registerid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "entity_type",
-        "entity_type_to",
-        "core",
-        "config"
-      ],
-      "immutable": [
-        "id",
-        "entity_type_to",
-        "object_type_id_to"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "entity_type", "entity_type_to", "core", "config"],
+      "immutable": ["id", "entity_type_to", "object_type_id_to"],
       "alias_for": "LinkRegister",
       "type": "object",
       "id": "CustomAttributeLinkConfiguration",
-      "system_projections": [
-        "write_permissionid",
-        "permissionid",
-        "topid"
-      ]
+      "system_projections": ["write_permissionid", "permissionid", "topid"]
     },
     {
-      "default_projections": [
-        "type_id",
-        "schema_id"
-      ],
-      "primary_key": [
-        "type_id",
-        "schema_id"
-      ],
-      "required": [
-        "type_id",
-        "schema_id"
-      ],
-      "immutable": [
-        "type_id",
-        "schema_id"
-      ],
+      "default_projections": ["type_id", "schema_id"],
+      "primary_key": ["type_id", "schema_id"],
+      "required": ["type_id", "schema_id"],
+      "immutable": ["type_id", "schema_id"],
       "id": "SchemaType",
       "type": "object",
       "properties": {
@@ -8105,22 +7020,10 @@
       }
     },
     {
-      "default_projections": [
-        "status_id",
-        "schema_id"
-      ],
-      "primary_key": [
-        "status_id",
-        "schema_id"
-      ],
-      "required": [
-        "status_id",
-        "schema_id"
-      ],
-      "immutable": [
-        "status_id",
-        "schema_id"
-      ],
+      "default_projections": ["status_id", "schema_id"],
+      "primary_key": ["status_id", "schema_id"],
+      "required": ["status_id", "schema_id"],
+      "immutable": ["status_id", "schema_id"],
       "id": "SchemaStatus",
       "type": "object",
       "properties": {
@@ -8147,19 +7050,10 @@
       }
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "resource_type",
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["resource_type", "id"],
+      "immutable": ["id"],
       "id": "Resource",
       "type": "object",
       "properties": {
@@ -8198,9 +7092,7 @@
           "type": "string"
         }
       },
-      "system_projections": [
-        "resource_type"
-      ]
+      "system_projections": ["resource_type"]
     },
     {
       "properties": {
@@ -8226,39 +7118,19 @@
           "type": "string"
         }
       },
-      "default_projections": [
-        "id",
-        "name"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id", "name"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "alias_for": "Auth_Role",
       "type": "object",
       "id": "SecurityRole"
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "is_open",
-        "category_id",
-        "project_id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "is_open", "category_id", "project_id"],
+      "immutable": ["id"],
       "id": "List",
       "type": "object",
       "properties": {
@@ -8342,17 +7214,11 @@
           "alias_for": "listid"
         }
       },
-      "system_projections": [
-        "showid"
-      ]
+      "system_projections": ["showid"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
       "required": [
         "name",
         "description",
@@ -8363,9 +7229,7 @@
         "created_at",
         "sort_order"
       ],
-      "immutable": [
-        "id"
-      ],
+      "immutable": ["id"],
       "id": "ReviewSessionObject",
       "type": "object",
       "properties": {
@@ -8423,9 +7287,7 @@
           "$ref": "ReviewSession"
         }
       },
-      "system_projections": [
-        "review_session_id"
-      ]
+      "system_projections": ["review_session_id"]
     },
     {
       "properties": {
@@ -8526,43 +7388,19 @@
           "alias_for": "registerid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "core",
-        "config"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "core", "config"],
+      "immutable": ["id"],
       "alias_for": "Variable_Register",
       "type": "object",
       "id": "CustomAttributeConfiguration",
-      "system_projections": [
-        "write_permissionid",
-        "permissionid",
-        "topid"
-      ]
+      "system_projections": ["write_permissionid", "permissionid", "topid"]
     },
     {
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
-      "computed": [
-        "thumbnail_url"
-      ],
-      "required": [
-        "context_type",
-        "id",
-        "name"
-      ],
+      "default_projections": ["context_type", "id", "name"],
+      "computed": ["thumbnail_url"],
+      "required": ["context_type", "id", "name"],
       "immutable": [
         "id",
         "_link",
@@ -8717,26 +7555,14 @@
           "type": "string"
         }
       },
-      "system_projections": [
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["context_type"],
+      "primary_key": ["id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "computed": [
-        "url"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "computed": ["url"],
+      "required": ["id"],
+      "immutable": ["id"],
       "id": "ComponentLocation",
       "type": "object",
       "properties": {
@@ -8768,13 +7594,8 @@
           "type": "string"
         }
       },
-      "system_projections": [
-        "location_id",
-        "component_id"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["location_id", "component_id"],
+      "primary_key": ["id"]
     },
     {
       "properties": {
@@ -8865,22 +7686,10 @@
           "alias_for": "listid"
         }
       },
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id",
-        "is_open",
-        "category_id",
-        "project_id"
-      ],
-      "immutable": [
-        "type",
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id", "is_open", "category_id", "project_id"],
+      "immutable": ["type", "id"],
       "alias_for": {
         "id": "List",
         "classifiers": {
@@ -8889,9 +7698,7 @@
       },
       "type": "object",
       "id": "AssetVersionList",
-      "system_projections": [
-        "showid"
-      ]
+      "system_projections": ["showid"]
     },
     {
       "properties": {
@@ -9156,11 +7963,7 @@
           "alias_for": "context_allocations"
         }
       },
-      "default_projections": [
-        "context_type",
-        "id",
-        "name"
-      ],
+      "default_projections": ["context_type", "id", "name"],
       "computed": [
         "time_logged",
         "bid_time_logged_difference",
@@ -9205,27 +8008,14 @@
       },
       "type": "object",
       "id": "Sequence",
-      "system_projections": [
-        "showid",
-        "context_type"
-      ],
-      "primary_key": [
-        "id"
-      ]
+      "system_projections": ["showid", "context_type"],
+      "primary_key": ["id"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "id": "Manager",
       "type": "object",
       "properties": {
@@ -9295,9 +8085,7 @@
         "configuration_id",
         "from_id"
       ],
-      "primary_key": [
-        "id"
-      ],
+      "primary_key": ["id"],
       "required": [
         "configuration_id",
         "from_id",
@@ -9306,35 +8094,15 @@
         "to_entity_type",
         "id"
       ],
-      "immutable": [
-        "id",
-        "configuration_id"
-      ],
+      "immutable": ["id", "configuration_id"],
       "type": "object",
       "id": "GroupCustomAttributeLink"
     },
     {
-      "default_projections": [
-        "component_id",
-        "name",
-        "group"
-      ],
-      "computed": [
-        "thumbnail_url",
-        "url"
-      ],
-      "required": [
-        "component_id",
-        "name",
-        "group"
-      ],
-      "immutable": [
-        "component_id",
-        "name",
-        "group",
-        "thumbnail_url",
-        "url"
-      ],
+      "default_projections": ["component_id", "name", "group"],
+      "computed": ["thumbnail_url", "url"],
+      "required": ["component_id", "name", "group"],
+      "immutable": ["component_id", "name", "group", "thumbnail_url", "url"],
       "id": "SettingComponent",
       "type": "object",
       "properties": {
@@ -9366,25 +8134,13 @@
           "type": "object"
         }
       },
-      "primary_key": [
-        "component_id",
-        "name",
-        "group"
-      ]
+      "primary_key": ["component_id", "name", "group"]
     },
     {
-      "default_projections": [
-        "id"
-      ],
-      "primary_key": [
-        "id"
-      ],
-      "required": [
-        "id"
-      ],
-      "immutable": [
-        "id"
-      ],
+      "default_projections": ["id"],
+      "primary_key": ["id"],
+      "required": ["id"],
+      "immutable": ["id"],
       "id": "Dashboard",
       "type": "object",
       "properties": {
@@ -9424,9 +8180,7 @@
           "alias_for": "dashboardid"
         }
       },
-      "system_projections": [
-        "typeid"
-      ]
+      "system_projections": ["typeid"]
     }
   ]
 ]
