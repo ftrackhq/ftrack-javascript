@@ -206,14 +206,6 @@ export class Session {
       this.clientToken = `ftrack-javascript-api--${uuidV4()}`;
     }
 
-    // Always include is_timezone_support_enabled as required by API.
-    if (
-      serverInformationValues &&
-      !serverInformationValues.includes("is_timezone_support_enabled")
-    ) {
-      serverInformationValues.push("is_timezone_support_enabled");
-    }
-
     const operations: operation.Operation[] = [
       {
         action: "query_server_information",
@@ -308,23 +300,11 @@ export class Session {
     }
 
     if (data && data._isAMomentObject) {
-      if (
-        this.serverInformation &&
-        this.serverInformation.is_timezone_support_enabled
-      ) {
-        // Ensure that the moment object is in UTC and format
-        // to timezone naive string.
-        return {
-          __type__: "datetime",
-          value: data.utc().format(ENCODE_DATETIME_FORMAT),
-        };
-      }
-
-      // Ensure that the moment object is in local time zone and format
+      // Ensure that the moment object is in UTC and format
       // to timezone naive string.
       return {
         __type__: "datetime",
-        value: data.local().format(ENCODE_DATETIME_FORMAT),
+        value: data.utc().format(ENCODE_DATETIME_FORMAT),
       };
     }
 
@@ -399,16 +379,8 @@ export class Session {
    * @private
    */
   private _decodeDateTime(data: any) {
-    if (
-      this.serverInformation &&
-      this.serverInformation.is_timezone_support_enabled
-    ) {
-      // Return date as moment object with UTC set to true.
-      return moment.utc(data.value);
-    }
-
-    // Return date as local moment object.
-    return moment(data.value);
+    // Return date as moment object with UTC set to true.
+    return moment.utc(data.value);
   }
 
   /**
