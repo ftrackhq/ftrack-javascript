@@ -523,7 +523,7 @@ describe("Session", () => {
       {
         foo: {
           __type__: "datetime",
-          value: now.format("YYYY-MM-DDTHH:mm:ss"),
+          value: now.toISOString(),
         },
         bar: "baz",
       },

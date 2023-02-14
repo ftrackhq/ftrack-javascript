@@ -16,6 +16,7 @@ import { SERVER_LOCATION_ID } from "./constant";
 
 import normalizeString from "./util/normalize_string";
 import { Data } from "./types";
+import { convertToISOString } from "./util/convert_to_iso_string";
 
 const logger = loglevel.getLogger("ftrack_api");
 
@@ -307,9 +308,7 @@ export class Session {
   /**
    * Return encoded *data* as JSON string.
    *
-   * This will translate objects with type moment into string representation.
-   * If time zone support is enabled on the server the date
-   * will be sent as UTC, otherwise in local time.
+   * This will translate date, moment, and dayjs  objects into ISO8601 string representation in UTC.
    *
    * @private
    * @param  {*} data  The data to encode.
@@ -331,7 +330,8 @@ export class Session {
       return out;
     }
 
-    if (data && data._isAMomentObject) {
+    const date = convertToISOString(data);
+    if (date) {
       if (
         this.serverInformation &&
         this.serverInformation.is_timezone_support_enabled
@@ -340,7 +340,7 @@ export class Session {
         // to timezone naive string.
         return {
           __type__: "datetime",
-          value: data.utc().format(ENCODE_DATETIME_FORMAT),
+          value: date,
         };
       }
 
@@ -348,7 +348,7 @@ export class Session {
       // to timezone naive string.
       return {
         __type__: "datetime",
-        value: data.local().format(ENCODE_DATETIME_FORMAT),
+        value: moment(date).local().format(ENCODE_DATETIME_FORMAT),
       };
     }
 
@@ -657,10 +657,8 @@ export class Session {
 
       if (value != null && typeof value.valueOf() === "string") {
         value = `"${value}"`;
-      } else if (value && value._isAMomentObject) {
-        // Server does not store microsecond or timezone currently so
-        // need to strip from query.
-        value = moment(value).utc().format(ENCODE_DATETIME_FORMAT);
+      } else if (convertToISOString(value)) {
+        value = convertToISOString(value);
         value = `"${value}"`;
       }
       return `${identifyingKey} is ${value}`;
