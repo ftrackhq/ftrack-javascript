@@ -185,14 +185,6 @@ export class Session {
       this.clientToken = `ftrack-javascript-api--${uuidV4()}`;
     }
 
-    // Always include is_timezone_support_enabled as required by API.
-    if (
-      serverInformationValues &&
-      !serverInformationValues.includes("is_timezone_support_enabled")
-    ) {
-      serverInformationValues.push("is_timezone_support_enabled");
-    }
-
     const operations: operation.Operation[] = [
       {
         action: "query_server_information",
@@ -288,23 +280,11 @@ export class Session {
 
     const date = convertToIsoString(data);
     if (date) {
-      if (
-        this.serverInformation &&
-        this.serverInformation.is_timezone_support_enabled
-      ) {
-        // Ensure that the moment object is in UTC and format
-        // to timezone naive string.
-        return {
-          __type__: "datetime",
-          value: date,
-        };
-      }
-
-      // Ensure that the moment object is in local time zone and format
+      // Ensure that the moment object is in UTC and format
       // to timezone naive string.
       return {
         __type__: "datetime",
-        value: moment(date).local().format(ENCODE_DATETIME_FORMAT),
+        value: date,
       };
     }
 
@@ -347,8 +327,6 @@ export class Session {
    * de-duplicated in the back end and point them to a single object in
    * *identityMap*.
    *
-   * datetime objects will be converted to timezone-aware moment objects.
-   *
    * @private
    * @param  {*} data  The data to decode.
    * @return {*}      Decoded data
@@ -380,25 +358,18 @@ export class Session {
    * Decode datetime *data* into ISO 8601 strings.
    *
    * Translate objects with __type__ equal to 'datetime' into moment
-   * datetime objects. If time zone support is enabled on the server the date
-   * will be assumed to be UTC and the moment will be in utc.
+   * datetime objects. The date will be assumed to be UTC and the
+   * returned string will reflect that.
    * @private
    */
   private _decodeDateTimeAsIso(data: any) {
     let dateValue = data.value;
-    if (
-      this.serverInformation &&
-      this.serverInformation.is_timezone_support_enabled
-    ) {
-      // Server responds with timezone naive strings, add Z to indicate UTC.
-      // If the string somehow already contains a timezone offset, do not add Z.
-      if (!dateValue.endsWith("Z") && !dateValue.includes("+")) {
-        dateValue += "Z";
-      }
-      // Return date as moment object with UTC set to true.
-      return new Date(dateValue).toISOString();
+    // Server responds with timezone naive strings, add Z to indicate UTC.
+    // If the string somehow already contains a timezone offset, do not add Z.
+    if (!dateValue.endsWith("Z") && !dateValue.includes("+")) {
+      dateValue += "Z";
     }
-    // Server has no timezone support, return date in ISO format
+    // Return date as ISO string.
     return new Date(dateValue).toISOString();
   }
 
@@ -406,21 +377,13 @@ export class Session {
    * Decode datetime *data* into moment objects.
    *
    * Translate objects with __type__ equal to 'datetime' into moment
-   * datetime objects. If time zone support is enabled on the server the date
-   * will be assumed to be UTC and the moment will be in utc.
+   * datetime objects. The date will be assumed to be UTC
+   * and the moment will be in utc.
    * @private
    */
   private _decodeDateTimeAsMoment(data: any) {
-    if (
-      this.serverInformation &&
-      this.serverInformation.is_timezone_support_enabled
-    ) {
-      // Return date as moment object with UTC set to true.
-      return moment.utc(data.value);
-    }
-
-    // Return date as local moment object.
-    return moment(data.value);
+    // Return date as moment object with UTC set to true.
+    return moment.utc(data.value);
   }
 
   /**
