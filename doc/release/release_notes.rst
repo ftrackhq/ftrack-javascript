@@ -7,7 +7,8 @@
 Release Notes
 *************
 
-.. release:: upcoming
+.. release:: Upcoming
+    
     .. change:: new
         :tags: Event hub, Dependencies
 
