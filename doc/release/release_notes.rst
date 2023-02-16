@@ -8,7 +8,12 @@ Release Notes
 *************
 
 .. release:: Upcoming
-    
+
+    .. change:: fixed
+        :tags: documentation
+
+        Documentation does not build on readthedocs.
+
     .. change:: new
         :tags: Event hub, Dependencies
 
