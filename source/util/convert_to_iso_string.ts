@@ -1,7 +1,7 @@
 function isIsoDate(str: string) {
-  if (!/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)) return false;
-  const d = new Date(str);
-  return d instanceof Date && !isNaN(d.getTime()) && d.toISOString() === str; // valid date
+  return /^([+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24:?00)([.,]\d+(?!:))?)?(\17[0-5]\d([.,]\d+)?)?([zZ]|([+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/.test(
+    str
+  );
 }
 
 export function convertToISOString(data: string | Date) {
@@ -13,7 +13,11 @@ export function convertToISOString(data: string | Date) {
       (typeof data == "string" && isIsoDate(data)))
   ) {
     // wrap it new Date() to convert it to UTC based ISO string in case it is in another timezone
-    return new Date(data).toISOString();
+    try {
+      return new Date(data).toISOString();
+    } catch (err) {
+      return null;
+    }
   }
 
   return null;
