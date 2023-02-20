@@ -23,6 +23,8 @@ Construct Session instance with API credentials.
     :param Array [options.serverInformationValues=[]]: Optional list of server information values to retrieve.
     :param Object [options.eventHubOptions={}]: Options to configure event hub with.
     :param string [options.clientToken=null]: Client identifier included in update events caused by operations performed by this session.
+    :param Object [options.headers]: Additional headers to send with the request
+    :param Object [options.strictApi]: Turn on strict API mode
 
 Function ``call``
 =================
@@ -45,8 +47,12 @@ ServerError
 
     
     :param Array operations: API operations.
+    :param Object [options]: options
+    :param Object [options.abortController]: - Deprecated in favour of options.signal
+    :param Object [options.signal]: - Abort signal user for aborting requests prematurely
+    :param Object [options.headers]: - Additional headers to send with the request
     
-
+    :return Promise: Promise which will be resolved with an array of decoded responses.
 
 Function ``getSchema``
 ======================

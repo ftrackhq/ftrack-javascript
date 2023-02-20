@@ -51,6 +51,8 @@ export interface SessionOptions {
   eventHubOptions?: EventHubOptions;
   clientToken?: string;
   apiEndpoint?: string;
+  additionalHeaders?: Data;
+  strictApi?: boolean;
 }
 
 export interface CreateComponentOptions {
@@ -95,11 +97,13 @@ export interface ResponseError {
 
 export interface MutatationOptions {
   pushToken?: string;
+  additionalHeaders?: Data;
 }
 
 export interface QueryOptions {
   abortController?: AbortController;
   signal?: AbortSignal;
+  additionalHeaders?: Data;
 }
 
 export interface CallOptions extends MutatationOptions, QueryOptions {}
@@ -121,6 +125,7 @@ export class Session {
   serverInformation?: Data;
   schemas?: Data;
   serverVersion?: string;
+  additionalHeaders: Data;
 
   /**
    * Construct Session instance with API credentials.
@@ -134,6 +139,8 @@ export class Session {
    * @param  {Object}  [options.eventHubOptions={}] - Options to configure event hub with.
    * @param  {string} [options.clientToken] - Client token for update events.
    * @param  {string} [options.apiEndpoint=/api] - API endpoint.
+   * @param {object} [options.headers] - Additional headers to send with the request
+   * @param {object} [options.strictApi] - Turn on strict API mode
    *
    * @constructs Session
    */
@@ -147,6 +154,8 @@ export class Session {
       eventHubOptions = {},
       clientToken,
       apiEndpoint = "/api",
+      additionalHeaders = {},
+      strictApi = false,
     }: SessionOptions = {}
   ) {
     if (!serverUrl || !apiUser || !apiKey) {
@@ -187,6 +196,21 @@ export class Session {
      * @type {string}
      */
     this.apiEndpoint = apiEndpoint;
+
+    /**
+     * allows setting additional headers to be sent with each request
+     * @memberof Session
+     * @instance
+     * @type {Data}
+     */
+    this.additionalHeaders = additionalHeaders;
+
+    if (strictApi) {
+      this.additionalHeaders = {
+        ...additionalHeaders,
+        "ftrack-strict-api": "true",
+      };
+    }
 
     /**
      * session event hub
@@ -486,11 +510,17 @@ export class Session {
    * @param {AbortController} options.abortController - Abort controller, deprecated in favor of options.signal
    * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
+   * @param {object} options.headers - Additional headers to send with the request
    *
    */
   call(
     operations: operation.Operation[],
-    { abortController, pushToken, signal }: CallOptions = {}
+    {
+      abortController,
+      pushToken,
+      signal,
+      additionalHeaders = {},
+    }: CallOptions = {}
   ): Promise<Response<Data>[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
@@ -516,6 +546,8 @@ export class Session {
             "ftrack-user": this.apiUser,
             "ftrack-Clienttoken": this.clientToken,
             "ftrack-pushtoken": pushToken,
+            ...this.additionalHeaders,
+            ...additionalHeaders,
           } as HeadersInit,
           body: this.encodeOperations(operations),
           signal: abortController ? abortController.signal : signal,
@@ -701,12 +733,12 @@ export class Session {
    * @param {object} options
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
   query(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
-
     const queryOperation = operation.query(expression);
     let request = this.call([queryOperation], options).then((responses) => {
       const response = responses[0];
@@ -728,6 +760,7 @@ export class Session {
    * @param {object} additionalOptions
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
@@ -771,6 +804,7 @@ export class Session {
    * @param {Object} data data which should be used to populate attributes on the entity.
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise which will be resolved with the response.
    */
   create(entityType: string, data: Data, { pushToken }: CallOptions = {}) {
@@ -794,6 +828,7 @@ export class Session {
    * @param  {Object} data
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise resolved with the response.
    */
   update(
@@ -821,6 +856,7 @@ export class Session {
    * @param  {Array} keys Identifying keys, typically [<entity id>]
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
+   * @param {object} options.headers - Additional headers to send with the request
    * @return {Promise} Promise resolved with the response.
    */
   delete(type: string, keys: string[], { pushToken }: MutatationOptions = {}) {

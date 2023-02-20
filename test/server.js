@@ -4,6 +4,8 @@ import fs from "fs/promises";
 import querySchemas from "./fixtures/query_schemas.json";
 import queryServerInformation from "./fixtures/query_server_information.json";
 import getUploadMetadata from "./fixtures/get_upload_metadata.json";
+import exampleQuery from "./fixtures/query_select_name_from_task_limit_1.json";
+import { setupServer } from "msw/node";
 
 function authenticate(req) {
   // allow returning invalid authentication by setting ftrack-api-key to "INVALID_API_KEY"
@@ -21,7 +23,16 @@ function pick(object, keys) {
     return obj;
   }, {});
 }
-const handlers = [
+
+export function getInitialSessionQuery() {
+  return [queryServerInformation, querySchemas];
+}
+
+export function getExampleQuery() {
+  return [exampleQuery];
+}
+
+export const handlers = [
   rest.post("http://ftrack.test/api", async (req, res, ctx) => {
     if (!authenticate(req)) {
       return res(
@@ -111,4 +122,4 @@ const handlers = [
   }),
 ];
 
-export { handlers };
+export const server = setupServer(...handlers);

@@ -13,6 +13,9 @@ import { Session } from "../source/session";
 import * as operation from "../source/operation";
 import { expect } from "chai";
 
+import { getExampleQuery, getInitialSessionQuery, server } from "./server";
+import { rest } from "msw";
+
 const logger = loglevel.getLogger("test_session");
 logger.setLevel("debug");
 
@@ -63,6 +66,70 @@ describe("Session", () => {
         .query("select name from Task limit 1")
         .then((response) => response.data[0].__entity_type__)
     ).resolves.toEqual("Task"));
+
+  it("Should allow adding additional headers on Session", async () => {
+    const headers = new Promise((resolve) => {
+      server.use(
+        rest.post("http://ftrack.test/api", (req, res, ctx) => {
+          resolve(req.headers);
+          return res.once(ctx.json(getInitialSessionQuery()));
+        })
+      );
+    });
+
+    new Session(
+      credentials.serverUrl,
+      credentials.apiUser,
+      credentials.apiKey,
+      {
+        autoConnectEventHub: false,
+        additionalHeaders: {
+          "X-Test-Header": "test",
+        },
+      }
+    );
+
+    return expect((await headers).get("X-Test-Header")).toEqual("test");
+  });
+
+  it("Should support strictApi option", async () => {
+    const headers = new Promise((resolve) => {
+      server.use(
+        rest.post("http://ftrack.test/api", (req, res, ctx) => {
+          resolve(req.headers);
+          return res.once(ctx.json(getInitialSessionQuery()));
+        })
+      );
+    });
+
+    new Session(
+      credentials.serverUrl,
+      credentials.apiUser,
+      credentials.apiKey,
+      {
+        autoConnectEventHub: false,
+        strictApi: true,
+      }
+    );
+
+    return expect((await headers).get("ftrack-strict-api")).toEqual("true");
+  });
+
+  it("Should allow adding additional headers on calls", async () => {
+    const headers = new Promise((resolve) => {
+      server.use(
+        rest.post("http://ftrack.test/api", (req, res, ctx) => {
+          resolve(req.headers);
+          return res.once(ctx.json(getExampleQuery()));
+        })
+      );
+    });
+
+    await session.query("select name from Task limit 1", {
+      additionalHeaders: { "X-Test-Header": "test" },
+    });
+    return expect((await headers).get("X-Test-Header")).toEqual("test");
+  });
 
   it("Should allow creating a User", () => {
     const promise = session.create("User", {
