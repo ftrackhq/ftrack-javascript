@@ -516,21 +516,6 @@ describe("Session", () => {
     session.apiUser = previousUser;
   });
 
-  it("Should support encoding moment dates", () => {
-    const now = moment();
-    const output = session.encode([{ foo: now, bar: "baz" }, 12321]);
-    expect(output).toEqual([
-      {
-        foo: {
-          __type__: "datetime",
-          value: now.toISOString(),
-        },
-        bar: "baz",
-      },
-      12321,
-    ]);
-  });
-
   it("Should return correct error", () => {
     expect(
       session.getErrorFromResponse({
@@ -556,5 +541,73 @@ describe("Session", () => {
         content: "foo",
       })
     ).toBeInstanceOf(ServerError);
+  });
+});
+
+describe("Encoding entities", () => {
+  it("Should support encoding moment dates", () => {
+    const now = moment();
+    const output = session.encode([{ foo: now, bar: "baz" }, 12321]);
+    expect(output).toEqual([
+      {
+        foo: {
+          __type__: "datetime",
+          value: now.toISOString(),
+        },
+        bar: "baz",
+      },
+      12321,
+    ]);
+  });
+
+  it("Should support encoding moment dates to local timezone if timezone is disabled", () => {
+    const now = moment();
+    server.use(
+      rest.post("http://ftrack.test/api", (req, res, ctx) => {
+        return res.once(
+          ctx.json({
+            ...getInitialSessionQuery(),
+            serverInformation: { is_timezone_support_enabled: false },
+          })
+        );
+      })
+    );
+    const timezoneDisabledSession = new Session(
+      credentials.serverUrl,
+      credentials.apiUser,
+      credentials.apiKey,
+      {
+        autoConnectEventHub: false,
+      }
+    );
+    const output = timezoneDisabledSession.encode([
+      { foo: now, bar: "baz" },
+      12321,
+    ]);
+    expect(output).toEqual([
+      {
+        foo: {
+          __type__: "datetime",
+          value: now.local().format("YYYY-MM-DDTHH:mm:ss"),
+        },
+        bar: "baz",
+      },
+      12321,
+    ]);
+  });
+
+  it("Should support encoding Date object dates", () => {
+    const now = new Date();
+    const output = session.encode([{ foo: now, bar: "baz" }, 12321]);
+    expect(output).toEqual([
+      {
+        foo: {
+          __type__: "datetime",
+          value: now.toISOString(),
+        },
+        bar: "baz",
+      },
+      12321,
+    ]);
   });
 });
