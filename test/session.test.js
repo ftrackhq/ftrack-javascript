@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2022 ftrack
-import { beforeAll } from "vitest";
+import { beforeAll, describe } from "vitest";
 
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
@@ -12,6 +12,8 @@ import {
 import { Session } from "../source/session";
 import * as operation from "../source/operation";
 import { expect } from "chai";
+import querySchemas from "./fixtures/query_schemas.json";
+import queryServerInformation from "./fixtures/query_server_information.json";
 
 import { getExampleQuery, getInitialSessionQuery, server } from "./server";
 import { rest } from "msw";
@@ -115,6 +117,50 @@ describe("Session", () => {
     return expect((await headers).get("ftrack-strict-api")).toEqual("true");
   });
 
+  it("Should allow querying with datetimes decoded as moment objects (default)", async () => {
+    const result = await session.query(
+      "select name, created_at from Task limit 1"
+    );
+    expect(result.data[0].created_at).to.be.instanceOf(moment);
+    expect(result.data[0].created_at.toISOString()).toEqual(
+      "2022-10-10T10:12:09.000Z"
+    );
+  });
+
+  it("Should allow querying with datetimes decoded as ISO objects", async () => {
+    const result = await session.query(
+      "select name, created_at from Task limit 1",
+      { decodeDatesAsISO: true }
+    );
+    expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
+  });
+
+  it("Should allow querying with datetimes decoded as ISO objects with timezone support disabled", async () => {
+    server.use(
+      rest.post("http://ftrack.test/api", (req, res, ctx) => {
+        return res.once(
+          ctx.json([
+            { ...queryServerInformation, is_timezone_support_enabled: false },
+            querySchemas,
+          ])
+        );
+      })
+    );
+    const timezoneDisabledSession = new Session(
+      credentials.serverUrl,
+      credentials.apiUser,
+      credentials.apiKey,
+      {
+        autoConnectEventHub: false,
+      }
+    );
+    const result = await timezoneDisabledSession.query(
+      "select name, created_at from Task limit 1",
+      { decodeDatesAsISO: true }
+    );
+    expect(result.data[0].created_at).toEqual("2022-10-10T08:12:09.000Z");
+  });
+
   it("Should allow adding additional headers on calls", async () => {
     const headers = new Promise((resolve) => {
       server.use(
@@ -177,114 +223,6 @@ describe("Session", () => {
     await expect(
       promise.then((response) => response.data.username)
     ).resolves.toMatch(/^testName-[0-9a-f-]{36}$/);
-  });
-
-  it("Should support merging 0-level nested data", async () => {
-    await session.initializing;
-    const data = session.decode([
-      {
-        id: 1,
-        __entity_type__: "Task",
-        name: "foo",
-      },
-      {
-        id: 1,
-        __entity_type__: "Task",
-      },
-      {
-        id: 2,
-        __entity_type__: "Task",
-        name: "bar",
-      },
-    ]);
-    expect(data[0].name).toEqual("foo");
-    expect(data[1].name).toEqual("foo");
-    expect(data[2].name).toEqual("bar");
-  });
-
-  it("Should support merging 1-level nested data", async () => {
-    await session.initializing;
-    const data = session.decode([
-      {
-        id: 1,
-        __entity_type__: "Task",
-        name: "foo",
-        status: {
-          __entity_type__: "Status",
-          id: 2,
-          name: "In progress",
-        },
-      },
-      {
-        id: 2,
-        __entity_type__: "Task",
-        name: "foo",
-        status: {
-          __entity_type__: "Status",
-          id: 1,
-          name: "Done",
-        },
-      },
-      {
-        id: 3,
-        __entity_type__: "Task",
-        status: {
-          __entity_type__: "Status",
-          id: 1,
-        },
-      },
-    ]);
-    expect(data[0].status.name).toEqual("In progress");
-    expect(data[1].status.name).toEqual("Done");
-    expect(data[2].status.name).toEqual("Done");
-  });
-
-  it("Should support merging 2-level nested data", async () => {
-    await session.initializing;
-    const data = session.decode([
-      {
-        id: 1,
-        __entity_type__: "Task",
-        name: "foo",
-        status: {
-          __entity_type__: "Status",
-          id: 1,
-          state: {
-            __entity_type__: "State",
-            id: 1,
-            short: "DONE",
-          },
-        },
-      },
-      {
-        id: 2,
-        __entity_type__: "Task",
-        status: {
-          __entity_type__: "Status",
-          id: 2,
-          state: {
-            __entity_type__: "State",
-            id: 2,
-            short: "NOT_STARTED",
-          },
-        },
-      },
-      {
-        id: 3,
-        __entity_type__: "Task",
-        status: {
-          __entity_type__: "Status",
-          id: 1,
-          state: {
-            __entity_type__: "State",
-            id: 1,
-          },
-        },
-      },
-    ]);
-    expect(data[0].status.state.short).toEqual("DONE");
-    expect(data[1].status.state.short).toEqual("NOT_STARTED");
-    expect(data[2].status.state.short).toEqual("DONE");
   });
 
   it("Should support api query 2-level nested data", async () => {
@@ -560,15 +498,15 @@ describe("Encoding entities", () => {
     ]);
   });
 
-  it("Should support encoding moment dates to local timezone if timezone is disabled", () => {
+  it("Should support encoding moment dates to local timezone if timezone support is disabled", () => {
     const now = moment();
     server.use(
       rest.post("http://ftrack.test/api", (req, res, ctx) => {
         return res.once(
-          ctx.json({
-            ...getInitialSessionQuery(),
-            serverInformation: { is_timezone_support_enabled: false },
-          })
+          ctx.json([
+            { ...queryServerInformation, is_timezone_support_enabled: false },
+            querySchemas,
+          ])
         );
       })
     );
@@ -594,6 +532,143 @@ describe("Encoding entities", () => {
       },
       12321,
     ]);
+  });
+
+  describe("Decoding entities", () => {
+    it("Should support merging 0-level nested data", async () => {
+      await session.initializing;
+      const data = session.decode([
+        {
+          id: 1,
+          __entity_type__: "Task",
+          name: "foo",
+        },
+        {
+          id: 1,
+          __entity_type__: "Task",
+        },
+        {
+          id: 2,
+          __entity_type__: "Task",
+          name: "bar",
+        },
+      ]);
+      expect(data[0].name).toEqual("foo");
+      expect(data[1].name).toEqual("foo");
+      expect(data[2].name).toEqual("bar");
+    });
+
+    it("Should support merging 1-level nested data", async () => {
+      await session.initializing;
+      const data = session.decode([
+        {
+          id: 1,
+          __entity_type__: "Task",
+          name: "foo",
+          status: {
+            __entity_type__: "Status",
+            id: 2,
+            name: "In progress",
+          },
+        },
+        {
+          id: 2,
+          __entity_type__: "Task",
+          name: "foo",
+          status: {
+            __entity_type__: "Status",
+            id: 1,
+            name: "Done",
+          },
+        },
+        {
+          id: 3,
+          __entity_type__: "Task",
+          status: {
+            __entity_type__: "Status",
+            id: 1,
+          },
+        },
+      ]);
+      expect(data[0].status.name).toEqual("In progress");
+      expect(data[1].status.name).toEqual("Done");
+      expect(data[2].status.name).toEqual("Done");
+    });
+
+    it("Should support merging 2-level nested data", async () => {
+      await session.initializing;
+      const data = session.decode([
+        {
+          id: 1,
+          __entity_type__: "Task",
+          name: "foo",
+          status: {
+            __entity_type__: "Status",
+            id: 1,
+            state: {
+              __entity_type__: "State",
+              id: 1,
+              short: "DONE",
+            },
+          },
+        },
+        {
+          id: 2,
+          __entity_type__: "Task",
+          status: {
+            __entity_type__: "Status",
+            id: 2,
+            state: {
+              __entity_type__: "State",
+              id: 2,
+              short: "NOT_STARTED",
+            },
+          },
+        },
+        {
+          id: 3,
+          __entity_type__: "Task",
+          status: {
+            __entity_type__: "Status",
+            id: 1,
+            state: {
+              __entity_type__: "State",
+              id: 1,
+            },
+          },
+        },
+      ]);
+      expect(data[0].status.state.short).toEqual("DONE");
+      expect(data[1].status.state.short).toEqual("NOT_STARTED");
+      expect(data[2].status.state.short).toEqual("DONE");
+    });
+
+    it("Should support decoding datetime as moment (default)", () => {
+      const now = moment();
+      const output = session.decode({
+        foo: {
+          __type__: "datetime",
+          value: now.toISOString(),
+        },
+      });
+      expect(output.foo).toBeInstanceOf(moment);
+      expect(output.foo.toISOString()).toEqual(now.toISOString());
+    });
+
+    it("Should support decoding datetime as ISO string", () => {
+      const now = new Date();
+      const output = session.decode(
+        {
+          foo: {
+            __type__: "datetime",
+            value: now.toISOString(),
+          },
+        },
+        {},
+        { decodeDatesAsISO: true }
+      );
+      expect(output.foo).toEqual(now.toISOString());
+    });
   });
 
   it("Should support encoding Date object dates", () => {

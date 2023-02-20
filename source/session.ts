@@ -96,18 +96,20 @@ export interface ResponseError {
   error?: Data;
 }
 
-export interface MutatationOptions {
+export interface MutationOptions {
   pushToken?: string;
   additionalHeaders?: Data;
+  decodeDatesAsISO?: boolean;
 }
 
 export interface QueryOptions {
   abortController?: AbortController;
   signal?: AbortSignal;
   additionalHeaders?: Data;
+  decodeDatesAsISO?: boolean;
 }
 
-export interface CallOptions extends MutatationOptions, QueryOptions {}
+export interface CallOptions extends MutationOptions, QueryOptions {}
 
 /**
  * ftrack API session
@@ -142,6 +144,7 @@ export class Session {
    * @param  {string} [options.apiEndpoint=/api] - API endpoint.
    * @param {object} [options.headers] - Additional headers to send with the request
    * @param {object} [options.strictApi] - Turn on strict API mode
+   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
    *
    * @constructs Session
    */
@@ -398,20 +401,52 @@ export class Session {
    * @return {*}      Decoded data
    */
 
-  private decode(data: any, identityMap: Data = {}): any {
+  private decode(
+    data: any,
+    identityMap: Data = {},
+    decodeDatesAsISO: boolean = false
+  ): any {
     if (Array.isArray(data)) {
-      return this._decodeArray(data, identityMap);
+      return this._decodeArray(data, identityMap, decodeDatesAsISO);
     }
     if (typeof data === "object" && data?.constructor === Object) {
       if (data.__entity_type__) {
-        return this._mergeEntity(data, identityMap);
+        return this._mergeEntity(data, identityMap, decodeDatesAsISO);
       }
-      if (data.__type__ === "datetime") {
-        return this._decodeDateTime(data);
+      if (data.__type__ === "datetime" && decodeDatesAsISO) {
+        return this._decodeDateTimeAsISO(data);
+      } else if (data.__type__ === "datetime") {
+        return this._decodeDateTimeAsMoment(data);
       }
-      return this._decodePlainObject(data, identityMap);
+      return this._decodePlainObject(data, identityMap, decodeDatesAsISO);
     }
     return data;
+  }
+
+  /**
+   * Decode datetime *data* into ISO 8601 strings.
+   *
+   * Translate objects with __type__ equal to 'datetime' into moment
+   * datetime objects. If time zone support is enabled on the server the date
+   * will be assumed to be UTC and the moment will be in utc.
+   * @private
+   */
+  private _decodeDateTimeAsISO(data: any) {
+    let dateValue = data.value;
+    if (
+      this.serverInformation &&
+      this.serverInformation.is_timezone_support_enabled
+    ) {
+      // Server responds with timezone naive strings, add Z to indicate UTC.
+      // If the string somehow already contains a timezone offset, do not add Z.
+      if (!dateValue.endsWith("Z") && !dateValue.includes("+")) {
+        dateValue += "Z";
+      }
+      // Return date as moment object with UTC set to true.
+      return new Date(dateValue).toISOString();
+    }
+    // Server has no timezone support, return date in ISO format
+    return new Date(dateValue).toISOString();
   }
 
   /**
@@ -422,7 +457,7 @@ export class Session {
    * will be assumed to be UTC and the moment will be in utc.
    * @private
    */
-  private _decodeDateTime(data: any) {
+  private _decodeDateTimeAsMoment(data: any) {
     if (
       this.serverInformation &&
       this.serverInformation.is_timezone_support_enabled
@@ -439,9 +474,13 @@ export class Session {
    * Return new object where all values have been decoded.
    * @private
    */
-  private _decodePlainObject(object: Data, identityMap: Data) {
+  private _decodePlainObject(
+    object: Data,
+    identityMap: Data,
+    decodeDatesAsISO: boolean
+  ) {
     return Object.keys(object).reduce<Data>((previous, key) => {
-      previous[key] = this.decode(object[key], identityMap);
+      previous[key] = this.decode(object[key], identityMap, decodeDatesAsISO);
       return previous;
     }, {});
   }
@@ -450,15 +489,25 @@ export class Session {
    * Return new Array where all items have been decoded.
    * @private
    */
-  private _decodeArray(collection: any[], identityMap: Data): any[] {
-    return collection.map((item) => this.decode(item, identityMap));
+  private _decodeArray(
+    collection: any[],
+    identityMap: Data,
+    decodeDatesAsISO: boolean
+  ): any[] {
+    return collection.map((item) =>
+      this.decode(item, identityMap, decodeDatesAsISO)
+    );
   }
 
   /**
    * Return merged *entity* using *identityMap*.
    * @private
    */
-  private _mergeEntity(entity: Data, identityMap: Data) {
+  private _mergeEntity(
+    entity: Data,
+    identityMap: Data,
+    decodeDatesAsISO: boolean
+  ) {
     const identifier = this.getIdentifyingKey(entity);
     if (!identifier) {
       logger.warn("Identifier could not be determined for: ", identifier);
@@ -479,7 +528,11 @@ export class Session {
 
     for (const key in entity) {
       if (entity.hasOwnProperty(key)) {
-        mergedEntity[key] = this.decode(entity[key], identityMap);
+        mergedEntity[key] = this.decode(
+          entity[key],
+          identityMap,
+          decodeDatesAsISO
+        );
       }
     }
     return mergedEntity;
@@ -511,6 +564,7 @@ export class Session {
    * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
+   * @param {string} options.decodeDatesAsISO - Return dates as ISO strings instead of moment objects
    *
    */
   call(
@@ -520,6 +574,7 @@ export class Session {
       pushToken,
       signal,
       additionalHeaders = {},
+      decodeDatesAsISO = false,
     }: CallOptions = {}
   ): Promise<Response<Data>[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
@@ -574,7 +629,7 @@ export class Session {
       })
       .then((data) => {
         if (this.initialized) {
-          return this.decode(data);
+          return this.decode(data, {}, decodeDatesAsISO);
         }
 
         return data;
@@ -732,6 +787,7 @@ export class Session {
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
+   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
@@ -759,6 +815,7 @@ export class Session {
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
+   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
@@ -803,17 +860,18 @@ export class Session {
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
+   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with the response.
    */
-  create(entityType: string, data: Data, { pushToken }: CallOptions = {}) {
-    logger.debug("Create", entityType, data, pushToken);
+  create(entityType: string, data: Data, options: MutationOptions = {}) {
+    logger.debug("Create", entityType, data, options);
 
-    let request = this.call([operation.create(entityType, data)], {
-      pushToken,
-    }).then((responses) => {
-      const response = responses[0];
-      return response;
-    });
+    let request = this.call([operation.create(entityType, data)], options).then(
+      (responses) => {
+        const response = responses[0];
+        return response;
+      }
+    );
 
     return request;
   }
@@ -827,19 +885,21 @@ export class Session {
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
+   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
   update(
     type: string,
     keys: string[],
     data: Data,
-    { pushToken }: MutatationOptions = {}
+    options: MutationOptions = {}
   ) {
-    logger.debug("Update", type, keys, data, pushToken);
+    logger.debug("Update", type, keys, data, options);
 
-    const request = this.call([operation.update(type, keys, data)], {
-      pushToken,
-    }).then((responses) => {
+    const request = this.call(
+      [operation.update(type, keys, data)],
+      options
+    ).then((responses) => {
       const response = responses[0];
       return response;
     });
@@ -855,12 +915,13 @@ export class Session {
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
+   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  delete(type: string, keys: string[], { pushToken }: MutatationOptions = {}) {
-    logger.debug("Delete", type, keys, pushToken);
+  delete(type: string, keys: string[], options: MutationOptions = {}) {
+    logger.debug("Delete", type, keys, options);
 
-    let request = this.call([operation.delete(type, keys)], { pushToken }).then(
+    let request = this.call([operation.delete(type, keys)], options).then(
       (responses) => {
         const response = responses[0];
         return response;
