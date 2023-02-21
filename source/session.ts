@@ -998,9 +998,13 @@ export class Session {
     file: Blob,
     options: CreateComponentOptions = {}
   ): Promise<Response<Data>[]> {
-    const normalizedFileName = normalizeString(
-      options.name ?? (file instanceof File ? file.name : "component")
-    );
+    const componentName = options.name ?? (file as File).name;
+
+    let normalizedFileName;
+    if (componentName) {
+      normalizedFileName = normalizeString(componentName);
+    }
+
     if (!normalizedFileName) {
       throw new CreateComponentError("Component name is missing.");
     }
