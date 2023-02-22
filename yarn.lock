@@ -1778,6 +1778,7 @@ __metadata:
     "@rollup/plugin-commonjs": ^24.0.1
     "@types/uuid": ^9.0.0
     cross-fetch: ^3.1.5
+    dayjs: ^1.11.7
     eslint: ^8.33.0
     eslint-config-react-app: ^7.0.1
     jsdom: ^21.1.0
@@ -3332,6 +3333,13 @@ __metadata:
     whatwg-mimetype: ^3.0.0
     whatwg-url: ^11.0.0
   checksum: 033fc3dd0fba6d24bc9a024ddcf9923691dd24f90a3d26f6545d6a2f71ec6956f93462f2cdf2183cc46f10dc01ed3bcb36731a8208456eb1a08147e571fe2a76
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.7":
+  version: 1.11.7
+  resolution: "dayjs@npm:1.11.7"
+  checksum: 5003a7c1dd9ed51385beb658231c3548700b82d3548c0cfbe549d85f2d08e90e972510282b7506941452c58d32136d6362f009c77ca55381a09c704e9f177ebb
   languageName: node
   linkType: hard
 
