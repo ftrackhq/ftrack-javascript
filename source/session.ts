@@ -16,7 +16,7 @@ import { SERVER_LOCATION_ID } from "./constant";
 
 import normalizeString from "./util/normalize_string";
 import { Data } from "./types";
-import { convertToISOString } from "./util/convert_to_iso_string";
+import { convertToIsoString } from "./util/convert_to_iso_string";
 
 const logger = loglevel.getLogger("ftrack_api");
 
@@ -99,14 +99,14 @@ export interface ResponseError {
 export interface MutationOptions {
   pushToken?: string;
   additionalHeaders?: Data;
-  decodeDatesAsISO?: boolean;
+  decodeDatesAsIso?: boolean;
 }
 
 export interface QueryOptions {
   abortController?: AbortController;
   signal?: AbortSignal;
   additionalHeaders?: Data;
-  decodeDatesAsISO?: boolean;
+  decodeDatesAsIso?: boolean;
 }
 
 export interface CallOptions extends MutationOptions, QueryOptions {}
@@ -144,7 +144,7 @@ export class Session {
    * @param  {string} [options.apiEndpoint=/api] - API endpoint.
    * @param {object} [options.headers] - Additional headers to send with the request
    * @param {object} [options.strictApi] - Turn on strict API mode
-   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    *
    * @constructs Session
    */
@@ -333,7 +333,7 @@ export class Session {
       return out;
     }
 
-    const date = convertToISOString(data);
+    const date = convertToIsoString(data);
     if (date) {
       if (
         this.serverInformation &&
@@ -404,21 +404,21 @@ export class Session {
   private decode(
     data: any,
     identityMap: Data = {},
-    decodeDatesAsISO: boolean = false
+    decodeDatesAsIso: boolean = false
   ): any {
     if (Array.isArray(data)) {
-      return this._decodeArray(data, identityMap, decodeDatesAsISO);
+      return this._decodeArray(data, identityMap, decodeDatesAsIso);
     }
     if (typeof data === "object" && data?.constructor === Object) {
       if (data.__entity_type__) {
-        return this._mergeEntity(data, identityMap, decodeDatesAsISO);
+        return this._mergeEntity(data, identityMap, decodeDatesAsIso);
       }
-      if (data.__type__ === "datetime" && decodeDatesAsISO) {
-        return this._decodeDateTimeAsISO(data);
+      if (data.__type__ === "datetime" && decodeDatesAsIso) {
+        return this._decodeDateTimeAsIso(data);
       } else if (data.__type__ === "datetime") {
         return this._decodeDateTimeAsMoment(data);
       }
-      return this._decodePlainObject(data, identityMap, decodeDatesAsISO);
+      return this._decodePlainObject(data, identityMap, decodeDatesAsIso);
     }
     return data;
   }
@@ -431,7 +431,7 @@ export class Session {
    * will be assumed to be UTC and the moment will be in utc.
    * @private
    */
-  private _decodeDateTimeAsISO(data: any) {
+  private _decodeDateTimeAsIso(data: any) {
     let dateValue = data.value;
     if (
       this.serverInformation &&
@@ -477,10 +477,10 @@ export class Session {
   private _decodePlainObject(
     object: Data,
     identityMap: Data,
-    decodeDatesAsISO: boolean
+    decodeDatesAsIso: boolean
   ) {
     return Object.keys(object).reduce<Data>((previous, key) => {
-      previous[key] = this.decode(object[key], identityMap, decodeDatesAsISO);
+      previous[key] = this.decode(object[key], identityMap, decodeDatesAsIso);
       return previous;
     }, {});
   }
@@ -492,10 +492,10 @@ export class Session {
   private _decodeArray(
     collection: any[],
     identityMap: Data,
-    decodeDatesAsISO: boolean
+    decodeDatesAsIso: boolean
   ): any[] {
     return collection.map((item) =>
-      this.decode(item, identityMap, decodeDatesAsISO)
+      this.decode(item, identityMap, decodeDatesAsIso)
     );
   }
 
@@ -506,7 +506,7 @@ export class Session {
   private _mergeEntity(
     entity: Data,
     identityMap: Data,
-    decodeDatesAsISO: boolean
+    decodeDatesAsIso: boolean
   ) {
     const identifier = this.getIdentifyingKey(entity);
     if (!identifier) {
@@ -531,7 +531,7 @@ export class Session {
         mergedEntity[key] = this.decode(
           entity[key],
           identityMap,
-          decodeDatesAsISO
+          decodeDatesAsIso
         );
       }
     }
@@ -564,7 +564,7 @@ export class Session {
    * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {string} options.decodeDatesAsISO - Return dates as ISO strings instead of moment objects
+   * @param {string} options.decodeDatesAsIso - Return dates as ISO strings instead of moment objects
    *
    */
   call(
@@ -574,7 +574,7 @@ export class Session {
       pushToken,
       signal,
       additionalHeaders = {},
-      decodeDatesAsISO = false,
+      decodeDatesAsIso = false,
     }: CallOptions = {}
   ): Promise<Response<Data>[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
@@ -629,7 +629,7 @@ export class Session {
       })
       .then((data) => {
         if (this.initialized) {
-          return this.decode(data, {}, decodeDatesAsISO);
+          return this.decode(data, {}, decodeDatesAsIso);
         }
 
         return data;
@@ -712,8 +712,8 @@ export class Session {
 
       if (value != null && typeof value.valueOf() === "string") {
         value = `"${value}"`;
-      } else if (convertToISOString(value)) {
-        value = convertToISOString(value);
+      } else if (convertToIsoString(value)) {
+        value = convertToIsoString(value);
         value = `"${value}"`;
       }
       return `${identifyingKey} is ${value}`;
@@ -787,7 +787,7 @@ export class Session {
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
@@ -815,7 +815,7 @@ export class Session {
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
@@ -860,7 +860,7 @@ export class Session {
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with the response.
    */
   create(entityType: string, data: Data, options: MutationOptions = {}) {
@@ -885,7 +885,7 @@ export class Session {
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
   update(
@@ -915,7 +915,7 @@ export class Session {
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsISO - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
   delete(type: string, keys: string[], options: MutationOptions = {}) {

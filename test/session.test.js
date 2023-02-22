@@ -130,7 +130,7 @@ describe("Session", () => {
   it("Should allow querying with datetimes decoded as ISO objects", async () => {
     const result = await session.query(
       "select name, created_at from Task limit 1",
-      { decodeDatesAsISO: true }
+      { decodeDatesAsIso: true }
     );
     expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
   });
@@ -156,7 +156,7 @@ describe("Session", () => {
     );
     const result = await timezoneDisabledSession.query(
       "select name, created_at from Task limit 1",
-      { decodeDatesAsISO: true }
+      { decodeDatesAsIso: true }
     );
     expect(result.data[0].created_at).toEqual("2022-10-10T08:12:09.000Z");
   });
@@ -665,7 +665,7 @@ describe("Encoding entities", () => {
           },
         },
         {},
-        { decodeDatesAsISO: true }
+        { decodeDatesAsIso: true }
       );
       expect(output.foo).toEqual(now.toISOString());
     });

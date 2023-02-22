@@ -14,7 +14,7 @@ function isIsoDate(str: string) {
  * @param data - string or date object
  * @returns ISO 6801 compatible string, or null if invalid date
  */
-export function convertToISOString(data: string | Date) {
+export function convertToIsoString(data: string | Date) {
   if (
     data &&
     // if this is a date object of type moment or dayjs, or regular date object (all of them has toISOString)
