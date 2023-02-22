@@ -36,6 +36,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
+    globalSetup: "./vitest.globalsetup.js",
     setupFiles: ["./vitest.setup.js"],
     deps: {
       fallbackCJS: true,
