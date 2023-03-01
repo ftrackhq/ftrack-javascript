@@ -509,6 +509,7 @@ export class Session {
    * ServerError
    *     Generic server errors or network issues
    *
+   * @typeParam T - either an array of responseTypes to get return type Tuple or a single response to get return type T[]. Default is ActionResponse
    * @param {Array} operations - API operations.
    * @param {Object} options
    * @param {AbortController} options.abortController - Abort controller, deprecated in favor of options.signal
