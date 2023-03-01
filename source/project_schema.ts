@@ -1,8 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import * as operation from "./operation";
-import { QueryResponse, Session } from "./session";
-import { Data } from "./types";
+import { Session } from "./session";
+import { Data, QueryResponse } from "./types";
 /**
  * Project schema namespace
  * @namespace project_schema

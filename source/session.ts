@@ -15,7 +15,25 @@ import {
 import { SERVER_LOCATION_ID } from "./constant";
 
 import normalizeString from "./util/normalize_string";
-import { Data } from "./types";
+import type {
+  ActionResponse,
+  CallOptions,
+  CreateComponentOptions,
+  CreateResponse,
+  Data,
+  DeleteResponse,
+  GetUploadMetadataResponse,
+  IsTuple,
+  MutationOptions,
+  QueryOptions,
+  QueryResponse,
+  QueryServerInformationResponse,
+  ResponseError,
+  SearchOptions,
+  SearchResponse,
+  SessionOptions,
+  UpdateResponse,
+} from "./types";
 import { convertToIsoString } from "./util/convert_to_iso_string";
 
 const logger = loglevel.getLogger("ftrack_api");
@@ -41,122 +59,6 @@ function splitFileExtension(fileName: string) {
 
   return [basename, extension];
 }
-
-export interface EventHubOptions {
-  applicationId?: string;
-}
-
-export interface SessionOptions {
-  autoConnectEventHub?: boolean;
-  serverInformationValues?: string[];
-  eventHubOptions?: EventHubOptions;
-  clientToken?: string;
-  apiEndpoint?: string;
-  additionalHeaders?: Data;
-  strictApi?: boolean;
-}
-
-export interface CreateComponentOptions {
-  name?: string;
-  data?: Data;
-  onProgress?: (progress: number) => unknown;
-  xhr?: XMLHttpRequest;
-  onAborted?: () => unknown;
-}
-
-export interface Entity {
-  id: string;
-  __entity_type__: string;
-}
-
-export interface SearchOptions {
-  expression: string;
-  entityType: string;
-  terms?: string[];
-  contextId?: string;
-  objectTypeIds?: string[];
-}
-
-interface ActionResponseMap {
-  query: {
-    data: Data[];
-  };
-  create: {
-    data: Data;
-  };
-  update: {
-    data: Data;
-  };
-  delete: {
-    data: boolean;
-  };
-  search: {
-    data: Data[];
-  };
-}
-
-interface BaseResponse<T = Data> {
-  url?: any;
-  headers?: any;
-  action: keyof ActionResponseMap;
-  metadata: {
-    next: {
-      offset: number | null;
-    };
-  };
-  data: T | T[] | boolean;
-}
-
-export interface QueryResponse<T = Data> extends BaseResponse<T> {
-  data: T[];
-  action: "query";
-}
-
-export interface CreateResponse<T = Data> extends BaseResponse<T> {
-  data: T;
-  action: "create";
-}
-export interface UpdateResponse<T = Data> extends BaseResponse<T> {
-  data: T;
-  action: "update";
-}
-export interface DeleteResponse extends BaseResponse {
-  data: boolean;
-  action: "delete";
-}
-export interface SearchResponse<T = Data> extends BaseResponse<T> {
-  data: T[];
-  action: "search";
-}
-export type Response<T> =
-  | QueryResponse<T>
-  | CreateResponse<T>
-  | UpdateResponse<T>
-  | DeleteResponse
-  | SearchResponse<T>
-  | BaseResponse;
-
-export interface ResponseError {
-  exception: string;
-  content: string;
-  error_code?: string;
-  error?: Data;
-}
-
-export interface MutationOptions {
-  pushToken?: string;
-  additionalHeaders?: Data;
-  decodeDatesAsIso?: boolean;
-}
-
-export interface QueryOptions {
-  abortController?: AbortController;
-  signal?: AbortSignal;
-  additionalHeaders?: Data;
-  decodeDatesAsIso?: boolean;
-}
-
-export interface CallOptions extends MutationOptions, QueryOptions {}
 
 /**
  * ftrack API session
@@ -311,10 +213,12 @@ export class Session {
      * @instance
      * @type {Promise}
      */
-    this.initializing = this.call(operations).then((responses) => {
+    this.initializing = this.call<
+      [QueryServerInformationResponse, QueryResponse]
+    >(operations).then((responses) => {
       this.serverInformation = responses[0];
       this.schemas = responses[1];
-      this.serverVersion = this.serverInformation?.version;
+      this.serverVersion = this.serverInformation.version;
       this.initialized = true;
 
       return Promise.resolve(this);
@@ -614,7 +518,7 @@ export class Session {
    * @param {string} options.decodeDatesAsIso - Return dates as ISO strings instead of moment objects
    *
    */
-  call<T = Response<Data>>(
+  call<T = ActionResponse>(
     operations: operation.Operation[],
     {
       abortController,
@@ -623,7 +527,7 @@ export class Session {
       additionalHeaders = {},
       decodeDatesAsIso = false,
     }: CallOptions = {}
-  ): Promise<T[]> {
+  ): Promise<IsTuple<T> extends true ? T : T[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
     // Delay call until session is initialized if initialization is in
@@ -841,7 +745,7 @@ export class Session {
   query(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
     const queryOperation = operation.query(expression);
-    let request = this.call<QueryResponse<Data>>(
+    let request = this.call<[QueryResponse<Data>]>(
       [queryOperation],
       options
     ).then((responses) => {
@@ -894,7 +798,7 @@ export class Session {
       contextId,
       objectTypeIds,
     });
-    let request = this.call<SearchResponse<Data>>(
+    let request = this.call<[SearchResponse<Data>]>(
       [searchOperation],
       options
     ).then((responses) => {
@@ -919,7 +823,7 @@ export class Session {
   create(entityType: string, data: Data, options: MutationOptions = {}) {
     logger.debug("Create", entityType, data, options);
 
-    let request = this.call<CreateResponse<Data>>(
+    let request = this.call<[CreateResponse<Data>]>(
       [operation.create(entityType, data)],
       options
     ).then((responses) => {
@@ -950,7 +854,7 @@ export class Session {
   ) {
     logger.debug("Update", type, keys, data, options);
 
-    const request = this.call<UpdateResponse<Data>>(
+    const request = this.call<[UpdateResponse<Data>]>(
       [operation.update(type, keys, data)],
       options
     ).then((responses) => {
@@ -975,7 +879,7 @@ export class Session {
   delete(type: string, keys: string[], options: MutationOptions = {}) {
     logger.debug("Delete", type, keys, options);
 
-    let request = this.call<DeleteResponse>(
+    let request = this.call<[DeleteResponse]>(
       [operation.delete(type, keys)],
       options
     ).then((responses) => {
@@ -1052,7 +956,7 @@ export class Session {
   createComponent(
     file: Blob,
     options: CreateComponentOptions = {}
-  ): Promise<Response<Data>[]> {
+  ): Promise<ActionResponse[]> {
     const componentName = options.name ?? (file as File).name;
 
     let normalizedFileName;
@@ -1107,7 +1011,9 @@ export class Session {
       location_id: SERVER_LOCATION_ID,
     };
 
-    const componentAndLocationPromise = this.call([
+    const componentAndLocationPromise = this.call<
+      [CreateResponse, CreateResponse, GetUploadMetadataResponse]
+    >([
       operation.create("FileComponent", component),
       operation.create("ComponentLocation", componentLocation),
       {
