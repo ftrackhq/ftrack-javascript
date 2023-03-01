@@ -77,17 +77,64 @@ export interface SearchOptions {
   objectTypeIds?: string[];
 }
 
-export interface Response<T> {
+interface ActionResponseMap {
+  query: {
+    data: Data[];
+  };
+  create: {
+    data: Data;
+  };
+  update: {
+    data: Data;
+  };
+  delete: {
+    data: boolean;
+  };
+  search: {
+    data: Data[];
+  };
+}
+
+interface BaseResponse<T = Data> {
   url?: any;
   headers?: any;
-  action: string;
+  action: keyof ActionResponseMap;
   metadata: {
     next: {
       offset: number | null;
     };
   };
-  data: T[];
+  data: T | T[] | boolean;
 }
+
+export interface QueryResponse<T = Data> extends BaseResponse<T> {
+  data: T[];
+  action: "query";
+}
+
+export interface CreateResponse<T = Data> extends BaseResponse<T> {
+  data: T;
+  action: "create";
+}
+export interface UpdateResponse<T = Data> extends BaseResponse<T> {
+  data: T;
+  action: "update";
+}
+export interface DeleteResponse extends BaseResponse {
+  data: boolean;
+  action: "delete";
+}
+export interface SearchResponse<T = Data> extends BaseResponse<T> {
+  data: T[];
+  action: "search";
+}
+export type Response<T> =
+  | QueryResponse<T>
+  | CreateResponse<T>
+  | UpdateResponse<T>
+  | DeleteResponse
+  | SearchResponse<T>
+  | BaseResponse;
 
 export interface ResponseError {
   exception: string;
@@ -267,7 +314,7 @@ export class Session {
     this.initializing = this.call(operations).then((responses) => {
       this.serverInformation = responses[0];
       this.schemas = responses[1];
-      this.serverVersion = this.serverInformation.version;
+      this.serverVersion = this.serverInformation?.version;
       this.initialized = true;
 
       return Promise.resolve(this);
@@ -567,7 +614,7 @@ export class Session {
    * @param {string} options.decodeDatesAsIso - Return dates as ISO strings instead of moment objects
    *
    */
-  call(
+  call<T = Response<Data>>(
     operations: operation.Operation[],
     {
       abortController,
@@ -576,7 +623,7 @@ export class Session {
       additionalHeaders = {},
       decodeDatesAsIso = false,
     }: CallOptions = {}
-  ): Promise<Response<Data>[]> {
+  ): Promise<T[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
     // Delay call until session is initialized if initialization is in
@@ -794,7 +841,10 @@ export class Session {
   query(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
     const queryOperation = operation.query(expression);
-    let request = this.call([queryOperation], options).then((responses) => {
+    let request = this.call<QueryResponse<Data>>(
+      [queryOperation],
+      options
+    ).then((responses) => {
       const response = responses[0];
       return response;
     });
@@ -844,7 +894,10 @@ export class Session {
       contextId,
       objectTypeIds,
     });
-    let request = this.call([searchOperation], options).then((responses) => {
+    let request = this.call<SearchResponse<Data>>(
+      [searchOperation],
+      options
+    ).then((responses) => {
       const response = responses[0];
       return response;
     });
@@ -866,12 +919,13 @@ export class Session {
   create(entityType: string, data: Data, options: MutationOptions = {}) {
     logger.debug("Create", entityType, data, options);
 
-    let request = this.call([operation.create(entityType, data)], options).then(
-      (responses) => {
-        const response = responses[0];
-        return response;
-      }
-    );
+    let request = this.call<CreateResponse<Data>>(
+      [operation.create(entityType, data)],
+      options
+    ).then((responses) => {
+      const response = responses[0];
+      return response;
+    });
 
     return request;
   }
@@ -896,7 +950,7 @@ export class Session {
   ) {
     logger.debug("Update", type, keys, data, options);
 
-    const request = this.call(
+    const request = this.call<UpdateResponse<Data>>(
       [operation.update(type, keys, data)],
       options
     ).then((responses) => {
@@ -921,12 +975,13 @@ export class Session {
   delete(type: string, keys: string[], options: MutationOptions = {}) {
     logger.debug("Delete", type, keys, options);
 
-    let request = this.call([operation.delete(type, keys)], options).then(
-      (responses) => {
-        const response = responses[0];
-        return response;
-      }
-    );
+    let request = this.call<DeleteResponse>(
+      [operation.delete(type, keys)],
+      options
+    ).then((responses) => {
+      const response = responses[0];
+      return response;
+    });
 
     return request;
   }
