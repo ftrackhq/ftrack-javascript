@@ -70,22 +70,15 @@ export interface ResetRemoteResponse {
 }
 export type QuerySchemasResponse = Data[];
 export interface QueryServerInformationResponse {
-  is_prevent_media_download_enabled?: boolean;
-  is_two_factor_authentication_enabled?: boolean;
-  is_two_factor_authentication_enforced?: boolean;
   custom_widget?: Data;
-  spark_sentry_dsn?: string;
   default_colors?: string[];
   is_nested_subqueries_enabled?: boolean;
   license?: string[];
-  require_billing_info_before?: string;
-  subscription_management?: Data;
   preferred_language?: string;
   week_startday?: number;
   workday_length?: number;
   display_week_numbers?: boolean;
   storage_limit?: number;
-  i18n_message_url_ftrack_spark_overview?: string;
   display_task_dates_as_time?: boolean;
   company_information?: {
     logo_url?: string;
@@ -98,17 +91,6 @@ export interface QueryServerInformationResponse {
     restricted_user?: boolean;
     username?: string;
   };
-  review_sync?: {
-    enabled?: boolean;
-    load_balancer?: string;
-    hosts?: string[];
-    limited?: boolean;
-  };
-  review_pro?: {
-    enabled?: boolean;
-    display_upsell_cta?: boolean;
-  };
-  review_watermarking_text?: string;
   product?: Data;
   version?: string;
   schema_hash?: string;
@@ -130,23 +112,6 @@ export interface GetUploadMetadataResponse {
   url: string;
   component_id?: string;
   headers: Data;
-}
-export interface SetLicenseResponse {
-  license: any[];
-}
-
-export interface ValidateLicenseResponse {
-  success: boolean;
-  message?: string;
-}
-export interface UpdateLicenseResponse {
-  action: "update_license";
-  success: boolean;
-  license?: any[];
-}
-export interface AdjustSubscriptionResponse {
-  action: "adjust_subscription";
-  success?: [boolean, string];
 }
 
 export interface SendReviewSessionInviteResponse {
@@ -179,10 +144,6 @@ export type ActionResponse =
   | DelayedJobResponse
   | EncodeMediaResponse
   | GetUploadMetadataResponse
-  | SetLicenseResponse
-  | ValidateLicenseResponse
-  | UpdateLicenseResponse
-  | AdjustSubscriptionResponse
   | SendReviewSessionInviteResponse
   | SendUserInviteResponse
   | ComputeRollupsResponse
