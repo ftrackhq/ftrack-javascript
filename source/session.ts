@@ -629,12 +629,13 @@ export class Session {
    *
    *   Return update or create promise.
    */
-  ensure(
+
+  ensure<T extends Data = Data>(
     entityType: string,
-    data: Data,
-    identifyingKeys: string[] = []
-  ): Promise<Data> {
-    let keys = identifyingKeys;
+    data: T,
+    identifyingKeys: Array<keyof T> = []
+  ): Promise<T> {
+    let keys = identifyingKeys as string[];
 
     logger.info(
       "Ensuring entity with data using identifying keys: ",
@@ -673,9 +674,9 @@ export class Session {
 
     expression = `${expression} ${criteria.join(" and ")}`;
 
-    return this.query(expression).then((response) => {
+    return this.query<T>(expression).then((response) => {
       if (response.data.length === 0) {
-        return this.create(entityType, data).then(({ data: responseData }) =>
+        return this.create<T>(entityType, data).then(({ data: responseData }) =>
           Promise.resolve(responseData)
         );
       }
@@ -692,7 +693,7 @@ export class Session {
 
       // Update entity if required.
       let updated = false;
-      Object.keys(data).forEach((key) => {
+      Object.keys(data).forEach((key: keyof T) => {
         if (data[key] !== updateEntity[key]) {
           updateEntity[key] = data[key];
           updated = true;
@@ -700,15 +701,15 @@ export class Session {
       });
 
       if (updated) {
-        return this.update(
+        return this.update<T>(
           entityType,
           primaryKeys.map((key: string) => updateEntity[key]),
-          Object.keys(data).reduce<Data>((accumulator, key) => {
+          Object.keys(data).reduce<T>((accumulator, key: keyof T) => {
             if (primaryKeys.indexOf(key) === -1) {
               accumulator[key] = data[key];
             }
             return accumulator;
-          }, {})
+          }, {} as T)
         ).then(({ data: responseData }) => Promise.resolve(responseData));
       }
 
@@ -743,16 +744,15 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  query(expression: string, options: QueryOptions = {}) {
+  query<T extends Data = Data>(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
     const queryOperation = operation.query(expression);
-    let request = this.call<[QueryResponse<Data>]>(
-      [queryOperation],
-      options
-    ).then((responses) => {
-      const response = responses[0];
-      return response;
-    });
+    let request = this.call<[QueryResponse<T>]>([queryOperation], options).then(
+      (responses) => {
+        const response = responses[0];
+        return response;
+      }
+    );
 
     return request;
   }
@@ -774,7 +774,7 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
-  search(
+  search<T extends Data = Data>(
     {
       expression,
       entityType,
@@ -799,7 +799,7 @@ export class Session {
       contextId,
       objectTypeIds,
     });
-    let request = this.call<[SearchResponse<Data>]>(
+    let request = this.call<[SearchResponse<T>]>(
       [searchOperation],
       options
     ).then((responses) => {
@@ -821,10 +821,14 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with the response.
    */
-  create(entityType: string, data: Data, options: MutationOptions = {}) {
+  create<T extends Data = Data>(
+    entityType: string,
+    data: T,
+    options: MutationOptions = {}
+  ) {
     logger.debug("Create", entityType, data, options);
 
-    let request = this.call<[CreateResponse<Data>]>(
+    let request = this.call<[CreateResponse<T>]>(
       [operation.create(entityType, data)],
       options
     ).then((responses) => {
@@ -847,15 +851,15 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  update(
+  update<T extends Data = Data>(
     type: string,
     keys: string[],
-    data: Data,
+    data: T,
     options: MutationOptions = {}
   ) {
     logger.debug("Update", type, keys, data, options);
 
-    const request = this.call<[UpdateResponse<Data>]>(
+    const request = this.call<[UpdateResponse<T>]>(
       [operation.update(type, keys, data)],
       options
     ).then((responses) => {
@@ -954,11 +958,11 @@ export class Session {
    * @return {Promise} Promise resolved with the response when creating
    * Component and ComponentLocation.
    */
-  createComponent(
+  createComponent<T extends Data = Data>(
     file: Blob,
     options: CreateComponentOptions = {}
   ): Promise<
-    [CreateResponse<Data>, CreateResponse<Data>, GetUploadMetadataResponse]
+    [CreateResponse<T>, CreateResponse<T>, GetUploadMetadataResponse]
   > {
     const componentName = options.name ?? (file as File).name;
 
@@ -1015,7 +1019,7 @@ export class Session {
     };
 
     const componentAndLocationPromise = this.call<
-      [CreateResponse, CreateResponse, GetUploadMetadataResponse]
+      [CreateResponse<T>, CreateResponse<T>, GetUploadMetadataResponse]
     >([
       operation.create("FileComponent", component),
       operation.create("ComponentLocation", componentLocation),
