@@ -957,7 +957,9 @@ export class Session {
   createComponent(
     file: Blob,
     options: CreateComponentOptions = {}
-  ): Promise<ActionResponse[]> {
+  ): Promise<
+    [CreateResponse<Data>, CreateResponse<Data>, GetUploadMetadataResponse]
+  > {
     const componentName = options.name ?? (file as File).name;
 
     let normalizedFileName;
