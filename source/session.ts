@@ -15,7 +15,25 @@ import {
 import { SERVER_LOCATION_ID } from "./constant";
 
 import normalizeString from "./util/normalize_string";
-import { Data } from "./types";
+import type {
+  ActionResponse,
+  CallOptions,
+  CreateComponentOptions,
+  CreateResponse,
+  Data,
+  DeleteResponse,
+  GetUploadMetadataResponse,
+  IsTuple,
+  MutationOptions,
+  QueryOptions,
+  QueryResponse,
+  QueryServerInformationResponse,
+  ResponseError,
+  SearchOptions,
+  SearchResponse,
+  SessionOptions,
+  UpdateResponse,
+} from "./types";
 import { convertToIsoString } from "./util/convert_to_iso_string";
 
 const logger = loglevel.getLogger("ftrack_api");
@@ -41,75 +59,6 @@ function splitFileExtension(fileName: string) {
 
   return [basename, extension];
 }
-
-export interface EventHubOptions {
-  applicationId?: string;
-}
-
-export interface SessionOptions {
-  autoConnectEventHub?: boolean;
-  serverInformationValues?: string[];
-  eventHubOptions?: EventHubOptions;
-  clientToken?: string;
-  apiEndpoint?: string;
-  additionalHeaders?: Data;
-  strictApi?: boolean;
-}
-
-export interface CreateComponentOptions {
-  name?: string;
-  data?: Data;
-  onProgress?: (progress: number) => unknown;
-  xhr?: XMLHttpRequest;
-  onAborted?: () => unknown;
-}
-
-export interface Entity {
-  id: string;
-  __entity_type__: string;
-}
-
-export interface SearchOptions {
-  expression: string;
-  entityType: string;
-  terms?: string[];
-  contextId?: string;
-  objectTypeIds?: string[];
-}
-
-export interface Response<T> {
-  url?: any;
-  headers?: any;
-  action: string;
-  metadata: {
-    next: {
-      offset: number | null;
-    };
-  };
-  data: T[];
-}
-
-export interface ResponseError {
-  exception: string;
-  content: string;
-  error_code?: string;
-  error?: Data;
-}
-
-export interface MutationOptions {
-  pushToken?: string;
-  additionalHeaders?: Data;
-  decodeDatesAsIso?: boolean;
-}
-
-export interface QueryOptions {
-  abortController?: AbortController;
-  signal?: AbortSignal;
-  additionalHeaders?: Data;
-  decodeDatesAsIso?: boolean;
-}
-
-export interface CallOptions extends MutationOptions, QueryOptions {}
 
 /**
  * ftrack API session
@@ -264,7 +213,9 @@ export class Session {
      * @instance
      * @type {Promise}
      */
-    this.initializing = this.call(operations).then((responses) => {
+    this.initializing = this.call<
+      [QueryServerInformationResponse, QueryResponse]
+    >(operations).then((responses) => {
       this.serverInformation = responses[0];
       this.schemas = responses[1];
       this.serverVersion = this.serverInformation.version;
@@ -558,6 +509,7 @@ export class Session {
    * ServerError
    *     Generic server errors or network issues
    *
+   * @typeParam T - Either an array of response types to get return type `Tuple<T[0], ..., T[n]>`, or a single response type to get return type T[]. Default is ActionResponse.
    * @param {Array} operations - API operations.
    * @param {Object} options
    * @param {AbortController} options.abortController - Abort controller, deprecated in favor of options.signal
@@ -567,7 +519,7 @@ export class Session {
    * @param {string} options.decodeDatesAsIso - Return dates as ISO strings instead of moment objects
    *
    */
-  call(
+  call<T = ActionResponse>(
     operations: operation.Operation[],
     {
       abortController,
@@ -576,7 +528,7 @@ export class Session {
       additionalHeaders = {},
       decodeDatesAsIso = false,
     }: CallOptions = {}
-  ): Promise<Response<Data>[]> {
+  ): Promise<IsTuple<T> extends true ? T : T[]> {
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
     // Delay call until session is initialized if initialization is in
@@ -677,12 +629,13 @@ export class Session {
    *
    *   Return update or create promise.
    */
-  ensure(
+
+  ensure<T extends Data = Data>(
     entityType: string,
-    data: Data,
-    identifyingKeys: string[] = []
-  ): Promise<Data> {
-    let keys = identifyingKeys;
+    data: T,
+    identifyingKeys: Array<keyof T> = []
+  ): Promise<T> {
+    let keys = identifyingKeys as string[];
 
     logger.info(
       "Ensuring entity with data using identifying keys: ",
@@ -721,9 +674,9 @@ export class Session {
 
     expression = `${expression} ${criteria.join(" and ")}`;
 
-    return this.query(expression).then((response) => {
+    return this.query<T>(expression).then((response) => {
       if (response.data.length === 0) {
-        return this.create(entityType, data).then(({ data: responseData }) =>
+        return this.create<T>(entityType, data).then(({ data: responseData }) =>
           Promise.resolve(responseData)
         );
       }
@@ -740,7 +693,7 @@ export class Session {
 
       // Update entity if required.
       let updated = false;
-      Object.keys(data).forEach((key) => {
+      Object.keys(data).forEach((key: keyof T) => {
         if (data[key] !== updateEntity[key]) {
           updateEntity[key] = data[key];
           updated = true;
@@ -748,15 +701,15 @@ export class Session {
       });
 
       if (updated) {
-        return this.update(
+        return this.update<T>(
           entityType,
           primaryKeys.map((key: string) => updateEntity[key]),
-          Object.keys(data).reduce<Data>((accumulator, key) => {
+          Object.keys(data).reduce<T>((accumulator, key: keyof T) => {
             if (primaryKeys.indexOf(key) === -1) {
               accumulator[key] = data[key];
             }
             return accumulator;
-          }, {})
+          }, {} as T)
         ).then(({ data: responseData }) => Promise.resolve(responseData));
       }
 
@@ -791,13 +744,15 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  query(expression: string, options: QueryOptions = {}) {
+  query<T extends Data = Data>(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
     const queryOperation = operation.query(expression);
-    let request = this.call([queryOperation], options).then((responses) => {
-      const response = responses[0];
-      return response;
-    });
+    let request = this.call<[QueryResponse<T>]>([queryOperation], options).then(
+      (responses) => {
+        const response = responses[0];
+        return response;
+      }
+    );
 
     return request;
   }
@@ -819,7 +774,7 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
-  search(
+  search<T extends Data = Data>(
     {
       expression,
       entityType,
@@ -844,7 +799,10 @@ export class Session {
       contextId,
       objectTypeIds,
     });
-    let request = this.call([searchOperation], options).then((responses) => {
+    let request = this.call<[SearchResponse<T>]>(
+      [searchOperation],
+      options
+    ).then((responses) => {
       const response = responses[0];
       return response;
     });
@@ -863,15 +821,20 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with the response.
    */
-  create(entityType: string, data: Data, options: MutationOptions = {}) {
+  create<T extends Data = Data>(
+    entityType: string,
+    data: T,
+    options: MutationOptions = {}
+  ) {
     logger.debug("Create", entityType, data, options);
 
-    let request = this.call([operation.create(entityType, data)], options).then(
-      (responses) => {
-        const response = responses[0];
-        return response;
-      }
-    );
+    let request = this.call<[CreateResponse<T>]>(
+      [operation.create(entityType, data)],
+      options
+    ).then((responses) => {
+      const response = responses[0];
+      return response;
+    });
 
     return request;
   }
@@ -888,15 +851,15 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  update(
+  update<T extends Data = Data>(
     type: string,
     keys: string[],
-    data: Data,
+    data: T,
     options: MutationOptions = {}
   ) {
     logger.debug("Update", type, keys, data, options);
 
-    const request = this.call(
+    const request = this.call<[UpdateResponse<T>]>(
       [operation.update(type, keys, data)],
       options
     ).then((responses) => {
@@ -921,12 +884,13 @@ export class Session {
   delete(type: string, keys: string[], options: MutationOptions = {}) {
     logger.debug("Delete", type, keys, options);
 
-    let request = this.call([operation.delete(type, keys)], options).then(
-      (responses) => {
-        const response = responses[0];
-        return response;
-      }
-    );
+    let request = this.call<[DeleteResponse]>(
+      [operation.delete(type, keys)],
+      options
+    ).then((responses) => {
+      const response = responses[0];
+      return response;
+    });
 
     return request;
   }
@@ -994,10 +958,12 @@ export class Session {
    * @return {Promise} Promise resolved with the response when creating
    * Component and ComponentLocation.
    */
-  createComponent(
+  createComponent<T extends Data = Data>(
     file: Blob,
     options: CreateComponentOptions = {}
-  ): Promise<Response<Data>[]> {
+  ): Promise<
+    [CreateResponse<T>, CreateResponse<T>, GetUploadMetadataResponse]
+  > {
     const componentName = options.name ?? (file as File).name;
 
     let normalizedFileName;
@@ -1052,7 +1018,9 @@ export class Session {
       location_id: SERVER_LOCATION_ID,
     };
 
-    const componentAndLocationPromise = this.call([
+    const componentAndLocationPromise = this.call<
+      [CreateResponse<T>, CreateResponse<T>, GetUploadMetadataResponse]
+    >([
       operation.create("FileComponent", component),
       operation.create("ComponentLocation", componentLocation),
       {
