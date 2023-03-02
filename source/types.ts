@@ -27,10 +27,8 @@ export interface Entity {
   __entity_type__: string;
 }
 interface ResponseMetadata {
-  metadata: {
-    next: {
-      offset: number | null;
-    };
+  next: {
+    offset: number | null;
   };
 }
 export interface SearchOptions {
