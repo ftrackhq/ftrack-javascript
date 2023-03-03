@@ -725,13 +725,8 @@ export class Session {
    * @return {Object|null} Schema definition
    */
   getSchema(schemaId: string): Schema | null {
-    for (const index in this.schemas) {
-      if (this.schemas[Number(index)].id === schemaId) {
-        return this.schemas[Number(index)];
-      }
-    }
-
-    return null;
+    const schema = this.schemas?.find((s) => s.id === schemaId);
+    return schema ?? null;
   }
 
   /**
