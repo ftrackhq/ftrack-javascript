@@ -66,7 +66,7 @@ export interface ResetRemoteResponse {
   action: "reset_remote";
   data: Data;
 }
-export type QuerySchemasResponse = Data[];
+export type QuerySchemasResponse = Schema[];
 export interface QueryServerInformationResponse {
   custom_widget?: Data;
   default_colors?: string[];
@@ -161,6 +161,18 @@ export interface MutationOptions {
   decodeDatesAsIso?: boolean;
 }
 
+export interface Schema {
+  properties: Data;
+  default_projections: string[];
+  primary_key: string[];
+  required: string[];
+  immutable: string[];
+  type?: string;
+  id: string;
+  computed?: string[];
+  system_projections?: string[];
+  alias_for?: string | Data;
+}
 export interface QueryOptions {
   abortController?: AbortController;
   signal?: AbortSignal;
