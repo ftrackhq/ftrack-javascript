@@ -521,7 +521,7 @@ export class Session {
    * @param {string} options.decodeDatesAsIso - Return dates as ISO strings instead of moment objects
    *
    */
-  call<T = ActionResponse>(
+  async call<T = ActionResponse>(
     operations: operation.Operation[],
     {
       abortController,
@@ -531,21 +531,17 @@ export class Session {
       decodeDatesAsIso = false,
     }: CallOptions = {}
   ): Promise<IsTuple<T> extends true ? T : T[]> {
+    await this.initializing;
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
-    // Delay call until session is initialized if initialization is in
-    // progress.
-    let request = new Promise<void>((resolve) => {
-      if (this.initializing && !this.initialized) {
-        this.initializing.then(() => {
-          resolve();
-        });
-      } else {
-        resolve();
-      }
-    })
-      .then(() =>
-        fetch(url, {
+    let response;
+    try {
+      // Delay call until session is initialized if initialization is in
+      // progress.
+
+      let fetchResponse;
+      try {
+        fetchResponse = await fetch(url, {
           method: "post",
           credentials: "include",
           headers: {
@@ -560,54 +556,45 @@ export class Session {
           } as HeadersInit,
           body: this.encodeOperations(operations),
           signal: abortController ? abortController.signal : signal,
-        })
-      )
-      .catch((reason) => {
-        logger.warn("Failed to perform request. ", reason);
+        });
+      } catch (reason) {
+        if (reason instanceof Error) {
+          throw this.getErrorFromResponse({
+            exception: "NetworkError",
+            content: reason.message,
+          });
+        }
+        throw new Error("Unknown error");
+      }
+
+      response = await fetchResponse.json();
+
+      if (response.exception) {
+        throw this.getErrorFromResponse(response);
+      }
+
+      return this.decode(response, {}, decodeDatesAsIso);
+    } catch (reason) {
+      logger.warn("Failed to perform request. ", reason);
+
+      if (reason instanceof Error) {
         if (reason.name === "AbortError") {
-          return Promise.resolve<ResponseError>({
+          throw this.getErrorFromResponse({
             exception: "AbortError",
             content: reason.message,
           });
         }
-        return Promise.resolve<ResponseError>({
-          exception: "NetworkError",
-          content: reason.message,
-        });
-      })
-      .then((response) => {
-        if ("json" in response) {
-          return (response.json && response.json()) || response;
-        }
-        return response;
-      })
-      .then((data) => {
-        if (this.initialized) {
-          return this.decode(data, {}, decodeDatesAsIso);
-        }
 
-        return data;
-      })
-      // Catch badly formatted responses
-      .catch((reason) => {
         logger.warn("Server reported error in unexpected format. ", reason);
-        return Promise.resolve<ResponseError>({
+        throw this.getErrorFromResponse({
           exception: "MalformedResponseError",
           content: reason.message,
           error: reason,
         });
-      })
-      // Reject promise on API exception.
-      .then((response) => {
-        if (response.exception) {
-          return Promise.reject<ResponseError>(
-            this.getErrorFromResponse(response as ResponseError)
-          );
-        }
-        return Promise.resolve(response);
-      });
+      }
+    }
 
-    return request;
+    throw new Error("Unknown error");
   }
 
   /**
@@ -744,17 +731,16 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  query<T extends Data = Data>(expression: string, options: QueryOptions = {}) {
+  async query<T extends Data = Data>(
+    expression: string,
+    options: QueryOptions = {}
+  ) {
     logger.debug("Query", expression);
-    const queryOperation = operation.query(expression);
-    let request = this.call<[QueryResponse<T>]>([queryOperation], options).then(
-      (responses) => {
-        const response = responses[0];
-        return response;
-      }
+    const responses = await this.call<[QueryResponse<T>]>(
+      [operation.query(expression)],
+      options
     );
-
-    return request;
+    return responses[0];
   }
 
   /**
@@ -774,7 +760,7 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
-  search<T extends Data = Data>(
+  async search<T extends Data = Data>(
     {
       expression,
       entityType,
@@ -792,22 +778,19 @@ export class Session {
       objectTypeIds,
     });
 
-    const searchOperation = operation.search({
-      expression,
-      entityType,
-      terms,
-      contextId,
-      objectTypeIds,
-    });
-    let request = this.call<[SearchResponse<T>]>(
-      [searchOperation],
+    const responses = await this.call<[SearchResponse<T>]>(
+      [
+        operation.search({
+          expression,
+          entityType,
+          terms,
+          contextId,
+          objectTypeIds,
+        }),
+      ],
       options
-    ).then((responses) => {
-      const response = responses[0];
-      return response;
-    });
-
-    return request;
+    );
+    return responses[0];
   }
 
   /**
@@ -821,22 +804,18 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with the response.
    */
-  create<T extends Data = Data>(
+  async create<T extends Data = Data>(
     entityType: string,
     data: T,
     options: MutationOptions = {}
   ) {
     logger.debug("Create", entityType, data, options);
 
-    let request = this.call<[CreateResponse<T>]>(
+    const responses = await this.call<[CreateResponse<T>]>(
       [operation.create(entityType, data)],
       options
-    ).then((responses) => {
-      const response = responses[0];
-      return response;
-    });
-
-    return request;
+    );
+    return responses[0];
   }
 
   /**
@@ -851,7 +830,7 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  update<T extends Data = Data>(
+  async update<T extends Data = Data>(
     type: string,
     keys: string[],
     data: T,
@@ -859,15 +838,11 @@ export class Session {
   ) {
     logger.debug("Update", type, keys, data, options);
 
-    const request = this.call<[UpdateResponse<T>]>(
+    const responses = await this.call<[UpdateResponse<T>]>(
       [operation.update(type, keys, data)],
       options
-    ).then((responses) => {
-      const response = responses[0];
-      return response;
-    });
-
-    return request;
+    );
+    return responses[0];
   }
 
   /**
@@ -881,18 +856,15 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  delete(type: string, keys: string[], options: MutationOptions = {}) {
+  async delete(type: string, keys: string[], options: MutationOptions = {}) {
     logger.debug("Delete", type, keys, options);
 
-    let request = this.call<[DeleteResponse]>(
+    const responses = await this.call<[DeleteResponse]>(
       [operation.delete(type, keys)],
       options
-    ).then((responses) => {
-      const response = responses[0];
-      return response;
-    });
+    );
 
-    return request;
+    return responses[0];
   }
 
   /**
