@@ -643,7 +643,7 @@ export class Session {
       "Ensuring entity with data using identifying keys: ",
       entityType,
       data,
-      identifyingKeys
+      keys
     );
 
     if (!keys.length) {
@@ -658,7 +658,10 @@ export class Session {
       );
     }
 
-    const primaryKeys = this.getPrimaryKeyAttributes(entityType) ?? [];
+    const primaryKeys = this.getPrimaryKeyAttributes(entityType);
+    if (primaryKeys === null || primaryKeys.length === 0) {
+      throw new Error(`Primary key could not be found for: ${entityType}`);
+    }
     let expression = `select ${primaryKeys.join(
       ", "
     )} from ${entityType} where`;
