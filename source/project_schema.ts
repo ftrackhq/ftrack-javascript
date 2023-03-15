@@ -97,9 +97,12 @@ export function getStatuses(
     } else if (entityType === "AssetVersion") {
       statuses = data._version_workflow.statuses;
     } else {
-      const schema = session.getSchema(entityType) as any;
+      const schema = session.getSchema(entityType);
 
-      if (schema && schema.alias_for && schema.alias_for.id === "Task") {
+      if (
+        typeof schema?.alias_for === "object" &&
+        schema.alias_for.id === "Task"
+      ) {
         const objectTypeId = schema.alias_for.classifiers.object_typeid;
 
         for (const index in data._schemas) {

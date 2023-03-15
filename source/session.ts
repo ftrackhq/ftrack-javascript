@@ -27,8 +27,10 @@ import type {
   MutationOptions,
   QueryOptions,
   QueryResponse,
+  QuerySchemasResponse,
   QueryServerInformationResponse,
   ResponseError,
+  Schema,
   SearchOptions,
   SearchResponse,
   SessionOptions,
@@ -75,7 +77,7 @@ export class Session {
   initialized: boolean;
   initializing: Promise<Session>;
   serverInformation?: Data;
-  schemas?: Data;
+  schemas?: Schema[];
   serverVersion?: string;
   additionalHeaders: Data;
 
@@ -214,7 +216,7 @@ export class Session {
      * @type {Promise}
      */
     this.initializing = this.call<
-      [QueryServerInformationResponse, QueryResponse]
+      [QueryServerInformationResponse, QuerySchemasResponse]
     >(operations).then((responses) => {
       this.serverInformation = responses[0];
       this.schemas = responses[1];
@@ -230,13 +232,13 @@ export class Session {
    *
    * @return {Array|null} List of primary key attributes.
    */
-  getPrimaryKeyAttributes(entityType: string) {
+  getPrimaryKeyAttributes(entityType: string): string[] | null {
     if (!this.schemas) {
       logger.warn("Schemas not available.");
       return null;
     }
-    const schema = this.schemas.find((item: any) => item.id === entityType);
-    if (!schema || !schema.primary_key) {
+    const schema = this.schemas.find((item) => item.id === entityType);
+    if (!schema || !schema.primary_key || !schema.primary_key.length) {
       logger.warn("Primary key could not be found for: ", entityType);
       return null;
     }
@@ -641,7 +643,7 @@ export class Session {
       "Ensuring entity with data using identifying keys: ",
       entityType,
       data,
-      identifyingKeys
+      keys
     );
 
     if (!keys.length) {
@@ -657,6 +659,9 @@ export class Session {
     }
 
     const primaryKeys = this.getPrimaryKeyAttributes(entityType);
+    if (primaryKeys === null || primaryKeys.length === 0) {
+      throw new Error(`Primary key could not be found for: ${entityType}`);
+    }
     let expression = `select ${primaryKeys.join(
       ", "
     )} from ${entityType} where`;
@@ -705,7 +710,7 @@ export class Session {
           entityType,
           primaryKeys.map((key: string) => updateEntity[key]),
           Object.keys(data).reduce<T>((accumulator, key: keyof T) => {
-            if (primaryKeys.indexOf(key) === -1) {
+            if (primaryKeys.indexOf(key.toString()) === -1) {
               accumulator[key] = data[key];
             }
             return accumulator;
@@ -722,14 +727,9 @@ export class Session {
    * @param  {string} schemaId Id of schema model, e.g. `AssetVersion`.
    * @return {Object|null} Schema definition
    */
-  getSchema(schemaId: string): Data | null {
-    for (const index in this.schemas) {
-      if (this.schemas[index].id === schemaId) {
-        return this.schemas[index];
-      }
-    }
-
-    return null;
+  getSchema(schemaId: string): Schema | null {
+    const schema = this.schemas?.find((s) => s.id === schemaId);
+    return schema ?? null;
   }
 
   /**
