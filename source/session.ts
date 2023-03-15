@@ -534,7 +534,6 @@ export class Session {
     await this.initializing;
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
-    let response;
     try {
       // Delay call until session is initialized if initialization is in
       // progress.
@@ -567,7 +566,7 @@ export class Session {
         throw new Error("Unknown error");
       }
 
-      response = await fetchResponse.json();
+      const response = await fetchResponse.json();
 
       if (response.exception) {
         throw this.getErrorFromResponse(response);
