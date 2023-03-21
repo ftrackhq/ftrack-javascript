@@ -166,6 +166,7 @@ type SimpleTypeSchemaProperty = {
   format?: string;
   description?: string;
   alias_for?: string;
+  default?: string;
 };
 type ArrayTypeSchemaProperty = {
   type: "array" | "mapped_array";
