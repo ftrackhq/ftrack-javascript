@@ -162,28 +162,24 @@ export interface MutationOptions {
 }
 
 type SimpleTypeSchemaProperty = {
-  type: "string"|"boolean"|"number"|"array";
+  type: "string" | "boolean" | "number" | "array";
   format?: string;
   description?: string;
   alias_for?: string;
-}
+};
 type ArrayTypeSchemaProperty = {
-  type: "array"|"mapped_array";
+  type: "array" | "mapped_array";
   items: RefSchemaProperty;
   description?: string;
   alias_for?: string;
-}
-type TypedSchemaProperty = 
-  SimpleTypeSchemaProperty |
-  ArrayTypeSchemaPropert;
+};
+type TypedSchemaProperty = SimpleTypeSchemaProperty | ArrayTypeSchemaProperty;
 type RefSchemaProperty = {
-  ["$ref"]: string
-}
+  ["$ref"]: string;
+};
 type SchemaProperties = {
-  [key: string]: 
-    TypedSchemaProperty | 
-    RefSchemaProperty;
-}
+  [key: string]: TypedSchemaProperty | RefSchemaProperty;
+};
 export interface Schema {
   properties: SchemaProperties;
   default_projections: string[];
