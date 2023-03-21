@@ -162,7 +162,7 @@ export interface MutationOptions {
 }
 
 type SimpleTypeSchemaProperty = {
-  type: "string" | "boolean" | "number" | "array";
+  type: "string" | "boolean" | "number" | "integer" | "variable";
   format?: string;
   description?: string;
   alias_for?: string;
