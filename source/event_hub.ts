@@ -60,7 +60,11 @@ export type UpdateEventPayload = BaseEventPayload & {
 export type EventPayload =
   | ActionLaunchEventPayload
   | ActionDiscoverEventPayload
-  | UpdateEventPayload;
+  | UpdateEventPayload
+  | {
+      topic: unknown;
+      data: unknown;
+    };
 
 export interface EventSource {
   clientToken: string;
