@@ -52,7 +52,7 @@ export interface UpdateEventData {
   clientToken: string;
 }
 
-export type UpdatedEventPayload = BaseEventPayload & {
+export type UpdateEventPayload = BaseEventPayload & {
   topic: "ftrack.update";
   data: UpdateEventData;
 }
@@ -60,7 +60,7 @@ export type UpdatedEventPayload = BaseEventPayload & {
 export type EventPayload =
   ActionLaunchEventPayload |
   ActionDiscoverEventPayload |
-  UpdatedEventPayload;
+  UpdateEventPayload;
 
 export interface EventSource {
   clientToken: string;
