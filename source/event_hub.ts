@@ -13,10 +13,10 @@ import { Data } from "./types";
 
 type BaseActionData = {
   selection: Array<{
-    entityId: string,
-    entityType: string
+    entityId: string;
+    entityType: string;
   }>;
-}
+};
 
 type BaseEventPayload = {
   target: string;
@@ -28,18 +28,18 @@ type BaseEventPayload = {
 export type ActionDiscoverEventPayload = BaseEventPayload & {
   topic: "ftrack.action.discover";
   data: BaseActionData;
-}
+};
 
 export type ActionLaunchEventData = BaseActionData & {
   actionIdentifier: string;
   description: string;
   label: string;
-}
+};
 
 export type ActionLaunchEventPayload = BaseEventPayload & {
   topic: "ftrack.action.launch";
   data: ActionLaunchEventData;
-}
+};
 
 export interface UpdateEventData {
   entities: EventEntity[];
@@ -55,12 +55,12 @@ export interface UpdateEventData {
 export type UpdateEventPayload = BaseEventPayload & {
   topic: "ftrack.update";
   data: UpdateEventData;
-}
+};
 
 export type EventPayload =
-  ActionLaunchEventPayload |
-  ActionDiscoverEventPayload |
-  UpdateEventPayload;
+  | ActionLaunchEventPayload
+  | ActionDiscoverEventPayload
+  | UpdateEventPayload;
 
 export interface EventSource {
   clientToken: string;
