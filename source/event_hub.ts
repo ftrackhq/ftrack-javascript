@@ -11,35 +11,35 @@ import {
 } from "./error";
 import { Data } from "./types";
 
-type BaseActionData = {
+interface BaseActionData {
   selection: Array<{
     entityId: string;
     entityType: string;
   }>;
-};
+}
 
-type BaseEventPayload = {
+interface BaseEventPayload {
   target: string;
   inReplyToEvent: string;
   source: EventSource;
   id: string;
-};
+}
 
-export type ActionDiscoverEventPayload = BaseEventPayload & {
+export interface ActionDiscoverEventPayload extends BaseEventPayload {
   topic: "ftrack.action.discover";
   data: BaseActionData;
-};
+}
 
-export type ActionLaunchEventData = BaseActionData & {
+export interface ActionLaunchEventData extends BaseActionData {
   actionIdentifier: string;
   description: string;
   label: string;
-};
+}
 
-export type ActionLaunchEventPayload = BaseEventPayload & {
+export interface ActionLaunchEventPayload extends BaseEventPayload {
   topic: "ftrack.action.launch";
   data: ActionLaunchEventData;
-};
+}
 
 export interface UpdateEventData {
   entities: EventEntity[];
@@ -52,19 +52,21 @@ export interface UpdateEventData {
   clientToken: string;
 }
 
-export type UpdateEventPayload = BaseEventPayload & {
+export interface UpdateEventPayload extends BaseEventPayload {
   topic: "ftrack.update";
   data: UpdateEventData;
-};
+}
+
+export interface UnknownEventPayload extends BaseEventPayload {
+  topic: unknown;
+  data: unknown;
+}
 
 export type EventPayload =
   | ActionLaunchEventPayload
   | ActionDiscoverEventPayload
   | UpdateEventPayload
-  | {
-      topic: unknown;
-      data: unknown;
-    };
+  | UnknownEventPayload;
 
 export interface EventSource {
   clientToken: string;
