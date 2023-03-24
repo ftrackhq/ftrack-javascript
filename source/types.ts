@@ -181,6 +181,9 @@ type RefSchemaProperty = {
 type SchemaProperties = {
   [key: string]: TypedSchemaProperty | RefSchemaProperty;
 };
+export type SchemaMixin = {
+  $ref: string;
+};
 export interface Schema {
   properties: SchemaProperties;
   default_projections: string[];
@@ -192,6 +195,7 @@ export interface Schema {
   computed?: string[];
   system_projections?: string[];
   alias_for?: string | Data;
+  $mixin?: SchemaMixin;
 }
 export interface QueryOptions {
   abortController?: AbortController;
