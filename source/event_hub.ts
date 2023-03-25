@@ -20,9 +20,10 @@ interface BaseActionData {
 
 interface BaseEventPayload {
   target: string;
-  inReplyToEvent: string;
   source: EventSource;
   id: string;
+  inReplyToEvent?: string;
+  sent?: boolean;
 }
 
 export interface ActionDiscoverEventPayload extends BaseEventPayload {
@@ -32,8 +33,9 @@ export interface ActionDiscoverEventPayload extends BaseEventPayload {
 
 export interface ActionLaunchEventData extends BaseActionData {
   actionIdentifier: string;
-  description: string;
-  label: string;
+  description?: string;
+  label?: string;
+  applicationIdentifier?: string;
 }
 
 export interface ActionLaunchEventPayload extends BaseEventPayload {
