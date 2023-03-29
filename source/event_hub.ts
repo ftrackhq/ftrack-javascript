@@ -44,14 +44,14 @@ export interface ActionLaunchEventPayload extends BaseEventPayload {
 }
 
 export interface UpdateEventData {
-  entities: EventEntity[];
-  pushToken: string;
-  parents: string[];
-  user: {
+  entities?: EventEntity[];
+  pushToken?: string;
+  parents?: string[];
+  user?: {
     userid: string;
     name: string;
   };
-  clientToken: string;
+  clientToken?: string;
 }
 
 export interface UpdateEventPayload extends BaseEventPayload {
@@ -81,20 +81,20 @@ export interface EventSource {
 }
 
 export interface EventEntity {
-  entity_type: string;
-  keys: string[];
-  objectTypeId: string;
-  entityType: string;
-  parents: {
+  entity_type?: string;
+  keys?: string[];
+  objectTypeId?: string;
+  entityType?: string;
+  parents?: {
     entityId: string;
     entityType: string;
     entity_type: string;
     parentId?: string;
   }[];
-  parentId: string;
-  action: string;
-  entityId: string;
-  changes: Data;
+  parentId?: string;
+  action?: string;
+  entityId?: string;
+  changes?: Data;
 }
 
 export interface SubscriberMetadata {
