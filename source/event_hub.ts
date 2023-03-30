@@ -578,7 +578,9 @@ export class EventHub {
    */
   _handleReply(eventPayload: EventPayload) {
     this.logger.debug("Reply received", eventPayload);
-    const onReplyCallback = this._replyCallbacks[eventPayload.inReplyToEvent];
+    const onReplyCallback = !eventPayload.inReplyToEvent
+      ? null
+      : this._replyCallbacks[eventPayload.inReplyToEvent];
     if (onReplyCallback) {
       onReplyCallback(eventPayload);
     }
