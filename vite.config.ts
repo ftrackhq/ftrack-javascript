@@ -15,7 +15,8 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "source/index.ts"),
       name: "ftrack-javascript-api",
-      fileName: (format) => `ftrack-javascript-api.${format}.js`,
+      fileName: (format) =>
+        `ftrack-javascript-api.${format}.${format === "umd" ? "cjs" : "js"}`,
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
