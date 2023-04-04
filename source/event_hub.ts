@@ -59,7 +59,14 @@ export interface UpdateEventPayload extends BaseEventPayload {
   data: UpdateEventData;
 }
 
-export type EventPayload =
+/**
+ * A union type of the different payload types with the 
+ * `topic:` property as a type discriminator.
+ * Supports the topics `ftrack.action.discover`, `ftrack.action.launch`
+ * and `ftrack.update`. Please add a GitHub issue for any missing core topics.
+ * @interface EventPayload
+ */
+ export type EventPayload =
   | ActionLaunchEventPayload
   | ActionDiscoverEventPayload
   | UpdateEventPayload;
