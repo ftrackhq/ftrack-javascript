@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-import io, { SocketIO } from "./socket.io-websocket-only.cjs";
+import io from "socket.io-client";
 import { Event } from "./event";
 import {
   EventServerConnectionTimeoutError,
@@ -92,7 +92,7 @@ export class EventHub {
   };
   private _unsentEvents: ConnectionCallback[];
   private _subscribers: Subscriber[];
-  private _socketIo: SocketIO | null;
+  private _socketIo: SocketIOClient.Socket | null;
 
   /**
    * Construct EventHub instance with API credentials.
@@ -138,14 +138,16 @@ export class EventHub {
   /** Connect to the event server. */
   connect(): void {
     this._socketIo = io.connect(this._serverUrl, {
-      "max reconnection attempts": Infinity,
-      "reconnection limit": 10000,
-      "reconnection delay": 5000,
+      reconnectionAttempts: 10000,
+      reconnectionDelay: 5000,
+      reconnection: true,
+      timeout: 10000,
       transports: ["websocket"],
       query: new URLSearchParams({
         api_user: this._apiUser,
         api_key: this._apiKey,
       }).toString(),
+      
     });
 
     this._socketIo.on("connect", this._onSocketConnected);
@@ -157,7 +159,7 @@ export class EventHub {
    * @return {Boolean}
    */
   isConnected(): boolean {
-    return (this._socketIo && this._socketIo.socket.connected) || false;
+    return (this._socketIo && this._socketIo.connected) || false;
   }
 
   /**
@@ -328,7 +330,7 @@ export class EventHub {
         // Force reconnect socket if not automatically reconnected. This
         // happens for example in Adobe After Effects when rendering a
         // sequence takes longer than ~30s and the JS thread is blocked.
-        this._socketIo.socket.reconnect();
+        this._socketIo.connect();
       }
     } else {
       callback();
