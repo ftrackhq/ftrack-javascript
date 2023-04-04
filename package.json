@@ -22,6 +22,7 @@
   ],
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
+    "@types/socket.io-client": "^1.4.36",
     "@types/uuid": "^9.0.0",
     "cross-fetch": "^3.1.5",
     "dayjs": "^1.11.7",
@@ -55,6 +56,7 @@
   "dependencies": {
     "loglevel": "^1.8.1",
     "moment": "^2.29.4",
+    "socket.io-client": "1.7.4",
     "uuid": "^9.0.0"
   },
   "lint-staged": {

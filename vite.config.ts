@@ -28,8 +28,7 @@ export default defineConfig({
           uuid: "uuid",
           loglevel: "log",
         },
-      },
-      plugins: [commonjs({ include: "./source/socket.io-websocket-only.cjs" })],
+      }
     },
   },
   plugins: [dts()],
