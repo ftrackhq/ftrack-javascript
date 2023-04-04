@@ -59,16 +59,10 @@ export interface UpdateEventPayload extends BaseEventPayload {
   data: UpdateEventData;
 }
 
-export interface UnknownEventPayload extends BaseEventPayload {
-  topic: unknown;
-  data: unknown;
-}
-
 export type EventPayload =
   | ActionLaunchEventPayload
   | ActionDiscoverEventPayload
-  | UpdateEventPayload
-  | UnknownEventPayload;
+  | UpdateEventPayload;
 
 export interface EventSource {
   clientToken: string;
