@@ -8,13 +8,15 @@
     "prepack": "yarn build",
     "prepublish": "yarn test"
   },
-  "main": "./dist/ftrack-javascript-api.umd.js",
+  "type": "module",
+  "main": "./dist/ftrack-javascript-api.umd.cjs",
   "module": "./dist/ftrack-javascript-api.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/ftrack-javascript-api.es.js",
-      "require": "./dist/ftrack-javascript-api.umd.js"
+      "require": "./dist/ftrack-javascript-api.umd.cjs"
     }
   },
   "files": [
@@ -43,8 +45,7 @@
   "keywords": [
     "ftrack",
     "api",
-    "library",
-    "umd"
+    "library"
   ],
   "author": "ftrack",
   "license": "Apache-2.0",

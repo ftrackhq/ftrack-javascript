@@ -161,8 +161,33 @@ export interface MutationOptions {
   decodeDatesAsIso?: boolean;
 }
 
+export type SimpleTypeSchemaProperty = {
+  type: "string" | "boolean" | "number" | "integer" | "variable";
+  format?: string;
+  description?: string;
+  alias_for?: string;
+  default?: string;
+};
+export type ArrayTypeSchemaProperty = {
+  type: "array" | "mapped_array";
+  items: RefSchemaProperty;
+  description?: string;
+  alias_for?: string;
+};
+export type TypedSchemaProperty =
+  | SimpleTypeSchemaProperty
+  | ArrayTypeSchemaProperty;
+export type RefSchemaProperty = {
+  ["$ref"]: string;
+};
+export type SchemaProperties = {
+  [key: string]: TypedSchemaProperty | RefSchemaProperty;
+};
+export type SchemaMixin = {
+  $ref: string;
+};
 export interface Schema {
-  properties: Data;
+  properties: SchemaProperties;
   default_projections: string[];
   primary_key: string[];
   required: string[];
@@ -172,6 +197,7 @@ export interface Schema {
   computed?: string[];
   system_projections?: string[];
   alias_for?: string | Data;
+  $mixin?: SchemaMixin;
 }
 export interface QueryOptions {
   abortController?: AbortController;

@@ -11,14 +11,65 @@ import {
 } from "./error";
 import { Data } from "./types";
 
-export interface EventPayload {
-  target: string;
-  inReplyToEvent: string;
-  topic: string;
-  source: EventSource;
-  data: EventData;
-  id: string;
+interface BaseActionData {
+  selection: Array<{
+    entityId: string;
+    entityType: string;
+  }>;
 }
+
+interface BaseEventPayload {
+  target: string;
+  source: EventSource;
+  id: string;
+  inReplyToEvent?: string;
+  sent?: boolean;
+}
+
+export interface ActionDiscoverEventPayload extends BaseEventPayload {
+  topic: "ftrack.action.discover";
+  data: BaseActionData;
+}
+
+export interface ActionLaunchEventData extends BaseActionData {
+  actionIdentifier: string;
+  description?: string;
+  label?: string;
+  applicationIdentifier?: string;
+}
+
+export interface ActionLaunchEventPayload extends BaseEventPayload {
+  topic: "ftrack.action.launch";
+  data: ActionLaunchEventData;
+}
+
+export interface UpdateEventData {
+  entities?: EventEntity[];
+  pushToken?: string;
+  parents?: string[];
+  user?: {
+    userid: string;
+    name: string;
+  };
+  clientToken?: string;
+}
+
+export interface UpdateEventPayload extends BaseEventPayload {
+  topic: "ftrack.update";
+  data: UpdateEventData;
+}
+
+/**
+ * A union type of the different payload types with the
+ * `topic:` property as a type discriminator.
+ * Supports the topics `ftrack.action.discover`, `ftrack.action.launch`
+ * and `ftrack.update`. Please add a GitHub issue for any missing core topics.
+ * @interface EventPayload
+ */
+export type EventPayload =
+  | ActionLaunchEventPayload
+  | ActionDiscoverEventPayload
+  | UpdateEventPayload;
 
 export interface EventSource {
   clientToken: string;
@@ -30,32 +81,21 @@ export interface EventSource {
   id: string;
 }
 
-export interface EventData {
-  entities: EventEntity[];
-  pushToken: string;
-  parents: string[];
-  user: {
-    userid: string;
-    name: string;
-  };
-  clientToken: string;
-}
-
 export interface EventEntity {
-  entity_type: string;
-  keys: string[];
-  objectTypeId: string;
-  entityType: string;
-  parents: {
+  entity_type?: string;
+  keys?: string[];
+  objectTypeId?: string;
+  entityType?: string;
+  parents?: {
     entityId: string;
     entityType: string;
     entity_type: string;
     parentId?: string;
   }[];
-  parentId: string;
-  action: string;
-  entityId: string;
-  changes: Data;
+  parentId?: string;
+  action?: string;
+  entityId?: string;
+  changes?: Data;
 }
 
 export interface SubscriberMetadata {
@@ -539,7 +579,9 @@ export class EventHub {
    */
   _handleReply(eventPayload: EventPayload) {
     this.logger.debug("Reply received", eventPayload);
-    const onReplyCallback = this._replyCallbacks[eventPayload.inReplyToEvent];
+    const onReplyCallback = !eventPayload.inReplyToEvent
+      ? null
+      : this._replyCallbacks[eventPayload.inReplyToEvent];
     if (onReplyCallback) {
       onReplyCallback(eventPayload);
     }
