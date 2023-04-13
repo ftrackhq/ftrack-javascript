@@ -5,6 +5,7 @@
     "lint": "tsc && eslint . && prettier -c .",
     "test": "vitest --run test && yarn lint",
     "build": "vite build",
+    "watch": "vite build -w",
     "prepack": "yarn build",
     "prepublish": "yarn test"
   },
@@ -54,9 +55,12 @@
   },
   "homepage": "http://ftrack.com",
   "dependencies": {
+    "has-cors": "^1.1.0",
     "loglevel": "^1.8.1",
     "moment": "^2.29.4",
-    "uuid": "^9.0.0"
+    "url": "^0.11.0",
+    "uuid": "^9.0.0",
+    "xmlhttprequest": "^1.8.0"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
