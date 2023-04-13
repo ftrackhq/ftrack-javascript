@@ -560,7 +560,7 @@ export class Session {
         if (reason instanceof Error) {
           throw this.getErrorFromResponse({
             exception: "NetworkError",
-            content: reason.message,
+            content: (reason.cause as string) || reason.message,
           });
         }
         throw new Error("Unknown error");
