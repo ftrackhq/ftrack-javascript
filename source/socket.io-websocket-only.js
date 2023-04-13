@@ -1,7 +1,8 @@
 /*! Socket.IO.js build:0.9.17, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
 const that = typeof window === "undefined" ? {} : window;
-
+const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var io = "undefined" === typeof module ? {} : module.exports;
+export default io;
 
 (function () {
   /**
@@ -1926,6 +1927,9 @@ var io = "undefined" === typeof module ? {} : module.exports;
      */
 
     Socket.prototype.isXDomain = function () {
+      if(!global.location)
+        return false;
+
       var port =
         global.location.port ||
         ("https:" == global.location.protocol ? 443 : 80);
