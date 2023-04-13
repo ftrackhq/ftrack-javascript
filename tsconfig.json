@@ -17,5 +17,5 @@
     "allowJs": false
   },
   "include": ["source"],
-  "exclude": ["source/socket.io-websocket-only.cjs"]
+  "exclude": ["source/socket.io-websocket-only.js"]
 }
