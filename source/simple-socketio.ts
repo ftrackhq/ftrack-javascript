@@ -100,8 +100,13 @@ export default class SimpleSocketIOClient {
     this.socket.transport = this.ws;
     this.addInitialEventListeners();
   }
+
   private addInitialEventListeners(): void {
-    this.ws.addEventListener("message", (event: MessageEvent) => {
+    this.ws.addEventListener("message", this.handleMessage.bind(this));
+    this.ws.addEventListener("open", this.handleOpen.bind(this));
+    this.ws.addEventListener("close", this.handleClose.bind(this));
+  }
+  private handleMessage(event: MessageEvent): void {
       const [packetType, data] = event.data.split(/:::?/);
       if (packetType === PACKET_TYPES.event) {
         const parsedData = JSON.parse(data) as Payload;
@@ -111,9 +116,8 @@ export default class SimpleSocketIOClient {
         // Respond to server heartbeat with a heartbeat
         this.ws.send(`${PACKET_TYPES.heartbeat}::`);
       }
-    });
-
-    this.ws.addEventListener("open", () => {
+  }
+  private handleOpen(): void {
       this.startHeartbeat();
       if (this.reconnectTimeout) {
         clearTimeout(this.reconnectTimeout);
@@ -121,16 +125,14 @@ export default class SimpleSocketIOClient {
       }
       // Set connected property to true
       this.socket.connected = true;
-    });
+  }
 
-    this.ws.addEventListener("close", () => {
+  private handleClose(): void {
       this.stopHeartbeat();
       this.scheduleReconnect();
       // Set connected property to false
       this.socket.connected = false;
-    });
   }
-
   private handleEvent(eventName: string, eventData: Event["_data"]): void {
     this.handlers[eventName]?.forEach((callback) => callback(eventData));
   }
