@@ -122,9 +122,18 @@ export default class SimpleSocketIOClient {
       const parsedData = JSON.parse(data) as Payload;
       const { name, args } = parsedData;
       this.handleEvent(name, args[0]);
-    } else if (packetType === PACKET_TYPES.heartbeat) {
+      return;
+    }
+    if (packetType === PACKET_TYPES.heartbeat) {
       // Respond to server heartbeat with a heartbeat
       this.ws.send(`${PACKET_TYPES.heartbeat}::`);
+      return;
+    }
+    if (packetType === PACKET_TYPES.error) {
+      // Respond to server heartbeat with a heartbeat
+      console.log("WebSocket message error: ", event);
+      this.handleClose();
+      return;
     }
   }
   private handleOpen(): void {
