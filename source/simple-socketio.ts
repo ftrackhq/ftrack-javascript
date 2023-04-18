@@ -113,7 +113,7 @@ export default class SimpleSocketIOClient {
   }
 
   private handleError(event: Event): void {
-    this.reconnect();
+    this.handleClose();
     console.error("WebSocket error:", event);
   }
   private handleMessage(event: MessageEvent): void {
