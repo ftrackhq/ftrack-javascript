@@ -6,6 +6,7 @@ import queryServerInformation from "./fixtures/query_server_information.json";
 import getUploadMetadata from "./fixtures/get_upload_metadata.json";
 import exampleQuery from "./fixtures/query_select_name_from_task_limit_1.json";
 import { setupServer } from "msw/node";
+import { Server } from "mock-socket";
 
 function authenticate(req) {
   // allow returning invalid authentication by setting ftrack-api-key to "INVALID_API_KEY"
@@ -119,6 +120,19 @@ export const handlers = [
   }),
   rest.put("http://ftrack.test/file-url", async (req, res, ctx) => {
     return res(ctx.status(200), ctx.set("Access-Control-Allow-Origin", "*"));
+  }),
+  // Get socket io session id
+  rest.get("http://ftrack.test/socket.io/1/", (req, res, ctx) => {
+    if (!authenticate(req)) {
+      return res(
+        ctx.status(401),
+        ctx.json({
+          message: "Invalid API key",
+        })
+      );
+    }
+    console.log("get session id");
+    return res(ctx.text("1234567890:")); // The returned session ID has a colon and then some other information at the end. This only has the colon, to check that the colon is removed.
   }),
 ];
 
