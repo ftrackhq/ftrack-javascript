@@ -67,6 +67,7 @@ export default class SimpleSocketIOClient {
   }
   // Fetch the session ID from the ftrack server
   private async fetchSessionId(): Promise<string> {
+    try {
     const url = new URL(`${this.serverUrl}/socket.io/1/`);
     url.searchParams.append("api_user", this.apiUser);
     const response = await fetch(url, {
@@ -76,10 +77,19 @@ export default class SimpleSocketIOClient {
       },
       method: "GET",
     });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching session ID: ${response.statusText}`);
+      }
+
     const responseText = await response.text();
     const sessionId = responseText.split(":")[0];
     this.sessionId = sessionId;
     return sessionId;
+    } catch (error) {
+      console.error("Error fetching session ID:", error);
+      throw error;
+    }
   }
 
   private async initializeWebSocket(): Promise<void> {
