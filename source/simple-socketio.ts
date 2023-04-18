@@ -70,13 +70,18 @@ export default class SimpleSocketIOClient {
     try {
       const url = new URL(`${this.serverUrl}/socket.io/1/`);
       url.searchParams.append("api_user", this.apiUser);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
       const response = await fetch(url, {
         headers: {
           "ftrack-api-user": this.apiUser,
           "ftrack-api-key": this.apiKey,
         },
         method: "GET",
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`Error fetching session ID: ${response.statusText}`);
@@ -91,7 +96,6 @@ export default class SimpleSocketIOClient {
       throw error;
     }
   }
-
   private async initializeWebSocket(): Promise<void> {
     const sessionId = this.sessionId ?? (await this.fetchSessionId());
     const urlWithQueryAndSession = `${this.wsUrl}/socket.io/1/websocket/${sessionId}?${this.query}`;
