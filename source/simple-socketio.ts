@@ -1,4 +1,4 @@
-// simple_socket_io_client.ts
+// :copyright: Copyright (c) 2023 ftrack
 import WebSocket from "isomorphic-ws";
 import type { Event } from "./event";
 const PACKET_TYPES = {
@@ -32,9 +32,9 @@ export default class SimpleSocketIOClient {
   private query: string;
   private apiUser: string;
   private apiKey: string;
-  private sessionId: string;
+  private sessionId?: string;
 
-  // Added socket object with connected, reconnect and transport properties
+  // Added socket object with connected, reconnect and transport properties to match current API
   public socket: {
     connected: boolean;
     reconnect: () => void;
@@ -47,6 +47,7 @@ export default class SimpleSocketIOClient {
     apiKey: string,
     heartbeatIntervalMs: number = 10000
   ) {
+    // Convert the http(s) URL to ws(s) URL
     const wsUrl = serverUrl.replace(/^(http)/, "ws");
     this.serverUrl = serverUrl;
     this.wsUrl = wsUrl;
@@ -63,13 +64,11 @@ export default class SimpleSocketIOClient {
       reconnect: this.reconnect.bind(this),
       transport: null,
     };
-    this.sessionId = this.initializeWebSocket();
   }
-
+  // Fetch the session ID from the ftrack server
   private async fetchSessionId(): Promise<string> {
     const url = new URL(`${this.serverUrl}/socket.io/1/`);
     url.searchParams.append("api_user", this.apiUser);
-
     const response = await fetch(url, {
       headers: {
         "ftrack-api-user": this.apiUser,
@@ -87,7 +86,7 @@ export default class SimpleSocketIOClient {
     const sessionId = this.sessionId ?? (await this.fetchSessionId());
     const urlWithQueryAndSession = `${this.wsUrl}/socket.io/1/websocket/${sessionId}?${this.query}`;
     this.ws = new WebSocket(urlWithQueryAndSession);
-    // Set transport property
+    // Set transport property as a public alias of the websocket
     this.socket.transport = this.ws;
     this.addInitialEventListeners();
   }
@@ -125,7 +124,7 @@ export default class SimpleSocketIOClient {
   private handleEvent(eventName: string, eventData: Event["_data"]): void {
     this.handlers[eventName]?.forEach((callback) => callback(eventData));
   }
-
+  // Setup event callbacks for a given eventName
   public on(
     eventName: string,
     eventCallback: (eventData: Event["_data"]) => void
@@ -135,7 +134,7 @@ export default class SimpleSocketIOClient {
     }
     this.handlers[eventName].push(eventCallback);
   }
-
+  // Emit an event with the given eventName and eventData
   public emit(eventName: string, eventData: Event["_data"]): void {
     const payload = {
       name: eventName,
@@ -144,7 +143,7 @@ export default class SimpleSocketIOClient {
     const dataString = eventData ? `:::${JSON.stringify(payload)}` : "";
     this.ws.send(`${PACKET_TYPES.event}${dataString}`);
   }
-
+  // Heartbeat functions, to tell the server to keep the connection alive
   private startHeartbeat(): void {
     this.heartbeatInterval = setInterval(() => {
       this.ws.send(`${PACKET_TYPES.heartbeat}::`);
@@ -157,9 +156,11 @@ export default class SimpleSocketIOClient {
       this.heartbeatInterval = undefined;
     }
   }
+
   public isConnected(): boolean {
     return this.ws?.readyState === WebSocket.OPEN;
   }
+  // Reconnect functions, to reconnect to the server if the connection is lost using the same session ID
   private scheduleReconnect(reconnectDelayMs: number = 5000): void {
     if (!this.reconnectTimeout) {
       this.reconnectTimeout = setTimeout(() => {
@@ -167,8 +168,6 @@ export default class SimpleSocketIOClient {
       }, reconnectDelayMs);
     }
   }
-
-  // Other methods remain the same
 
   public reconnect(): void {
     if (this.socket.connected) {
