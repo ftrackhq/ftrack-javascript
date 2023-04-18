@@ -109,6 +109,12 @@ export default class SimpleSocketIOClient {
     this.ws.addEventListener("message", this.handleMessage.bind(this));
     this.ws.addEventListener("open", this.handleOpen.bind(this));
     this.ws.addEventListener("close", this.handleClose.bind(this));
+    this.ws.addEventListener("error", this.handleError.bind(this));
+  }
+
+  private handleError(event: Event): void {
+    this.reconnect();
+    console.error("WebSocket error:", event);
   }
   private handleMessage(event: MessageEvent): void {
     const [packetType, data] = event.data.split(/:::?/);
