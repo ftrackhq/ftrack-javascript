@@ -68,24 +68,24 @@ export default class SimpleSocketIOClient {
   // Fetch the session ID from the ftrack server
   private async fetchSessionId(): Promise<string> {
     try {
-    const url = new URL(`${this.serverUrl}/socket.io/1/`);
-    url.searchParams.append("api_user", this.apiUser);
-    const response = await fetch(url, {
-      headers: {
-        "ftrack-api-user": this.apiUser,
-        "ftrack-api-key": this.apiKey,
-      },
-      method: "GET",
-    });
+      const url = new URL(`${this.serverUrl}/socket.io/1/`);
+      url.searchParams.append("api_user", this.apiUser);
+      const response = await fetch(url, {
+        headers: {
+          "ftrack-api-user": this.apiUser,
+          "ftrack-api-key": this.apiKey,
+        },
+        method: "GET",
+      });
 
       if (!response.ok) {
         throw new Error(`Error fetching session ID: ${response.statusText}`);
       }
 
-    const responseText = await response.text();
-    const sessionId = responseText.split(":")[0];
-    this.sessionId = sessionId;
-    return sessionId;
+      const responseText = await response.text();
+      const sessionId = responseText.split(":")[0];
+      this.sessionId = sessionId;
+      return sessionId;
     } catch (error) {
       console.error("Error fetching session ID:", error);
       throw error;
@@ -107,31 +107,31 @@ export default class SimpleSocketIOClient {
     this.ws.addEventListener("close", this.handleClose.bind(this));
   }
   private handleMessage(event: MessageEvent): void {
-      const [packetType, data] = event.data.split(/:::?/);
-      if (packetType === PACKET_TYPES.event) {
-        const parsedData = JSON.parse(data) as Payload;
-        const { name, args } = parsedData;
-        this.handleEvent(name, args[0]);
-      } else if (packetType === PACKET_TYPES.heartbeat) {
-        // Respond to server heartbeat with a heartbeat
-        this.ws.send(`${PACKET_TYPES.heartbeat}::`);
-      }
+    const [packetType, data] = event.data.split(/:::?/);
+    if (packetType === PACKET_TYPES.event) {
+      const parsedData = JSON.parse(data) as Payload;
+      const { name, args } = parsedData;
+      this.handleEvent(name, args[0]);
+    } else if (packetType === PACKET_TYPES.heartbeat) {
+      // Respond to server heartbeat with a heartbeat
+      this.ws.send(`${PACKET_TYPES.heartbeat}::`);
+    }
   }
   private handleOpen(): void {
-      this.startHeartbeat();
-      if (this.reconnectTimeout) {
-        clearTimeout(this.reconnectTimeout);
-        this.reconnectTimeout = undefined;
-      }
-      // Set connected property to true
-      this.socket.connected = true;
+    this.startHeartbeat();
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = undefined;
+    }
+    // Set connected property to true
+    this.socket.connected = true;
   }
 
   private handleClose(): void {
-      this.stopHeartbeat();
-      this.scheduleReconnect();
-      // Set connected property to false
-      this.socket.connected = false;
+    this.stopHeartbeat();
+    this.scheduleReconnect();
+    // Set connected property to false
+    this.socket.connected = false;
   }
   private handleEvent(eventName: string, eventData: Event["_data"]): void {
     this.handlers[eventName]?.forEach((callback) => callback(eventData));
@@ -155,7 +155,7 @@ export default class SimpleSocketIOClient {
     const dataString = eventData ? `:::${JSON.stringify(payload)}` : "";
     this.ws.send(`${PACKET_TYPES.event}${dataString}`);
   }
-  // Heartbeat functions, to tell the server to keep the connection alive
+  // Heartbeat methods, to tell the server to keep the connection alive
   private startHeartbeat(): void {
     this.heartbeatInterval = setInterval(() => {
       this.ws.send(`${PACKET_TYPES.heartbeat}::`);
@@ -172,19 +172,18 @@ export default class SimpleSocketIOClient {
   public isConnected(): boolean {
     return this.ws?.readyState === WebSocket.OPEN;
   }
-  // Reconnect functions, to reconnect to the server if the connection is lost using the same session ID
+  // Reconnect methods, to reconnect to the server if the connection is lost using the same session ID
+  public reconnect(): void {
+    if (this.socket.connected) {
+      this.ws.close();
+    }
+    this.initializeWebSocket();
+  }
   private scheduleReconnect(reconnectDelayMs: number = 5000): void {
     if (!this.reconnectTimeout) {
       this.reconnectTimeout = setTimeout(() => {
         this.reconnect();
       }, reconnectDelayMs);
     }
-  }
-
-  public reconnect(): void {
-    if (this.socket.connected) {
-      this.ws.close();
-    }
-    this.initializeWebSocket();
   }
 }
