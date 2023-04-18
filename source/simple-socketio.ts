@@ -64,6 +64,7 @@ export default class SimpleSocketIOClient {
       reconnect: this.reconnect.bind(this),
       transport: null,
     };
+    this.initializeWebSocket();
   }
   // Fetch the session ID from the ftrack server
   private async fetchSessionId(): Promise<string> {
