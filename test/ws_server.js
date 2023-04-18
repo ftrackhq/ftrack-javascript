@@ -2,9 +2,11 @@ import { Server } from "mock-socket";
 
 const HEARTBEAT_INTERVAL = 2000; // 2 seconds
 
-const server = new Server("ws://ftrack.test/socket.io/1/websocket/1234567890");
+export const mockedServer = new Server(
+  "ws://ftrack.test/socket.io/1/websocket/1234567890"
+);
 
-server.on("connection", (socket) => {
+mockedServer.on("connection", (socket) => {
   let heartbeatTimer;
 
   // Handle 'message' events
@@ -35,7 +37,7 @@ server.on("connection", (socket) => {
         break;
       case "3": // Message
         // Broadcast message to all connected sockets
-        server.clients.forEach((client) => {
+        mockedServer.clients.forEach((client) => {
           if (client !== socket) {
             client.send(`3:${id}:${endpoint}:${data}`);
           }
@@ -43,7 +45,7 @@ server.on("connection", (socket) => {
         break;
       case "4": // JSON Message
         // Broadcast JSON message to all connected sockets
-        server.clients.forEach((client) => {
+        mockedServer.clients.forEach((client) => {
           if (client !== socket) {
             client.send(`4:${id}:${endpoint}:${data}`);
           }
@@ -51,7 +53,7 @@ server.on("connection", (socket) => {
         break;
       case "5": // Event
         // Broadcast event to all connected sockets
-        server.clients.forEach((client) => {
+        mockedServer.clients.forEach((client) => {
           if (client !== socket) {
             client.send(`5:${id}:${endpoint}:${data}`);
           }
@@ -105,7 +107,7 @@ server.on("connection", (socket) => {
     if (targetSocket) {
       targetSocket.send(message);
     } else {
-      server.clients.forEach((client) => {
+      mockedServer.clients.forEach((client) => {
         client.send(message);
       });
     }
@@ -124,7 +126,7 @@ server.on("connection", (socket) => {
     if (targetSocket) {
       targetSocket.send(message);
     } else {
-      server.clients.forEach((client) => {
+      mockedServer.clients.forEach((client) => {
         client.send(message);
       });
     }
@@ -136,5 +138,5 @@ server.on("connection", (socket) => {
   socket.sendError = (errorData) => sendError(errorData, socket);
 });
 export function closeServer() {
-  server.close();
+  mockedServer.close();
 }

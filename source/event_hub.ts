@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-import io from "./simple-socketio";
+import io from "./simple_socketio";
 import { Event } from "./event";
 import {
   EventServerConnectionTimeoutError,

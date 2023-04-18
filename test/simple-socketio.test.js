@@ -1,8 +1,7 @@
 // Import the required dependencies
 import { test } from "vitest";
-import { server as wsServer, closeServer as closeWsServer } from "./ws_server";
-import SimpleSocketIOClient from "../source/simple-socketio";
-
+import { mockedServer, closeServer as closeWsServer } from "./ws_server";
+import SimpleSocketIOClient from "../source/simple_socketio";
 const credentials = {
   serverUrl: "http://ftrack.test",
   apiUser: "testuser",
@@ -81,7 +80,7 @@ describe("WebSocket tests", () => {
         resolve();
       });
       client.on("connect", () => {
-        const serverSocket = wsServer.clients[0];
+        const serverSocket = mockedServer.clients[0];
         console.log("serverSocket", serverSocket);
         serverSocket.sendEvent(eventName, eventData);
       });
