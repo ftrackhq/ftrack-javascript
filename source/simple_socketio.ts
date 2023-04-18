@@ -107,10 +107,10 @@ export default class SimpleSocketIOClient {
   }
 
   private addInitialEventListeners(): void {
-    this.ws.addEventListener("message", this.handleMessage.bind(this));
-    this.ws.addEventListener("open", this.handleOpen.bind(this));
-    this.ws.addEventListener("close", this.handleClose.bind(this));
-    this.ws.addEventListener("error", this.handleError.bind(this));
+    this.ws?.addEventListener("message", this.handleMessage.bind(this));
+    this.ws?.addEventListener("open", this.handleOpen.bind(this));
+    this.ws?.addEventListener("close", this.handleClose.bind(this));
+    this.ws?.addEventListener("error", this.handleError.bind(this));
   }
 
   private handleError(event: Event): void {
@@ -127,7 +127,7 @@ export default class SimpleSocketIOClient {
     }
     if (packetType === PACKET_TYPES.heartbeat) {
       // Respond to server heartbeat with a heartbeat
-      this.ws.send(`${PACKET_TYPES.heartbeat}::`);
+      this.ws?.send(`${PACKET_TYPES.heartbeat}::`);
       return;
     }
     if (packetType === PACKET_TYPES.error) {
@@ -171,12 +171,12 @@ export default class SimpleSocketIOClient {
       args: [eventData],
     };
     const dataString = eventData ? `:::${JSON.stringify(payload)}` : "";
-    this.ws.send(`${PACKET_TYPES.event}${dataString}`);
+    this.ws?.send(`${PACKET_TYPES.event}${dataString}`);
   }
   // Heartbeat methods, to tell the server to keep the connection alive
   private startHeartbeat(): void {
     this.heartbeatInterval = setInterval(() => {
-      this.ws.send(`${PACKET_TYPES.heartbeat}::`);
+      this.ws?.send(`${PACKET_TYPES.heartbeat}::`);
     }, this.heartbeatIntervalMs);
   }
 
@@ -193,7 +193,7 @@ export default class SimpleSocketIOClient {
   // Reconnect methods, to reconnect to the server if the connection is lost using the same session ID
   public reconnect(): void {
     if (this.socket.connected) {
-      this.ws.close();
+      this.ws?.close();
     }
     this.initializeWebSocket();
   }
