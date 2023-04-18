@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2023 ftrack
 import WebSocket from "isomorphic-ws";
 import type { Event } from "./event";
-const PACKET_TYPES = {
+export const PACKET_TYPES = {
   disconnect: "0",
   connect: "1",
   heartbeat: "2",
