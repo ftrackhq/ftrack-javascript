@@ -142,6 +142,7 @@ export default class SimpleSocketIOClient {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = undefined;
     }
+    this.handleEvent("connect", {});
     // Set connected property to true
     this.socket.connected = true;
   }
@@ -152,14 +153,11 @@ export default class SimpleSocketIOClient {
     // Set connected property to false
     this.socket.connected = false;
   }
-  private handleEvent(eventName: string, eventData: Event["_data"]): void {
+  private handleEvent(eventName: string, eventData?: any): void {
     this.handlers[eventName]?.forEach((callback) => callback(eventData));
   }
   // Setup event callbacks for a given eventName
-  public on(
-    eventName: string,
-    eventCallback: (eventData: Event["_data"]) => void
-  ): void {
+  public on(eventName: string, eventCallback: (eventData: any) => void): void {
     if (!this.handlers[eventName]) {
       this.handlers[eventName] = [];
     }
