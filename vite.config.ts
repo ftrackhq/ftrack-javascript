@@ -2,7 +2,6 @@ import { defineConfig, UserConfig } from "vite";
 import { InlineConfig } from "vitest";
 import path from "path";
 import dts from "vite-plugin-dts";
-import commonjs from "@rollup/plugin-commonjs";
 
 interface VitestConfigExport extends UserConfig {
   test: InlineConfig;
@@ -30,7 +29,6 @@ export default defineConfig({
           loglevel: "log",
         },
       },
-      plugins: [commonjs({ include: "./source/socket.io-websocket-only.cjs" })],
     },
   },
   plugins: [dts()],
