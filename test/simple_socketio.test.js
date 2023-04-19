@@ -10,7 +10,6 @@ function createWebSocketMock() {
   return {
     addEventListener: vi.fn(),
     send: vi.fn(),
-    close: vi.fn(),
   };
 }
 function createClient(options) {
@@ -32,8 +31,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     client = undefined;
   });
 
-  // Check if the class properties are correctly initialized in the constructor
-  test("SimpleSocketIOClient: constructor initializes properties correctly", async () => {
+  test("SimpleSocketIOClient initializes properties correctly", async () => {
     // Assertions
     expect(client.serverUrl).toBe(credentials.serverUrl);
     expect(client.wsUrl).toBe(credentials.serverUrl.replace(/^(http)/, "ws"));
@@ -47,21 +45,15 @@ describe("Tests using SimpleSocketIOClient", () => {
       transport: null,
     });
   });
-  test("fetchSessionId method should fetch session ID correctly", async () => {
-    // Call the fetchSessionId method (it's private, so we use Object.getOwnPropertyDescriptor to access it)
-    // TODO: Check if there is a better way of doing this
-    const fetchSessionIdDescriptor = Object.getOwnPropertyDescriptor(
-      SimpleSocketIOClient.prototype,
-      "fetchSessionId"
-    );
-    const fetchSessionId = fetchSessionIdDescriptor.value;
-    const sessionId = await fetchSessionId.call(client);
+  test("initializeWebSocket should set the fetched session ID correctly", async () => {
+    // Call the initializeWebSocket method
+    await client.initializeWebSocket();
 
     // Check if the session ID is fetched correctly
-    expect(sessionId).toBe("1234567890");
+    expect(client.sessionId).toBe("1234567890");
   });
 
-  test("constructor initializes custom heartbeatIntervalMs correctly", () => {
+  test("SimpleSocketIOClient initializes custom heartbeatIntervalMs correctly", () => {
     const heartbeatClient = createClient({
       heartbeatIntervalMs: 1990,
     });
@@ -92,7 +84,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     expect(client.handlers["testEvent"]).toContain(callback);
   });
 
-  test("constructor initializes properties correctly with HTTPS URL", () => {
+  test("SimpleSocketIOClient initializes properties correctly with HTTPS URL", () => {
     const httpsClient = createClient({ serverUrl: "https://ftrack.test" });
     expect(httpsClient.serverUrl).toBe("https://ftrack.test");
     expect(httpsClient.wsUrl).toBe("wss://ftrack.test");
@@ -135,13 +127,16 @@ describe("Tests using SimpleSocketIOClient", () => {
     // Initialize the WebSocket and set the connected property to true
     await client.initializeWebSocket();
     client.socket.connected = true;
-    client.ws = createWebSocketMock();
+
+    // Create a mock WebSocket with a spied close method
+    const closeMock = vi.fn();
+    client.ws.close = closeMock;
 
     // Call the reconnect method
     client.reconnect();
 
-    // Check that WebSocket close mock was called and that the initializeWebSocket method was called again
-    expect(client.ws.close).toHaveBeenCalledTimes(1);
+    // Check that closemock was called and that the initializeWebSocket method was called again
+    expect(closeMock).toHaveBeenCalledTimes(1);
     expect(client.initializeWebSocket).toHaveBeenCalledTimes(2);
   });
 });
