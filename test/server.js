@@ -121,6 +121,13 @@ export const handlers = [
   // Get socket io session id
   rest.get("https://ftrack.test/socket.io/1/", handleSocketIORequest),
   rest.get("http://ftrack.test/socket.io/1/", handleSocketIORequest),
+  rest.get("https://ftrack.test", (req, res, ctx) => {
+    return res(ctx.status(200));
+  }),
+
+  rest.get("http://ftrack.test:8080", (req, res, ctx) => {
+    return res(ctx.status(200));
+  }),
 ];
 // Get socket io session id
 function handleSocketIORequest(req, res, ctx) {
