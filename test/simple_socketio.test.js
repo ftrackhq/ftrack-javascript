@@ -1,7 +1,6 @@
-// Import the required dependencies
-import { test } from "vitest";
-import { mockedServer, closeServer as closeWsServer } from "./ws_server";
-import SimpleSocketIOClient from "../source/simple_socketio";
+// :copyright: Copyright (c) 2023 ftrack
+import { test, vi } from "vitest";
+import SimpleSocketIOClient, { PACKET_TYPES } from "../source/simple_socketio";
 const credentials = {
   serverUrl: "http://ftrack.test",
   apiUser: "testuser",
@@ -58,32 +57,129 @@ test("fetchSessionId method should fetch session ID correctly", async () => {
   expect(sessionId).toBe("1234567890");
 });
 
-describe("WebSocket tests", () => {
-  let client;
-  afterEach(() => {
-    closeWsServer(); // Close the server after each test
-  });
-  test("Client should receive a custom event", async () => {
-    const eventName = "testEvent";
-    const eventData = { key: "value" };
+test("constructor initializes custom heartbeatIntervalMs correctly", () => {
+  const client = new SimpleSocketIOClient(
+    credentials.serverUrl,
+    credentials.apiUser,
+    credentials.apiKey,
+    1990
+  );
+  expect(client.heartbeatIntervalMs).toBe(1990);
+});
 
-    // Use a single Promise to handle both 'connect' and the custom event
-    await new Promise((resolve) => {
-      client = new SimpleSocketIOClient(
-        credentials.serverUrl,
-        credentials.apiUser,
-        credentials.apiKey
-      );
-      console.log("client", client);
-      client.on(eventName, (data) => {
-        expect(data).toEqual(eventData);
-        resolve();
-      });
-      client.on("connect", () => {
-        const serverSocket = mockedServer.clients[0];
-        console.log("serverSocket", serverSocket);
-        serverSocket.sendEvent(eventName, eventData);
-      });
-    });
-  });
+test.skip("isConnected returns false when WebSocket is not initialized", () => {
+  // TODO: Figure out how to handle error throw testing.
+
+  let connected;
+  try {
+    const client = new SimpleSocketIOClient(
+      credentials.serverUrl,
+      credentials.apiUser,
+      "INVALID_API_KEY"
+    );
+    connected = client.isConnected();
+  } catch (error) {
+    connected = false;
+  }
+  expect(connected).toBe(false);
+});
+
+test("on method registers event callback correctly", () => {
+  const client = new SimpleSocketIOClient(
+    credentials.serverUrl,
+    credentials.apiUser,
+    credentials.apiKey
+  );
+  const callback = () => {};
+
+  client.on("testEvent", callback);
+  expect(client.handlers["testEvent"]).toContain(callback);
+});
+
+test("constructor initializes properties correctly with HTTPS URL", () => {
+  const client = new SimpleSocketIOClient(
+    "https://ftrack.test",
+    credentials.apiUser,
+    credentials.apiKey
+  );
+  expect(client.serverUrl).toBe("https://ftrack.test");
+  expect(client.wsUrl).toBe("wss://ftrack.test");
+});
+test("emit method correctly sends event to server", () => {
+  const client = new SimpleSocketIOClient(
+    credentials.serverUrl,
+    credentials.apiUser,
+    credentials.apiKey
+  );
+
+  // Mock the send method of the WebSocket
+  const sendMock = vi.fn();
+  client.ws = { send: sendMock };
+
+  const eventName = "testEvent";
+  const eventData = { foo: "bar" };
+
+  // Call the emit method
+  client.emit(eventName, eventData);
+
+  // Check that the correct payload is sent to the server
+  const expectedPayload = {
+    name: eventName,
+    args: [eventData],
+  };
+  const expectedDataString = `:::${JSON.stringify(expectedPayload)}`;
+  expect(sendMock).toHaveBeenCalledWith(
+    `${PACKET_TYPES.event}${expectedDataString}`
+  );
+});
+test("handleError method correctly handles WebSocket errors and calls handleClose method", () => {
+  // Create an instance of SimpleSocketIOClient
+  const client = new SimpleSocketIOClient(
+    credentials.serverUrl,
+    credentials.apiUser,
+    credentials.apiKey
+  );
+
+  // Mock WebSocket object
+  client.ws = {
+    addEventListener: vi.fn(),
+    send: vi.fn(),
+    close: vi.fn(),
+  };
+  vi.spyOn(client, "handleClose");
+  vi.spyOn(global.console, "error");
+
+  // Call handleError method with mock event
+  const mockEvent = { type: "error" };
+  client.handleError(mockEvent);
+
+  // Assertions
+  expect(client.handleClose).toHaveBeenCalledTimes(1);
+  expect(console.error).toHaveBeenCalledWith("WebSocket error:", mockEvent);
+});
+
+test("reconnect method runs the ws close method and then initialises websocket again", async () => {
+  const client = new SimpleSocketIOClient(
+    credentials.serverUrl,
+    credentials.apiUser,
+    credentials.apiKey
+  );
+
+  // Spy on the initializeWebSocket method
+  vi.spyOn(client, "initializeWebSocket");
+
+  // Initialize the WebSocket and set the connected property to true
+  await client.initializeWebSocket();
+  client.socket.connected = true;
+
+  // Mock the WebSocket close method to check if it is called
+  const closeMock = vi.fn();
+  client.ws.close = closeMock;
+
+  // Call the reconnect method
+  client.reconnect();
+
+  // Check that closemock was called and that the initializeWebSocket method was called again
+  expect(closeMock).toHaveBeenCalledTimes(1);
+  expect(client.initializeWebSocket).toHaveBeenCalledTimes(2);
 });
