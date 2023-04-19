@@ -47,11 +47,9 @@ describe("Tests using SimpleSocketIOClient", () => {
       transport: null,
     });
   });
-  // Test the `fetchSessionId` method by using the mock server and checking if the session ID is fetched correctly
   test("fetchSessionId method should fetch session ID correctly", async () => {
     // Call the fetchSessionId method (it's private, so we use Object.getOwnPropertyDescriptor to access it)
-    // Check if there is a better way of doing this
-
+    // TODO: Check if there is a better way of doing this
     const fetchSessionIdDescriptor = Object.getOwnPropertyDescriptor(
       SimpleSocketIOClient.prototype,
       "fetchSessionId"
@@ -100,7 +98,6 @@ describe("Tests using SimpleSocketIOClient", () => {
     expect(httpsClient.wsUrl).toBe("wss://ftrack.test");
   });
   test("emit method correctly sends event to server", () => {
-    // Mock the send method of the WebSocket
     client.ws = createWebSocketMock();
 
     const eventName = "testEvent";
@@ -128,26 +125,22 @@ describe("Tests using SimpleSocketIOClient", () => {
     const mockEvent = { type: "error" };
     client.handleError(mockEvent);
 
-    // Assertions
     expect(client.handleClose).toHaveBeenCalledTimes(1);
     expect(console.error).toHaveBeenCalledWith("WebSocket error:", mockEvent);
   });
 
   test("reconnect method runs the ws close method and then initialises websocket again", async () => {
-    // Spy on the initializeWebSocket method
     vi.spyOn(client, "initializeWebSocket");
 
     // Initialize the WebSocket and set the connected property to true
     await client.initializeWebSocket();
     client.socket.connected = true;
-
-    // Mock the WebSocket close method to check if it is called
     client.ws = createWebSocketMock();
 
     // Call the reconnect method
     client.reconnect();
 
-    // Check that closemock was called and that the initializeWebSocket method was called again
+    // Check that WebSocket close mock was called and that the initializeWebSocket method was called again
     expect(client.ws.close).toHaveBeenCalledTimes(1);
     expect(client.initializeWebSocket).toHaveBeenCalledTimes(2);
   });
