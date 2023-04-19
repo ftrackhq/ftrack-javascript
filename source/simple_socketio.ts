@@ -52,6 +52,8 @@ export default class SimpleSocketIOClient {
   private apiUser: string;
   private apiKey: string;
   private sessionId?: string;
+  private packetQueue: string[] = [];
+
   // Added socket object with connected, reconnect and transport properties to match current API
   public socket: {
     connected: boolean;
@@ -173,6 +175,7 @@ export default class SimpleSocketIOClient {
     if (packetType === PACKET_TYPES.heartbeat) {
       // Respond to server heartbeat with a heartbeat
       this.ws?.send(`${PACKET_TYPES.heartbeat}::`);
+      this.flushPacketQueue();
       return;
     }
     if (packetType === PACKET_TYPES.error) {
@@ -193,6 +196,7 @@ export default class SimpleSocketIOClient {
       this.reconnectTimeout = undefined;
     }
     this.handleEvent("connect", {});
+    this.flushPacketQueue();
     // Set connected property to true
     this.socket.connected = true;
   }
@@ -229,6 +233,8 @@ export default class SimpleSocketIOClient {
   }
   /**
    * Emits an event with the given eventName and eventData.
+   * If the WebSocket is not open, the event is queued and sent
+   * when the WebSocket is open.
    * @public
    * @param eventName - The event name.
    * @param eventData - The event data.
@@ -239,7 +245,25 @@ export default class SimpleSocketIOClient {
       args: [eventData],
     };
     const dataString = eventData ? `:::${JSON.stringify(payload)}` : "";
-    this.ws?.send(`${PACKET_TYPES.event}${dataString}`);
+    const packet = `${PACKET_TYPES.event}${dataString}`;
+
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(packet);
+    } else {
+      this.packetQueue.push(packet);
+    }
+  }
+  /**
+   * Send the queued packets to the server
+   * @private
+   */
+  private flushPacketQueue(): void {
+    while (this.packetQueue.length > 0) {
+      const packet = this.packetQueue.shift();
+      if (packet && this.ws) {
+        this.ws.send(packet);
+      }
+    }
   }
   /**
    * Starts sending heartbeats to the server to keep the connection alive

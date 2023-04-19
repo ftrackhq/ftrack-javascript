@@ -31,7 +31,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     client = undefined;
   });
 
-  test("SimpleSocketIOClient initializes properties correctly", async () => {
+  test("SimpleSocketIOClient initializes properties correctly", () => {
     // Assertions
     expect(client.serverUrl).toBe(credentials.serverUrl);
     expect(client.wsUrl).toBe(credentials.serverUrl.replace(/^(http)/, "ws"));
@@ -91,6 +91,8 @@ describe("Tests using SimpleSocketIOClient", () => {
   });
   test("emit method correctly sends event to server", () => {
     client.ws = createWebSocketMock();
+    // Set the readyState to OPEN, to simulate an open connection
+    client.ws.readyState = WebSocket.OPEN;
 
     const eventName = "testEvent";
     const eventData = { foo: "bar" };
@@ -282,7 +284,7 @@ describe("Tests using SimpleSocketIOClient", () => {
 
     vi.useRealTimers(); // Reset timers back to normal behavior
   });
-  test("scheduleReconnect method schedules reconnect only once and calls reconnect after specified delay", async () => {
+  test("scheduleReconnect method schedules reconnect only once and calls reconnect after specified delay", () => {
     vi.useFakeTimers();
 
     vi.spyOn(client, "reconnect");
@@ -301,5 +303,36 @@ describe("Tests using SimpleSocketIOClient", () => {
     expect(client.reconnect).toHaveBeenCalledTimes(1);
 
     vi.useRealTimers(); // Reset timers back to normal behavior
+  });
+  test("Event queue is working", () => {
+    client.ws = createWebSocketMock();
+
+    // Disconnect the WebSocket to ensure messages are queued
+    client.ws.readyState = WebSocket.CLOSED;
+    const eventName = "testEvent";
+    const eventData = { foo: "bar" };
+
+    // Call the emit method
+    client.emit(eventName, eventData);
+
+    // Check that the correct payload is sent to the server
+    const expectedPayload = {
+      name: eventName,
+      args: [eventData],
+    };
+
+    // Check if the event was queued
+    expect(client.packetQueue).toHaveLength(1);
+    expect(client.ws.send).toHaveBeenCalledTimes(0);
+    // Reconnect the WebSocket and ensure the message is sent
+    client.ws.readyState = WebSocket.OPEN;
+    client.handleOpen();
+
+    // Check if the packetQueue is empty and the message was sent
+    expect(client.packetQueue).toHaveLength(0);
+    const expectedDataString = `:::${JSON.stringify(expectedPayload)}`;
+    expect(client.ws.send).toHaveBeenCalledWith(
+      `${PACKET_TYPES.event}${expectedDataString}`
+    );
   });
 });
