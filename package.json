@@ -57,7 +57,9 @@
     "isomorphic-ws": "^5.0.0",
     "loglevel": "^1.8.1",
     "moment": "^2.29.4",
-    "uuid": "^9.0.0",
+    "uuid": "^9.0.0"
+  },
+  "peerDependencies": {
     "ws": "^8.13.0"
   },
   "lint-staged": {
