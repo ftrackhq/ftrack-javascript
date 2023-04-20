@@ -301,13 +301,16 @@ export default class SimpleSocketIOClient {
     this.initializeWebSocket();
   }
   /**
-   * Schedules a reconnect attempt after a specified delay.
+   * Schedules a reconnect attempt. The delay is calculated
+   * using the reconnectionDelay and reconnectionDelayMax options.
+   * It is then randomized to prevent multiple clients from reconnecting at the same time.
    * @private
-   * @param reconnectDelayMs - The delay in milliseconds before attempting to reconnect. Defaults to 5000.
+   * @param reconnectionDelay - The delay in milliseconds before first attempting to reconnect. Defaults to 1000.
+   * @param reconnectionDelayMax - The maximum delay in milliseconds before attempting to reconnect. Defaults to 10000.
    */
   private scheduleReconnect(
     reconnectionDelay: number = 1000,
-    reconnectionDelayMax: number = 5000
+    reconnectionDelayMax: number = 10000
   ): void {
     // Implements similar delay logic to socket.io-client
     const delay = Math.min(
