@@ -42,7 +42,7 @@ interface Payload {
  */
 export default class SimpleSocketIOClient {
   private ws: WebSocket;
-  private handlers: EventHandlers;
+  private handlers: EventHandlers = {};
   private reconnectTimeout: ReturnType<typeof setInterval> | undefined;
   private heartbeatInterval: ReturnType<typeof setInterval> | undefined;
   private serverUrl: string;
@@ -53,12 +53,17 @@ export default class SimpleSocketIOClient {
   private apiKey: string;
   private sessionId?: string;
   private packetQueue: string[] = [];
+  private reconnectionAttempts: number = 0;
 
   // Added socket object with connected, reconnect and transport properties to match current API
   public socket: {
     connected: boolean;
     reconnect: () => void;
-    transport: WebSocket;
+    transport: WebSocket | null;
+  } = {
+    connected: false,
+    reconnect: this.reconnect.bind(this),
+    transport: null,
   };
   /**
    * Constructs a new SimpleSocketIOClient instance.
@@ -81,15 +86,9 @@ export default class SimpleSocketIOClient {
       api_user: apiUser,
       api_key: apiKey,
     }).toString();
-    this.handlers = {};
     this.heartbeatIntervalMs = heartbeatIntervalMs;
     this.apiUser = apiUser;
     this.apiKey = apiKey;
-    this.socket = {
-      connected: false,
-      reconnect: this.reconnect.bind(this),
-      transport: null,
-    };
     this.initializeWebSocket();
   }
   /**
@@ -101,19 +100,13 @@ export default class SimpleSocketIOClient {
     try {
       const url = new URL(`${this.serverUrl}/socket.io/1/`);
       url.searchParams.append("api_user", this.apiUser);
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 7000);
       const response = await fetch(url, {
         headers: {
           "ftrack-api-user": this.apiUser,
           "ftrack-api-key": this.apiKey,
         },
         method: "GET",
-        signal: controller.signal,
       });
-
-      clearTimeout(timeoutId);
-
       if (!response.ok) {
         throw new Error(`Error fetching session ID: ${response.statusText}`);
       }
@@ -303,6 +296,8 @@ export default class SimpleSocketIOClient {
     if (this.socket.connected) {
       this.ws?.close();
     }
+
+    this.reconnectionAttempts++;
     this.initializeWebSocket();
   }
   /**
@@ -310,11 +305,21 @@ export default class SimpleSocketIOClient {
    * @private
    * @param reconnectDelayMs - The delay in milliseconds before attempting to reconnect. Defaults to 5000.
    */
-  private scheduleReconnect(reconnectDelayMs: number = 5000): void {
+  private scheduleReconnect(
+    reconnectionDelay: number = 1000,
+    reconnectionDelayMax: number = 5000
+  ): void {
+    // Implements similar delay logic to socket.io-client
+    const delay = Math.min(
+      reconnectionDelay * Math.pow(2, this.reconnectionAttempts),
+      reconnectionDelayMax
+    );
+    const randomizedDelay = Math.round(delay * (1 + 0.5 * Math.random()));
     if (!this.reconnectTimeout) {
       this.reconnectTimeout = setTimeout(() => {
         this.reconnect();
-      }, reconnectDelayMs);
+        this.reconnectTimeout = undefined; // Honestly not sure if this is necessary, please advice
+      }, randomizedDelay);
     }
   }
 }

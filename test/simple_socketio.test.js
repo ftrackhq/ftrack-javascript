@@ -23,7 +23,6 @@ function createClient(options) {
 
 describe("Tests using SimpleSocketIOClient", () => {
   let client;
-
   beforeEach(() => {
     client = createClient({});
   });
@@ -45,9 +44,9 @@ describe("Tests using SimpleSocketIOClient", () => {
       transport: null,
     });
   });
-  test("initializeWebSocket should set the fetched session ID correctly", async () => {
+  test("fetchSessionId should set the fetched session ID correctly", async () => {
     // Call the initializeWebSocket method
-    await client.initializeWebSocket();
+    await client.fetchSessionId();
 
     // Check if the session ID is fetched correctly
     expect(client.sessionId).toBe("1234567890");
@@ -121,25 +120,6 @@ describe("Tests using SimpleSocketIOClient", () => {
 
     expect(client.handleClose).toHaveBeenCalledTimes(1);
     expect(console.error).toHaveBeenCalledWith("WebSocket error:", mockEvent);
-  });
-
-  test("reconnect method runs the ws close method and then initialises websocket again", async () => {
-    vi.spyOn(client, "initializeWebSocket");
-
-    // Initialize the WebSocket and set the connected property to true
-    await client.initializeWebSocket();
-    client.socket.connected = true;
-
-    // Create a mock WebSocket with a spied close method
-    const closeMock = vi.fn();
-    client.ws.close = closeMock;
-
-    // Call the reconnect method
-    client.reconnect();
-
-    // Check that closemock was called and that the initializeWebSocket method was called again
-    expect(closeMock).toHaveBeenCalledTimes(1);
-    expect(client.initializeWebSocket).toHaveBeenCalledTimes(2);
   });
   describe("handleMessage", () => {
     test("handleMessage correctly handles event packet type", () => {
@@ -282,26 +262,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     vi.advanceTimersByTime(client.heartbeatIntervalMs);
     expect(client.ws.send).toHaveBeenCalledTimes(2);
 
-    vi.useRealTimers(); // Reset timers back to normal behavior
-  });
-  test("scheduleReconnect method schedules reconnect only once and calls reconnect after specified delay", () => {
-    vi.useFakeTimers();
-
-    vi.spyOn(client, "reconnect");
-    const reconnectDelayMs = 1000;
-
-    // Call scheduleReconnect twice to ensure that it only schedules reconnect once
-    client.scheduleReconnect(reconnectDelayMs);
-    client.scheduleReconnect(reconnectDelayMs);
-
-    // Move the clock forward by less than the reconnect delay and check that reconnect hasn't been called yet
-    vi.advanceTimersByTime(reconnectDelayMs / 2);
-    expect(client.reconnect).toHaveBeenCalledTimes(0);
-
-    // Move the clock forward by the remaining reconnect delay and check that reconnect is called exactly once
-    vi.advanceTimersByTime(reconnectDelayMs / 2);
-    expect(client.reconnect).toHaveBeenCalledTimes(1);
-
+    vi.runOnlyPendingTimers();
     vi.useRealTimers(); // Reset timers back to normal behavior
   });
   test("Event queue is working", () => {
@@ -334,5 +295,107 @@ describe("Tests using SimpleSocketIOClient", () => {
     expect(client.ws.send).toHaveBeenCalledWith(
       `${PACKET_TYPES.event}${expectedDataString}`
     );
+  });
+  describe("Reconnection tests", () => {
+    test("reconnect method initialises websocket again", async () => {
+      client.initializeWebSocket = vi.fn();
+
+      client.reconnect();
+
+      expect(client.initializeWebSocket).toHaveBeenCalledTimes(1);
+    });
+    test("if reconnecting when connection should be open, first close then initialize again", async () => {
+      client.initializeWebSocket = vi.fn();
+
+      // Set the connected property to true, simulating a connected socket
+      client.socket.connected = true;
+
+      // Create a mock WebSocket with a spied close method
+      const closeMock = vi.fn();
+      client.ws = { close: closeMock };
+
+      // Call the reconnect method
+      client.reconnect();
+
+      // Check that closemock and initializeWebSocket method was called
+      expect(closeMock).toHaveBeenCalledTimes(1);
+      expect(client.initializeWebSocket).toHaveBeenCalledTimes(1);
+    });
+
+    test("reconnect method increments attempts count", () => {
+      const initialAttempts = client.reconnectionAttempts;
+
+      client.reconnect();
+
+      expect(client.reconnectionAttempts).toBe(initialAttempts + 1);
+    });
+    test("scheduleReconnect trigger reconnect after delay", () => {
+      vi.spyOn(client, "reconnect");
+      vi.useFakeTimers();
+      client.scheduleReconnect();
+
+      const maxDelay = 1500;
+
+      // Advance the timers to the maxDelay
+      vi.advanceTimersByTime(maxDelay);
+      expect(client.reconnect).toHaveBeenCalledTimes(1);
+
+      vi.runOnlyPendingTimers();
+      vi.useRealTimers();
+    });
+
+    test("scheduleReconnect does not trigger reconnect before delay", () => {
+      vi.spyOn(client, "reconnect");
+      vi.useFakeTimers();
+
+      client.scheduleReconnect();
+
+      // Advance the timers just under the expectedMinDelay
+      const expectedMinDelay = 1000;
+      vi.advanceTimersByTime(expectedMinDelay - 1);
+
+      // Reconnect should not be called yet
+      expect(client.reconnect).toHaveBeenCalledTimes(0);
+    });
+    test("scheduleReconnect method uses exponential backoff and randomization factor for delay", () => {
+      vi.useFakeTimers();
+      const reconnectMock = vi.fn();
+      client.reconnect = reconnectMock;
+
+      const reconnectAttempts = 5;
+
+      for (let i = 1; i <= reconnectAttempts; i++) {
+        client.scheduleReconnect();
+        const expectedMinDelay = 1000 * Math.pow(2, i - 1);
+        const expectedMaxDelay = expectedMinDelay * 1.5;
+
+        vi.advanceTimersByTime(expectedMaxDelay + 1);
+
+        // Reconnect mock should have been called exactly once
+        expect(reconnectMock).toHaveBeenCalledTimes(1);
+
+        // Reset the reconnect mock to avoid interference with the next iteration
+        reconnectMock.mockReset();
+      }
+      vi.runOnlyPendingTimers();
+      vi.useRealTimers();
+    });
+    test("scheduleReconnect method schedules reconnect only once and calls reconnect after specified delay", () => {
+      vi.useFakeTimers();
+
+      vi.spyOn(client, "reconnect");
+
+      // Call scheduleReconnect twice to ensure that it only schedules reconnect once
+      client.scheduleReconnect();
+      client.scheduleReconnect();
+
+      const maxDelay = 1500;
+
+      // Move the clock forward by the maximum remaining reconnect delay and check that reconnect is called exactly once
+      vi.advanceTimersByTime(maxDelay);
+      expect(client.reconnect).toHaveBeenCalledTimes(1);
+      vi.runOnlyPendingTimers();
+      vi.useRealTimers(); // Reset timers back to normal behavior
+    });
   });
 });
