@@ -325,4 +325,18 @@ export default class SimpleSocketIOClient {
       }, randomizedDelay);
     }
   }
+  /**
+   * Allows users to manually disconnect the WebSocket connection and stop all reconnection attempts
+   * @private
+   */
+
+  public disconnect(): void {
+    this.stopHeartbeat();
+    this.socket.connected = false;
+    this.ws?.close();
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = undefined;
+    }
+  }
 }
