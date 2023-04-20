@@ -80,9 +80,40 @@ describe("Tests using SimpleSocketIOClient", () => {
     const callback = () => {};
 
     client.on("testEvent", callback);
+
     expect(client.handlers["testEvent"]).toContain(callback);
   });
+  test("off method removes event callback correctly", async ({ expect }) => {
+    const callback = () => {};
 
+    client.on("testEvent", callback);
+    client.off("testEvent", callback);
+
+    // Check if the event listener has been removed
+    expect(client.handlers["test-event"]).not.toContain(callback);
+  });
+  test("Off method removes only the callback given", async ({ expect }) => {
+    const callback = () => {};
+    const callback2 = () => {};
+    client.on("testEvent", callback);
+    client.on("testEvent", callback2);
+    client.off("testEvent", callback);
+
+    expect(client.handlers["test-event"]).toContain(callback2);
+    expect(client.handlers["test-event"]).not.toContain(callback);
+  });
+  test("Off method removes all callbacks when only name given", async ({
+    expect,
+  }) => {
+    const callback = () => {};
+    const callback2 = () => {};
+    client.on("testEvent", callback);
+    client.on("testEvent", callback2);
+    client.off("testEvent");
+
+    expect(client.handlers["test-event"]).not.toContain(callback2);
+    expect(client.handlers["test-event"]).not.toContain(callback);
+  });
   test("SimpleSocketIOClient initializes properties correctly with HTTPS URL", () => {
     const httpsClient = createClient({ serverUrl: "https://ftrack.test" });
     expect(httpsClient.serverUrl).toBe("https://ftrack.test");
@@ -397,5 +428,19 @@ describe("Tests using SimpleSocketIOClient", () => {
       vi.runOnlyPendingTimers();
       vi.useRealTimers(); // Reset timers back to normal behavior
     });
+  });
+
+  test("should disconnect and stop reconnection attempts", async ({
+    expect,
+  }) => {
+    // Schedule a reconnection attempt
+    client.scheduleReconnect();
+
+    // Connect and then disconnect
+    client.socket.connected = true; // Simulate a connected socket
+    client.disconnect();
+
+    expect(client.socket.connected).toBe(false);
+    expect(client.reconnectTimeout).toBeUndefined();
   });
 });
