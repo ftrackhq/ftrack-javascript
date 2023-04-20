@@ -357,7 +357,7 @@ describe("Tests using SimpleSocketIOClient", () => {
       // Reconnect should not be called yet
       expect(client.reconnect).toHaveBeenCalledTimes(0);
     });
-    test("scheduleReconnect method uses exponential backoff and randomization factor for delay", () => {
+    test("scheduleReconnect method exponentially increase delay for every attempt", () => {
       vi.useFakeTimers();
       const reconnectMock = vi.fn();
       client.reconnect = reconnectMock;

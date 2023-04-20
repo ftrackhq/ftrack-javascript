@@ -225,6 +225,25 @@ export default class SimpleSocketIOClient {
     this.handlers[eventName].push(eventCallback);
   }
   /**
+   * Removes event callbacks for a given eventName. An optional eventCallback
+   * can be passed to remove that specific callback.
+   * @private
+   * @param eventName - The event name.
+   * @param eventCallback - The event callback.
+   */
+  public off(
+    eventName: string,
+    eventCallback?: (eventData: any) => void
+  ): void {
+    if (!eventCallback) {
+      delete this.handlers[eventName];
+    } else {
+      this.handlers[eventName] = this.handlers[eventName]?.filter(
+        (callback) => callback !== eventCallback
+      );
+    }
+  }
+  /**
    * Emits an event with the given eventName and eventData.
    * If the WebSocket is not open, the event is queued and sent
    * when the WebSocket is open.
@@ -321,7 +340,7 @@ export default class SimpleSocketIOClient {
     if (!this.reconnectTimeout) {
       this.reconnectTimeout = setTimeout(() => {
         this.reconnect();
-        this.reconnectTimeout = undefined; // Honestly not sure if this is necessary, please advice
+        this.reconnectTimeout = undefined;
       }, randomizedDelay);
     }
   }
