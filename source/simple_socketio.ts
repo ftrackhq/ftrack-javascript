@@ -45,6 +45,7 @@ export default class SimpleSocketIOClient {
   private handlers: EventHandlers = {};
   private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
   private heartbeatInterval: ReturnType<typeof setInterval> | undefined;
+  private heartbeatTimeout: ReturnType<typeof setInterval> | undefined;
   private serverUrl: string;
   private WebSocketUrl: string;
   private heartbeatIntervalMs: number;
@@ -140,10 +141,10 @@ export default class SimpleSocketIOClient {
    * @private
    */
   private addInitialEventListeners(WebSocket: WebSocket): void {
-    WebSocket.addEventListener("message", this.handleMessage.bind(this));
-    WebSocket.addEventListener("open", this.handleOpen.bind(this));
-    WebSocket.addEventListener("close", this.handleClose.bind(this));
-    WebSocket.addEventListener("error", this.handleError.bind(this));
+    WebSocket.onmessage = this.handleMessage.bind(this);
+    WebSocket.onopen = this.handleOpen.bind(this);
+    WebSocket.onclose = this.handleClose.bind(this);
+    WebSocket.onerror = this.handleError.bind(this);
   }
   /**
    * Handles WebSocket errors
@@ -168,6 +169,7 @@ export default class SimpleSocketIOClient {
     if (packetType === PACKET_TYPES.heartbeat) {
       // Respond to server heartbeat with a heartbeat
       this.WebSocket?.send(`${PACKET_TYPES.heartbeat}::`);
+      this.resetHeartbeatCheck();
       this.flushPacketQueue();
       return;
     }
@@ -278,6 +280,20 @@ export default class SimpleSocketIOClient {
     }
   }
   /**
+   * Sets a timeout to wait for a hearbeat from the server
+   * before trying to reconnect
+   * @private
+   */
+  private resetHeartbeatCheck(): void {
+    if (this.heartbeatTimeout) {
+      clearTimeout(this.heartbeatTimeout);
+    }
+    this.heartbeatTimeout = setTimeout(() => {
+      this.reconnect();
+    }, 20000);
+  }
+
+  /**
    * Starts sending heartbeats to the server to keep the connection alive
    * @private
    */
@@ -285,7 +301,10 @@ export default class SimpleSocketIOClient {
     this.heartbeatInterval = setInterval(() => {
       this.WebSocket?.send(`${PACKET_TYPES.heartbeat}::`);
     }, this.heartbeatIntervalMs);
+
+    this.resetHeartbeatCheck();
   }
+
   /**
    * Stops sending heartbeats to the server
    * @private
