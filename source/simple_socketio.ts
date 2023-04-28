@@ -73,17 +73,19 @@ export default class SimpleSocketIOClient {
    * @param apiUser - The API user.
    * @param apiKey - The API key.
    * @param heartbeatTimeoutMs - The heartbeat timeout in milliseconds. Defaults to 15000
+   * @param forceNew - If true, a new instance will be created even if one already exists. Mostly used for tests
    */
   public static connect(
     serverUrl: string,
     apiUser: string,
     apiKey: string,
-    heartbeatTimeoutMs: number = 15000
+    heartbeatTimeoutMs: number = 15000,
+    forceNew: boolean = false
   ): SimpleSocketIOClient {
     const key = `${serverUrl}_${apiUser}_${apiKey}`;
     let instance = this.instances.get(key);
 
-    if (!instance) {
+    if (!instance || forceNew) {
       instance = new SimpleSocketIOClient(
         serverUrl,
         apiUser,

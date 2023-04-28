@@ -13,11 +13,12 @@ function createWebSocketMock() {
   };
 }
 function createClient(options) {
-  return new SimpleSocketIOClient(
+  return SimpleSocketIOClient.connect(
     options.serverUrl || credentials.serverUrl,
     options.apiUser || credentials.apiUser,
     options.apiKey || credentials.apiKey,
-    options.heartbeatTimeoutMs || undefined
+    options.heartbeatTimeoutMs || undefined,
+    true
   );
 }
 
@@ -27,9 +28,63 @@ describe("Tests using SimpleSocketIOClient", () => {
     client = createClient({});
   });
   afterEach(() => {
-    client = undefined;
+    SimpleSocketIOClient.instances.clear();
   });
+  describe("Connect method and singleton behaviour", () => {
+    test("should return a new instance for unique serverUrl, apiUser, and apiKey combinations", () => {
+      const instance1 = SimpleSocketIOClient.connect(
+        credentials.serverUrl,
+        credentials.apiUser,
+        credentials.apiKey
+      );
+      const instance2 = SimpleSocketIOClient.connect(
+        credentials.serverUrl,
+        "anotherUser",
+        credentials.apiKey
+      );
+      const instance3 = SimpleSocketIOClient.connect(
+        "https://ftrack.test/anotherlink",
+        credentials.apiUser,
+        credentials.apiKey
+      );
 
+      expect(instance1).not.toBe(instance2);
+      expect(instance1).not.toBe(instance3);
+      expect(instance2).not.toBe(instance3);
+    });
+
+    test("should return the same instance for the same serverUrl, apiUser, and apiKey combinations", () => {
+      const instance1 = SimpleSocketIOClient.connect(
+        credentials.serverUrl,
+        credentials.apiUser,
+        credentials.apiKey
+      );
+      const instance2 = SimpleSocketIOClient.connect(
+        credentials.serverUrl,
+        credentials.apiUser,
+        credentials.apiKey
+      );
+
+      expect(instance1).toBe(instance2);
+    });
+
+    test("should return a new instance when forceNew is set to true", () => {
+      const instance1 = SimpleSocketIOClient.connect(
+        credentials.serverUrl,
+        credentials.apiUser,
+        credentials.apiKey
+      );
+      const instance2 = SimpleSocketIOClient.connect(
+        credentials.serverUrl,
+        credentials.apiUser,
+        credentials.apiKey,
+        credentials.heartbeatTimeoutMs,
+        true
+      );
+
+      expect(instance1).not.toBe(instance2);
+    });
+  });
   test("SimpleSocketIOClient initializes properties correctly", () => {
     // Assertions
     expect(client.serverUrl).toBe(credentials.serverUrl);
@@ -66,7 +121,7 @@ describe("Tests using SimpleSocketIOClient", () => {
 
     let connected;
     try {
-      const client = new SimpleSocketIOClient(
+      const client = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
         "INVALID_API_KEY"
