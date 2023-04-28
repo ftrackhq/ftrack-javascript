@@ -33,7 +33,9 @@ describe("Tests using SimpleSocketIOClient", () => {
   test("SimpleSocketIOClient initializes properties correctly", () => {
     // Assertions
     expect(client.serverUrl).toBe(credentials.serverUrl);
-    expect(client.wsUrl).toBe(credentials.serverUrl.replace(/^(http)/, "ws"));
+    expect(client.webSocketUrl).toBe(
+      credentials.serverUrl.replace(/^(http)/, "ws")
+    );
     expect(client.query).toMatch(credentials.apiUser);
     expect(client.query).toMatch(credentials.apiKey);
     expect(client.handlers).toEqual({});
@@ -117,12 +119,12 @@ describe("Tests using SimpleSocketIOClient", () => {
   test("SimpleSocketIOClient initializes properties correctly with HTTPS URL", () => {
     const httpsClient = createClient({ serverUrl: "https://ftrack.test" });
     expect(httpsClient.serverUrl).toBe("https://ftrack.test");
-    expect(httpsClient.wsUrl).toBe("wss://ftrack.test");
+    expect(httpsClient.webSocketUrl).toBe("wss://ftrack.test");
   });
   test("emit method correctly sends event to server", () => {
-    client.ws = createWebSocketMock();
+    client.webSocket = createWebSocketMock();
     // Set the readyState to OPEN, to simulate an open connection
-    client.ws.readyState = WebSocket.OPEN;
+    client.webSocket.readyState = WebSocket.OPEN;
 
     const eventName = "testEvent";
     const eventData = { foo: "bar" };
@@ -136,12 +138,12 @@ describe("Tests using SimpleSocketIOClient", () => {
       args: [eventData],
     };
     const expectedDataString = `:::${JSON.stringify(expectedPayload)}`;
-    expect(client.ws.send).toHaveBeenCalledWith(
+    expect(client.webSocket.send).toHaveBeenCalledWith(
       `${PACKET_TYPES.event}${expectedDataString}`
     );
   });
   test("handleError method correctly handles WebSocket errors and calls handleClose method", () => {
-    client.ws = createWebSocketMock();
+    client.webSocket = createWebSocketMock();
     vi.spyOn(client, "handleClose");
     vi.spyOn(global.console, "error");
 
@@ -166,11 +168,11 @@ describe("Tests using SimpleSocketIOClient", () => {
     });
 
     test("handleMessage correctly handles heartbeat packet type", () => {
-      client.ws = createWebSocketMock();
+      client.webSocket = createWebSocketMock();
 
       client.handleMessage({ data: `${PACKET_TYPES.heartbeat}::` });
 
-      expect(client.ws.send).toHaveBeenCalledWith(
+      expect(client.webSocket.send).toHaveBeenCalledWith(
         `${PACKET_TYPES.heartbeat}::`
       );
     });
@@ -276,31 +278,33 @@ describe("Tests using SimpleSocketIOClient", () => {
     vi.useFakeTimers(); // Use fake timers to control setInterval and clearInterval
 
     // Mock the WebSocket send method
-    client.ws = createWebSocketMock();
+    client.webSocket = createWebSocketMock();
 
     // Call the startHeartbeat method and check if the send method is called with the correct arguments
     client.startHeartbeat();
     vi.advanceTimersByTime(client.heartbeatIntervalMs);
-    expect(client.ws.send).toHaveBeenCalledTimes(1);
-    expect(client.ws.send).toHaveBeenCalledWith(`${PACKET_TYPES.heartbeat}::`);
+    expect(client.webSocket.send).toHaveBeenCalledTimes(1);
+    expect(client.webSocket.send).toHaveBeenCalledWith(
+      `${PACKET_TYPES.heartbeat}::`
+    );
 
     // Advance the time again and check if the send method is called again
     vi.advanceTimersByTime(client.heartbeatIntervalMs);
-    expect(client.ws.send).toHaveBeenCalledTimes(2);
+    expect(client.webSocket.send).toHaveBeenCalledTimes(2);
 
     // Call the stopHeartbeat method and check if the send method is not called anymore
     client.stopHeartbeat();
     vi.advanceTimersByTime(client.heartbeatIntervalMs);
-    expect(client.ws.send).toHaveBeenCalledTimes(2);
+    expect(client.webSocket.send).toHaveBeenCalledTimes(2);
 
     vi.runOnlyPendingTimers();
     vi.useRealTimers(); // Reset timers back to normal behavior
   });
   test("Event queue is working", () => {
-    client.ws = createWebSocketMock();
+    client.webSocket = createWebSocketMock();
 
     // Disconnect the WebSocket to ensure messages are queued
-    client.ws.readyState = WebSocket.CLOSED;
+    client.webSocket.readyState = WebSocket.CLOSED;
     const eventName = "testEvent";
     const eventData = { foo: "bar" };
 
@@ -315,15 +319,15 @@ describe("Tests using SimpleSocketIOClient", () => {
 
     // Check if the event was queued
     expect(client.packetQueue).toHaveLength(1);
-    expect(client.ws.send).toHaveBeenCalledTimes(0);
+    expect(client.webSocket.send).toHaveBeenCalledTimes(0);
     // Reconnect the WebSocket and ensure the message is sent
-    client.ws.readyState = WebSocket.OPEN;
+    client.webSocket.readyState = WebSocket.OPEN;
     client.handleOpen();
 
     // Check if the packetQueue is empty and the message was sent
     expect(client.packetQueue).toHaveLength(0);
     const expectedDataString = `:::${JSON.stringify(expectedPayload)}`;
-    expect(client.ws.send).toHaveBeenCalledWith(
+    expect(client.webSocket.send).toHaveBeenCalledWith(
       `${PACKET_TYPES.event}${expectedDataString}`
     );
   });
@@ -343,7 +347,7 @@ describe("Tests using SimpleSocketIOClient", () => {
 
       // Create a mock WebSocket with a spied close method
       const closeMock = vi.fn();
-      client.ws = { close: closeMock };
+      client.webSocket = { close: closeMock };
 
       // Call the reconnect method
       client.reconnect();

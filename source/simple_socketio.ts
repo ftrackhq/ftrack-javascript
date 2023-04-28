@@ -41,13 +41,13 @@ interface Payload {
  * ```
  */
 export default class SimpleSocketIOClient {
-  private WebSocket: WebSocket;
+  private webSocket: WebSocket;
   private handlers: EventHandlers = {};
   private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
   private heartbeatInterval: ReturnType<typeof setInterval> | undefined;
   private heartbeatTimeout: ReturnType<typeof setInterval> | undefined;
   private serverUrl: string;
-  private WebSocketUrl: string;
+  private webSocketUrl: string;
   private heartbeatIntervalMs: number;
   private query: string;
   private apiUser: string;
@@ -82,7 +82,7 @@ export default class SimpleSocketIOClient {
     // Convert the http(s) URL to ws(s) URL
     const WebSocketUrl = serverUrl.replace(/^(http)/, "ws");
     this.serverUrl = serverUrl;
-    this.WebSocketUrl = WebSocketUrl;
+    this.webSocketUrl = WebSocketUrl;
     this.query = new URLSearchParams({
       api_user: apiUser,
       api_key: apiKey,
@@ -129,11 +129,11 @@ export default class SimpleSocketIOClient {
    */
   private async initializeWebSocket(): Promise<void> {
     const sessionId = this.sessionId ?? (await this.fetchSessionId());
-    const urlWithQueryAndSession = `${this.WebSocketUrl}/socket.io/1/websocket/${sessionId}?${this.query}`;
-    this.WebSocket = new WebSocket(urlWithQueryAndSession);
+    const urlWithQueryAndSession = `${this.webSocketUrl}/socket.io/1/websocket/${sessionId}?${this.query}`;
+    this.webSocket = new WebSocket(urlWithQueryAndSession);
     // Set transport property as a public alias of the websocket
-    this.socket.transport = this.WebSocket;
-    this.addInitialEventListeners(this.WebSocket);
+    this.socket.transport = this.webSocket;
+    this.addInitialEventListeners(this.webSocket);
   }
 
   /**
@@ -168,7 +168,7 @@ export default class SimpleSocketIOClient {
     }
     if (packetType === PACKET_TYPES.heartbeat) {
       // Respond to server heartbeat with a heartbeat
-      this.WebSocket?.send(`${PACKET_TYPES.heartbeat}::`);
+      this.webSocket?.send(`${PACKET_TYPES.heartbeat}::`);
       this.resetHeartbeatCheck();
       this.flushPacketQueue();
       return;
@@ -261,8 +261,8 @@ export default class SimpleSocketIOClient {
     const dataString = eventData ? `:::${JSON.stringify(payload)}` : "";
     const packet = `${PACKET_TYPES.event}${dataString}`;
 
-    if (this.WebSocket?.readyState === WebSocket.OPEN) {
-      this.WebSocket.send(packet);
+    if (this.webSocket?.readyState === WebSocket.OPEN) {
+      this.webSocket.send(packet);
     } else {
       this.packetQueue.push(packet);
     }
@@ -274,8 +274,8 @@ export default class SimpleSocketIOClient {
   private flushPacketQueue(): void {
     while (this.packetQueue.length > 0) {
       const packet = this.packetQueue.shift();
-      if (packet && this.WebSocket) {
-        this.WebSocket.send(packet);
+      if (packet && this.webSocket) {
+        this.webSocket.send(packet);
       }
     }
   }
@@ -299,7 +299,7 @@ export default class SimpleSocketIOClient {
    */
   private startHeartbeat(): void {
     this.heartbeatInterval = setInterval(() => {
-      this.WebSocket?.send(`${PACKET_TYPES.heartbeat}::`);
+      this.webSocket?.send(`${PACKET_TYPES.heartbeat}::`);
     }, this.heartbeatIntervalMs);
 
     this.resetHeartbeatCheck();
@@ -323,7 +323,7 @@ export default class SimpleSocketIOClient {
    * @returns - True if the WebSocket is open, false otherwise.
    */
   public isConnected(): boolean {
-    return this.WebSocket?.readyState === WebSocket.OPEN;
+    return this.webSocket?.readyState === WebSocket.OPEN;
   }
   /**
    *
@@ -332,7 +332,7 @@ export default class SimpleSocketIOClient {
    */
   public reconnect(): void {
     if (this.socket.connected) {
-      this.WebSocket?.close();
+      this.webSocket?.close();
     }
 
     this.reconnectionAttempts++;
@@ -371,8 +371,8 @@ export default class SimpleSocketIOClient {
   public disconnect(): void {
     this.stopHeartbeat();
     this.socket.connected = false;
-    this.WebSocket?.close();
-    this.WebSocket = undefined;
+    this.webSocket?.close();
+    this.webSocket = undefined;
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = undefined;
