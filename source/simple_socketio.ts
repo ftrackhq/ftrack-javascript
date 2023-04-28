@@ -44,11 +44,10 @@ export default class SimpleSocketIOClient {
   private webSocket: WebSocket;
   private handlers: EventHandlers = {};
   private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
-  private heartbeatInterval: ReturnType<typeof setInterval> | undefined;
   private heartbeatTimeout: ReturnType<typeof setInterval> | undefined;
   private serverUrl: string;
   private webSocketUrl: string;
-  private heartbeatIntervalMs: number;
+  private heartbeatTimeoutMs: number;
   private query: string;
   private apiUser: string;
   private apiKey: string;
@@ -71,13 +70,13 @@ export default class SimpleSocketIOClient {
    * @param serverUrl - The server URL.
    * @param apiUser - The API user.
    * @param apiKey - The API key.
-   * @param heartbeatIntervalMs - The heartbeat interval in milliseconds. Defaults to 10000
+   * @param heartbeatTimeoutMs - The heartbeat timeout in milliseconds. Defaults to 15000
    */
   constructor(
     serverUrl: string,
     apiUser: string,
     apiKey: string,
-    heartbeatIntervalMs: number = 10000
+    heartbeatTimeoutMs: number = 15000
   ) {
     // Convert the http(s) URL to ws(s) URL
     const WebSocketUrl = serverUrl.replace(/^(http)/, "ws");
@@ -87,7 +86,7 @@ export default class SimpleSocketIOClient {
       api_user: apiUser,
       api_key: apiKey,
     }).toString();
-    this.heartbeatIntervalMs = heartbeatIntervalMs;
+    this.heartbeatTimeoutMs = heartbeatTimeoutMs;
     this.apiUser = apiUser;
     this.apiKey = apiKey;
     this.initializeWebSocket();
@@ -287,21 +286,18 @@ export default class SimpleSocketIOClient {
   private resetHeartbeatCheck(): void {
     if (this.heartbeatTimeout) {
       clearTimeout(this.heartbeatTimeout);
+      this.heartbeatTimeout = undefined;
     }
     this.heartbeatTimeout = setTimeout(() => {
       this.reconnect();
-    }, 20000);
+    }, this.heartbeatTimeoutMs);
   }
 
   /**
-   * Starts sending heartbeats to the server to keep the connection alive
+   * Starts expecting heartbeats from the server
    * @private
    */
   private startHeartbeat(): void {
-    this.heartbeatInterval = setInterval(() => {
-      this.webSocket?.send(`${PACKET_TYPES.heartbeat}::`);
-    }, this.heartbeatIntervalMs);
-
     this.resetHeartbeatCheck();
   }
 
@@ -310,9 +306,9 @@ export default class SimpleSocketIOClient {
    * @private
    */
   private stopHeartbeat(): void {
-    if (this.heartbeatInterval) {
-      clearInterval(this.heartbeatInterval);
-      this.heartbeatInterval = undefined;
+    if (this.heartbeatTimeout) {
+      clearTimeout(this.heartbeatTimeout);
+      this.heartbeatTimeout = undefined;
     }
   }
   /**
@@ -332,6 +328,7 @@ export default class SimpleSocketIOClient {
    */
   public reconnect(): void {
     if (this.socket.connected) {
+      console.log(this.webSocket?.readyState);
       this.webSocket?.close();
     }
 

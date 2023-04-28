@@ -17,7 +17,7 @@ function createClient(options) {
     options.serverUrl || credentials.serverUrl,
     options.apiUser || credentials.apiUser,
     options.apiKey || credentials.apiKey,
-    options.heartbeatIntervalMs || undefined
+    options.heartbeatTimeoutMs || undefined
   );
 }
 
@@ -54,11 +54,11 @@ describe("Tests using SimpleSocketIOClient", () => {
     expect(client.sessionId).toBe("1234567890");
   });
 
-  test("SimpleSocketIOClient initializes custom heartbeatIntervalMs correctly", () => {
+  test("SimpleSocketIOClient initializes custom heartbeatTimeoutMs correctly", () => {
     const heartbeatClient = createClient({
-      heartbeatIntervalMs: 1990,
+      heartbeatTimeoutMs: 1990,
     });
-    expect(heartbeatClient.heartbeatIntervalMs).toBe(1990);
+    expect(heartbeatClient.heartbeatTimeoutMs).toBe(1990);
   });
 
   test.skip("isConnected returns false when WebSocket is not initialized", () => {
@@ -223,6 +223,9 @@ describe("Tests using SimpleSocketIOClient", () => {
   test("handleOpen method works as expected", () => {
     vi.spyOn(client, "startHeartbeat");
     vi.spyOn(client, "handleEvent");
+    // Save original timers
+    const originalSetTimeout = global.setTimeout;
+    const originalClearTimeout = global.clearTimeout;
     // Setup timeout mocks
     const fakeTimeoutId = 12345;
     const setTimeoutMock = vi.fn(() => fakeTimeoutId);
@@ -239,6 +242,9 @@ describe("Tests using SimpleSocketIOClient", () => {
     expect(client.reconnectTimeout).toBeUndefined();
     expect(client.handleEvent).toHaveBeenCalledWith("connect", {});
     expect(client.socket.connected).toBe(true);
+    // Restore original timers
+    global.setTimeout = originalSetTimeout;
+    global.clearTimeout = originalClearTimeout;
   });
   describe("handleClose method", () => {
     test("handleClose stops the heartbeat", () => {
@@ -274,31 +280,46 @@ describe("Tests using SimpleSocketIOClient", () => {
       expect(client.socket.connected).toBe(false);
     });
   });
-  test("startHeartbeat and stopHeartbeat correctly set and clear the heartbeat interval", () => {
-    vi.useFakeTimers(); // Use fake timers to control setInterval and clearInterval
+  test("resetHeartbeatCheck() properly sets and resets the heartbeatTimeout", async () => {
+    vi.useFakeTimers();
+    client.resetHeartbeatCheck();
 
-    // Mock the WebSocket send method
-    client.webSocket = createWebSocketMock();
+    expect(client.heartbeatTimeout).toBeDefined();
 
-    // Call the startHeartbeat method and check if the send method is called with the correct arguments
-    client.startHeartbeat();
-    vi.advanceTimersByTime(client.heartbeatIntervalMs);
-    expect(client.webSocket.send).toHaveBeenCalledTimes(1);
-    expect(client.webSocket.send).toHaveBeenCalledWith(
-      `${PACKET_TYPES.heartbeat}::`
-    );
+    const initialHeartbeatTimeout = client.heartbeatTimeout;
+    vi.advanceTimersByTime(100);
 
-    // Advance the time again and check if the send method is called again
-    vi.advanceTimersByTime(client.heartbeatIntervalMs);
-    expect(client.webSocket.send).toHaveBeenCalledTimes(2);
+    client.resetHeartbeatCheck();
 
-    // Call the stopHeartbeat method and check if the send method is not called anymore
-    client.stopHeartbeat();
-    vi.advanceTimersByTime(client.heartbeatIntervalMs);
-    expect(client.webSocket.send).toHaveBeenCalledTimes(2);
+    expect(client.heartbeatTimeout).toBeDefined();
+    expect(client.heartbeatTimeout).not.toBe(initialHeartbeatTimeout);
+  });
 
-    vi.runOnlyPendingTimers();
-    vi.useRealTimers(); // Reset timers back to normal behavior
+  test("heartbeatTimeout triggers reconnect() when no heartbeat is received", async () => {
+    vi.spyOn(client, "reconnect");
+    vi.useFakeTimers();
+
+    client["resetHeartbeatCheck"]();
+    vi.advanceTimersByTime(client.heartbeatTimeoutMs + 100);
+
+    expect(client.reconnect).toHaveBeenCalledTimes(1);
+
+    vi.useRealTimers();
+  });
+
+  test("heartbeatTimeout does not trigger reconnect() when heartbeat is received", async () => {
+    vi.spyOn(client, "reconnect");
+    vi.useFakeTimers();
+
+    client.resetHeartbeatCheck();
+    vi.advanceTimersByTime(client.heartbeatTimeoutMs / 2);
+
+    client.handleMessage({ data: "2::" });
+    vi.advanceTimersByTime(client.heartbeatTimeoutMs / 2 + 100);
+
+    expect(client.reconnect).toHaveBeenCalledTimes(0);
+
+    vi.useRealTimers();
   });
   test("Event queue is working", () => {
     client.webSocket = createWebSocketMock();
@@ -332,14 +353,14 @@ describe("Tests using SimpleSocketIOClient", () => {
     );
   });
   describe("Reconnection tests", () => {
-    test("reconnect method initialises websocket again", async () => {
+    test("reconnect method initialises websocket again", () => {
       client.initializeWebSocket = vi.fn();
 
       client.reconnect();
 
       expect(client.initializeWebSocket).toHaveBeenCalledTimes(1);
     });
-    test("if reconnecting when connection should be open, first close then initialize again", async () => {
+    test("if reconnecting when connection should be open, first close then initialize again", () => {
       client.initializeWebSocket = vi.fn();
 
       // Set the connected property to true, simulating a connected socket
@@ -365,7 +386,8 @@ describe("Tests using SimpleSocketIOClient", () => {
       expect(client.reconnectionAttempts).toBe(initialAttempts + 1);
     });
     test("scheduleReconnect trigger reconnect after delay", () => {
-      vi.spyOn(client, "reconnect");
+      client.reconnect = vi.fn();
+
       vi.useFakeTimers();
       client.scheduleReconnect();
 
