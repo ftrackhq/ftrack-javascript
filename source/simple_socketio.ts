@@ -41,6 +41,8 @@ interface Payload {
  * ```
  */
 export default class SimpleSocketIOClient {
+  // Add a static instance variable
+  private static instances: Map<string, SimpleSocketIOClient> = new Map();
   private webSocket: WebSocket;
   private handlers: EventHandlers = {};
   private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -66,13 +68,42 @@ export default class SimpleSocketIOClient {
     transport: null,
   };
   /**
+   * Connect to a websocket server, or return the existing instance if one already exists.
+   * @param serverUrl - The server URL.
+   * @param apiUser - The API user.
+   * @param apiKey - The API key.
+   * @param heartbeatTimeoutMs - The heartbeat timeout in milliseconds. Defaults to 15000
+   */
+  public static connect(
+    serverUrl: string,
+    apiUser: string,
+    apiKey: string,
+    heartbeatTimeoutMs: number = 15000
+  ): SimpleSocketIOClient {
+    const key = `${serverUrl}_${apiUser}_${apiKey}`;
+    let instance = this.instances.get(key);
+
+    if (!instance) {
+      instance = new SimpleSocketIOClient(
+        serverUrl,
+        apiUser,
+        apiKey,
+        heartbeatTimeoutMs
+      );
+      this.instances.set(key, instance);
+    }
+
+    return instance;
+  }
+
+  /**
    * Constructs a new SimpleSocketIOClient instance.
    * @param serverUrl - The server URL.
    * @param apiUser - The API user.
    * @param apiKey - The API key.
    * @param heartbeatTimeoutMs - The heartbeat timeout in milliseconds. Defaults to 15000
    */
-  constructor(
+  private constructor(
     serverUrl: string,
     apiUser: string,
     apiKey: string,

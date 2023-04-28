@@ -177,8 +177,7 @@ export class EventHub {
 
   /** Connect to the event server. */
   connect(): void {
-    this._socketIo = new io(this._serverUrl, this._apiUser, this._apiKey);
-
+    this._socketIo = io.connect(this._serverUrl, this._apiUser, this._apiKey);
     this._socketIo.on("connect", this._onSocketConnected);
     this._socketIo.on("ftrack.event", this._handle);
   }
