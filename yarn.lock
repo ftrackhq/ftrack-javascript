@@ -7608,9 +7608,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-dts@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "vite-plugin-dts@npm:2.3.0"
+"vite-plugin-dts@npm:^1.7.2":
+  version: 1.7.3
+  resolution: "vite-plugin-dts@npm:1.7.3"
   dependencies:
     "@babel/parser": ^7.21.4
     "@microsoft/api-extractor": ^7.34.4
@@ -7624,7 +7624,7 @@ __metadata:
     ts-morph: 18.0.0
   peerDependencies:
     vite: ">=2.9.0"
-  checksum: b4247d9f7800bd72addd62fb07fbd3f5a1535a6de771420e4ed896fb5db156335b2abf810091ecd998ac05d6ebbd857a186ec3d468216f0bc6e54064c4886b31
+  checksum: 8bc41400a4b29d0c178e7c0acc23f5e839637725d3a4e909defc820308f654280bde59901d5a287b84501d71fa4129abafa05fb83756fda328916e423af2d2a7
   languageName: node
   linkType: hard
 
