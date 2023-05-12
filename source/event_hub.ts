@@ -237,7 +237,7 @@ export class EventHub {
    *
    * If timeout is non-zero, the promise will be rejected if the event is not
    * sent before the timeout is reached. Should be specified as seconds and
-   * will default to 10.
+   * will default to 30.
    *
    * @param  {Event}  event               Event instance to publish
    * @param  {Function} [options.onReply] Function to be invoked when a reply

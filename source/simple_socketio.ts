@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2023 ftrack
 import WebSocket from "isomorphic-ws";
-import type { Event } from "./event";
+import { Event } from "./event";
 export const PACKET_TYPES = {
   disconnect: "0",
   connect: "1",
@@ -222,6 +222,7 @@ export default class SimpleSocketIOClient {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = undefined;
     }
+    this.reconnectionAttempts = 0; // Reset reconnection attempts
     this.handleEvent("connect", {});
     this.flushPacketQueue();
     // Set connected property to true
@@ -233,7 +234,7 @@ export default class SimpleSocketIOClient {
    */
   private handleClose(): void {
     this.stopHeartbeat();
-    this.scheduleReconnect();
+    this.reconnect();
     // Set connected property to false
     this.socket.connected = false;
   }
@@ -285,7 +286,7 @@ export default class SimpleSocketIOClient {
    * @param eventName - The event name.
    * @param eventData - The event data.
    */
-  public emit(eventName: string, eventData: Event["_data"]): void {
+  public emit(eventName: string, eventData?: object): void {
     const payload = {
       name: eventName,
       args: [eventData],
@@ -355,43 +356,56 @@ export default class SimpleSocketIOClient {
     return this.webSocket?.readyState === WebSocket.OPEN;
   }
   /**
-   *
-   * Reconnects to the server if the connection is lost using the same session ID.
-   * @public
-   */
-  public reconnect(): void {
-    if (this.socket.connected) {
-      console.log(this.webSocket?.readyState);
-      this.webSocket?.close();
-    }
-
-    this.reconnectionAttempts++;
-    this.initializeWebSocket();
-  }
-  /**
    * Schedules a reconnect attempt. The delay is calculated
    * using the reconnectionDelay and reconnectionDelayMax options.
    * It is then randomized to prevent multiple clients from reconnecting at the same time.
-   * @private
+   * @public
    * @param reconnectionDelay - The delay in milliseconds before first attempting to reconnect. Defaults to 1000.
    * @param reconnectionDelayMax - The maximum delay in milliseconds before attempting to reconnect. Defaults to 10000.
    */
-  private scheduleReconnect(
+  public reconnect(
     reconnectionDelay: number = 1000,
-    reconnectionDelayMax: number = 10000
+    reconnectionDelayMax: number = 10000,
+    maxAttempts: number = Infinity
   ): void {
-    // Implements similar delay logic to socket.io-client
+    // Check if already connected
+    if (this.isConnected()) {
+      this.emit("reconnect");
+      return;
+    }
+
+    // Check if max attempts reached
+    if (this.reconnectionAttempts >= maxAttempts) {
+      this.emit("reconnect_failed");
+      return;
+    }
+
+    // Calculate delay for reconnect
     const delay = Math.min(
       reconnectionDelay * Math.pow(2, this.reconnectionAttempts),
       reconnectionDelayMax
     );
     const randomizedDelay = Math.round(delay * (1 + 0.5 * Math.random()));
+
+    // Schedule reconnect
+    console.log("reconnect scheduled", randomizedDelay);
     if (!this.reconnectTimeout) {
       this.reconnectTimeout = setTimeout(() => {
-        this.reconnect();
-        this.reconnectTimeout = undefined;
+        this.attemptReconnect(randomizedDelay);
       }, randomizedDelay);
     }
+  }
+
+  private attemptReconnect(randomizedDelay: number): void {
+    this.reconnectionAttempts++;
+    this.initializeWebSocket();
+    this.reconnectTimeout = undefined;
+    console.log("reconnecting", randomizedDelay, this.reconnectionAttempts);
+    this.emit("reconnecting", {
+      delay: randomizedDelay,
+      attempts: this.reconnectionAttempts,
+    });
+    this.reconnect();
   }
   /**
    * Allows users to manually disconnect the WebSocket connection and stop all reconnection attempts
