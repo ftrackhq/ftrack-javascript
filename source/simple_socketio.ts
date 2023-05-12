@@ -392,7 +392,11 @@ export default class SimpleSocketIOClient {
       }, randomizedDelay);
     }
   }
-
+  /**
+   * Attempt a reconnect attempt.
+   * @private
+   * @param randomizedDelay
+   */
   private attemptReconnect(randomizedDelay: number): void {
     this.reconnectionAttempts++;
     this.initializeWebSocket();
