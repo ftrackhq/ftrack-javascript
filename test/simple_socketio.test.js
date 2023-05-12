@@ -453,24 +453,17 @@ describe("Tests using SimpleSocketIOClient", () => {
       // Reconnect should not be called yet
       expect(client.attemptReconnect).toHaveBeenCalledTimes(0);
     });
-    test.skip("reconnect method exponentially increase delay for every attempt", () => {
+    test("reconnect method exponentially increase delay for every attempt", () => {
       vi.useFakeTimers();
       vi.spyOn(client, "attemptReconnect");
 
       const reconnectAttempts = 5;
-      for (let i = 1; i <= reconnectAttempts; i++) {
-        client.reconnect();
-
-        const expectedMinDelay = 1000 * Math.pow(2, i - 1);
+      for (let i = 0; i <= reconnectAttempts; i++) {
+        const expectedMinDelay = Math.min(1000 * Math.pow(2, i), 10000);
         const expectedMaxDelay = expectedMinDelay * 1.5;
-
-        vi.advanceTimersByTime(expectedMaxDelay + 100);
-
-        // attemptReconnect should have been called exactly once
-        expect(client.attemptReconnect).toHaveBeenCalledTimes(1);
-
-        // Reset the reconnect mock to avoid interference with the next iteration
-        client.attemptReconnect.mockReset();
+        client.reconnect();
+        vi.advanceTimersByTime(expectedMaxDelay + 1);
+        expect(client.attemptReconnect).toHaveBeenCalledTimes(i + 1);
       }
       vi.runOnlyPendingTimers();
       vi.useRealTimers();

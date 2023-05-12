@@ -206,7 +206,6 @@ export default class SimpleSocketIOClient {
       return;
     }
     if (packetType === PACKET_TYPES.error) {
-      // Respond to server heartbeat with a heartbeat
       console.log("WebSocket message error: ", event);
       this.handleClose();
       return;
@@ -387,8 +386,6 @@ export default class SimpleSocketIOClient {
     );
     const randomizedDelay = Math.round(delay * (1 + 0.5 * Math.random()));
 
-    // Schedule reconnect
-    console.log("reconnect scheduled", randomizedDelay);
     if (!this.reconnectTimeout) {
       this.reconnectTimeout = setTimeout(() => {
         this.attemptReconnect(randomizedDelay);
@@ -400,7 +397,6 @@ export default class SimpleSocketIOClient {
     this.reconnectionAttempts++;
     this.initializeWebSocket();
     this.reconnectTimeout = undefined;
-    console.log("reconnecting", randomizedDelay, this.reconnectionAttempts);
     this.emit("reconnecting", {
       delay: randomizedDelay,
       attempts: this.reconnectionAttempts,
