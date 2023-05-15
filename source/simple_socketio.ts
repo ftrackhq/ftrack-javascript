@@ -41,7 +41,6 @@ interface Payload {
  * ```
  */
 export default class SimpleSocketIOClient {
-  // Add a static instance variable
   private static instances: Map<string, SimpleSocketIOClient> = new Map();
   private webSocket: WebSocket;
   private handlers: EventHandlers = {};
@@ -248,7 +247,7 @@ export default class SimpleSocketIOClient {
   }
   /**
    * Sets up event callbacks for a given eventName.
-   * @private
+   * @public
    * @param eventName - The event name.
    * @param eventCallback - The event callback.
    */
@@ -364,18 +363,11 @@ export default class SimpleSocketIOClient {
    */
   public reconnect(
     reconnectionDelay: number = 1000,
-    reconnectionDelayMax: number = 10000,
-    maxAttempts: number = Infinity
+    reconnectionDelayMax: number = 10000
   ): void {
     // Check if already connected
     if (this.isConnected()) {
       this.emit("reconnect");
-      return;
-    }
-
-    // Check if max attempts reached
-    if (this.reconnectionAttempts >= maxAttempts) {
-      this.emit("reconnect_failed");
       return;
     }
 
@@ -388,7 +380,7 @@ export default class SimpleSocketIOClient {
 
     if (!this.reconnectTimeout) {
       this.reconnectTimeout = setTimeout(() => {
-        this.attemptReconnect(randomizedDelay);
+        this.attemptReconnect();
       }, randomizedDelay);
     }
   }
@@ -397,19 +389,15 @@ export default class SimpleSocketIOClient {
    * @private
    * @param randomizedDelay
    */
-  private attemptReconnect(randomizedDelay: number): void {
+  private attemptReconnect(): void {
     this.reconnectionAttempts++;
     this.initializeWebSocket();
     this.reconnectTimeout = undefined;
-    this.emit("reconnecting", {
-      delay: randomizedDelay,
-      attempts: this.reconnectionAttempts,
-    });
     this.reconnect();
   }
   /**
    * Allows users to manually disconnect the WebSocket connection and stop all reconnection attempts
-   * @private
+   * @public
    */
 
   public disconnect(): void {
