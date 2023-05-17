@@ -40,8 +40,6 @@ import { convertToIsoString } from "./util/convert_to_iso_string";
 
 const logger = loglevel.getLogger("ftrack_api");
 
-const ENCODE_DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
-
 /**
  * Create component from *file* and add to server location.
  *
