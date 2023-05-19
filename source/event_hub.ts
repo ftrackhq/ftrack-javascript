@@ -378,9 +378,9 @@ export class EventHub {
   /**
    * Register to *subscription* events.
    *
-   * @param  {String}   subscription  Expression to subscribe on. Currently,
-   *                                  only "topic=value" expressions are
-   *                                  supported.
+   * @param  {String}   subscription  Expression to subscribe on. This can
+   *                                  be in the format of "topic=value" or
+   *                                  include a wildcard like "topic=*".
    * @param  {Function} callback      Function to be called when an event
    *                                  matching the subscription is returned.
    * @param  {Object}   [metadata]    Optional information about subscriber.
@@ -520,9 +520,7 @@ export class EventHub {
   /**
    * Return if *subscriber* is interested in *event*.
    *
-   * Only expressions on the format topic=value is supported.
-   *
-   * TODO: Support the full event expression format.
+   * Expressions on the format topic=value is supported, including wildcard support.
    *
    * @param  {Object} subscriber
    * @param  {Object} eventPayload
@@ -533,9 +531,17 @@ export class EventHub {
     eventPayload: EventPayload
   ) {
     const topic = this._getExpressionTopic(subscriber.subscription);
-    if (topic === eventPayload.topic) {
+
+    // Support for wildcard matching in topic.
+    if (topic.endsWith("*")) {
+      const baseTopic = topic.slice(0, -1); // remove the wildcard character
+      if (eventPayload.topic.startsWith(baseTopic)) {
+        return true;
+      }
+    } else if (topic === eventPayload.topic) {
       return true;
     }
+
     return false;
   }
 
