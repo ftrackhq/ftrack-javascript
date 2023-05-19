@@ -391,6 +391,9 @@ export class EventHub {
     callback: EventCallback,
     metadata?: SubscriberMetadata
   ): string {
+    if (typeof callback !== "function") {
+      throw new Error("Callback must be a function.");
+    }
     const subscriber = this._addSubscriber(subscription, callback, metadata);
     this._notifyServerAboutSubscriber(subscriber);
     return subscriber.metadata.id;
@@ -535,6 +538,9 @@ export class EventHub {
     // Support for wildcard matching in topic.
     if (topic.endsWith("*")) {
       const baseTopic = topic.slice(0, -1); // remove the wildcard character
+      if (typeof eventPayload.topic !== "string") {
+        return false;
+      }
       if (eventPayload.topic.startsWith(baseTopic)) {
         return true;
       }
