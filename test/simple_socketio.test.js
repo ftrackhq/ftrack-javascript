@@ -98,7 +98,8 @@ describe("Tests using SimpleSocketIOClient", () => {
     expect(client.apiKey).toBe(credentials.apiKey);
     expect(client.socket).toMatchObject({
       connected: false,
-      transport: null,
+      open: false,
+      transport: { websocket: null },
     });
   });
   test("fetchSessionId should set the fetched session ID correctly", async () => {
