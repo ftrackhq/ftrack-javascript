@@ -380,7 +380,7 @@ export class EventHub {
    *
    * @param  {String}   subscription  Expression to subscribe on. This can
    *                                  be in the format of "topic=value" or
-   *                                  include a wildcard like "topic=*".
+   *                                  include a wildcard like "topic=ftrack.*".
    * @param  {Function} callback      Function to be called when an event
    *                                  matching the subscription is returned.
    * @param  {Object}   [metadata]    Optional information about subscriber.
