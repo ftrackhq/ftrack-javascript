@@ -56,15 +56,21 @@ export default class SimpleSocketIOClient {
   private packetQueue: string[] = [];
   private reconnectionAttempts: number = 0;
 
-  // Added socket object with connected, reconnect and transport properties to match current API
+  // Added socket object with connected, open reconnect and transport properties to match current API
+  // The old socket-io client uses both a connected and open property that are interchangeable
+  // especially since we now don't use any fallback for websocket. To not break existing code
+  // we add both properties.
+
   public socket: {
     connected: boolean;
+    open: boolean;
     reconnect: () => void;
-    transport: WebSocket | null;
+    transport: { websocket: WebSocket | null };
   } = {
     connected: false,
+    open: false,
     reconnect: this.reconnect.bind(this),
-    transport: null,
+    transport: { websocket: null },
   };
   /**
    * Connect to a websocket server, or return the existing instance if one already exists.
@@ -162,8 +168,8 @@ export default class SimpleSocketIOClient {
     const sessionId = this.sessionId ?? (await this.fetchSessionId());
     const urlWithQueryAndSession = `${this.webSocketUrl}/socket.io/1/websocket/${sessionId}?${this.query}`;
     this.webSocket = new WebSocket(urlWithQueryAndSession);
-    // Set transport property as a public alias of the websocket
-    this.socket.transport = this.webSocket;
+    // Set transport.websocket property as a public alias of the websocket
+    this.socket.transport.websocket = this.webSocket;
     this.addInitialEventListeners(this.webSocket);
   }
 
@@ -225,6 +231,7 @@ export default class SimpleSocketIOClient {
     this.flushPacketQueue();
     // Set connected property to true
     this.socket.connected = true;
+    this.socket.open = true;
   }
   /**
    * Handles WebSocket close event
@@ -235,6 +242,7 @@ export default class SimpleSocketIOClient {
     this.reconnect();
     // Set connected property to false
     this.socket.connected = false;
+    this.socket.open = false;
   }
   /**
    * Calls all callbacks for the given eventName with the given eventData.
@@ -403,6 +411,7 @@ export default class SimpleSocketIOClient {
   public disconnect(): void {
     this.stopHeartbeat();
     this.socket.connected = false;
+    this.socket.open = false;
     this.webSocket?.close();
     this.webSocket = undefined;
     if (this.reconnectTimeout) {
