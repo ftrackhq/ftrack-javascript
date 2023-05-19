@@ -59,19 +59,21 @@ export default class SimpleSocketIOClient {
   // Added socket object with connected, open reconnect and transport properties to match current API
   // The old socket-io client uses both a connected and open property that are interchangeable
   // especially since we now don't use any fallback for websocket. To not break existing code
-  // we add both properties.
-
+  // we add open as a getter to the connected property
   public socket: {
     connected: boolean;
-    open: boolean;
     reconnect: () => void;
     transport: { websocket: WebSocket | null };
+    get open(): boolean;
   } = {
     connected: false,
-    open: false,
     reconnect: this.reconnect.bind(this),
     transport: { websocket: null },
+    get open() {
+      return this.connected;
+    },
   };
+
   /**
    * Connect to a websocket server, or return the existing instance if one already exists.
    * @param serverUrl - The server URL.
@@ -231,7 +233,6 @@ export default class SimpleSocketIOClient {
     this.flushPacketQueue();
     // Set connected property to true
     this.socket.connected = true;
-    this.socket.open = true;
   }
   /**
    * Handles WebSocket close event
@@ -242,7 +243,6 @@ export default class SimpleSocketIOClient {
     this.reconnect();
     // Set connected property to false
     this.socket.connected = false;
-    this.socket.open = false;
   }
   /**
    * Calls all callbacks for the given eventName with the given eventData.
@@ -411,7 +411,6 @@ export default class SimpleSocketIOClient {
   public disconnect(): void {
     this.stopHeartbeat();
     this.socket.connected = false;
-    this.socket.open = false;
     this.webSocket?.close();
     this.webSocket = undefined;
     if (this.reconnectTimeout) {
