@@ -12,8 +12,6 @@ import {
 import { Session } from "../source/session";
 import * as operation from "../source/operation";
 import { expect } from "chai";
-import querySchemas from "./fixtures/query_schemas.json";
-import queryServerInformation from "./fixtures/query_server_information.json";
 
 import { getExampleQuery, getInitialSessionQuery, server } from "./server";
 import { rest } from "msw";
@@ -133,32 +131,6 @@ describe("Session", () => {
       { decodeDatesAsIso: true }
     );
     expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
-  });
-
-  it("Should allow querying with datetimes decoded as ISO objects with timezone support disabled", async () => {
-    server.use(
-      rest.post("http://ftrack.test/api", (req, res, ctx) => {
-        return res.once(
-          ctx.json([
-            { ...queryServerInformation, is_timezone_support_enabled: false },
-            querySchemas,
-          ])
-        );
-      })
-    );
-    const timezoneDisabledSession = new Session(
-      credentials.serverUrl,
-      credentials.apiUser,
-      credentials.apiKey,
-      {
-        autoConnectEventHub: false,
-      }
-    );
-    const result = await timezoneDisabledSession.query(
-      "select name, created_at from Task limit 1",
-      { decodeDatesAsIso: true }
-    );
-    expect(result.data[0].created_at).toEqual("2022-10-10T08:12:09.000Z");
   });
 
   it("Should allow adding additional headers on calls", async () => {
@@ -491,42 +463,6 @@ describe("Encoding entities", () => {
         foo: {
           __type__: "datetime",
           value: now.toISOString(),
-        },
-        bar: "baz",
-      },
-      12321,
-    ]);
-  });
-
-  it("Should support encoding moment dates to local timezone if timezone support is disabled", () => {
-    const now = moment();
-    server.use(
-      rest.post("http://ftrack.test/api", (req, res, ctx) => {
-        return res.once(
-          ctx.json([
-            { ...queryServerInformation, is_timezone_support_enabled: false },
-            querySchemas,
-          ])
-        );
-      })
-    );
-    const timezoneDisabledSession = new Session(
-      credentials.serverUrl,
-      credentials.apiUser,
-      credentials.apiKey,
-      {
-        autoConnectEventHub: false,
-      }
-    );
-    const output = timezoneDisabledSession.encode([
-      { foo: now, bar: "baz" },
-      12321,
-    ]);
-    expect(output).toEqual([
-      {
-        foo: {
-          __type__: "datetime",
-          value: now.local().format("YYYY-MM-DDTHH:mm:ss"),
         },
         bar: "baz",
       },
