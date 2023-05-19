@@ -349,7 +349,7 @@ export class EventHub {
     return response;
   }
 
-  _removeReplyCallback(eventId: string) {
+  private _removeReplyCallback(eventId: string) {
     if (this._replyCallbacks[eventId]) {
       delete this._replyCallbacks[eventId];
     }
@@ -359,7 +359,7 @@ export class EventHub {
    * Run *callback* if event hub is connected to server.
    * @param  {Function} callback
    */
-  _runWhenConnected(callback: ConnectionCallback) {
+  private _runWhenConnected(callback: ConnectionCallback) {
     if (!this.isConnected()) {
       this.logger.debug("Event hub is not connected, event is delayed.");
       this._unsentEvents.push(callback);
@@ -425,7 +425,7 @@ export class EventHub {
    * @param  {String} subscription    expression
    * @return {String}                 topic
    */
-  _getExpressionTopic(subscription: string) {
+  private _getExpressionTopic(subscription: string) {
     // retreive the value of a topic on the format "topic=value"
     const regex = new RegExp("^topic[ ]?=[ '\"]?([\\w-,./*@+]+)['\"]?$");
     const matches = subscription.trim().match(regex);
@@ -448,7 +448,7 @@ export class EventHub {
    * @param {Object}   metadata       Optional information about subscriber.
    * @return {Object}                 subscriber information.
    */
-  _addSubscriber(
+  private _addSubscriber(
     subscription: string,
     callback: EventCallback,
     metadata: SubscriberMetadata = {
@@ -485,7 +485,7 @@ export class EventHub {
    * Notify server of new *subscriber*.
    * @param  {Object} subscriber      subscriber information
    */
-  _notifyServerAboutSubscriber(subscriber: Subscriber) {
+  private _notifyServerAboutSubscriber(subscriber: Subscriber) {
     const subscribeEvent = new Event("ftrack.meta.subscribe", {
       subscriber: subscriber.metadata,
       subscription: subscriber.subscription,
@@ -493,7 +493,7 @@ export class EventHub {
     this.publish(subscribeEvent);
   }
 
-  _notifyServerAboutUnsubscribe(subscriber: SubscriberMetadata) {
+  private _notifyServerAboutUnsubscribe(subscriber: SubscriberMetadata) {
     const unsubscribeEvent = new Event("ftrack.meta.unsubscribe", {
       subscriber,
     });
@@ -528,7 +528,7 @@ export class EventHub {
    * @param  {Object} eventPayload
    * @return {Boolean}
    */
-  _IsSubscriberInterestedIn(
+  private _IsSubscriberInterestedIn(
     subscriber: Subscriber,
     eventPayload: EventPayload
   ) {
@@ -543,7 +543,7 @@ export class EventHub {
    * Handle Events.
    * @param  {Object} eventPayload   Event payload
    */
-  _handle(eventPayload: EventPayload) {
+  private _handle(eventPayload: EventPayload) {
     this.logger.debug("Event received", eventPayload);
 
     for (const subscriber of this._subscribers) {
@@ -577,7 +577,7 @@ export class EventHub {
    * Handle reply event.
    * @param  {Object} eventPayload  Event payload
    */
-  _handleReply(eventPayload: EventPayload) {
+  private _handleReply(eventPayload: EventPayload) {
     this.logger.debug("Reply received", eventPayload);
     const onReplyCallback = !eventPayload.inReplyToEvent
       ? null
