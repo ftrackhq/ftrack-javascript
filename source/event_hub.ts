@@ -1,15 +1,15 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-import io, { SocketIO } from "./socket.io-websocket-only.cjs";
-import { Event } from "./event";
+import * as io from "./socket.io-websocket-only.js";
+import { Event } from "./event.js";
 import {
   EventServerConnectionTimeoutError,
   EventServerReplyTimeoutError,
   EventServerPublishError,
   NotUniqueError,
-} from "./error";
-import { Data } from "./types";
+} from "./error.js";
+import { Data } from "./types.js";
 
 interface BaseActionData {
   selection: Array<{
@@ -132,7 +132,7 @@ export class EventHub {
   };
   private _unsentEvents: ConnectionCallback[];
   private _subscribers: Subscriber[];
-  private _socketIo: SocketIO | null;
+  private _socketIo: io.SocketIO | null;
 
   /**
    * Construct EventHub instance with API credentials.
