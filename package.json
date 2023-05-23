@@ -23,20 +23,20 @@
     "dist"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.0",
-    "@types/uuid": "^9.0.0",
-    "cross-fetch": "^3.1.5",
+    "@types/uuid": "^9.0.1",
+    "cross-fetch": "^3.1.6",
     "dayjs": "^1.11.7",
-    "eslint": "^8.33.0",
+    "eslint": "^8.41.0",
     "eslint-config-react-app": "^7.0.1",
-    "jsdom": "^21.1.0",
-    "lint-staged": "^13.1.0",
-    "msw": "^1.0.0",
-    "prettier": "^2.8.3",
+    "jsdom": "^22.0.0",
+    "lint-staged": "^13.2.2",
+    "msw": "^1.2.1",
+    "prettier": "^2.8.8",
     "typescript": "^5.0.4",
     "vite": "^4.3.8",
     "vite-plugin-dts": "^2.3.0",
-    "vitest": "^0.31.1"
+    "vitest": "^0.31.1",
+    "ws": "^8.13.0"
   },
   "repository": {
     "type": "git",
@@ -54,9 +54,18 @@
   },
   "homepage": "http://ftrack.com",
   "dependencies": {
+    "isomorphic-ws": "^5.0.0",
     "loglevel": "^1.8.1",
     "moment": "^2.29.4",
     "uuid": "^9.0.0"
+  },
+  "peerDependencies": {
+    "ws": "^8.13.0"
+  },
+  "peerDependenciesMeta": {
+    "ws": {
+      "optional": true
+    }
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
