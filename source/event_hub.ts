@@ -1,15 +1,15 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-import io from "./simple_socketio";
-import { Event } from "./event";
+import io from "./simple_socketio.js";
+import { Event } from "./event.js";
 import {
   EventServerConnectionTimeoutError,
   EventServerReplyTimeoutError,
   EventServerPublishError,
   NotUniqueError,
-} from "./error";
-import { Data } from "./types";
+} from "./error.js";
+import { Data } from "./types.js";
 
 interface BaseActionData {
   selection: Array<{
@@ -339,7 +339,7 @@ export class EventHub {
     return response;
   }
 
-  _removeReplyCallback(eventId: string) {
+  private _removeReplyCallback(eventId: string) {
     if (this._replyCallbacks[eventId]) {
       delete this._replyCallbacks[eventId];
     }
@@ -349,7 +349,7 @@ export class EventHub {
    * Run *callback* if event hub is connected to server.
    * @param  {Function} callback
    */
-  _runWhenConnected(callback: ConnectionCallback) {
+  private _runWhenConnected(callback: ConnectionCallback) {
     if (!this.isConnected()) {
       this.logger.debug("Event hub is not connected, event is delayed.");
       this._unsentEvents.push(callback);
@@ -368,9 +368,9 @@ export class EventHub {
   /**
    * Register to *subscription* events.
    *
-   * @param  {String}   subscription  Expression to subscribe on. Currently,
-   *                                  only "topic=value" expressions are
-   *                                  supported.
+   * @param  {String}   subscription  Expression to subscribe on. This can
+   *                                  be in the format of "topic=value" or
+   *                                  include a wildcard like "topic=ftrack.*".
    * @param  {Function} callback      Function to be called when an event
    *                                  matching the subscription is returned.
    * @param  {Object}   [metadata]    Optional information about subscriber.
@@ -381,6 +381,9 @@ export class EventHub {
     callback: EventCallback,
     metadata?: SubscriberMetadata
   ): string {
+    if (typeof callback !== "function") {
+      throw new Error("Callback must be a function.");
+    }
     const subscriber = this._addSubscriber(subscription, callback, metadata);
     this._notifyServerAboutSubscriber(subscriber);
     return subscriber.metadata.id;
@@ -415,7 +418,7 @@ export class EventHub {
    * @param  {String} subscription    expression
    * @return {String}                 topic
    */
-  _getExpressionTopic(subscription: string) {
+  private _getExpressionTopic(subscription: string) {
     // retreive the value of a topic on the format "topic=value"
     const regex = new RegExp("^topic[ ]?=[ '\"]?([\\w-,./*@+]+)['\"]?$");
     const matches = subscription.trim().match(regex);
@@ -438,7 +441,7 @@ export class EventHub {
    * @param {Object}   metadata       Optional information about subscriber.
    * @return {Object}                 subscriber information.
    */
-  _addSubscriber(
+  private _addSubscriber(
     subscription: string,
     callback: EventCallback,
     metadata: SubscriberMetadata = {
@@ -475,7 +478,7 @@ export class EventHub {
    * Notify server of new *subscriber*.
    * @param  {Object} subscriber      subscriber information
    */
-  _notifyServerAboutSubscriber(subscriber: Subscriber) {
+  private _notifyServerAboutSubscriber(subscriber: Subscriber) {
     const subscribeEvent = new Event("ftrack.meta.subscribe", {
       subscriber: subscriber.metadata,
       subscription: subscriber.subscription,
@@ -483,7 +486,7 @@ export class EventHub {
     this.publish(subscribeEvent);
   }
 
-  _notifyServerAboutUnsubscribe(subscriber: SubscriberMetadata) {
+  private _notifyServerAboutUnsubscribe(subscriber: SubscriberMetadata) {
     const unsubscribeEvent = new Event("ftrack.meta.unsubscribe", {
       subscriber,
     });
@@ -510,22 +513,31 @@ export class EventHub {
   /**
    * Return if *subscriber* is interested in *event*.
    *
-   * Only expressions on the format topic=value is supported.
-   *
-   * TODO: Support the full event expression format.
+   * Expressions on the format topic=value is supported, including wildcard support.
    *
    * @param  {Object} subscriber
    * @param  {Object} eventPayload
    * @return {Boolean}
    */
-  _IsSubscriberInterestedIn(
+  private _IsSubscriberInterestedIn(
     subscriber: Subscriber,
     eventPayload: EventPayload
   ) {
     const topic = this._getExpressionTopic(subscriber.subscription);
-    if (topic === eventPayload.topic) {
+
+    // Support for wildcard matching in topic.
+    if (topic.endsWith("*")) {
+      const baseTopic = topic.slice(0, -1); // remove the wildcard character
+      if (typeof eventPayload.topic !== "string") {
+        return false;
+      }
+      if (eventPayload.topic.startsWith(baseTopic)) {
+        return true;
+      }
+    } else if (topic === eventPayload.topic) {
       return true;
     }
+
     return false;
   }
 
@@ -533,7 +545,7 @@ export class EventHub {
    * Handle Events.
    * @param  {Object} eventPayload   Event payload
    */
-  _handle(eventPayload: EventPayload) {
+  private _handle(eventPayload: EventPayload) {
     this.logger.debug("Event received", eventPayload);
 
     for (const subscriber of this._subscribers) {
@@ -567,7 +579,7 @@ export class EventHub {
    * Handle reply event.
    * @param  {Object} eventPayload  Event payload
    */
-  _handleReply(eventPayload: EventPayload) {
+  private _handleReply(eventPayload: EventPayload) {
     this.logger.debug("Reply received", eventPayload);
     const onReplyCallback = !eventPayload.inReplyToEvent
       ? null

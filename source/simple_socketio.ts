@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2023 ftrack
 import WebSocket from "isomorphic-ws";
-import { Event } from "./event";
+import { Event } from "./event.js";
 export const PACKET_TYPES = {
   disconnect: "0",
   connect: "1",
