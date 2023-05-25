@@ -926,6 +926,8 @@ export class Session {
    * @param {?object} [options = {}] - Options
    * @param {?string} options.name - Component name. Defaults get from file object.
    * @param {?number} options.data - Component data. Defaults to {}.
+   * @param {XMLHttpRequest} options.xhr - Custom XHR object, deprecated in favor of options.signal.
+   * @param {AbortSignal} options.signal - Abort signal
    * @return {Promise} Promise resolved with the response when creating
    * Component and ComponentLocation.
    */
@@ -949,6 +951,12 @@ export class Session {
     const defaultProgress = (progress: number) => progress;
     const defaultAbort = () => {};
 
+    if (options.xhr) {
+      logger.warn(
+        "[session.createComponent] options.xhr is deprecated, use options.signal for aborting uploads."
+      );
+    }
+
     const data = options.data || {};
     const onProgress = options.onProgress || defaultProgress;
     const xhr = options.xhr || new XMLHttpRequest();
@@ -961,6 +969,10 @@ export class Session {
     const componentLocationId = uuidV4();
     let url: string;
     let headers: Record<string, string> = {};
+
+    options.signal?.addEventListener("abort", () => {
+      xhr.abort();
+    });
 
     const updateOnProgressCallback = (
       oEvent: ProgressEvent<XMLHttpRequestEventTarget>

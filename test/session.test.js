@@ -289,7 +289,7 @@ describe("Session", () => {
     });
   });
 
-  it("Should support abort of uploading file", async () => {
+  it("Should support abort of uploading file using xhr", async () => {
     const data = { foo: "bar" };
     const blob = new Blob([JSON.stringify(data)], {
       type: "application/json",
@@ -306,6 +306,30 @@ describe("Session", () => {
         name: "data.json",
         onProgress: () => {
           xhr.abort();
+        },
+        onAborted,
+      });
+    });
+    await expect(promise).resolves.toEqual(true);
+  });
+
+  it.only("Should support abort of uploading file using signal", async () => {
+    const data = { foo: "bar" };
+    const blob = new Blob([JSON.stringify(data)], {
+      type: "application/json",
+    });
+
+    const controller = new AbortController();
+    const promise = new Promise((resolve) => {
+      const onAborted = () => {
+        resolve(true);
+      };
+
+      session.createComponent(blob, {
+        signal: controller.signal,
+        name: "data.json",
+        onProgress: () => {
+          controller.abort();
         },
         onAborted,
       });
