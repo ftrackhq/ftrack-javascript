@@ -2,6 +2,7 @@ import { defineConfig, UserConfig } from "vite";
 import { InlineConfig } from "vitest";
 import path from "path";
 import dts from "vite-plugin-dts";
+import commonjs from "@rollup/plugin-commonjs";
 
 interface VitestConfigExport extends UserConfig {
   test: InlineConfig;
@@ -20,16 +21,16 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ["moment", "uuid", "loglevel", "isomorphic-ws"],
+      external: ["moment", "uuid", "loglevel"],
       output: {
         globals: {
           "ftrack-javascript-api": "ftrack",
           moment: "moment",
           uuid: "uuid",
           loglevel: "log",
-          "isomorphic-ws": "WebSocket",
         },
       },
+      plugins: [commonjs({ include: "./source/socket.io-websocket-only.js" })],
     },
   },
   plugins: [dts()],

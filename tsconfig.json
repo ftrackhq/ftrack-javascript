@@ -15,5 +15,6 @@
     "skipLibCheck": true,
     "allowJs": false
   },
-  "include": ["source"]
+  "include": ["source"],
+  "exclude": ["source/socket.io-websocket-only.js"]
 }
