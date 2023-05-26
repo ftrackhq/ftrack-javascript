@@ -37,30 +37,11 @@ import type {
   UpdateResponse,
 } from "./types";
 import { convertToIsoString } from "./util/convert_to_iso_string";
+import { splitFileExtension } from "./util/split_file_extension";
 
 const logger = loglevel.getLogger("ftrack_api");
 
 const ENCODE_DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
-
-/**
- * Create component from *file* and add to server location.
- *
- * @param  {fileName} The name of the file.
- * @return {array} Array with [basename, extension] from filename.
- */
-function splitFileExtension(fileName: string) {
-  let basename = fileName || "";
-  let extension =
-    fileName.slice((Math.max(0, fileName.lastIndexOf(".")) || Infinity) + 1) ||
-    "";
-
-  if (extension.length) {
-    extension = `.${extension}`;
-    basename = fileName.slice(0, -1 * extension.length) || "";
-  }
-
-  return [basename, extension];
-}
 
 /**
  * ftrack API session
