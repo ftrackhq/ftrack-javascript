@@ -489,11 +489,9 @@ describe("Session", () => {
   it("If configure_totp returns validation error, we expect it to throw ValidationError", async () => {
     const secret = "";
     const code = "";
-
     server.use(
       rest.post("http://ftrack.test/api", async (req, res, ctx) => {
         const payload = await req.json();
-        console.log("PAYLOAD", payload);
         if (payload[0].action === "configure_totp") {
           return res.once(
             ctx.json({
