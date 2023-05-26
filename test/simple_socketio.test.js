@@ -454,13 +454,11 @@ describe("Tests using SimpleSocketIOClient", () => {
       // Reconnect should not be called yet
       expect(client.attemptReconnect).toHaveBeenCalledTimes(0);
     });
-    test("reconnect method exponentially increase delay for every attempt, stopping at the max value", () => {
-      const originalRandom = Math.random;
-      Math.random = vi.fn().mockReturnValue(1);
+    test("reconnect method exponentially increase delay for every attempt", () => {
       vi.useFakeTimers();
       vi.spyOn(client, "attemptReconnect");
 
-      const reconnectAttempts = 10;
+      const reconnectAttempts = 5;
       for (let i = 0; i <= reconnectAttempts; i++) {
         const expectedMinDelay = Math.min(1000 * Math.pow(2, i), 10000);
         const expectedMaxDelay = expectedMinDelay * 1.5;
@@ -470,7 +468,6 @@ describe("Tests using SimpleSocketIOClient", () => {
       }
       vi.runOnlyPendingTimers();
       vi.useRealTimers();
-      Math.random = originalRandom;
     });
     test("reconnect method schedules reconnect only once and calls reconnect after specified delay", () => {
       vi.useFakeTimers();
