@@ -970,9 +970,11 @@ export class Session {
     let url: string;
     let headers: Record<string, string> = {};
 
-    options.signal?.addEventListener("abort", () => {
+    const handleAbortSignal = () => {
       xhr.abort();
-    });
+      options.signal?.removeEventListener("abort", handleAbortSignal);
+    };
+    options.signal?.addEventListener("abort", handleAbortSignal);
 
     const updateOnProgressCallback = (
       oEvent: ProgressEvent<XMLHttpRequestEventTarget>
