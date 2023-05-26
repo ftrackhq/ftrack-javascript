@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
-import { EventSource } from "./event_hub.js";
+
 /**
  * ftrack API Event class.
  */
@@ -11,7 +11,7 @@ export class Event {
     target: string;
     inReplyToEvent: string | null;
     id: string;
-    source?: EventSource;
+    source?: any;
   };
 
   /**
@@ -37,12 +37,12 @@ export class Event {
   }
 
   /** Return event data. */
-  getData() {
+  getData(): { [key: string]: any } {
     return this._data;
   }
 
   /** Add source to event data. */
-  addSource(source: EventSource): void {
+  addSource(source: any): void {
     this._data.source = source;
   }
 }
