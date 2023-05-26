@@ -1,12 +1,12 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-export * from "./event";
-export * from "./event_hub";
-export * from "./session";
-export * from "./types";
+export * from "./event.js";
+export * from "./event_hub.js";
+export * from "./session.js";
+export * from "./types.js";
 
-export * as error from "./error";
-export * as operation from "./operation";
-export * as projectSchema from "./project_schema";
+export * as error from "./error.js";
+export * as operation from "./operation.js";
+export * as projectSchema from "./project_schema.js";
 
-export { SERVER_LOCATION_ID } from "./constant";
+export { SERVER_LOCATION_ID } from "./constant.js";

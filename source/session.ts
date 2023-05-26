@@ -3,18 +3,18 @@ import moment from "moment";
 import loglevel from "loglevel";
 import { v4 as uuidV4 } from "uuid";
 
-import { EventHub } from "./event_hub";
-import * as operation from "./operation";
+import { EventHub } from "./event_hub.js";
+import * as operation from "./operation.js";
 import {
   ServerPermissionDeniedError,
   ServerValidationError,
   ServerError,
   AbortError,
   CreateComponentError,
-} from "./error";
-import { SERVER_LOCATION_ID } from "./constant";
+} from "./error.js";
+import { SERVER_LOCATION_ID } from "./constant.js";
 
-import normalizeString from "./util/normalize_string";
+import normalizeString from "./util/normalize_string.js";
 import type {
   ActionResponse,
   CallOptions,
@@ -35,8 +35,8 @@ import type {
   SearchResponse,
   SessionOptions,
   UpdateResponse,
-} from "./types";
-import { convertToIsoString } from "./util/convert_to_iso_string";
+} from "./types.js";
+import { convertToIsoString } from "./util/convert_to_iso_string.js";
 
 const logger = loglevel.getLogger("ftrack_api");
 
