@@ -313,7 +313,7 @@ describe("Session", () => {
     await expect(promise).resolves.toEqual(true);
   });
 
-  it.only("Should support abort of uploading file using signal", async () => {
+  it("Should support abort of uploading file using signal", async () => {
     const data = { foo: "bar" };
     const blob = new Blob([JSON.stringify(data)], {
       type: "application/json",
