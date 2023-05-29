@@ -2,9 +2,8 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "module": "ESNext",
+    "module": "NodeNext",
     "lib": ["ESNext", "DOM"],
-    "moduleResolution": "Node",
     "strict": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -17,5 +16,5 @@
     "allowJs": false
   },
   "include": ["source"],
-  "exclude": ["source/socket.io-websocket-only.cjs"]
+  "exclude": ["source/socket.io-websocket-only.js"]
 }

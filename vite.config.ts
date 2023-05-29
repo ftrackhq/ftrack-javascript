@@ -30,7 +30,7 @@ export default defineConfig({
           loglevel: "log",
         },
       },
-      plugins: [commonjs({ include: "./source/socket.io-websocket-only.cjs" })],
+      plugins: [commonjs({ include: "./source/socket.io-websocket-only.js" })],
     },
   },
   plugins: [dts()],
