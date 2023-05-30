@@ -915,13 +915,23 @@ export class Session {
   ): Promise<
     readonly [CreateResponse, CreateResponse, GetUploadMetadataResponse]
   > {
-    const uploader = new Uploader(this, file, options);
-    await uploader.upload();
+    return new Promise((resolve, reject) => {
+      const uploader = new Uploader(this, file, {
+        ...options,
+        onError(error) {
+          reject(error);
+        },
+        onComplete() {
+          // TODO: Deprecate createComponent response.
+          resolve([
+            uploader.createComponentResponse!,
+            uploader.createComponentLocationResponse!,
+            uploader.uploadMetadata!,
+          ]);
+        },
+      });
 
-    return [
-      uploader.createComponentResponse!,
-      uploader.createComponentLocationResponse!,
-      uploader.uploadMetadata!,
-    ];
+      uploader.start();
+    });
   }
 }
