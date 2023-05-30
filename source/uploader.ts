@@ -137,6 +137,7 @@ export class Uploader {
     options.signal?.addEventListener("abort", handleAbortSignal);
   }
 
+  /** Initiate upload. Promise is resolved once preflight is complete and upload started. */
   async start() {
     logger.debug("Upload starting", this.componentId);
     await this.uploadPreflight();
@@ -153,6 +154,7 @@ export class Uploader {
     }
   }
 
+  /** Create component entity and get upload metadata. */
   async uploadPreflight() {
     logger.debug("Registering component and fetching upload metadata.");
 
@@ -180,6 +182,7 @@ export class Uploader {
     this.uploadMetadata = response[1];
   }
 
+  /** Upload file using single-part upload. */
   async singlePartUpload({
     url,
     headers,
@@ -198,6 +201,7 @@ export class Uploader {
     }
   }
 
+  /** Handle progress event for single-part upload */
   handleSinglePartProgress(
     progressEvent: ProgressEvent<XMLHttpRequestEventTarget>
   ) {
@@ -211,6 +215,7 @@ export class Uploader {
     }
   }
 
+  /** Recursively upload next chunk for multi-part upload. Calls complete upload when done. */
   uploadNextChunk(retry = 0) {
     const activeConnections = Object.keys(this.activeConnections).length;
 
@@ -269,6 +274,7 @@ export class Uploader {
     }
   }
 
+  /** Upload *chunk* for *part*. Call *onUploadChunkStart* when started. */
   uploadChunk(
     chunk: Blob,
     part: MultiPartUploadPart,
@@ -290,6 +296,7 @@ export class Uploader {
     });
   }
 
+  /** Handle progress event for multi-part *partNumber*. */
   handleChunkProgress(partNumber: number, event: ProgressEvent) {
     if (this.file) {
       if (
@@ -320,6 +327,7 @@ export class Uploader {
     }
   }
 
+  /** Upload chunk for multi-part upload. */
   uploadFileChunk(
     file: Blob,
     part: MultiPartUploadPart,
@@ -362,7 +370,10 @@ export class Uploader {
         xhr.onreadystatechange = () => {
           if (xhr.readyState === 4 && xhr.status === 200) {
             const eTag = xhr.getResponseHeader("ETag");
-            logger.debug(`Upload of part ${part.part_number} / ${this.numParts} complete`, eTag);
+            logger.debug(
+              `Upload of part ${part.part_number} / ${this.numParts} complete`,
+              eTag
+            );
             if (eTag) {
               const uploadedPart = {
                 part_number: part.part_number,
@@ -397,6 +408,7 @@ export class Uploader {
     });
   }
 
+  /** Single-part upload of file. */
   async uploadFile({
     url,
     headers,
@@ -450,6 +462,7 @@ export class Uploader {
     await promise;
   }
 
+  /** Complete upload, register component in server location and publish ftrack.location.component-added. Calls onComplete when done.  */
   async completeUpload() {
     logger.debug("Completing upload");
     const operations = [];
@@ -496,6 +509,7 @@ export class Uploader {
     }
   }
 
+  /** Abort upload request(s) */
   abort() {
     if (this.xhr) {
       this.xhr.abort();
@@ -508,6 +522,7 @@ export class Uploader {
       });
   }
 
+  /** Clean-up failed uploads by deleting `FileComponent`. */
   async cleanup() {
     await this.session.delete("FileComponent", [this.componentId]);
   }
