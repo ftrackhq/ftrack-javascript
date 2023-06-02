@@ -516,6 +516,36 @@ describe("Session", () => {
         content: "foo",
       })
     ).toBeInstanceOf(ServerError);
+    expect(
+      session.getErrorFromResponse({
+        exception: "MalformedResponseError",
+        content: "foo",
+      })
+    ).toBeInstanceOf(ServerError);
+  });
+  it("If configure_totp returns validation error, we expect it to throw ValidationError", async () => {
+    const secret = "";
+    const code = "";
+    server.use(
+      rest.post("http://ftrack.test/api", async (req, res, ctx) => {
+        const payload = await req.json();
+        if (payload[0].action === "configure_totp") {
+          return res.once(
+            ctx.json({
+              content: "Code must be provided to enable totp.",
+              exception: "ValidationError",
+              error_code: null,
+            })
+          );
+        }
+      })
+    );
+
+    await expect(() =>
+      session.call([{ action: "configure_totp", secret, code }], {
+        decodeDatesAsIso: true,
+      })
+    ).rejects.toThrowError("Code must be provided to enable totp.");
   });
 });
 

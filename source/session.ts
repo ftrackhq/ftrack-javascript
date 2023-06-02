@@ -549,29 +549,25 @@ export class Session {
       if (response.exception) {
         throw this.getErrorFromResponse(response);
       }
-
-      return this.decode(response, {}, decodeDatesAsIso);
-    } catch (reason) {
-      logger.warn("Failed to perform request. ", reason);
-
-      if (reason instanceof Error) {
-        if (reason.name === "AbortError") {
-          throw this.getErrorFromResponse({
-            exception: "AbortError",
-            content: reason.message,
-          });
-        }
-
+      try {
+        return this.decode(response, {}, decodeDatesAsIso);
+      } catch (reason) {
         logger.warn("Server reported error in unexpected format. ", reason);
         throw this.getErrorFromResponse({
           exception: "MalformedResponseError",
-          content: reason.message,
-          error: reason,
+          content: "Response is malformed",
         });
       }
+    } catch (reason) {
+      logger.warn("Failed to perform request. ", reason);
+      if (reason instanceof Error && reason.name === "AbortError") {
+        throw this.getErrorFromResponse({
+          exception: "AbortError",
+          content: reason.message,
+        });
+      }
+      throw reason;
     }
-
-    throw new Error("Unknown error");
   }
 
   /**
