@@ -16,11 +16,9 @@ import normalizeString from "./util/normalize_string.js";
 import { splitFileExtension } from "./util/split_file_extension.js";
 import type { Data } from "./types.js";
 import { getChunkSize } from "./util/get_chunk_size.js";
+import { backOff } from "./util/back_off.js";
 
 const logger = loglevel.getLogger("ftrack_api");
-
-const wait = (milliseconds: number) =>
-  new Promise((fn: (args: void) => void) => setTimeout(fn, milliseconds));
 
 interface UploaderOptions extends CreateComponentOptions {
   onError?: (error: Error) => unknown;
@@ -216,9 +214,8 @@ export class Uploader {
   }
 
   /** Recursively upload next chunk for multi-part upload. Calls complete upload when done. */
-  uploadNextChunk(retry = 0) {
+  async uploadNextChunk() {
     const activeConnections = Object.keys(this.activeConnections).length;
-
     if (activeConnections >= this.maxConcurrentConnections) {
       return;
     }
@@ -227,50 +224,35 @@ export class Uploader {
       if (!activeConnections) {
         this.completeUpload();
       }
-
       return;
     }
 
     const part = this.parts.pop();
-    if (this.file && part) {
-      const sentSize = (part.part_number - 1) * this.chunkSize;
-      const chunk = this.file.slice(sentSize, sentSize + this.chunkSize);
+    if (!this.file || !part) {
+      return;
+    }
 
+    const sentSize = (part.part_number - 1) * this.chunkSize;
+    const chunk = this.file.slice(sentSize, sentSize + this.chunkSize);
+    try {
       const onUploadChunkStart = () => {
         this.uploadNextChunk();
       };
-
-      this.uploadChunk(chunk, part, onUploadChunkStart)
-        .then(() => {
-          this.uploadNextChunk();
-        })
-        .catch((error) => {
-          if (retry <= 6) {
-            retry++;
-
-            // Exponential back-off retry before giving up
-            logger.warn(
-              `Part#${part.part_number} failed to upload, backing off ${
-                2 ** retry * 100
-              } before retrying...`
-            );
-            wait(2 ** retry * 100).then(() => {
-              this.parts.push(part);
-              this.uploadNextChunk(retry);
-            });
-          } else {
-            logger.error(
-              `Part#${part.part_number} failed to upload, giving up`
-            );
-            const handleError = () => {
-              if (this.onError) {
-                this.onError(error);
-              }
-            };
-            this.abort();
-            this.cleanup().then(handleError, handleError);
-          }
-        });
+      await backOff(async () => {
+        await this.uploadChunk(chunk, part, onUploadChunkStart);
+        this.uploadNextChunk();
+      });
+    } catch (error) {
+      logger.error(`Part #${part.part_number} failed to upload`);
+      try {
+        this.abort();
+        await this.cleanup();
+      } catch (cleanupError) {
+        logger.error("Clean up failed", cleanupError);
+      }
+      if (this.onError) {
+        this.onError(error as Error);
+      }
     }
   }
 
@@ -504,6 +486,7 @@ export class Uploader {
       );
     }
 
+    logger.debug("Upload complete");
     if (this.onComplete) {
       this.onComplete(this.componentId);
     }
@@ -511,6 +494,7 @@ export class Uploader {
 
   /** Abort upload request(s) */
   abort() {
+    logger.debug("Aborting upload", this.componentId)
     if (this.xhr) {
       this.xhr.abort();
     }
@@ -524,6 +508,8 @@ export class Uploader {
 
   /** Clean-up failed uploads by deleting `FileComponent`. */
   async cleanup() {
+    logger.debug("Cleaning up", this.componentId);
     await this.session.delete("FileComponent", [this.componentId]);
+    logger.debug("Clean up complete");
   }
 }

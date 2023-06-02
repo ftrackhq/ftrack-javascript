@@ -2,9 +2,11 @@
 import loglevel from "loglevel";
 const logger = loglevel.getLogger("ftrack_api");
 
-const wait = async (ms: number) =>
+const sleep = async (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+
+/** Allows retrying a function *request*, with an exponential delay between attempts */
 export async function backOff<T>(
   request: () => Promise<T>,
   /** Maximum number of attempts to attempt before giving up */
@@ -35,8 +37,7 @@ export async function backOff<T>(
           delayMs / 1000
         )} seconds...`
       );
-      // eslint-disable-next-line no-loop-func
-      await wait(delayMs + delayFuzzMs);
+      await sleep(delayMs + delayFuzzMs);
     }
   }
   throw new Error("Something went wrong");
