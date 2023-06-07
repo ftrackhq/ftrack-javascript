@@ -4,6 +4,7 @@ import fs from "fs/promises";
 import querySchemas from "./fixtures/query_schemas.json";
 import queryServerInformation from "./fixtures/query_server_information.json";
 import getUploadMetadata from "./fixtures/get_upload_metadata.json";
+import completeMultipartUpload from "./fixtures/complete_multipart_upload.json";
 import exampleQuery from "./fixtures/query_select_name_from_task_limit_1.json";
 import { setupServer } from "msw/node";
 
@@ -101,7 +102,8 @@ export const handlers = [
               );
             case "get_upload_metadata":
               return getUploadMetadata;
-
+            case "complete_multipart_upload":
+              return completeMultipartUpload;
             default:
               throw new Error("Action not supported by test server.");
           }
