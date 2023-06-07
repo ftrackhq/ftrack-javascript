@@ -24,6 +24,25 @@ interface UploaderOptions extends CreateComponentOptions {
   onError?: (error: Error) => unknown;
   onComplete?: (componentId: string) => unknown;
 }
+
+/**
+ * Uploader - Creates components in the ftrack.server location, uploading file
+ * data in single or multiple parts.
+ *
+ * Usage:
+ *    const uploader = new Uploader(session, file, { onError, onComplete });
+ *    uploader.start();
+ *
+ * Uploads are done in the following phases:
+ *
+ * 1. Preflight - A component is created and upload metadata is fetched using
+ *    the Session. The response indicates if it is a single-part or multi-part
+ *    upload.
+ * 2. Data transfer - Data is transferred, either as a single part or in
+ *    multiple *chunkSize* sized parts.
+ * 3. Completion - Multi-part uploads are completed, the component is
+ *    registered in the server location and an event is published.
+ */
 export class Uploader {
   /** Component id */
   componentId: string;
