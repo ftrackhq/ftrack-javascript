@@ -257,25 +257,23 @@ export class Uploader {
   }
 
   /** Upload *chunk* for *part*. Call *onUploadChunkStart* when started. */
-  uploadChunk(
+  async uploadChunk(
     chunk: Blob,
     part: MultiPartUploadPart,
     onUploadChunkStart: () => void
-  ) {
-    return new Promise<void>((resolve, reject) => {
-      this.uploadFileChunk(chunk, part, onUploadChunkStart)
-        .then((status) => {
-          if (status !== 200) {
-            reject(new Error("Failed chunk upload"));
-            return;
-          }
-
-          resolve();
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+  ): Promise<void> {
+    try {
+      const status = await this.uploadFileChunk(
+        chunk,
+        part,
+        onUploadChunkStart
+      );
+      if (status !== 200) {
+        throw new Error("Failed chunk upload");
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 
   /** Handle progress event for multi-part *partNumber*. */
@@ -302,7 +300,7 @@ export class Uploader {
 
       const total = this.fileSize;
 
-      const percentage = Math.round((sent / total) * 100);
+      const percentage = Math.floor((sent / total) * 100);
       if (this.onProgress) {
         this.onProgress(percentage);
       }
@@ -310,25 +308,26 @@ export class Uploader {
   }
 
   /** Upload chunk for multi-part upload. */
-  uploadFileChunk(
+  async uploadFileChunk(
     file: Blob,
     part: MultiPartUploadPart,
     onUploadChunkStart: () => void
-  ) {
-    // uploading each part with its pre-signed URL
-    return new Promise((resolve, reject) => {
+  ): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
       const throwXHRError = (
         error: Error,
         part: MultiPartUploadPart,
-        abortFx?: any
+        abortFn?: any
       ) => {
         delete this.activeConnections[part.part_number - 1];
         reject(error);
-        window.removeEventListener("offline", abortFx);
+        window.removeEventListener("offline", abortFn);
       };
+
       if (true) {
         if (!window.navigator.onLine) {
           reject(new Error("System is offline"));
+          return;
         }
 
         const xhr = (this.activeConnections[part.part_number - 1] =
@@ -342,13 +341,13 @@ export class Uploader {
         );
 
         xhr.upload.addEventListener("progress", progressListener);
-
         xhr.addEventListener("error", progressListener);
         xhr.addEventListener("abort", progressListener);
         xhr.addEventListener("loadend", progressListener);
 
         xhr.open("PUT", part.signed_url);
         const abortXHR = () => xhr.abort();
+
         xhr.onreadystatechange = () => {
           if (xhr.readyState === 4 && xhr.status === 200) {
             const eTag = xhr.getResponseHeader("ETag");
@@ -494,7 +493,7 @@ export class Uploader {
 
   /** Abort upload request(s) */
   abort() {
-    logger.debug("Aborting upload", this.componentId)
+    logger.debug("Aborting upload", this.componentId);
     if (this.xhr) {
       this.xhr.abort();
     }

@@ -5,7 +5,6 @@ const logger = loglevel.getLogger("ftrack_api");
 const sleep = async (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-
 /** Allows retrying a function *request*, with an exponential delay between attempts */
 export async function backOff<T>(
   request: () => Promise<T>,
