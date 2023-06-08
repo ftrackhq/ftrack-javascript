@@ -488,11 +488,7 @@ export class Uploader {
       operations.push({
         action: "complete_multipart_upload",
         upload_id: this.uploadId,
-        // TODO: Remove map once API is snake_case
-        parts: this.uploadedParts.map((item) => ({
-          ETag: item.e_tag,
-          PartNumber: item.part_number,
-        })),
+        parts: this.uploadedParts,
         component_id: this.componentId,
       });
     }
