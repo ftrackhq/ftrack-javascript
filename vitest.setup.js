@@ -13,7 +13,7 @@ class MockXmlHttpRequest extends EventTarget {
   }
   abort() {
     this.aborted = true;
-    this.dispatchEvent(new Event("abort"))
+    this.dispatchEvent(new Event("abort"));
     this.onabort();
   }
   setRequestHeader() {}
@@ -26,7 +26,6 @@ class MockXmlHttpRequest extends EventTarget {
   readyState = 4;
   status = 200;
 }
-
 
 beforeAll(() => {
   server.listen({ onUnhandledRequest: "error" });

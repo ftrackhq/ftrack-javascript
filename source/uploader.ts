@@ -458,6 +458,9 @@ export class Uploader {
       );
       this.xhr.open("PUT", url, true);
       this.xhr.onabort = async () => {
+        if (this.onAborted) {
+          this.onAborted();
+        }
         await this.cleanup();
         reject(
           new CreateComponentError("Upload aborted by client", "UPLOAD_ABORTED")
@@ -546,7 +549,7 @@ export class Uploader {
       this.activeConnections[id].abort();
     });
 
-    if ((this.xhr || connections.length) && this.onAborted) {
+    if (connections.length && this.onAborted) {
       this.onAborted();
     }
   }
