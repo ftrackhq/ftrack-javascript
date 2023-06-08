@@ -208,8 +208,10 @@ export class Uploader {
     headers: Record<string, string>;
   }) {
     try {
-      await this.uploadFile({ url, headers });
-      await this.completeUpload();
+      await backOff(async () => {
+        await this.uploadFile({ url, headers });
+        await this.completeUpload();
+      });
       logger.debug("Upload complete", this.componentId);
     } catch (error) {
       if (this.onError) {
@@ -531,15 +533,13 @@ export class Uploader {
       this.xhr.abort();
     }
 
-    const connections = Object.keys(this.activeConnections).map(
-      Number
-    );
+    const connections = Object.keys(this.activeConnections).map(Number);
 
     connections.forEach((id) => {
       this.activeConnections[id].abort();
     });
 
-    if ((this.xhr || connections.length) && this.onAborted) {
+    if ((this.xhr || connections.length) && this.onAborted) {
       this.onAborted();
     }
   }
