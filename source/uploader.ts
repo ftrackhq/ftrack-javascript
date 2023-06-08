@@ -25,6 +25,13 @@ interface UploaderOptions extends CreateComponentOptions {
   onComplete?: (componentId: string) => unknown;
 }
 
+declare global {
+  interface Window {
+    FTRACK_UPLOAD_MAX_CONNECTIONS?: number;
+    FTRACK_UPLOAD_CHUNK_SIZE?: number;
+  }
+}
+
 /**
  * Uploader - Creates components in the ftrack.server location, uploading file
  * data in single or multiple parts.
@@ -123,8 +130,12 @@ export class Uploader {
 
     this.componentId = this.data.id || uuidV4();
 
-    this.maxConcurrentConnections = 6;
-    this.chunkSize = getChunkSize(this.fileSize);
+    this.maxConcurrentConnections =
+      (typeof window !== "undefined" && window.FTRACK_UPLOAD_MAX_CONNECTIONS) ||
+      6;
+    this.chunkSize =
+      (typeof window !== "undefined" && window.FTRACK_UPLOAD_CHUNK_SIZE) ||
+      getChunkSize(this.fileSize);
     this.numParts = Math.ceil(this.fileSize / this.chunkSize);
     if (this.numParts <= 2) {
       this.numParts = null;
