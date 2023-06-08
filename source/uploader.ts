@@ -91,7 +91,8 @@ export class Uploader {
   private uploadedSize: number;
   /** Number of bytes uploads */
   private progressCache: Record<number, number>;
-
+  /** If upload request has been aborted */
+  private aborted: boolean;
   /** Number of milliseconds a request can take before automatically being terminated. The default value is 0, which means there is no timeout. */
   private timeout: number;
   /** Additional data for Component entity */
@@ -153,6 +154,7 @@ export class Uploader {
     this.uploadedSize = 0;
     this.progressCache = {};
     this.timeout = 0;
+    this.aborted = false;
 
     this.createComponentResponse = null;
     this.uploadMetadata = null;
@@ -220,8 +222,10 @@ export class Uploader {
   }) {
     try {
       await backOff(async () => {
-        await this.uploadFile({ url, headers });
-        await this.completeUpload();
+        if (!this.aborted) {
+          await this.uploadFile({ url, headers });
+          await this.completeUpload();
+        }
       });
       logger.debug("Upload complete", this.componentId);
     } catch (error) {
@@ -271,8 +275,10 @@ export class Uploader {
         this.uploadNextChunk();
       };
       await backOff(async () => {
-        await this.uploadChunk(chunk, part, onUploadChunkStart);
-        this.uploadNextChunk();
+        if (!this.aborted) {
+          await this.uploadChunk(chunk, part, onUploadChunkStart);
+          this.uploadNextChunk();
+        }
       });
     } catch (error) {
       logger.error(`Part #${part.part_number} failed to upload`);
@@ -538,6 +544,7 @@ export class Uploader {
 
   /** Abort upload request(s) */
   abort() {
+    this.aborted = true;
     logger.debug("Aborting upload", this.componentId);
     if (this.xhr) {
       this.xhr.abort();
