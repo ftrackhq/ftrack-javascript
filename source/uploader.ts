@@ -288,7 +288,7 @@ export class Uploader {
         onUploadChunkStart
       );
       if (status !== 200) {
-        throw new Error("Failed chunk upload");
+        throw new CreateComponentError(`Failed to upload file part: ${status}`);
       }
     } catch (error) {
       throw error;
@@ -343,68 +343,87 @@ export class Uploader {
         window.removeEventListener("offline", abortFn);
       };
 
-      if (true) {
-        if (!window.navigator.onLine) {
-          reject(new Error("System is offline"));
-          return;
-        }
-
-        const xhr = (this.activeConnections[part.part_number - 1] =
-          new XMLHttpRequest());
-        xhr.timeout = this.timeout;
-        onUploadChunkStart();
-
-        const progressListener = this.handleChunkProgress.bind(
-          this,
-          part.part_number - 1
+      if (!window.navigator.onLine) {
+        reject(
+          new CreateComponentError(
+            "Failed to upload, network is offline",
+            "UPLOAD_FAILED_OFFLINE"
+          )
         );
-
-        xhr.upload.addEventListener("progress", progressListener);
-        xhr.addEventListener("error", progressListener);
-        xhr.addEventListener("abort", progressListener);
-        xhr.addEventListener("loadend", progressListener);
-
-        xhr.open("PUT", part.signed_url);
-        const abortXHR = () => xhr.abort();
-
-        xhr.onreadystatechange = () => {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-            const eTag = xhr.getResponseHeader("ETag");
-            logger.debug(
-              `Upload of part ${part.part_number} / ${this.numParts} complete`,
-              eTag
-            );
-            if (eTag) {
-              const uploadedPart = {
-                part_number: part.part_number,
-                e_tag: eTag.replaceAll('"', ""),
-              };
-
-              this.uploadedParts.push(uploadedPart);
-
-              resolve(xhr.status);
-              delete this.activeConnections[part.part_number - 1];
-              window.removeEventListener("offline", abortXHR);
-            }
-          }
-        };
-
-        xhr.onerror = () => {
-          throwXHRError(new Error("Upload chunk error"), part, abortXHR);
-        };
-        xhr.ontimeout = () => {
-          throwXHRError(
-            new Error("Upload chunk timeout timeout"),
-            part,
-            abortXHR
-          );
-        };
-        xhr.onabort = () => {
-          throwXHRError(new Error("Upload canceled by user or system"), part);
-        };
-        window.addEventListener("offline", abortXHR);
-        xhr.send(file);
+        return;
       }
+
+      const xhr = (this.activeConnections[part.part_number - 1] =
+        new XMLHttpRequest());
+      xhr.timeout = this.timeout;
+      onUploadChunkStart();
+
+      const progressListener = this.handleChunkProgress.bind(
+        this,
+        part.part_number - 1
+      );
+
+      xhr.upload.addEventListener("progress", progressListener);
+      xhr.addEventListener("error", progressListener);
+      xhr.addEventListener("abort", progressListener);
+      xhr.addEventListener("loadend", progressListener);
+
+      xhr.open("PUT", part.signed_url);
+      const abortXHR = () => xhr.abort();
+
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          const eTag = xhr.getResponseHeader("ETag");
+          logger.debug(
+            `Upload of part ${part.part_number} / ${this.numParts} complete`,
+            eTag
+          );
+          if (eTag) {
+            const uploadedPart = {
+              part_number: part.part_number,
+              e_tag: eTag.replaceAll('"', ""),
+            };
+
+            this.uploadedParts.push(uploadedPart);
+
+            resolve(xhr.status);
+            delete this.activeConnections[part.part_number - 1];
+            window.removeEventListener("offline", abortXHR);
+          }
+        }
+      };
+
+      xhr.onerror = () => {
+        throwXHRError(
+          new CreateComponentError(
+            "Failed to upload file part",
+            "UPLOAD_PART_FAILED"
+          ),
+          part,
+          abortXHR
+        );
+      };
+      xhr.ontimeout = () => {
+        throwXHRError(
+          new CreateComponentError(
+            "Failed to upload file part within timeout",
+            "UPLOAD_PART_TIMEOUT"
+          ),
+          part,
+          abortXHR
+        );
+      };
+      xhr.onabort = () => {
+        throwXHRError(
+          new CreateComponentError(
+            "Upload aborted by client",
+            "UPLOAD_ABORTED"
+          ),
+          part
+        );
+      };
+      window.addEventListener("offline", abortXHR);
+      xhr.send(file);
     });
   }
 
@@ -418,7 +437,7 @@ export class Uploader {
   }) {
     logger.debug(`Uploading file to: ${url}`);
 
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       this.xhr = this.xhr ?? new XMLHttpRequest();
       this.xhr.upload.addEventListener(
         "progress",
@@ -426,9 +445,6 @@ export class Uploader {
       );
       this.xhr.open("PUT", url, true);
       this.xhr.onabort = async () => {
-        if (this.onAborted) {
-          this.onAborted();
-        }
         await this.cleanup();
         reject(
           new CreateComponentError("Upload aborted by client", "UPLOAD_ABORTED")
@@ -458,8 +474,6 @@ export class Uploader {
       }
       this.xhr.send(this.file);
     });
-
-    await promise;
   }
 
   /** Complete upload, register component in server location and publish ftrack.location.component-added. Calls onComplete when done.  */
@@ -517,11 +531,17 @@ export class Uploader {
       this.xhr.abort();
     }
 
-    Object.keys(this.activeConnections)
-      .map(Number)
-      .forEach((id) => {
-        this.activeConnections[id].abort();
-      });
+    const connections = Object.keys(this.activeConnections).map(
+      Number
+    );
+
+    connections.forEach((id) => {
+      this.activeConnections[id].abort();
+    });
+
+    if ((this.xhr || connections.length) && this.onAborted) {
+      this.onAborted();
+    }
   }
 
   /** Clean-up failed uploads by deleting `FileComponent`. */

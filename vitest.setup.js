@@ -6,10 +6,14 @@ class MockXmlHttpRequest extends EventTarget {
   open() {}
   send(file) {
     this.upload.dispatchEvent(new Event("progress"));
-    this.onreadystatechange?.();
-    this.onload?.(file);
+    if (!this.aborted) {
+      this.onreadystatechange?.();
+      this.onload?.(file);
+    }
   }
   abort() {
+    this.aborted = true;
+    this.dispatchEvent(new Event("abort"))
     this.onabort();
   }
   setRequestHeader() {}
@@ -17,6 +21,7 @@ class MockXmlHttpRequest extends EventTarget {
     return header;
   }
   upload = new EventTarget();
+  aborted = false;
   timeout = 0;
   readyState = 4;
   status = 200;
