@@ -1,1 +1,5 @@
-"http://ftrack.test/file-url"
+{
+  "action": "complete_multipart_upload",
+  "component_id": "78e388a0-5752-48fe-a4e0-944d7cdfce2c",
+  "url": "http://ftrack.test/file-url"
+}
