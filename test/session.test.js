@@ -278,6 +278,19 @@ describe("Session", () => {
     expect(response[0].data.name).toEqual("data");
   });
 
+  it("Should return ComponentLocation and metadata when uploading files", async () => {
+    const data = { foo: "bar" };
+    const file = new File([JSON.stringify(data)], "data.json", {
+      type: "application/json",
+    });
+
+    const response = await session.createComponent(file);
+    expect(response[0].data.__entity_type__).toEqual("FileComponent");
+    expect(response[1].data.__entity_type__).toEqual("ComponentLocation");
+    expect(response[2].url).toBeDefined();
+    expect(response[2].headers).toBeDefined();
+  });
+
   it("Should support uploading blob", () => {
     const data = { foo: "bar" };
     const blob = new Blob([JSON.stringify(data)], {

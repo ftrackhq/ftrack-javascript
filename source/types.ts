@@ -107,11 +107,26 @@ export interface DelayedJobResponse {
 export interface EncodeMediaResponse {
   job_id: string;
 }
-export interface GetUploadMetadataResponse {
+
+export interface SinglePartGetUploadMetadataResponse {
   url: string;
-  component_id?: string;
+  component_id: string;
   headers: Data;
 }
+
+export interface MultiPartUploadPart {
+  signed_url: string;
+  part_number: number;
+}
+export interface MultiPartGetUploadMetadataResponse {
+  component_id: string;
+  urls: MultiPartUploadPart[];
+  upload_id: string;
+}
+
+export type GetUploadMetadataResponse =
+  | SinglePartGetUploadMetadataResponse
+  | MultiPartGetUploadMetadataResponse;
 
 export interface SendReviewSessionInviteResponse {
   sent: true;

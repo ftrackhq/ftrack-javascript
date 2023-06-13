@@ -2,17 +2,29 @@ import { fetch } from "cross-fetch";
 import { server } from "./test/server";
 
 // Very simple mock of XmlHttpRequest with only the parts we use
-class MockXmlHttpRequest {
+class MockXmlHttpRequest extends EventTarget {
   open() {}
-  send() {
+  send(file) {
     this.upload.dispatchEvent(new Event("progress"));
-    this.onload();
+    if (!this.aborted) {
+      this.onreadystatechange?.();
+      this.onload?.(file);
+    }
   }
   abort() {
+    this.aborted = true;
+    this.dispatchEvent(new Event("abort"));
     this.onabort();
   }
   setRequestHeader() {}
+  getResponseHeader(header) {
+    return header;
+  }
   upload = new EventTarget();
+  aborted = false;
+  timeout = 0;
+  readyState = 4;
+  status = 200;
 }
 
 beforeAll(() => {

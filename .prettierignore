@@ -3,4 +3,5 @@ coverage/
 build/
 dist/
 .eggs/
+.yarn/
 renovate.json

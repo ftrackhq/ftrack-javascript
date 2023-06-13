@@ -10,11 +10,8 @@ import {
   ServerValidationError,
   ServerError,
   AbortError,
-  CreateComponentError,
 } from "./error.js";
-import { SERVER_LOCATION_ID } from "./constant.js";
 
-import normalizeString from "./util/normalize_string.js";
 import type {
   ActionResponse,
   CallOptions,
@@ -37,30 +34,11 @@ import type {
   UpdateResponse,
 } from "./types.js";
 import { convertToIsoString } from "./util/convert_to_iso_string.js";
+import { Uploader } from "./uploader.js";
 
 const logger = loglevel.getLogger("ftrack_api");
 
 const ENCODE_DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
-
-/**
- * Create component from *file* and add to server location.
- *
- * @param  {fileName} The name of the file.
- * @return {array} Array with [basename, extension] from filename.
- */
-function splitFileExtension(fileName: string) {
-  let basename = fileName || "";
-  let extension =
-    fileName.slice((Math.max(0, fileName.lastIndexOf(".")) || Infinity) + 1) ||
-    "";
-
-  if (extension.length) {
-    extension = `.${extension}`;
-    basename = fileName.slice(0, -1 * extension.length) || "";
-  }
-
-  return [basename, extension];
-}
 
 /**
  * ftrack API session
@@ -927,136 +905,29 @@ export class Session {
    * @return {Promise} Promise resolved with the response when creating
    * Component and ComponentLocation.
    */
-  createComponent<T extends Data = Data>(
+  async createComponent(
     file: Blob,
     options: CreateComponentOptions = {}
   ): Promise<
-    [CreateResponse<T>, CreateResponse<T>, GetUploadMetadataResponse]
+    readonly [CreateResponse, CreateResponse, GetUploadMetadataResponse]
   > {
-    const componentName = options.name ?? (file as File).name;
+    return new Promise((resolve, reject) => {
+      const uploader = new Uploader(this, file, {
+        ...options,
+        onError(error) {
+          reject(error);
+        },
+        onComplete() {
+          // TODO: Deprecate createComponent response.
+          resolve([
+            uploader.createComponentResponse!,
+            uploader.createComponentLocationResponse!,
+            uploader.uploadMetadata!,
+          ]);
+        },
+      });
 
-    let normalizedFileName;
-    if (componentName) {
-      normalizedFileName = normalizeString(componentName);
-    }
-
-    if (!normalizedFileName) {
-      throw new CreateComponentError("Component name is missing.");
-    }
-    const fileNameParts = splitFileExtension(normalizedFileName);
-    const defaultProgress = (progress: number) => progress;
-    const defaultAbort = () => {};
-
-    if (options.xhr) {
-      logger.warn(
-        "[session.createComponent] options.xhr is deprecated, use options.signal for aborting uploads."
-      );
-    }
-
-    const data = options.data || {};
-    const onProgress = options.onProgress || defaultProgress;
-    const xhr = options.xhr || new XMLHttpRequest();
-    const onAborted = options.onAborted || defaultAbort;
-
-    const fileType = data.file_type || fileNameParts[1];
-    const fileName = data.name || fileNameParts[0];
-    const fileSize = data.size || file.size;
-    const componentId = data.id || uuidV4();
-    const componentLocationId = uuidV4();
-    let url: string;
-    let headers: Record<string, string> = {};
-
-    const handleAbortSignal = () => {
-      xhr.abort();
-      options.signal?.removeEventListener("abort", handleAbortSignal);
-    };
-    options.signal?.addEventListener("abort", handleAbortSignal);
-
-    const updateOnProgressCallback = (
-      oEvent: ProgressEvent<XMLHttpRequestEventTarget>
-    ) => {
-      let progress = 0;
-
-      if (oEvent.lengthComputable) {
-        progress = Math.floor((oEvent.loaded / oEvent.total) * 100);
-      }
-
-      onProgress(progress);
-    };
-
-    logger.debug("Registering component and fetching upload metadata.");
-
-    const component = Object.assign(data, {
-      id: componentId,
-      name: fileName,
-      file_type: fileType,
-      size: fileSize,
-    });
-    const componentLocation = {
-      id: componentLocationId,
-      component_id: componentId,
-      resource_identifier: componentId,
-      location_id: SERVER_LOCATION_ID,
-    };
-
-    const componentAndLocationPromise = this.call<
-      [CreateResponse<T>, CreateResponse<T>, GetUploadMetadataResponse]
-    >([
-      operation.create("FileComponent", component),
-      operation.create("ComponentLocation", componentLocation),
-      {
-        action: "get_upload_metadata",
-        file_name: `${fileName}${fileType}`,
-        file_size: fileSize,
-        component_id: componentId,
-      },
-    ]).then((response) => {
-      url = response[2].url;
-      headers = response[2].headers;
-      return response;
-    });
-
-    return componentAndLocationPromise.then(() => {
-      logger.debug(`Uploading file to: ${url}`);
-
-      return new Promise((resolve, reject) => {
-        // wait until file is uploaded
-        xhr.upload.addEventListener("progress", updateOnProgressCallback);
-        xhr.open("PUT", url, true);
-        xhr.onabort = () => {
-          onAborted();
-          this.delete("FileComponent", [componentId]).then(() => {
-            reject(
-              new CreateComponentError(
-                "Upload aborted by client",
-                "UPLOAD_ABORTED"
-              )
-            );
-          });
-        };
-
-        for (const key in headers) {
-          if (headers.hasOwnProperty(key) && key !== "Content-Length") {
-            xhr.setRequestHeader(key, headers[key]);
-          }
-        }
-        xhr.onload = () => {
-          if (xhr.status >= 400) {
-            reject(
-              new CreateComponentError(`Failed to upload file: ${xhr.status}`)
-            );
-          }
-          resolve(xhr.response);
-        };
-        xhr.onerror = () => {
-          this.delete("FileComponent", [componentId]).then(() => {
-            reject(
-              new CreateComponentError(`Failed to upload file: ${xhr.status}`)
-            );
-          });
-        };
-        xhr.send(file);
-      }).then(() => componentAndLocationPromise);
+      uploader.start();
     });
   }
 }
