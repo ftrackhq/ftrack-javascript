@@ -230,7 +230,6 @@ export class Uploader {
       logger.debug("Upload complete", this.componentId);
     } catch (error) {
       try {
-        this.abort();
         await this.cleanup();
       } catch (cleanupError) {
         logger.error("Clean up failed", cleanupError);
