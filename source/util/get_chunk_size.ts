@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2023 ftrack
 
-const MAX_PARTS = 10_000;
+const MAX_PARTS = 10000;
 
 /** Return chunk size for multi-part upload based on *fileSize*. */
 export function getChunkSize(fileSize: number): number {
