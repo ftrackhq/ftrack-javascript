@@ -229,6 +229,11 @@ export class Uploader {
       });
       logger.debug("Upload complete", this.componentId);
     } catch (error) {
+      try {
+        await this.cleanup();
+      } catch (cleanupError) {
+        logger.error("Clean up failed", cleanupError);
+      }
       if (this.onError) {
         this.onError(error as Error);
       }
@@ -464,16 +469,15 @@ export class Uploader {
       );
       this.xhr.open("PUT", url, true);
       this.xhr.onabort = async () => {
+        this.aborted = true;
         if (this.onAborted) {
           this.onAborted();
         }
-        await this.cleanup();
         reject(
           new CreateComponentError("Upload aborted by client", "UPLOAD_ABORTED")
         );
       };
       this.xhr.onerror = async () => {
-        await this.cleanup();
         reject(
           new CreateComponentError(`Failed to upload file: ${this.xhr!.status}`)
         );
