@@ -30,6 +30,7 @@ import type {
   Schema,
   SearchOptions,
   SearchResponse,
+  ServerInformation,
   SessionOptions,
   UpdateResponse,
 } from "./types.js";
@@ -54,10 +55,11 @@ export class Session {
   clientToken: string | null;
   initialized: boolean;
   initializing: Promise<Session>;
-  serverInformation?: Data;
-  schemas?: Schema[];
-  serverVersion?: string;
   additionalHeaders: Data;
+  schemas?: Schema[];
+  serverInformation?: QueryServerInformationResponse;
+  serverVersion?: string;
+  private serverInformationValues: string[];
 
   /**
    * Construct Session instance with API credentials.
@@ -83,7 +85,7 @@ export class Session {
     apiKey: string,
     {
       autoConnectEventHub = false,
-      serverInformationValues,
+      serverInformationValues = [],
       eventHubOptions = {},
       clientToken,
       apiEndpoint = "/api",
@@ -121,6 +123,8 @@ export class Session {
      * @type {string}
      */
     this.serverUrl = serverUrl;
+
+    this.serverInformationValues = serverInformationValues;
 
     /**
      * API Endpoint. Specified relative to server URL with leading slash.
@@ -164,13 +168,12 @@ export class Session {
     }
 
     // Always include is_timezone_support_enabled as required by API.
-    if (
-      serverInformationValues &&
-      !serverInformationValues.includes("is_timezone_support_enabled")
-    ) {
+    // TODO: Remove this in next major.
+    if (!serverInformationValues.includes("is_timezone_support_enabled")) {
       serverInformationValues.push("is_timezone_support_enabled");
     }
 
+    // TODO: remove these operations from session initialization in next major
     const operations: operation.Operation[] = [
       {
         action: "query_server_information",
@@ -196,6 +199,8 @@ export class Session {
     this.initializing = this.call<
       [QueryServerInformationResponse, QuerySchemasResponse]
     >(operations).then((responses) => {
+      // TODO: Make this.serverInformation, this.schemas, and this.serverVersion private in next major
+      // and require calling getServerInformation, getSchemas, and this.getServerVersion instead.
       this.serverInformation = responses[0];
       this.schemas = responses[1];
       this.serverVersion = this.serverInformation.version;
@@ -472,6 +477,48 @@ export class Session {
   /** Return encoded *operations*. */
   encodeOperations(operations: operation.Operation[]) {
     return JSON.stringify(this.encode(operations));
+  }
+
+  /**
+   * Returns server information for the session, using serverInformationValues as set on session initialization.
+   * This is cached after the first call, and assumes that the server information will not change during the session.
+   * @returns Promise with the server information for the session.
+   */
+  async getServerInformation(): Promise<ServerInformation> {
+    if (!this.serverInformation) {
+      this.serverInformation = (
+        await this.call<QueryServerInformationResponse>([
+          {
+            action: "query_server_information",
+            values: this.serverInformationValues,
+          },
+        ])
+      )[0];
+    }
+    return this.serverInformation;
+  }
+
+  /**
+   * Returns server information for the session, using serverInformationValues as set on session initialization.
+   * This is cached after the first call, and assumes that the server information will not change during the session.
+   * @returns Promise with the server information for the session.
+   */
+  async getServerVersion(): Promise<string> {
+    return (await this.getServerInformation()).version;
+  }
+
+  /**
+   * Returns the API schemas for the session.
+   * This is cached after the first call, and assumes that the schemas will not change during the session.
+   * @returns Promise with the API schemas for the session.
+   */
+  async getSchemas(): Promise<Schema[]> {
+    if (!this.schemas) {
+      this.schemas = (
+        await this.call<QuerySchemasResponse>([{ action: "query_schemas" }])
+      )[0];
+    }
+    return this.schemas;
   }
 
   /**
