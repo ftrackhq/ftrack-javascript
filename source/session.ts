@@ -56,8 +56,10 @@ export class Session {
   initialized: boolean;
   initializing: Promise<Session>;
   additionalHeaders: Data;
-  schemas?: Schema[];
-  serverInformation?: QueryServerInformationResponse;
+  schemas?: Schema[] | Promise<Schema[]>;
+  serverInformation?:
+    | QueryServerInformationResponse
+    | Promise<QueryServerInformationResponse>;
   serverVersion?: string;
   private serverInformationValues: string[];
 
@@ -216,7 +218,8 @@ export class Session {
    * @return {Array|null} List of primary key attributes.
    */
   getPrimaryKeyAttributes(entityType: string): string[] | null {
-    if (!this.schemas) {
+    // Todo: make this async in next major
+    if (!this.schemas || this.schemas instanceof Promise) {
       logger.warn("Schemas not available.");
       return null;
     }
@@ -273,6 +276,7 @@ export class Session {
     if (date) {
       if (
         this.serverInformation &&
+        !(this.serverInformation instanceof Promise) &&
         this.serverInformation.is_timezone_support_enabled
       ) {
         // Ensure that the moment object is in UTC and format
@@ -371,6 +375,7 @@ export class Session {
     let dateValue = data.value;
     if (
       this.serverInformation &&
+      !(this.serverInformation instanceof Promise) &&
       this.serverInformation.is_timezone_support_enabled
     ) {
       // Server responds with timezone naive strings, add Z to indicate UTC.
@@ -396,6 +401,7 @@ export class Session {
   private _decodeDateTimeAsMoment(data: any) {
     if (
       this.serverInformation &&
+      !(this.serverInformation instanceof Promise) &&
       this.serverInformation.is_timezone_support_enabled
     ) {
       // Return date as moment object with UTC set to true.
@@ -486,14 +492,15 @@ export class Session {
    */
   async getServerInformation(): Promise<ServerInformation> {
     if (!this.serverInformation) {
-      this.serverInformation = (
-        await this.call<QueryServerInformationResponse>([
-          {
-            action: "query_server_information",
-            values: this.serverInformationValues,
-          },
-        ])
-      )[0];
+      this.serverInformation = this.call<QueryServerInformationResponse>([
+        {
+          action: "query_server_information",
+          values: this.serverInformationValues,
+        },
+      ]).then((responses) => responses[0]);
+    }
+    if (this.serverInformation instanceof Promise) {
+      this.serverInformation = await this.serverInformation;
     }
     return this.serverInformation;
   }
@@ -514,9 +521,12 @@ export class Session {
    */
   async getSchemas(): Promise<Schema[]> {
     if (!this.schemas) {
-      this.schemas = (
-        await this.call<QuerySchemasResponse>([{ action: "query_schemas" }])
-      )[0];
+      this.schemas = this.call<QuerySchemasResponse>([
+        { action: "query_schemas" },
+      ]).then((responses) => responses[0]);
+    }
+    if (this.schemas instanceof Promise) {
+      this.schemas = await this.schemas;
     }
     return this.schemas;
   }
@@ -735,6 +745,8 @@ export class Session {
    * @return {Object|null} Schema definition
    */
   getSchema(schemaId: string): Schema | null {
+    // TODO: make this async in next major
+    if (this.schemas instanceof Promise) return null;
     const schema = this.schemas?.find((s) => s.id === schemaId);
     return schema ?? null;
   }
