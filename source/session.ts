@@ -197,11 +197,6 @@ export class Session {
         operations
       );
 
-    this.serverInformationPromise = initializingPromise.then(
-      (responses) => responses[0]
-    );
-    this.schemasPromise = initializingPromise.then((responses) => responses[1]);
-
     /**
      * Resolved once session is initialized.
      * @memberof Session
@@ -218,6 +213,14 @@ export class Session {
 
       return Promise.resolve(this);
     });
+
+    this.serverInformationPromise = initializingPromise
+      .then((responses) => responses[0])
+      .catch(() => ({} as ServerInformation));
+
+    this.schemasPromise = initializingPromise
+      .then((responses) => responses[1])
+      .catch(() => [] as Schema[]);
   }
 
   /**
@@ -506,7 +509,8 @@ export class Session {
         ]
       ).then((responses) => responses[0]);
     }
-    return await this.serverInformationPromise;
+
+    return this.serverInformationPromise;
   }
 
   /**
@@ -529,7 +533,7 @@ export class Session {
         { action: "query_schemas" },
       ]).then((responses) => responses[0]);
     }
-    return await this.schemasPromise;
+    return this.schemasPromise;
   }
 
   /**
@@ -567,7 +571,9 @@ export class Session {
       decodeDatesAsIso = false,
     }: CallOptions = {}
   ): Promise<IsTuple<T> extends true ? T : T[]> {
-    await this.initializing;
+    if (this.initializing) {
+      await this.initializing;
+    }
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
     try {
