@@ -192,15 +192,23 @@ export class Session {
      */
     this.initialized = false;
 
+    const initializingPromise =
+      this.call<[QueryServerInformationResponse, QuerySchemasResponse]>(
+        operations
+      );
+
+    this.serverInformationPromise = initializingPromise.then(
+      (responses) => responses[0]
+    );
+    this.schemasPromise = initializingPromise.then((responses) => responses[1]);
+
     /**
      * Resolved once session is initialized.
      * @memberof Session
      * @instance
      * @type {Promise}
      */
-    this.initializing = this.call<
-      [QueryServerInformationResponse, QuerySchemasResponse]
-    >(operations).then((responses) => {
+    this.initializing = initializingPromise.then((responses) => {
       // TODO: Make this.serverInformation, this.schemas, and this.serverVersion private in next major
       // and require calling getServerInformation, getSchemas, and this.getServerVersion instead.
       this.serverInformation = responses[0];
