@@ -514,7 +514,7 @@ export class Session {
   }
 
   /**
-   * Returns server information for the session, using serverInformationValues as set on session initialization.
+   * Returns server version for the session, using serverInformationValues as set on session initialization.
    * This is cached after the first call, and assumes that the server information will not change during the session.
    * @returns Promise with the server information for the session.
    */
