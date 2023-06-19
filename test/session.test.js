@@ -557,6 +557,10 @@ describe("Session", () => {
       queryServerInformation
     );
   });
+
+  it("Should support getting server version with session.getServerVersion()", async () => {
+    expect(await session.getServerVersion()).toEqual("dev");
+  });
 });
 
 describe("Encoding entities", () => {
