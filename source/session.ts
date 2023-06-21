@@ -61,7 +61,7 @@ export class Session {
   serverVersion?: string;
   private schemasPromise?: Promise<Schema[]>;
   private serverInformationPromise?: Promise<ServerInformation>;
-  private serverInformationValues: string[];
+  private serverInformationValues?: string[];
 
   /**
    * Construct Session instance with API credentials.
@@ -87,7 +87,7 @@ export class Session {
     apiKey: string,
     {
       autoConnectEventHub = false,
-      serverInformationValues = [],
+      serverInformationValues,
       eventHubOptions = {},
       clientToken,
       apiEndpoint = "/api",
@@ -171,7 +171,10 @@ export class Session {
 
     // Always include is_timezone_support_enabled as required by API.
     // TODO: Remove this in next major.
-    if (!serverInformationValues.includes("is_timezone_support_enabled")) {
+    if (
+      serverInformationValues &&
+      !serverInformationValues.includes("is_timezone_support_enabled")
+    ) {
       serverInformationValues.push("is_timezone_support_enabled");
     }
 
