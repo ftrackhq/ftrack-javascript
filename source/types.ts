@@ -68,7 +68,9 @@ export interface ResetRemoteResponse {
   data: Data;
 }
 export type QuerySchemasResponse = Schema[];
-export interface QueryServerInformationResponse {
+
+export type QueryServerInformationResponse = ServerInformation;
+export interface ServerInformation {
   custom_widget?: Data;
   default_colors?: string[];
   is_nested_subqueries_enabled?: boolean;
@@ -91,7 +93,7 @@ export interface QueryServerInformationResponse {
     username?: string;
   };
   product?: Data;
-  version?: string;
+  version: string;
   schema_hash?: string;
   storage_scenario?: Data;
   [key: string]: any;

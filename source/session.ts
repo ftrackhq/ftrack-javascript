@@ -30,11 +30,13 @@ import type {
   Schema,
   SearchOptions,
   SearchResponse,
+  ServerInformation,
   SessionOptions,
   UpdateResponse,
 } from "./types.js";
 import { convertToIsoString } from "./util/convert_to_iso_string.js";
 import { Uploader } from "./uploader.js";
+import getSchemaMappingFromSchemas from "./util/get_schema_mapping.js";
 
 const logger = loglevel.getLogger("ftrack_api");
 
@@ -54,10 +56,14 @@ export class Session {
   clientToken: string | null;
   initialized: boolean;
   initializing: Promise<Session>;
-  serverInformation?: Data;
-  schemas?: Schema[];
-  serverVersion?: string;
   additionalHeaders: Data;
+  schemas?: Schema[];
+  serverInformation?: QueryServerInformationResponse;
+  serverVersion?: string;
+  private schemasPromise?: Promise<Schema[]>;
+  private serverInformationPromise?: Promise<ServerInformation>;
+  private serverInformationValues?: string[];
+  private schemaMapping?: Record<string, Schema>;
 
   /**
    * Construct Session instance with API credentials.
@@ -122,6 +128,8 @@ export class Session {
      */
     this.serverUrl = serverUrl;
 
+    this.serverInformationValues = serverInformationValues;
+
     /**
      * API Endpoint. Specified relative to server URL with leading slash.
      * @memberof Session
@@ -164,6 +172,7 @@ export class Session {
     }
 
     // Always include is_timezone_support_enabled as required by API.
+    // TODO: Remove this in next major.
     if (
       serverInformationValues &&
       !serverInformationValues.includes("is_timezone_support_enabled")
@@ -171,6 +180,7 @@ export class Session {
       serverInformationValues.push("is_timezone_support_enabled");
     }
 
+    // TODO: remove these operations from session initialization in next major
     const operations: operation.Operation[] = [
       {
         action: "query_server_information",
@@ -187,22 +197,36 @@ export class Session {
      */
     this.initialized = false;
 
+    const initializingPromise =
+      this.call<[QueryServerInformationResponse, QuerySchemasResponse]>(
+        operations
+      );
+
     /**
      * Resolved once session is initialized.
      * @memberof Session
      * @instance
      * @type {Promise}
      */
-    this.initializing = this.call<
-      [QueryServerInformationResponse, QuerySchemasResponse]
-    >(operations).then((responses) => {
+    this.initializing = initializingPromise.then((responses) => {
+      // TODO: Make this.serverInformation, this.schemas, and this.serverVersion private in next major
+      // and require calling getServerInformation, getSchemas, and this.getServerVersion instead.
       this.serverInformation = responses[0];
       this.schemas = responses[1];
+      this.schemaMapping = getSchemaMappingFromSchemas(this.schemas);
       this.serverVersion = this.serverInformation.version;
       this.initialized = true;
 
       return Promise.resolve(this);
     });
+
+    this.serverInformationPromise = initializingPromise
+      .then((responses) => responses[0])
+      .catch(() => ({} as ServerInformation));
+
+    this.schemasPromise = initializingPromise
+      .then((responses) => responses[1])
+      .catch(() => [] as Schema[]);
   }
 
   /**
@@ -211,11 +235,12 @@ export class Session {
    * @return {Array|null} List of primary key attributes.
    */
   getPrimaryKeyAttributes(entityType: string): string[] | null {
+    // Todo: make this async in next major
     if (!this.schemas) {
       logger.warn("Schemas not available.");
       return null;
     }
-    const schema = this.schemas.find((item) => item.id === entityType);
+    const schema = this.schemaMapping?.[entityType];
     if (!schema || !schema.primary_key || !schema.primary_key.length) {
       logger.warn("Primary key could not be found for: ", entityType);
       return null;
@@ -475,6 +500,52 @@ export class Session {
   }
 
   /**
+   * Returns server information for the session, using serverInformationValues as set on session initialization.
+   * This is cached after the first call, and assumes that the server information will not change during the session.
+   * @returns Promise with the server information for the session.
+   */
+  async getServerInformation(): Promise<ServerInformation> {
+    if (!this.serverInformationPromise) {
+      this.serverInformationPromise = this.call<QueryServerInformationResponse>(
+        [
+          {
+            action: "query_server_information",
+            values: this.serverInformationValues,
+          },
+        ]
+      ).then((responses) => responses[0]);
+    }
+
+    return this.serverInformationPromise;
+  }
+
+  /**
+   * Returns server version for the session, using serverInformationValues as set on session initialization.
+   * This is cached after the first call, and assumes that the server information will not change during the session.
+   * @returns Promise with the server version for the session.
+   */
+  async getServerVersion(): Promise<string> {
+    return (await this.getServerInformation()).version;
+  }
+
+  /**
+   * Returns the API schemas for the session.
+   * This is cached after the first call, and assumes that the schemas will not change during the session.
+   * @returns Promise with the API schemas for the session.
+   */
+  async getSchemas(): Promise<Schema[]> {
+    if (!this.schemasPromise) {
+      this.schemasPromise = this.call<QuerySchemasResponse>([
+        { action: "query_schemas" },
+      ]).then((responses) => {
+        this.schemaMapping = getSchemaMappingFromSchemas(responses[0]);
+        return responses[0];
+      });
+    }
+    return this.schemasPromise;
+  }
+
+  /**
    * Call API with array of operation objects in *operations*.
    *
    * Returns promise which will be resolved with an array of decoded
@@ -509,7 +580,9 @@ export class Session {
       decodeDatesAsIso = false,
     }: CallOptions = {}
   ): Promise<IsTuple<T> extends true ? T : T[]> {
-    await this.initializing;
+    if (this.initializing) {
+      await this.initializing;
+    }
     const url = `${this.serverUrl}${this.apiEndpoint}`;
 
     try {
@@ -688,7 +761,8 @@ export class Session {
    * @return {Object|null} Schema definition
    */
   getSchema(schemaId: string): Schema | null {
-    const schema = this.schemas?.find((s) => s.id === schemaId);
+    // TODO: make this async in next major
+    const schema = this.schemaMapping?.[schemaId];
     return schema ?? null;
   }
 

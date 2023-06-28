@@ -547,6 +547,20 @@ describe("Session", () => {
       })
     ).rejects.toThrowError("Code must be provided to enable totp.");
   });
+
+  it("Should support getting schemas with session.getSchemas()", async () => {
+    expect(await session.getSchemas()).toEqual(querySchemas);
+  });
+
+  it("Should support getting server information with session.getServerInformation()", async () => {
+    expect(await session.getServerInformation()).toEqual(
+      queryServerInformation
+    );
+  });
+
+  it("Should support getting server version with session.getServerVersion()", async () => {
+    expect(await session.getServerVersion()).toEqual("dev");
+  });
 });
 
 describe("Encoding entities", () => {
