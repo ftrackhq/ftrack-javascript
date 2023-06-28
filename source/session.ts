@@ -36,6 +36,7 @@ import type {
 } from "./types.js";
 import { convertToIsoString } from "./util/convert_to_iso_string.js";
 import { Uploader } from "./uploader.js";
+import getSchemaMappingFromSchemas from "./util/get_schema_mapping.js";
 
 const logger = loglevel.getLogger("ftrack_api");
 
@@ -62,6 +63,7 @@ export class Session {
   private schemasPromise?: Promise<Schema[]>;
   private serverInformationPromise?: Promise<ServerInformation>;
   private serverInformationValues?: string[];
+  private schemaMapping?: Record<string, Schema>;
 
   /**
    * Construct Session instance with API credentials.
@@ -211,6 +213,7 @@ export class Session {
       // and require calling getServerInformation, getSchemas, and this.getServerVersion instead.
       this.serverInformation = responses[0];
       this.schemas = responses[1];
+      this.schemaMapping = getSchemaMappingFromSchemas(this.schemas);
       this.serverVersion = this.serverInformation.version;
       this.initialized = true;
 
@@ -237,7 +240,7 @@ export class Session {
       logger.warn("Schemas not available.");
       return null;
     }
-    const schema = this.schemas.find((item) => item.id === entityType);
+    const schema = this.schemaMapping?.[entityType];
     if (!schema || !schema.primary_key || !schema.primary_key.length) {
       logger.warn("Primary key could not be found for: ", entityType);
       return null;
@@ -534,7 +537,10 @@ export class Session {
     if (!this.schemasPromise) {
       this.schemasPromise = this.call<QuerySchemasResponse>([
         { action: "query_schemas" },
-      ]).then((responses) => responses[0]);
+      ]).then((responses) => {
+        this.schemaMapping = getSchemaMappingFromSchemas(responses[0]);
+        return responses[0];
+      });
     }
     return this.schemasPromise;
   }
@@ -756,7 +762,7 @@ export class Session {
    */
   getSchema(schemaId: string): Schema | null {
     // TODO: make this async in next major
-    const schema = this.schemas?.find((s) => s.id === schemaId);
+    const schema = this.schemaMapping?.[schemaId];
     return schema ?? null;
   }
 
