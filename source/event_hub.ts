@@ -566,9 +566,15 @@ export class EventHub {
         continue;
       }
 
-      let response = null;
       try {
-        response = subscriber.callback(eventPayload);
+        const responsePromise = Promise.resolve(subscriber.callback(eventPayload));
+        
+        responsePromise.then(response => {
+          // Publish reply if response isn't null or undefined.
+          if (response != null) {
+            this.publishReply(eventPayload, response, subscriber.metadata);
+          }
+        });
       } catch (error) {
         this.logger.error(
           "Error calling subscriber for event.",
@@ -576,11 +582,6 @@ export class EventHub {
           subscriber,
           eventPayload
         );
-      }
-
-      // Publish reply if response isn't null or undefined.
-      if (response != null) {
-        this.publishReply(eventPayload, response, subscriber.metadata);
       }
     }
   }
