@@ -152,4 +152,60 @@ describe("EventHub", () => {
 
     expect(callback).not.toHaveBeenCalledWith(testEvent);
   });
+
+  test("should handle async callback and return correct data", () => {
+    const callback = vi.fn(async () => {
+      return new Promise((resolve) => setTimeout(() => resolve("someData"), 1));
+    });
+    const testEvent = {
+      topic: "ftrack.test",
+      data: {},
+      id: "eventId",
+      source: { id: "sourceId" },
+    };
+
+    const publishReplySpy = vi
+      .spyOn(eventHub, "publishReply")
+      .mockImplementation((_, data) => data);
+
+    eventHub.subscribe("topic=ftrack.test", callback);
+    eventHub._handle(testEvent);
+
+    setTimeout(() => {
+      expect(callback).toHaveBeenCalledWith(testEvent);
+      expect(publishReplySpy).toHaveBeenCalledWith(
+        expect.anything(),
+        "someData",
+        expect.anything()
+      );
+    }, 10);
+    publishReplySpy.mockRestore();
+  });
+
+  test("should handle sync callback and return correct data", () => {
+    const callback = vi.fn(() => "someData");
+    const testEvent = {
+      topic: "ftrack.test",
+      data: {},
+      id: "eventId",
+      source: { id: "sourceId" },
+    };
+
+    const publishReplySpy = vi
+      .spyOn(eventHub, "publishReply")
+      .mockImplementation((_, data) => data);
+
+    eventHub.subscribe("topic=ftrack.test", callback);
+    eventHub._handle(testEvent);
+
+    setTimeout(() => {
+      expect(callback).toHaveBeenCalledWith(testEvent);
+      expect(publishReplySpy).toHaveBeenCalledWith(
+        expect.anything(),
+        "someData",
+        expect.anything()
+      );
+    }, 10);
+    publishReplySpy.mockRestore();
+  });
 });
