@@ -565,7 +565,7 @@ export class EventHub {
       if (!this._IsSubscriberInterestedIn(subscriber, eventPayload)) {
         continue;
       }
-
+    const promises: Promise<any>[] = [];
       try {
         const responsePromise = Promise.resolve(subscriber.callback(eventPayload));
         
