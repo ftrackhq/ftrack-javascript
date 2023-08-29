@@ -152,4 +152,60 @@ describe("EventHub", () => {
 
     expect(callback).not.toHaveBeenCalledWith(testEvent);
   });
+
+  test("should handle sync callback and return correct data", async () => {
+    const callback = vi.fn(() => "someData");
+    const testEvent = {
+      topic: "ftrack.test",
+      data: {},
+      id: "eventId",
+      source: { id: "sourceId" },
+    };
+
+    const publishReplySpy = vi
+      .spyOn(eventHub, "publishReply")
+      .mockImplementation((_, data) => data);
+
+    eventHub.subscribe("topic=ftrack.test", callback);
+    const promises = eventHub._handle(testEvent);
+    await Promise.all(promises);
+    expect(callback).toHaveBeenCalledWith(testEvent);
+    expect(publishReplySpy).toHaveBeenCalledWith(
+      expect.anything(),
+      "someData",
+      expect.anything()
+    );
+    publishReplySpy.mockRestore();
+  });
+
+  test("should not handle async callback with a promise", async () => {
+    const asyncCallback = vi.fn(async () => "someData");
+    const testEvent = {
+      topic: "ftrack.test",
+      data: {},
+      id: "eventId",
+      source: { id: "sourceId" },
+    };
+
+    const publishReplySpy = vi
+      .spyOn(eventHub, "publishReply")
+      .mockImplementation((_, data) => data);
+
+    eventHub.subscribe("topic=ftrack.test", asyncCallback);
+    const promises = eventHub._handle(testEvent);
+    await Promise.all(promises ?? []);
+    expect(asyncCallback).toHaveBeenCalledWith(testEvent);
+    expect(publishReplySpy).toHaveBeenCalled();
+    expect(publishReplySpy).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.any(Promise),
+      expect.anything()
+    );
+    expect(publishReplySpy).toHaveBeenCalledWith(
+      expect.anything(),
+      "someData",
+      expect.anything()
+    );
+    publishReplySpy.mockRestore();
+  });
 });

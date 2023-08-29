@@ -557,7 +557,7 @@ export class EventHub {
    */
   private _handle(eventPayload: EventPayload) {
     this.logger.debug("Event received", eventPayload);
-
+    const promises: Promise<any>[] = [];
     for (const subscriber of this._subscribers) {
       // TODO: Parse event target and check that it matches subscriber.
 
@@ -565,10 +565,17 @@ export class EventHub {
       if (!this._IsSubscriberInterestedIn(subscriber, eventPayload)) {
         continue;
       }
-
-      let response = null;
       try {
-        response = subscriber.callback(eventPayload);
+        const responsePromise = Promise.resolve(
+          subscriber.callback(eventPayload)
+        );
+        promises.push(responsePromise);
+        responsePromise.then((response) => {
+          // Publish reply if response isn't null or undefined.
+          if (response != null) {
+            this.publishReply(eventPayload, response, subscriber.metadata);
+          }
+        });
       } catch (error) {
         this.logger.error(
           "Error calling subscriber for event.",
@@ -577,12 +584,8 @@ export class EventHub {
           eventPayload
         );
       }
-
-      // Publish reply if response isn't null or undefined.
-      if (response != null) {
-        this.publishReply(eventPayload, response, subscriber.metadata);
-      }
     }
+    return promises;
   }
 
   /**
