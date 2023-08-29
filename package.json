@@ -63,7 +63,7 @@
     "uuid": "^9.0.0"
   },
   "lint-staged": {
-    "*.{js,ts}": "eslint --cache --fix",
+    "*.{js,ts}": "eslint --cache --fix --max-warnings=0",
     "*.{js,ts,css,md,json,jsx,scss,yml}": "prettier --write"
   },
   "packageManager": "yarn@3.6.1"
