@@ -568,7 +568,7 @@ export class EventHub {
     const promises: Promise<any>[] = [];
       try {
         const responsePromise = Promise.resolve(subscriber.callback(eventPayload));
-        
+                promises.push(responsePromise);
         responsePromise.then(response => {
           // Publish reply if response isn't null or undefined.
           if (response != null) {
