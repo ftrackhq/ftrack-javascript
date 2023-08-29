@@ -583,6 +583,7 @@ export class EventHub {
           eventPayload
         );
       }
+         return promises; 
     }
   }
 
