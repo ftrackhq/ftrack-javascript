@@ -3,6 +3,7 @@
 import { convertToIsoString } from "../source/util/convert_to_iso_string";
 import moment from "moment";
 import dayjs from "dayjs";
+import { describe, it, expect } from "vitest";
 
 describe("convertToIsoString", () => {
   it("should convert date object to ISO", () => {
@@ -29,14 +30,14 @@ describe("convertToIsoString", () => {
   it("should convert moment objects to ISO strings in UTC", () => {
     const tzDate = "2023-01-01T01:00:00+01:00";
     const isoDate = "2023-01-01T00:00:00.000Z";
-    const converted = convertToIsoString(moment(tzDate));
+    const converted = convertToIsoString(moment(tzDate).toDate());
     expect(converted).toEqual(isoDate);
   });
 
   it("should convert dayjs objects to ISO strings", () => {
     const tzDate = "2023-01-01T01:00:00+01:00";
     const isoDate = "2023-01-01T00:00:00.000Z";
-    const converted = convertToIsoString(dayjs(tzDate));
+    const converted = convertToIsoString(dayjs(tzDate).toDate());
     expect(converted).toEqual(isoDate);
   });
 
@@ -55,7 +56,7 @@ describe("convertToIsoString", () => {
     new Date("hello world"),
     NaN,
   ])("should return null for invalid ISO string: %s", (invalidDate) => {
-    const converted = convertToIsoString(invalidDate);
+    const converted = convertToIsoString(invalidDate as any);
     expect(converted).toEqual(null);
   });
 });
