@@ -1014,7 +1014,7 @@ export function prepared(
 
   for (let i = 0; i < placeholders.length; i++) {
     result += literals[i];
-    result += placeholders[i].replace(/'/g, "'").replace(/"/g, '"');
+    result += placeholders[i].replace(/'/g, "\\'").replace(/"/g, '\\"');
   }
 
   result += literals[literals.length - 1];
