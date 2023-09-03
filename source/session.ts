@@ -1005,3 +1005,18 @@ export class Session {
     });
   }
 }
+
+export function prepared(
+  literals: TemplateStringsArray,
+  ...placeholders: string[]
+) {
+  let result = "";
+
+  for (let i = 0; i < placeholders.length; i++) {
+    result += literals[i];
+    result += placeholders[i].replace(/'/g, "'").replace(/"/g, '"');
+  }
+
+  result += literals[literals.length - 1];
+  return result;
+}
