@@ -9,7 +9,7 @@ import {
   ServerValidationError,
   ServerError,
 } from "../source/error";
-import { Session } from "../source/session";
+import { Session, prepared } from "../source/session";
 import * as operation from "../source/operation";
 import { expect } from "chai";
 import querySchemas from "./fixtures/query_schemas.json";
