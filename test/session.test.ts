@@ -16,6 +16,7 @@ import queryServerInformation from "./fixtures/query_server_information.json";
 
 import { getExampleQuery, getInitialSessionQuery, server } from "./server";
 import { rest } from "msw";
+import { QueryResponse } from "../source/types";
 
 const logger = loglevel.getLogger("test_session");
 logger.setLevel("debug");
@@ -236,14 +237,14 @@ describe("Session", () => {
   });
 
   it("Should decode batched query operations", async () => {
-    const responses = (await session.call([
+    const responses = await session.call<QueryResponse>([
       operation.query(
         "select status.state.short from Task where status.state.short is NOT_STARTED limit 1"
       ),
       operation.query(
         "select status.state.short from Task where status.state.short is NOT_STARTED limit 1"
       ),
-    ])) as any[];
+    ]);
     const status1 = responses[0].data[0].status;
     const status2 = responses[1].data[0].status;
     expect(status1.state.short).toEqual("NOT_STARTED");
@@ -350,7 +351,11 @@ describe("Session", () => {
   });
 
   it.skip("Should support ensure with create", async () => {
-    const identifyingKeys = ["key", "parent_id", "parent_type"];
+    const identifyingKeys = [
+      "key" as const,
+      "parent_id" as const,
+      "parent_type" as const,
+    ];
     const key = uuidV4();
 
     let user;
@@ -367,7 +372,7 @@ describe("Session", () => {
         parent_id: user.id,
         parent_type: "User",
       },
-      identifyingKeys as any
+      identifyingKeys
     );
     expect(ensuredData.__entity_type__).toEqual("Metadata");
     expect(ensuredData.key).toEqual(key);
@@ -492,35 +497,35 @@ describe("Session", () => {
 
   it("Should return correct error", () => {
     expect(
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       session.getErrorFromResponse({
         exception: "PermissionError",
         content: "foo",
       })
     ).toBeInstanceOf(ServerPermissionDeniedError);
     expect(
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       session.getErrorFromResponse({
         exception: "FTAuthenticationError",
         content: "foo",
       })
     ).toBeInstanceOf(ServerPermissionDeniedError);
     expect(
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       session.getErrorFromResponse({
         exception: "ValidationError",
         content: "foo",
       })
     ).toBeInstanceOf(ServerValidationError);
     expect(
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       session.getErrorFromResponse({
         exception: "Foo",
         content: "foo",
       })
     ).toBeInstanceOf(ServerError);
     expect(
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       session.getErrorFromResponse({
         exception: "MalformedResponseError",
         content: "foo",
@@ -571,7 +576,7 @@ describe("Encoding entities", () => {
   it("Should support encoding moment dates", () => {
     const now = moment();
 
-    //@ts-ignore
+    //@ts-ignore - Otherwise internal method used for testing purposes
     const output = session.encode([{ foo: now, bar: "baz" }, 12321]);
 
     expect(output).toEqual([
@@ -607,7 +612,7 @@ describe("Encoding entities", () => {
       }
     );
 
-    //@ts-ignore
+    //@ts-ignore - Otherwise internal method used for testing purposes
     const output = timezoneDisabledSession.encode([
       { foo: now, bar: "baz" },
       12321,
@@ -629,7 +634,7 @@ describe("Encoding entities", () => {
     it("Should support merging 0-level nested data", async () => {
       await session.initializing;
 
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       const data = session.decode([
         {
           id: 1,
@@ -654,7 +659,7 @@ describe("Encoding entities", () => {
     it("Should support merging 1-level nested data", async () => {
       await session.initializing;
 
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       const data = session.decode([
         {
           id: 1,
@@ -693,7 +698,7 @@ describe("Encoding entities", () => {
     it("Should support merging 2-level nested data", async () => {
       await session.initializing;
 
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       const data = session.decode([
         {
           id: 1,
@@ -743,7 +748,7 @@ describe("Encoding entities", () => {
     it("Should support decoding datetime as moment (default)", () => {
       const now = moment();
 
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       const output = session.decode({
         foo: {
           __type__: "datetime",
@@ -757,7 +762,7 @@ describe("Encoding entities", () => {
     it("Should support decoding datetime as ISO string", () => {
       const now = new Date();
 
-      //@ts-ignore
+      //@ts-ignore - Otherwise internal method used for testing purposes
       const output = session.decode(
         {
           foo: {
@@ -775,7 +780,7 @@ describe("Encoding entities", () => {
   it("Should support encoding Date object dates", () => {
     const now = new Date();
 
-    //@ts-ignore
+    //@ts-ignore - Otherwise internal method used for testing purposes
     const output = session.encode([{ foo: now, bar: "baz" }, 12321]);
     expect(output).toEqual([
       {

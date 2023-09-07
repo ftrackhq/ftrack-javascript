@@ -30,14 +30,14 @@ describe("convertToIsoString", () => {
   it("should convert moment objects to ISO strings in UTC", () => {
     const tzDate = "2023-01-01T01:00:00+01:00";
     const isoDate = "2023-01-01T00:00:00.000Z";
-    const converted = convertToIsoString(moment(tzDate).toDate());
+    const converted = convertToIsoString(moment(tzDate));
     expect(converted).toEqual(isoDate);
   });
 
   it("should convert dayjs objects to ISO strings", () => {
     const tzDate = "2023-01-01T01:00:00+01:00";
     const isoDate = "2023-01-01T00:00:00.000Z";
-    const converted = convertToIsoString(dayjs(tzDate).toDate());
+    const converted = convertToIsoString(dayjs(tzDate));
     expect(converted).toEqual(isoDate);
   });
 
@@ -56,7 +56,7 @@ describe("convertToIsoString", () => {
     new Date("hello world"),
     NaN,
   ])("should return null for invalid ISO string: %s", (invalidDate) => {
-    const converted = convertToIsoString(invalidDate as any);
+    const converted = convertToIsoString(invalidDate as any); //casted to test for invalid type
     expect(converted).toEqual(null);
   });
 });

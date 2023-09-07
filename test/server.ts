@@ -46,7 +46,9 @@ export const handlers = [
       );
     }
     const body = await Promise.all(
-      (req.body as any[]).map(
+      (
+        await req.json()
+      ).map(
         async ({
           action,
           expression,

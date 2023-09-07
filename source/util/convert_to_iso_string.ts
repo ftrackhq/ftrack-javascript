@@ -1,3 +1,6 @@
+import { Moment } from "moment";
+import type dayjs from "dayjs";
+
 /**
  * Checks if string is in ISO 6801 format.
  */
@@ -14,7 +17,9 @@ function isIsoDate(str: string) {
  * @param data - string or date object
  * @returns ISO 6801 compatible string, or null if invalid date
  */
-export function convertToIsoString(data: string | Date) {
+export function convertToIsoString(
+  data: string | Date | Moment | ReturnType<typeof dayjs>
+) {
   if (
     data &&
     // if this is a date object of type moment or dayjs, or regular date object (all of them has toISOString)
@@ -24,7 +29,7 @@ export function convertToIsoString(data: string | Date) {
   ) {
     // wrap it new Date() to convert it to UTC based ISO string in case it is in another timezone
     try {
-      return new Date(data).toISOString();
+      return new Date(data as any).toISOString();
     } catch (err) {
       return null;
     }
