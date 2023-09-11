@@ -1,5 +1,6 @@
 // :copyright: Copyright (c) 2023 ftrack
 import { getChunkSize } from "../source/util/get_chunk_size";
+import { describe, expect, it } from "vitest";
 
 describe("getChunkSize", () => {
   it("should return the correct chunk size for a given file size", () => {
