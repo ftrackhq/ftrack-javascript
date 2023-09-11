@@ -184,6 +184,7 @@ describe("EventHub", () => {
       topic: "ftrack.test",
       data: {},
       id: "eventId",
+      source: { id: "sourceId" },
     };
 
     const publishReplySpy = vi
