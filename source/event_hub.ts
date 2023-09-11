@@ -606,7 +606,7 @@ export class EventHub {
    * Publish reply event.
    * @param  {Object} sourceEventPayload Source event payload
    * @param  {Object} data        Response event data
-   * @param  {Object} source      Deprecated value - will be removed in a later version
+   * @param  {Object} [source]    Response event source information
    */
   publishReply(
     sourceEventPayload: EventPayload,

@@ -48,8 +48,8 @@ export class Event {
       ...this._data.source,
     };
   }
-  /** Add source to event data, replacing any previous data.
-   */
+
+  /** Add source to event data, replacing any previous data. */
   addSource(source: any): void {
     this._data.source = source;
   }
