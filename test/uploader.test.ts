@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2023 ftrack
 import { Uploader } from "../source/uploader";
 import { Session } from "../source/session";
-import { expect, vitest, vi } from "vitest";
+import { beforeAll, describe, it, expect, vi, vitest } from "vitest";
 import { server } from "./server";
 import { rest } from "msw";
 
@@ -60,8 +60,8 @@ const credentials = {
   apiUser: "testuser",
   apiKey: "testkey",
 };
-let session = null;
-let file = null;
+let session: Session = null!;
+let file: File = null!;
 
 beforeAll(() => {
   session = new Session(
@@ -90,6 +90,7 @@ describe("Uploader", () => {
     new Promise((done) => {
       useMultiPartUpload();
       const uploader = new Uploader(session, file, {
+        //@ts-ignore
         fileSize: MULTI_PART_TEST_FILE_SIZE,
         onComplete: done,
       });
@@ -105,7 +106,7 @@ describe("Uploader", () => {
   });
 
   it("Should allow aborting single-part uploads", () =>
-    new Promise((done, fail) => {
+    new Promise<void>((done, fail) => {
       const onProgress = () => {
         uploader.abort();
       };
@@ -128,7 +129,7 @@ describe("Uploader", () => {
     }));
 
   it("Should allow aborting using AbortSignal", () =>
-    new Promise((done, fail) => {
+    new Promise<void>((done, fail) => {
       const controller = new AbortController();
       const onProgress = () => {
         controller.abort();
@@ -153,7 +154,7 @@ describe("Uploader", () => {
     }));
 
   it("Should allow aborting multi-part uploads", () =>
-    new Promise((done, fail) => {
+    new Promise<void>((done, fail) => {
       useMultiPartUpload();
       let aborted = false;
       const onProgress = () => {

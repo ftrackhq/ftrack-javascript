@@ -1,5 +1,6 @@
 // :copyright: Copyright (c) 2019 ftrack
 import normalizeString from "../source/util/normalize_string";
+import { describe, it, expect } from "vitest";
 
 describe("Normalize string", () => {
   it("should normalize COMBINING DIAERESIS", () => {

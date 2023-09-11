@@ -35,14 +35,14 @@ export interface SearchOperation {
 export interface UpdateOperation {
   action: "update";
   entity_type: string;
-  entity_key: string[];
+  entity_key: string[] | string;
   entity_data: any;
 }
 
 export interface DeleteOperation {
   action: "delete";
   entity_type: string;
-  entity_key: string[];
+  entity_key: string[] | string;
 }
 
 export interface QueryServerInformationOperation {
@@ -138,7 +138,7 @@ export function search({
  */
 export function update(
   type: string,
-  keys: string[],
+  keys: string[] | string,
   data: any
 ): UpdateOperation {
   return {
@@ -158,7 +158,10 @@ export function update(
  * @param  {Array} keys Identifying keys, typically [<entity id>]
  * @return {Object}      API operation
  */
-function deleteOperation(type: string, keys: string[]): DeleteOperation {
+function deleteOperation(
+  type: string,
+  keys: string[] | string
+): DeleteOperation {
   return {
     action: "delete",
     entity_type: type,
