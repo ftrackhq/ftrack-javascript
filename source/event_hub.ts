@@ -271,7 +271,7 @@ export class EventHub {
       );
     }
 
-    event.addSource({
+    event.prepareSource({
       id: this._id,
       applicationId: this._applicationId,
       user: {
@@ -573,7 +573,7 @@ export class EventHub {
         responsePromise.then((response) => {
           // Publish reply if response isn't null or undefined.
           if (response != null) {
-            this.publishReply(eventPayload, response);
+            this.publishReply(eventPayload, response, subscriber.metadata);
           }
         });
       } catch (error) {
@@ -611,7 +611,7 @@ export class EventHub {
   publishReply(
     sourceEventPayload: EventPayload,
     data: Data,
-    source?: unknown
+    source: Data | null = null
   ): Promise<string> {
     const replyEvent = new Event(
       "ftrack.meta.reply",
@@ -621,13 +621,9 @@ export class EventHub {
       {
         target: `id=${sourceEventPayload.source.id}`,
         inReplyToEvent: sourceEventPayload.id,
+        source: source ?? data.source,
       }
     );
-    if (source) {
-      console.log(
-        "source is a deprecated property and is unused. Property will be removed in future version"
-      );
-    }
     return this.publish(replyEvent);
   }
 }

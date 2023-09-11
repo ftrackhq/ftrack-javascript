@@ -42,8 +42,57 @@ describe("Event class", () => {
 
   it("should add source to event data", () => {
     const event = new Event("testTopic", { key: "value" });
-    event.addSource("sampleSource");
+    const source = {
+      id: "testId",
+      applicationId: "testApplicationId",
+      user: {
+        username: "testUser",
+      },
+    };
+    event.addSource(source);
     const data = event.getData();
-    expect(data.source).toBe("sampleSource");
+    expect(data.source).toBe(source);
+  });
+  describe("prepareSource Method", () => {
+    it("should prepare and add source to event data", () => {
+      const event = new Event("testTopic", { key: "value" });
+      event.prepareSource({ newKey: "newValue" });
+      const data = event.getData();
+      expect(data.source).toEqual({ newKey: "newValue" });
+    });
+
+    it("should not override existing source when preparing a new source", () => {
+      const event = new Event(
+        "testTopic",
+        { key: "value" },
+        { source: { oldKey: "oldValue" } }
+      );
+      event.prepareSource({ oldKey: "newValue", newKey: "newValue" });
+      const data = event.getData();
+      expect(data.source).toEqual({
+        oldKey: "oldValue",
+        newKey: "newValue",
+      });
+    });
+    it("should handle source undefined", () => {
+      const event = new Event(
+        "testTopic",
+        { key: "value" },
+        { source: undefined }
+      );
+      event.prepareSource({ newKey: "newValue" });
+      const data = event.getData();
+      expect(data.source).toEqual({
+        newKey: "newValue",
+      });
+    });
+    it("Prepare should handle source null", () => {
+      const event = new Event("testTopic", { key: "value" }, { source: null });
+      event.prepareSource({ newKey: "newValue" });
+      const data = event.getData();
+      expect(data.source).toEqual({
+        newKey: "newValue",
+      });
+    });
   });
 });

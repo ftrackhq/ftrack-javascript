@@ -170,7 +170,11 @@ describe("EventHub", () => {
     const promises = eventHub._handle(testEvent);
     await Promise.all(promises);
     expect(callback).toHaveBeenCalledWith(testEvent);
-    expect(publishReplySpy).toHaveBeenCalledWith(expect.anything(), "someData");
+    expect(publishReplySpy).toHaveBeenCalledWith(
+      expect.anything(),
+      "someData",
+      expect.anything()
+    );
     publishReplySpy.mockRestore();
   });
 
@@ -193,9 +197,14 @@ describe("EventHub", () => {
     expect(publishReplySpy).toHaveBeenCalled();
     expect(publishReplySpy).not.toHaveBeenCalledWith(
       expect.anything(),
-      expect.any(Promise)
+      expect.any(Promise),
+      expect.anything()
     );
-    expect(publishReplySpy).toHaveBeenCalledWith(expect.anything(), "someData");
+    expect(publishReplySpy).toHaveBeenCalledWith(
+      expect.anything(),
+      "someData",
+      expect.anything()
+    );
     publishReplySpy.mockRestore();
   });
   it("publishReply published Event with correct shape", async () => {
@@ -215,7 +224,6 @@ describe("EventHub", () => {
     const publishedEvent = eventHub.publish.mock.calls[0][0];
     expect(publishedEvent).toBeInstanceOf(Event);
     const EventData = publishedEvent.getData();
-    console.log(EventData, "eventData");
     // Ignoring the id field for comparison
     delete EventData.id;
 

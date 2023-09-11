@@ -41,7 +41,15 @@ export class Event {
     return this._data;
   }
 
-  /** Add source to event data. */
+  /** Add source to event data, keeping any already avalable source information  */
+  prepareSource(source: object): void {
+    this._data.source = {
+      ...source,
+      ...this._data.source,
+    };
+  }
+  /** Add source to event data, replacing any previous data.
+   */
   addSource(source: any): void {
     this._data.source = source;
   }
