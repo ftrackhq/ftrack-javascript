@@ -139,11 +139,13 @@ export default class SimpleSocketIOClient {
   private async fetchSessionId(): Promise<string> {
     try {
       const url = new URL(`${this.serverUrl}/socket.io/1/`);
-      url.searchParams.append("api_user", this.apiUser);
-      url.searchParams.append("api_key", this.apiKey);
-
       const response = await fetch(url, {
+        headers: {
+          "ftrack-user": this.apiUser,
+          "ftrack-api-key": this.apiKey,
+        },
         method: "GET",
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error(`Error fetching session ID: ${response.statusText}`);
