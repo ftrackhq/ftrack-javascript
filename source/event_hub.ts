@@ -613,17 +613,11 @@ export class EventHub {
     data: Data,
     source: Data | null = null
   ): Promise<string> {
-    const replyEvent = new Event(
-      "ftrack.meta.reply",
-      {
-        ...data,
-      },
-      {
-        target: `id=${sourceEventPayload.source.id}`,
-        inReplyToEvent: sourceEventPayload.id,
-        source: source ?? data.source,
-      }
-    );
+    const replyEvent = new Event("ftrack.meta.reply", data, {
+      target: `id=${sourceEventPayload.source.id}`,
+      inReplyToEvent: sourceEventPayload.id,
+      source: source,
+    });
     return this.publish(replyEvent);
   }
 }

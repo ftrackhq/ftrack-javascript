@@ -230,6 +230,7 @@ describe("EventHub", () => {
     const expectedEvent = {
       topic: "ftrack.meta.reply",
       data: { someData: "value" },
+      source: null,
       target: "id=testId",
       inReplyToEvent: "anotherTestId",
     };
