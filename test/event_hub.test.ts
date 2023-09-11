@@ -1,4 +1,5 @@
 import { EventHub } from "../source/event_hub";
+import { Event } from "../source/event";
 import { vi, describe, expect, beforeEach, afterEach, test } from "vitest";
 
 describe("EventHub", () => {
@@ -207,5 +208,34 @@ describe("EventHub", () => {
       expect.anything()
     );
     publishReplySpy.mockRestore();
+  });
+  test("publishReply published Event with correct shape", async () => {
+    eventHub.publish = vi.fn();
+
+    const sourceEventPayload = {
+      source: { id: "testId" },
+      id: "anotherTestId",
+    };
+
+    const data = {
+      someData: "value",
+    };
+
+    await eventHub.publishReply(sourceEventPayload, data);
+
+    const publishedEvent = eventHub.publish.mock.calls[0][0];
+    expect(publishedEvent).toBeInstanceOf(Event);
+    const EventData = publishedEvent.getData();
+    // Ignoring the id field for comparison
+    delete EventData.id;
+
+    const expectedEvent = {
+      topic: "ftrack.meta.reply",
+      data: { someData: "value" },
+      source: null,
+      target: "id=testId",
+      inReplyToEvent: "anotherTestId",
+    };
+    expect(EventData).toEqual(expectedEvent);
   });
 });

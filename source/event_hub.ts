@@ -271,7 +271,7 @@ export class EventHub {
       );
     }
 
-    event.addSource({
+    event.prepareSource({
       id: this._id,
       applicationId: this._applicationId,
       user: {
@@ -613,13 +613,11 @@ export class EventHub {
     data: Data,
     source: Data | null = null
   ): Promise<string> {
-    const replyEvent = new Event("ftrack.meta.reply", {
-      ...data,
+    const replyEvent = new Event("ftrack.meta.reply", data, {
       target: `id=${sourceEventPayload.source.id}`,
       inReplyToEvent: sourceEventPayload.id,
-      source: source ?? data.source,
+      source: source,
     });
-
     return this.publish(replyEvent);
   }
 }
