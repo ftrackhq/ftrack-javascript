@@ -573,7 +573,7 @@ export class EventHub {
         responsePromise.then((response) => {
           // Publish reply if response isn't null or undefined.
           if (response != null) {
-            this.publishReply(eventPayload, response, subscriber.metadata);
+            this.publishReply(eventPayload, response);
           }
         });
       } catch (error) {
@@ -606,20 +606,28 @@ export class EventHub {
    * Publish reply event.
    * @param  {Object} sourceEventPayload Source event payload
    * @param  {Object} data        Response event data
-   * @param  {Object} [source]    Response event source information
+   * @param  {Object} source      Deprecated value - will be removed in a later version
    */
   publishReply(
     sourceEventPayload: EventPayload,
     data: Data,
-    source: Data | null = null
+    source?: unknown
   ): Promise<string> {
-    const replyEvent = new Event("ftrack.meta.reply", {
-      ...data,
-      target: `id=${sourceEventPayload.source.id}`,
-      inReplyToEvent: sourceEventPayload.id,
-      source: source ?? data.source,
-    });
-
+    const replyEvent = new Event(
+      "ftrack.meta.reply",
+      {
+        ...data,
+      },
+      {
+        target: `id=${sourceEventPayload.source.id}`,
+        inReplyToEvent: sourceEventPayload.id,
+      }
+    );
+    if (source) {
+      console.log(
+        "source is a deprecated property and is unused. Property will be removed in future version"
+      );
+    }
     return this.publish(replyEvent);
   }
 }

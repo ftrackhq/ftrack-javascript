@@ -1,6 +1,6 @@
 import { EventHub } from "../source/event_hub";
 import { vi, describe, expect } from "vitest";
-
+import { Event } from "../source/event";
 describe("EventHub", () => {
   let eventHub;
 
@@ -170,11 +170,7 @@ describe("EventHub", () => {
     const promises = eventHub._handle(testEvent);
     await Promise.all(promises);
     expect(callback).toHaveBeenCalledWith(testEvent);
-    expect(publishReplySpy).toHaveBeenCalledWith(
-      expect.anything(),
-      "someData",
-      expect.anything()
-    );
+    expect(publishReplySpy).toHaveBeenCalledWith(expect.anything(), "someData");
     publishReplySpy.mockRestore();
   });
 
@@ -184,7 +180,6 @@ describe("EventHub", () => {
       topic: "ftrack.test",
       data: {},
       id: "eventId",
-      source: { id: "sourceId" },
     };
 
     const publishReplySpy = vi
@@ -198,14 +193,38 @@ describe("EventHub", () => {
     expect(publishReplySpy).toHaveBeenCalled();
     expect(publishReplySpy).not.toHaveBeenCalledWith(
       expect.anything(),
-      expect.any(Promise),
-      expect.anything()
+      expect.any(Promise)
     );
-    expect(publishReplySpy).toHaveBeenCalledWith(
-      expect.anything(),
-      "someData",
-      expect.anything()
-    );
+    expect(publishReplySpy).toHaveBeenCalledWith(expect.anything(), "someData");
     publishReplySpy.mockRestore();
+  });
+  it("publishReply published Event with correct shape", async () => {
+    eventHub.publish = vi.fn();
+
+    const sourceEventPayload = {
+      source: { id: "testId" },
+      id: "anotherTestId",
+    };
+
+    const data = {
+      someData: "value",
+    };
+
+    await eventHub.publishReply(sourceEventPayload, data);
+
+    const publishedEvent = eventHub.publish.mock.calls[0][0];
+    expect(publishedEvent).toBeInstanceOf(Event);
+    const EventData = publishedEvent.getData();
+    console.log(EventData, "eventData");
+    // Ignoring the id field for comparison
+    delete EventData.id;
+
+    const expectedEvent = {
+      topic: "ftrack.meta.reply",
+      data: { someData: "value" },
+      target: "id=testId",
+      inReplyToEvent: "anotherTestId",
+    };
+    expect(EventData).toEqual(expectedEvent);
   });
 });
