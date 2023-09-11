@@ -1,4 +1,5 @@
 import { EventHub } from "../source/event_hub";
+import { Event } from "../source/event";
 import { vi, describe, expect, beforeEach, afterEach, test } from "vitest";
 
 describe("EventHub", () => {
