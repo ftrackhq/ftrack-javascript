@@ -1009,7 +1009,7 @@ export class Session {
 /**
  * Tagged string template for preparing statements to prevent injection attacks.
  */
-export function prepared(
+export function expression(
   literals: TemplateStringsArray,
   ...placeholders: string[]
 ): string {
