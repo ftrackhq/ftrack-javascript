@@ -1,5 +1,4 @@
 import { EventHub } from "../source/event_hub";
-import { Event } from "../source/event";
 import { vi, describe, expect, beforeEach, afterEach, test } from "vitest";
 
 describe("EventHub", () => {
@@ -208,7 +207,7 @@ describe("EventHub", () => {
     );
     publishReplySpy.mockRestore();
   });
-  it("publishReply published Event with correct shape", async () => {
+  test("publishReply published Event with correct shape", async () => {
     eventHub.publish = vi.fn();
 
     const sourceEventPayload = {
