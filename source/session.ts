@@ -717,7 +717,7 @@ export class Session {
 
     expression = `${expression} ${criteria.join(" and ")}`;
 
-    return this.query<any>(expression).then((response) => {
+    return this.query<T>(expression).then((response) => {
       if (response.data.length === 0) {
         return this.create<T>(entityType, anyData).then(
           ({ data: responseData }) => Promise.resolve(responseData)
@@ -732,11 +732,11 @@ export class Session {
         );
       }
 
-      const updateEntity = response.data[0];
+      const updateEntity = response.data[0] as any;
 
       // Update entity if required.
       let updated = false;
-      Object.keys(anyData).forEach((key: any) => {
+      Object.keys(anyData).forEach((key) => {
         if (anyData[key] !== updateEntity[key]) {
           updateEntity[key] = anyData[key];
           updated = true;
