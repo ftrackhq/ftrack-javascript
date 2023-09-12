@@ -2052,8 +2052,8 @@ __metadata:
   linkType: hard
 
 "@rollup/plugin-commonjs@npm:^25.0.2":
-  version: 25.0.2
-  resolution: "@rollup/plugin-commonjs@npm:25.0.2"
+  version: 25.0.4
+  resolution: "@rollup/plugin-commonjs@npm:25.0.4"
   dependencies:
     "@rollup/pluginutils": ^5.0.1
     commondir: ^1.0.1
@@ -2066,7 +2066,7 @@ __metadata:
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: d8c4e22d264c5b9286f697653c2f9288149c0fe0169d49b83b5dc8b542f96cc0b9113da3f30d241f2f277513fbf3f8c207d95def5559eb3800190f1872add794
+  checksum: 073b92b765a1f8ab8db8e1aa216c1950e62f6c0c41210d10bb7530c4fc63670a16c19c0bbbf73e2752467c4468ad4c8134cf4724924388c3eed83df45630fda6
   languageName: node
   linkType: hard
 
@@ -2259,9 +2259,9 @@ __metadata:
   linkType: hard
 
 "@types/uuid@npm:^9.0.2":
-  version: 9.0.2
-  resolution: "@types/uuid@npm:9.0.2"
-  checksum: 1754bcf3444e1e3aeadd6e774fc328eb53bc956665e2e8fb6ec127aa8e1f43d9a224c3d22a9a6233dca8dd81a12dc7fed4d84b8876dd5ec82d40f574f7ff8b68
+  version: 9.0.3
+  resolution: "@types/uuid@npm:9.0.3"
+  checksum: 3dde198defd71c067dd14b3050a8fe6d1ead5fe94ec318472e2c30a399d13f18941fe66cffabdcac7267177c9de2f975fdee6f0cc87cde610a2578e1ce4cc3af
   languageName: node
   linkType: hard
 

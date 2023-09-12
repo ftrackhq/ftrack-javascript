@@ -1,4 +1,6 @@
 import { splitFileExtension } from "../source/util/split_file_extension";
+import { describe, it, expect } from "vitest";
+
 describe("splitFileExtension", () => {
   it("should split filename into basename and extension", () => {
     const fileName = "example.txt";

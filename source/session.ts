@@ -19,6 +19,7 @@ import type {
   CreateResponse,
   Data,
   DeleteResponse,
+  Entity,
   GetUploadMetadataResponse,
   IsTuple,
   MutationOptions,
@@ -669,7 +670,7 @@ export class Session {
     entityType: string,
     data: T,
     identifyingKeys: Array<keyof T> = []
-  ): Promise<T> {
+  ): Promise<T & Entity> {
     let keys = identifyingKeys as string[];
 
     logger.info(
@@ -712,7 +713,7 @@ export class Session {
 
     expression = `${expression} ${criteria.join(" and ")}`;
 
-    return this.query<T>(expression).then((response) => {
+    return this.query<T & Entity>(expression).then((response) => {
       if (response.data.length === 0) {
         return this.create<T>(entityType, data).then(({ data: responseData }) =>
           Promise.resolve(responseData)
@@ -731,7 +732,7 @@ export class Session {
 
       // Update entity if required.
       let updated = false;
-      Object.keys(data).forEach((key: keyof T) => {
+      Object.keys(data).forEach((key: keyof (T & Entity)) => {
         if (data[key] !== updateEntity[key]) {
           updateEntity[key] = data[key];
           updated = true;
@@ -748,7 +749,9 @@ export class Session {
             }
             return accumulator;
           }, {} as T)
-        ).then(({ data: responseData }) => Promise.resolve(responseData));
+        ).then(({ data: responseData }) =>
+          Promise.resolve(responseData as T & Entity)
+        );
       }
 
       return Promise.resolve(response.data[0]);
@@ -858,7 +861,7 @@ export class Session {
   ) {
     logger.debug("Create", entityType, data, options);
 
-    const responses = await this.call<[CreateResponse<T>]>(
+    const responses = await this.call<[CreateResponse<T & Entity>]>(
       [operation.create(entityType, data)],
       options
     );
@@ -879,7 +882,7 @@ export class Session {
    */
   async update<T extends Data = Data>(
     type: string,
-    keys: string[],
+    keys: string[] | string,
     data: T,
     options: MutationOptions = {}
   ) {
@@ -903,7 +906,11 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  async delete(type: string, keys: string[], options: MutationOptions = {}) {
+  async delete(
+    type: string,
+    keys: string[] | string,
+    options: MutationOptions = {}
+  ) {
     logger.debug("Delete", type, keys, options);
 
     const responses = await this.call<[DeleteResponse]>(
