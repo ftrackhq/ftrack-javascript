@@ -9,7 +9,7 @@ import {
   ServerValidationError,
   ServerError,
 } from "../source/error";
-import { Session, prepared } from "../source/session";
+import { Session, expression } from "../source/session";
 import * as operation from "../source/operation";
 import querySchemas from "./fixtures/query_schemas.json";
 import queryServerInformation from "./fixtures/query_server_information.json";
@@ -73,7 +73,7 @@ describe("Session", () => {
     const headers = new Promise<Headers>((resolve) => {
       server.use(
         rest.post("http://ftrack.test/api", (req, res, ctx) => {
-          resolve(req.headers);
+          resolve(req.headers as any);
           return res.once(ctx.json(getInitialSessionQuery()));
         })
       );
@@ -165,7 +165,7 @@ describe("Session", () => {
     const headers = new Promise<Headers>((resolve) => {
       server.use(
         rest.post("http://ftrack.test/api", (req, res, ctx) => {
-          resolve(req.headers);
+          resolve(req.headers as any);
           return res.once(ctx.json(getExampleQuery()));
         })
       );
@@ -792,6 +792,52 @@ describe("Encoding entities", () => {
       },
       12321,
     ]);
+  });
+});
+
+describe("Prepared template tests", () => {
+  it("escapes single quotes in interpolated values", () => {
+    const result = expression`It's ${"amazing"} here.`;
+    expect(result).toBe("It's amazing here.");
+  });
+
+  it("escapes double quotes in interpolated values", () => {
+    const result = expression`She said, ${'"Hello!"'} to him.`;
+    expect(result).toBe('She said, \\"Hello!\\" to him.');
+  });
+
+  it("escapes quotes when mixing multiple types", () => {
+    const result = expression`Quotes: ${`"begin and end'`}.`;
+    expect(result).toBe(`Quotes: \\"begin and end\\'.`);
+  });
+
+  it("works with multiple interpolated values", () => {
+    const result = expression`This is ${"first"} and this is ${"second"}.`;
+    expect(result).toBe("This is first and this is second.");
+  });
+
+  it("works without any interpolated values", () => {
+    const result = expression`Just a string without any interpolation.`;
+    expect(result).toBe("Just a string without any interpolation.");
+  });
+
+  it("works with empty string as interpolated value", () => {
+    const result = expression`This is an ${""} empty value.`;
+    expect(result).toBe("This is an  empty value.");
+  });
+  it("handles no arguments", () => {
+    const result = expression``;
+    expect(result).toBe("");
+  });
+  it("handles backslashes in interpolated values", () => {
+    const result = expression`This is a backslash: ${"\\"}.`;
+    expect(result).toBe("This is a backslash: \\.");
+  });
+  it("handles unusual characters", () => {
+    const result = expression`${"æøåßđŋħłøœŧźżšđžčćñé.,;:!?()[]{}<></>+-*/=<>^%&|~©®™µƒ∂∆πΣΩ$€£¥¢₹₽😀😍🤖👍❤️"}`;
+    expect(result).toBe(
+      "æøåßđŋħłøœŧźżšđžčćñé.,;:!?()[]{}<></>+-*/=<>^%&|~©®™µƒ∂∆πΣΩ$€£¥¢₹₽😀😍🤖👍❤️"
+    );
   });
 });
 
