@@ -843,44 +843,44 @@ describe("Prepared template tests", () => {
 
 describe("Prepared template tests", () => {
   it("escapes single quotes in interpolated values", () => {
-    const result = prepared`It's ${"amazing"} here.`;
+    const result = expression`It's ${"amazing"} here.`;
     expect(result).toBe("It's amazing here.");
   });
 
   it("escapes double quotes in interpolated values", () => {
-    const result = prepared`She said, ${'"Hello!"'} to him.`;
+    const result = expression`She said, ${'"Hello!"'} to him.`;
     expect(result).toBe('She said, \\"Hello!\\" to him.');
   });
 
   it("escapes quotes when mixing multiple types", () => {
-    const result = prepared`Quotes: ${`"begin and end'`}.`;
+    const result = expression`Quotes: ${`"begin and end'`}.`;
     expect(result).toBe(`Quotes: \\"begin and end\\'.`);
   });
 
   it("works with multiple interpolated values", () => {
-    const result = prepared`This is ${"first"} and this is ${"second"}.`;
+    const result = expression`This is ${"first"} and this is ${"second"}.`;
     expect(result).toBe("This is first and this is second.");
   });
 
   it("works without any interpolated values", () => {
-    const result = prepared`Just a string without any interpolation.`;
+    const result = expression`Just a string without any interpolation.`;
     expect(result).toBe("Just a string without any interpolation.");
   });
 
   it("works with empty string as interpolated value", () => {
-    const result = prepared`This is an ${""} empty value.`;
+    const result = expression`This is an ${""} empty value.`;
     expect(result).toBe("This is an  empty value.");
   });
   it("handles no arguments", () => {
-    const result = prepared``;
+    const result = expression``;
     expect(result).toBe("");
   });
   it("handles backslashes in interpolated values", () => {
-    const result = prepared`This is a backslash: ${"\\"}.`;
+    const result = expression`This is a backslash: ${"\\"}.`;
     expect(result).toBe("This is a backslash: \\.");
   });
   it("handles unusual characters", () => {
-    const result = prepared`${"æøåßđŋħłøœŧźżšđžčćñé.,;:!?()[]{}<></>+-*/=<>^%&|~©®™µƒ∂∆πΣΩ$€£¥¢₹₽😀😍🤖👍❤️"}`;
+    const result = expression`${"æøåßđŋħłøœŧźżšđžčćñé.,;:!?()[]{}<></>+-*/=<>^%&|~©®™µƒ∂∆πΣΩ$€£¥¢₹₽😀😍🤖👍❤️"}`;
     expect(result).toBe(
       "æøåßđŋħłøœŧźżšđžčćñé.,;:!?()[]{}<></>+-*/=<>^%&|~©®™µƒ∂∆πΣΩ$€£¥¢₹₽😀😍🤖👍❤️"
     );
