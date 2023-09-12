@@ -702,7 +702,7 @@ export class Session {
       ", "
     )} from ${entityType} where`;
     const criteria = keys.map((identifyingKey) => {
-      let value = data[identifyingKey] as unknown;
+      let value = data[identifyingKey] as any;
 
       if (value != null && typeof value.valueOf() === "string") {
         value = `"${value}"`;
