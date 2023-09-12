@@ -675,21 +675,23 @@ export class Session {
   ): Promise<T & Entity> {
     let keys = identifyingKeys as string[];
 
+    const anyData = data as any;
+
     logger.info(
       "Ensuring entity with data using identifying keys: ",
       entityType,
-      data,
+      anyData,
       keys
     );
 
     if (!keys.length) {
-      keys = Object.keys(data);
+      keys = Object.keys(anyData);
     }
 
     if (!keys.length) {
       throw new Error(
         "Could not determine any identifying data to check against " +
-          `when ensuring ${entityType} with data ${data}. ` +
+          `when ensuring ${entityType} with data ${anyData}. ` +
           `Identifying keys: ${identifyingKeys}`
       );
     }
@@ -702,7 +704,7 @@ export class Session {
       ", "
     )} from ${entityType} where`;
     const criteria = keys.map((identifyingKey) => {
-      let value = data[identifyingKey] as any;
+      let value = anyData[identifyingKey];
 
       if (value != null && typeof value.valueOf() === "string") {
         value = `"${value}"`;
@@ -715,17 +717,17 @@ export class Session {
 
     expression = `${expression} ${criteria.join(" and ")}`;
 
-    return this.query<T & Entity>(expression).then((response) => {
+    return this.query<any>(expression).then((response) => {
       if (response.data.length === 0) {
-        return this.create<T>(entityType, data).then(({ data: responseData }) =>
-          Promise.resolve(responseData)
+        return this.create<T>(entityType, anyData).then(
+          ({ data: responseData }) => Promise.resolve(responseData)
         );
       }
 
       if (response.data.length !== 1) {
         throw new Error(
           "Expected single or no item to be found but got multiple " +
-            `when ensuring ${entityType} with data ${data}. ` +
+            `when ensuring ${entityType} with data ${anyData}. ` +
             `Identifying keys: ${identifyingKeys}`
         );
       }
@@ -734,9 +736,9 @@ export class Session {
 
       // Update entity if required.
       let updated = false;
-      Object.keys(data).forEach((key: keyof (T & Entity)) => {
-        if (data[key] !== updateEntity[key]) {
-          updateEntity[key] = data[key];
+      Object.keys(anyData).forEach((key: any) => {
+        if (anyData[key] !== updateEntity[key]) {
+          updateEntity[key] = anyData[key];
           updated = true;
         }
       });
@@ -745,15 +747,13 @@ export class Session {
         return this.update<T>(
           entityType,
           primaryKeys.map((key: string) => updateEntity[key]),
-          Object.keys(data).reduce<T>((accumulator, key: keyof T) => {
+          Object.keys(anyData).reduce<any>((accumulator, key) => {
             if (primaryKeys.indexOf(key.toString()) === -1) {
-              accumulator[key] = data[key];
+              accumulator[key] = anyData[key];
             }
             return accumulator;
           }, {} as T)
-        ).then(({ data: responseData }) =>
-          Promise.resolve(responseData as T & Entity)
-        );
+        ).then(({ data: responseData }) => Promise.resolve(responseData as T));
       }
 
       return Promise.resolve(response.data[0]);

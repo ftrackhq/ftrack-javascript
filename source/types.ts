@@ -34,7 +34,7 @@ interface ResponseMetadata {
 }
 export interface SearchOptions {
   expression: string;
-  entityType: string;
+  entityType: EntityType;
   terms?: string[];
   contextId?: string;
   objectTypeIds?: string[];
@@ -226,7 +226,10 @@ export interface QueryOptions {
 
 export interface CallOptions extends MutationOptions, QueryOptions {}
 
-export interface EntityTypeMap {}
+export interface EntityTypeMap {
+  FileComponent: {};
+}
 export type EntityType = keyof EntityTypeMap;
-export type EntityData<TEntityType extends EntityType = EntityType> = EntityTypeMap[TEntityType];
+export type EntityData<TEntityType extends EntityType = EntityType> =
+  EntityTypeMap[TEntityType] & Entity;
 export interface TypedContextSubtypeMap {}
