@@ -20,6 +20,8 @@ import type {
   Data,
   DeleteResponse,
   Entity,
+  EntityData,
+  EntityType,
   GetUploadMetadataResponse,
   IsTuple,
   MutationOptions,
@@ -666,7 +668,7 @@ export class Session {
    *   Return update or create promise.
    */
 
-  ensure<T extends Data = Data>(
+  ensure<T extends EntityData = EntityData>(
     entityType: string,
     data: T,
     identifyingKeys: Array<keyof T> = []
@@ -700,7 +702,7 @@ export class Session {
       ", "
     )} from ${entityType} where`;
     const criteria = keys.map((identifyingKey) => {
-      let value = data[identifyingKey];
+      let value = data[identifyingKey] as unknown;
 
       if (value != null && typeof value.valueOf() === "string") {
         value = `"${value}"`;
@@ -781,7 +783,7 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  async query<T extends Data = Data>(
+  async query<T extends EntityData = EntityData>(
     expression: string,
     options: QueryOptions = {}
   ) {
@@ -810,7 +812,7 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
-  async search<T extends Data = Data>(
+  async search<T extends EntityData = EntityData>(
     {
       expression,
       entityType,
@@ -854,7 +856,7 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with the response.
    */
-  async create<T extends Data = Data>(
+  async create<T extends EntityData = EntityData>(
     entityType: string,
     data: T,
     options: MutationOptions = {}
@@ -880,7 +882,7 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  async update<T extends Data = Data>(
+  async update<T extends EntityData = EntityData>(
     type: string,
     keys: string[] | string,
     data: T,
@@ -907,7 +909,7 @@ export class Session {
    * @return {Promise} Promise resolved with the response.
    */
   async delete(
-    type: string,
+    type: EntityType,
     keys: string[] | string,
     options: MutationOptions = {}
   ) {
