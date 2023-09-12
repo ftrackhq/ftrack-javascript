@@ -225,3 +225,8 @@ export interface QueryOptions {
 }
 
 export interface CallOptions extends MutationOptions, QueryOptions {}
+
+export interface EntityTypeMap {}
+export type EntityType = keyof EntityTypeMap;
+export type EntityData<TEntityType extends EntityType = EntityType> = EntityTypeMap[TEntityType];
+export interface TypedContextSubtypeMap {}
