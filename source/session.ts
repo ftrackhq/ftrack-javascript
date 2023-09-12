@@ -1014,3 +1014,21 @@ export class Session {
     });
   }
 }
+
+/**
+ * Tagged string template for preparing statements to prevent injection attacks.
+ */
+export function expression(
+  literals: TemplateStringsArray,
+  ...placeholders: string[]
+): string {
+  let result = "";
+
+  for (let i = 0; i < placeholders.length; i++) {
+    result += literals[i];
+    result += placeholders[i].replace(/(['"])/g, "\\$1");
+  }
+
+  result += literals[literals.length - 1];
+  return result;
+}
