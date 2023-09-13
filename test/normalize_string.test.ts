@@ -20,7 +20,7 @@ describe("Normalize string", () => {
 
   it("Should not alter chinese characters", () => {
     const normalized = normalizeString(
-      "修改仅影响您个人帐户的语言、颜色或通知设置。"
+      "修改仅影响您个人帐户的语言、颜色或通知设置。",
     );
     expect(normalized).to.equal("修改仅影响您个人帐户的语言、颜色或通知设置。");
   });

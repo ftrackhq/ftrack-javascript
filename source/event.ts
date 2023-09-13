@@ -24,7 +24,7 @@ export class Event {
   constructor(
     topic: string,
     data: object,
-    options: { [key: string]: unknown } = {}
+    options: { [key: string]: unknown } = {},
   ) {
     this._data = {
       topic,

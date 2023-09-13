@@ -22,7 +22,7 @@ describe("Event class", () => {
     const event = new Event(
       "testTopic",
       { key: "value" },
-      { target: "sampleTarget", customOption: "customValue" }
+      { target: "sampleTarget", customOption: "customValue" },
     );
     const data = event.getData();
     expect(data.target).toBe("sampleTarget");
@@ -65,7 +65,7 @@ describe("Event class", () => {
       const event = new Event(
         "testTopic",
         { key: "value" },
-        { source: { oldKey: "oldValue" } }
+        { source: { oldKey: "oldValue" } },
       );
       event.prepareSource({ oldKey: "newValue", newKey: "newValue" });
       const data = event.getData();
@@ -78,7 +78,7 @@ describe("Event class", () => {
       const event = new Event(
         "testTopic",
         { key: "value" },
-        { source: undefined }
+        { source: undefined },
       );
       event.prepareSource({ newKey: "newValue" });
       const data = event.getData();

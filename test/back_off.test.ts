@@ -22,7 +22,7 @@ describe("backOff", () => {
     };
 
     await expect(backOff(failingRequest, 3, 0, 0)).rejects.toThrow(
-      "Request failed"
+      "Request failed",
     );
     expect(attempts).toBe(3);
   });
