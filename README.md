@@ -87,7 +87,7 @@ console.debug("Component URL: " + session.getComponentUrl(component.id));
 console.debug("Component thumbnail URL: " + session.thumbnailUrl(component.id));
 ```
 
-## Overview
+## Handling Events
 
 The `EventHub` is a class that provides functionality to interact with an ftrack event server. It allows you to connect to the event server, subscribe to specific events, publish events, and handle event responses.
 
