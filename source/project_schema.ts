@@ -22,7 +22,7 @@ export function getStatuses(
   session: Session,
   projectSchemaId: string,
   entityType: string,
-  typeId: string | null = null
+  typeId: string | null = null,
 ) {
   let response;
 
@@ -66,9 +66,9 @@ export function getStatuses(
   const operations = groupedAttributes.map((select) =>
     operation.query(
       `select ${select.join(
-        ", "
-      )} from ProjectSchema where id is ${projectSchemaId}`
-    )
+        ", ",
+      )} from ProjectSchema where id is ${projectSchemaId}`,
+    ),
   );
 
   response = session.call<QueryResponse<Data>>(operations);
@@ -108,7 +108,7 @@ export function getStatuses(
         for (const index in data._schemas) {
           if (data._schemas[index].type_id === objectTypeId) {
             statuses = data._schemas[index].statuses.map(
-              (status: any) => status.task_status
+              (status: any) => status.task_status,
             );
           }
         }

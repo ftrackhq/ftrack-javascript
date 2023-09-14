@@ -31,7 +31,7 @@ describe("getChunkSize", () => {
     // File size is larger than the maximum allowed
     fileSize = 1500 * 1024 * 1024 * 1024; // 1500 GB
     expect(() => getChunkSize(fileSize)).toThrowError(
-      "File is larger than the maximum allowed (1,280 GB)"
+      "File is larger than the maximum allowed (1,280 GB)",
     );
   });
 });

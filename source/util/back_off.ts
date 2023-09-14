@@ -13,7 +13,7 @@ export async function backOff<T>(
   /** Maximum delay between attempts [64 seconds] */
   maxDelayMs = 64 * 1000,
   /** Fuzz/Jitter each attempt by [0-fuzzMs] ms */
-  fuzzMs = 500
+  fuzzMs = 500,
 ) {
   let attemptNumber = 0;
   let delayMs = 500;
@@ -33,8 +33,8 @@ export async function backOff<T>(
 
       logger.warn(
         `Failed to execute function, retrying in ${Math.floor(
-          delayMs / 1000
-        )} seconds...`
+          delayMs / 1000,
+        )} seconds...`,
       );
       await sleep(delayMs + delayFuzzMs);
     }

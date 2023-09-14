@@ -44,9 +44,7 @@ export const handlers = [
       return res(ctx.json(InvalidCredentialsError));
     }
     const body = await Promise.all(
-      (
-        await req.json()
-      ).map(
+      (await req.json()).map(
         async ({
           action,
           expression,
@@ -64,7 +62,7 @@ export const handlers = [
                 `${__dirname}/fixtures/create_${entityType.toLowerCase()}.json`,
                 {
                   encoding: "utf-8",
-                }
+                },
               );
               const response = JSON.parse(createFixture);
               return {
@@ -86,8 +84,8 @@ export const handlers = [
                   `${__dirname}/fixtures/update_${entityType.toLowerCase()}.json`,
                   {
                     encoding: "utf-8",
-                  }
-                )
+                  },
+                ),
               );
             case "query":
               // queries are fetched from test/fixtures where the file name matches the full expression
@@ -97,8 +95,8 @@ export const handlers = [
                     .toLowerCase()
                     .split(" ")
                     .join("_")}.json`,
-                  { encoding: "utf-8" }
-                )
+                  { encoding: "utf-8" },
+                ),
               );
             case "get_upload_metadata":
               return getUploadMetadata;
@@ -107,8 +105,8 @@ export const handlers = [
             default:
               throw new Error("Action not supported by test server.");
           }
-        }
-      )
+        },
+      ),
     );
     return res(ctx.json(body));
   }),
@@ -116,7 +114,7 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.set("Access-Control-Allow-Origin", "*"),
-      ctx.body("file")
+      ctx.body("file"),
     );
   }),
   rest.put("http://ftrack.test/file-url", async (req, res, ctx) => {

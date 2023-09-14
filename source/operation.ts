@@ -139,7 +139,7 @@ export function search({
 export function update(
   type: string,
   keys: string[] | string,
-  data: any
+  data: any,
 ): UpdateOperation {
   return {
     action: "update",
@@ -160,7 +160,7 @@ export function update(
  */
 function deleteOperation(
   type: string,
-  keys: string[] | string
+  keys: string[] | string,
 ): DeleteOperation {
   return {
     action: "delete",

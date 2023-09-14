@@ -20,7 +20,7 @@ function createClient(options) {
     options.apiUser || credentials.apiUser,
     options.apiKey || credentials.apiKey,
     options.heartbeatTimeoutMs || undefined,
-    true
+    true,
   );
 }
 
@@ -37,17 +37,17 @@ describe("Tests using SimpleSocketIOClient", () => {
       const instance1 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
-        credentials.apiKey
+        credentials.apiKey,
       );
       const instance2 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         "anotherUser",
-        credentials.apiKey
+        credentials.apiKey,
       );
       const instance3 = SimpleSocketIOClient.connect(
         "https://ftrack.test/anotherlink",
         credentials.apiUser,
-        credentials.apiKey
+        credentials.apiKey,
       );
 
       expect(instance1).not.toBe(instance2);
@@ -59,12 +59,12 @@ describe("Tests using SimpleSocketIOClient", () => {
       const instance1 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
-        credentials.apiKey
+        credentials.apiKey,
       );
       const instance2 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
-        credentials.apiKey
+        credentials.apiKey,
       );
 
       expect(instance1).toBe(instance2);
@@ -74,14 +74,14 @@ describe("Tests using SimpleSocketIOClient", () => {
       const instance1 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
-        credentials.apiKey
+        credentials.apiKey,
       );
       const instance2 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
         credentials.apiKey,
         credentials.heartbeatTimeoutMs,
-        true
+        true,
       );
 
       expect(instance1).not.toBe(instance2);
@@ -91,7 +91,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     // Assertions
     expect(client.serverUrl).toBe(credentials.serverUrl);
     expect(client.webSocketUrl).toBe(
-      credentials.serverUrl.replace(/^(http)/, "ws")
+      credentials.serverUrl.replace(/^(http)/, "ws"),
     );
     expect(client.query).toMatch(credentials.apiUser);
     expect(client.query).toMatch(credentials.apiKey);
@@ -127,7 +127,7 @@ describe("Tests using SimpleSocketIOClient", () => {
       const client = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
-        "INVALID_API_KEY"
+        "INVALID_API_KEY",
       );
       connected = client.isConnected();
     } catch (error) {
@@ -197,7 +197,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     };
     const expectedDataString = `:::${JSON.stringify(expectedPayload)}`;
     expect(client.webSocket.send).toHaveBeenCalledWith(
-      `${PACKET_TYPES.event}${expectedDataString}`
+      `${PACKET_TYPES.event}${expectedDataString}`,
     );
   });
   test("handleError method correctly handles WebSocket errors and calls handleClose method", () => {
@@ -231,7 +231,7 @@ describe("Tests using SimpleSocketIOClient", () => {
       client.handleMessage({ data: `${PACKET_TYPES.heartbeat}::` });
 
       expect(client.webSocket.send).toHaveBeenCalledWith(
-        `${PACKET_TYPES.heartbeat}::`
+        `${PACKET_TYPES.heartbeat}::`,
       );
     });
 
@@ -407,7 +407,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     expect(client.packetQueue).toHaveLength(0);
     const expectedDataString = `:::${JSON.stringify(expectedPayload)}`;
     expect(client.webSocket.send).toHaveBeenCalledWith(
-      `${PACKET_TYPES.event}${expectedDataString}`
+      `${PACKET_TYPES.event}${expectedDataString}`,
     );
   });
   describe("Reconnection tests", () => {

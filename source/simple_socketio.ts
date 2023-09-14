@@ -87,7 +87,7 @@ export default class SimpleSocketIOClient {
     apiUser: string,
     apiKey: string,
     heartbeatTimeoutMs: number = 15000,
-    forceNew: boolean = false
+    forceNew: boolean = false,
   ): SimpleSocketIOClient {
     const key = `${serverUrl}_${apiUser}_${apiKey}`;
     let instance = this.instances.get(key);
@@ -97,7 +97,7 @@ export default class SimpleSocketIOClient {
         serverUrl,
         apiUser,
         apiKey,
-        heartbeatTimeoutMs
+        heartbeatTimeoutMs,
       );
       this.instances.set(key, instance);
     }
@@ -116,7 +116,7 @@ export default class SimpleSocketIOClient {
     serverUrl: string,
     apiUser: string,
     apiKey: string,
-    heartbeatTimeoutMs: number = 15000
+    heartbeatTimeoutMs: number = 15000,
   ) {
     // Convert the http(s) URL to ws(s) URL
     const WebSocketUrl = serverUrl.replace(/^(http)/, "ws");
@@ -285,13 +285,13 @@ export default class SimpleSocketIOClient {
    */
   public off(
     eventName: string,
-    eventCallback?: (eventData: any) => void
+    eventCallback?: (eventData: any) => void,
   ): void {
     if (!eventCallback) {
       delete this.handlers[eventName];
     } else {
       this.handlers[eventName] = this.handlers[eventName]?.filter(
-        (callback) => callback !== eventCallback
+        (callback) => callback !== eventCallback,
       );
     }
   }
@@ -382,12 +382,12 @@ export default class SimpleSocketIOClient {
    */
   public reconnect(
     reconnectionDelay: number = 1000,
-    reconnectionDelayMax: number = 10000
+    reconnectionDelayMax: number = 10000,
   ): void {
     // Calculate delay for reconnect
     const delay = Math.min(
       reconnectionDelay * Math.pow(2, this.reconnectionAttempts),
-      reconnectionDelayMax
+      reconnectionDelayMax,
     );
     const randomizedDelay = Math.round(delay * (1 + 0.5 * Math.random()));
 
