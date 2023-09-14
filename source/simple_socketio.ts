@@ -55,6 +55,7 @@ export default class SimpleSocketIOClient {
   private sessionId?: string;
   private packetQueue: string[] = [];
   private reconnectionAttempts: number = 0;
+  private reconnecting: boolean = false;
 
   // Added socket object with connected, open reconnect and transport properties to match current API
   // The old socket-io client uses both a connected and open property that are interchangeable
@@ -227,6 +228,7 @@ export default class SimpleSocketIOClient {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = undefined;
     }
+    this.reconnecting = false;
     this.reconnectionAttempts = 0; // Reset reconnection attempts
     this.handleEvent("connect", {});
     this.flushPacketQueue();
@@ -234,14 +236,16 @@ export default class SimpleSocketIOClient {
     this.socket.connected = true;
   }
   /**
-   * Handles WebSocket close event
+   * Handles WebSocket closing
    * @private
    */
   private handleClose(): void {
     this.stopHeartbeat();
-    this.reconnect();
-    // Set connected property to false
     this.socket.connected = false;
+    this.reconnecting = false;
+    this.webSocket?.close();
+    this.webSocket = undefined;
+    this.reconnect();
   }
   /**
    * Calls all callbacks for the given eventName with the given eventData.
@@ -328,7 +332,7 @@ export default class SimpleSocketIOClient {
       this.heartbeatTimeout = undefined;
     }
     this.heartbeatTimeout = setTimeout(() => {
-      this.reconnect();
+      this.handleClose();
     }, this.heartbeatTimeoutMs);
   }
 
@@ -372,12 +376,6 @@ export default class SimpleSocketIOClient {
     reconnectionDelay: number = 1000,
     reconnectionDelayMax: number = 10000
   ): void {
-    // Check if already connected
-    if (this.isConnected()) {
-      this.emit("reconnect");
-      return;
-    }
-
     // Calculate delay for reconnect
     const delay = Math.min(
       reconnectionDelay * Math.pow(2, this.reconnectionAttempts),
@@ -397,6 +395,11 @@ export default class SimpleSocketIOClient {
    * @param randomizedDelay
    */
   private attemptReconnect(): void {
+    // Check if already connected or if active reconnection attempt ongoing.
+    if (this.socket.connected || this.reconnecting) {
+      return;
+    }
+    this.reconnecting = true;
     this.reconnectionAttempts++;
     this.initializeWebSocket();
     this.reconnectTimeout = undefined;
@@ -410,6 +413,9 @@ export default class SimpleSocketIOClient {
   public disconnect(): void {
     this.stopHeartbeat();
     this.socket.connected = false;
+    this.webSocket.onclose = undefined;
+    this.webSocket.onerror = undefined;
+    this.packetQueue = [];
     this.webSocket?.close();
     this.webSocket = undefined;
     if (this.reconnectTimeout) {
