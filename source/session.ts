@@ -20,8 +20,7 @@ import type {
   Data,
   DeleteResponse,
   Entity,
-  EntityData,
-  EntityType,
+  EntityTypeMap,
   GetUploadMetadataResponse,
   IsTuple,
   MutationOptions,
@@ -668,7 +667,10 @@ export class Session {
    *   Return update or create promise.
    */
 
-  ensure<T extends EntityData = EntityData>(
+  ensure<
+    T extends
+      EntityTypeMap[keyof EntityTypeMap] = EntityTypeMap[keyof EntityTypeMap],
+  >(
     entityType: string,
     data: T,
     identifyingKeys: Array<keyof T> = [],
@@ -681,7 +683,7 @@ export class Session {
       "Ensuring entity with data using identifying keys: ",
       entityType,
       anyData,
-      keys
+      keys,
     );
 
     if (!keys.length) {
@@ -692,7 +694,7 @@ export class Session {
       throw new Error(
         "Could not determine any identifying data to check against " +
           `when ensuring ${entityType} with data ${anyData}. ` +
-          `Identifying keys: ${identifyingKeys}`
+          `Identifying keys: ${identifyingKeys}`,
       );
     }
 
@@ -720,7 +722,7 @@ export class Session {
     return this.query<T>(expression).then((response) => {
       if (response.data.length === 0) {
         return this.create<T>(entityType, anyData).then(
-          ({ data: responseData }) => Promise.resolve(responseData)
+          ({ data: responseData }) => Promise.resolve(responseData),
         );
       }
 
@@ -728,7 +730,7 @@ export class Session {
         throw new Error(
           "Expected single or no item to be found but got multiple " +
             `when ensuring ${entityType} with data ${anyData}. ` +
-            `Identifying keys: ${identifyingKeys}`
+            `Identifying keys: ${identifyingKeys}`,
         );
       }
 
@@ -752,11 +754,11 @@ export class Session {
               accumulator[key] = anyData[key];
             }
             return accumulator;
-          }, {} as T)
+          }, {} as T),
         ).then(({ data: responseData }) => Promise.resolve(responseData as T));
       }
 
-      return Promise.resolve(response.data[0]);
+      return Promise.resolve(response.data[0]) as any;
     });
   }
 
@@ -783,10 +785,10 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  async query<T extends EntityData = EntityData>(
-    expression: string,
-    options: QueryOptions = {},
-  ) {
+  async query<
+    T extends
+      EntityTypeMap[keyof EntityTypeMap] = EntityTypeMap[keyof EntityTypeMap],
+  >(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
     const responses = await this.call<[QueryResponse<T>]>(
       [operation.query(expression)],
@@ -812,7 +814,10 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
-  async search<T extends EntityData = EntityData>(
+  async search<
+    T extends
+      EntityTypeMap[keyof EntityTypeMap] = EntityTypeMap[keyof EntityTypeMap],
+  >(
     {
       expression,
       entityType,
@@ -856,11 +861,10 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with the response.
    */
-  async create<T extends EntityData = EntityData>(
-    entityType: string,
-    data: T,
-    options: MutationOptions = {},
-  ) {
+  async create<
+    T extends
+      EntityTypeMap[keyof EntityTypeMap] = EntityTypeMap[keyof EntityTypeMap],
+  >(entityType: string, data: T, options: MutationOptions = {}) {
     logger.debug("Create", entityType, data, options);
 
     const responses = await this.call<[CreateResponse<T & Entity>]>(
@@ -882,7 +886,10 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  async update<T extends EntityData = EntityData>(
+  async update<
+    T extends
+      EntityTypeMap[keyof EntityTypeMap] = EntityTypeMap[keyof EntityTypeMap],
+  >(
     type: string,
     keys: string[] | string,
     data: T,
@@ -909,7 +916,7 @@ export class Session {
    * @return {Promise} Promise resolved with the response.
    */
   async delete(
-    type: EntityType,
+    type: keyof EntityTypeMap,
     keys: string[] | string,
     options: MutationOptions = {},
   ) {
