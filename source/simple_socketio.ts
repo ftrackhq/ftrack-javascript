@@ -52,7 +52,6 @@ export default class SimpleSocketIOClient {
   private query: string;
   private apiUser: string;
   private apiKey: string;
-  private sessionId?: string;
   private packetQueue: string[] = [];
   private reconnectionAttempts: number = 0;
   private reconnecting: boolean = false;
@@ -153,7 +152,6 @@ export default class SimpleSocketIOClient {
 
       const responseText = await response.text();
       const sessionId = responseText.split(":")[0];
-      this.sessionId = sessionId;
       return sessionId;
     } catch (error) {
       console.error("Error fetching session ID:", error);
@@ -168,7 +166,7 @@ export default class SimpleSocketIOClient {
    */
   private async initializeWebSocket(): Promise<void> {
     try {
-      const sessionId = this.sessionId ?? (await this.fetchSessionId());
+      const sessionId = await this.fetchSessionId();
       if (!sessionId) {
         this.reconnecting = false;
       }
@@ -252,7 +250,9 @@ export default class SimpleSocketIOClient {
     this.reconnecting = false;
     this.webSocket?.close();
     this.webSocket = undefined;
-    window.addEventListener("online", this.attemptReconnect, { once: true });
+    window.addEventListener("online", this.attemptReconnect.bind(this), {
+      once: true,
+    });
     this.reconnect();
   }
   /**

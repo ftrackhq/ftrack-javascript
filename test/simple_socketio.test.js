@@ -1,4 +1,5 @@
 // :copyright: Copyright (c) 2023 ftrack
+
 import { describe, test, vi } from "vitest";
 import SimpleSocketIOClient, { PACKET_TYPES } from "../source/simple_socketio";
 const credentials = {
@@ -103,12 +104,12 @@ describe("Tests using SimpleSocketIOClient", () => {
       transport: { websocket: null },
     });
   });
-  test("fetchSessionId should set the fetched session ID correctly", async () => {
+  test("fetchSessionId should get the fetched session ID correctly", async () => {
     // Call the initializeWebSocket method
-    await client.fetchSessionId();
+    const sessionId = await client.fetchSessionId();
 
     // Check if the session ID is fetched correctly
-    expect(client.sessionId).toBe("1234567890");
+    expect(sessionId).toBe("1234567890");
   });
 
   test("SimpleSocketIOClient initializes custom heartbeatTimeoutMs correctly", () => {
