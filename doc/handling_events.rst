@@ -198,9 +198,3 @@ Stopping events
 
 Subscription callback priorities and the ability to stop events is not
 supported at this point.
-
-Node support
-------------
-
-The event hub currently is dependent on browser APIs and will not work when
-run from Node.
