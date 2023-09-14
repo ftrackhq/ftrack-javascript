@@ -10,6 +10,7 @@ function createWebSocketMock() {
   return {
     addEventListener: vi.fn(),
     send: vi.fn(),
+    close: vi.fn(),
   };
 }
 function createClient(options) {
@@ -464,6 +465,7 @@ describe("Tests using SimpleSocketIOClient", () => {
       for (let i = 0; i <= reconnectAttempts; i++) {
         const expectedMinDelay = Math.min(1000 * Math.pow(2, i), 10000);
         const expectedMaxDelay = expectedMinDelay * 1.5;
+        client.reconnecting = false; // Since it never gets to the actual fail state triggered by
         client.reconnect();
         vi.advanceTimersByTime(expectedMaxDelay + 1);
         expect(client.attemptReconnect).toHaveBeenCalledTimes(i + 1);
@@ -495,7 +497,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     expect,
   }) => {
     // Schedule a reconnection attempt
-    client.reconnect();
+    client.reconnectTimeout = 10000;
 
     // Connect and then disconnect
     client.socket.connected = true; // Simulate a connected socket

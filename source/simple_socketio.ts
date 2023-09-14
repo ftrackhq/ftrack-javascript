@@ -167,12 +167,19 @@ export default class SimpleSocketIOClient {
    * initial event listeners have been added.
    */
   private async initializeWebSocket(): Promise<void> {
-    const sessionId = this.sessionId ?? (await this.fetchSessionId());
-    const urlWithQueryAndSession = `${this.webSocketUrl}/socket.io/1/websocket/${sessionId}?${this.query}`;
-    this.webSocket = new WebSocket(urlWithQueryAndSession);
-    // Set transport.websocket property as a public alias of the websocket
-    this.socket.transport.websocket = this.webSocket;
-    this.addInitialEventListeners(this.webSocket);
+    try {
+      const sessionId = this.sessionId ?? (await this.fetchSessionId());
+      if (!sessionId) {
+        this.reconnecting = false;
+      }
+      const urlWithQueryAndSession = `${this.webSocketUrl}/socket.io/1/websocket/${sessionId}?${this.query}`;
+      this.webSocket = new WebSocket(urlWithQueryAndSession);
+      // Set transport.websocket property as a public alias of the websocket
+      this.socket.transport.websocket = this.webSocket;
+      this.addInitialEventListeners(this.webSocket);
+    } catch (error) {
+      this.reconnecting = false;
+    }
   }
 
   /**
@@ -414,11 +421,14 @@ export default class SimpleSocketIOClient {
   public disconnect(): void {
     this.stopHeartbeat();
     this.socket.connected = false;
-    this.webSocket.onclose = undefined;
-    this.webSocket.onerror = undefined;
     this.packetQueue = [];
-    this.webSocket?.close();
-    this.webSocket = undefined;
+
+    if (this.webSocket) {
+      this.webSocket.onclose = undefined;
+      this.webSocket.onerror = undefined;
+      this.webSocket?.close();
+      this.webSocket = undefined;
+    }
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = undefined;
