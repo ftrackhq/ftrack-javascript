@@ -89,4 +89,4 @@ console.debug("Component thumbnail URL: " + session.thumbnailUrl(component.id));
 
 ### Further documentation
 
-We are currently overhauling our documentation. The old documentation is still available in the [doc](/doc) folder in the repository. If there's any part of the client that is confusing and that you would like us to expand the documentation for, please add a GitHub issue and we'll try to get to it as soon as possible.
+We are currently overhauling our documentation. The old documentation is still available in the [doc/old](/doc/old) folder in the repository while we are adding new documentation files in the doc folder. If there's any part of the client that is confusing and that you would like us to expand the documentation for, please add a GitHub issue and we'll try to get to it as soon as possible.
