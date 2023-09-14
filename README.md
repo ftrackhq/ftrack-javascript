@@ -220,8 +220,7 @@ session.eventHub.publishAndWaitForReply(event, { timeout: 5 }).then(onReply, onE
 ## Limitations
 
 The event hub in the JavaScript API has some minor differences and lacks some
-of the features available in the 
-:ref:`python counterpart <ftrack-python-api:handling_events>`.
+of the features available in the [python counterpart](https://ftrack-python-api.rtd.ftrack.com/en/latest/handling_events.html).
 
 ### Subscription expressions
 
