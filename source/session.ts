@@ -98,12 +98,12 @@ export class Session {
       apiEndpoint = "/api",
       additionalHeaders = {},
       strictApi = false,
-    }: SessionOptions = {}
+    }: SessionOptions = {},
   ) {
     if (!serverUrl || !apiUser || !apiKey) {
       throw new Error(
         "Invalid arguments, please construct Session with " +
-          "*serverUrl*, *apiUser* and *apiKey*."
+          "*serverUrl*, *apiUser* and *apiKey*.",
       );
     }
 
@@ -202,7 +202,7 @@ export class Session {
 
     const initializingPromise =
       this.call<[QueryServerInformationResponse, QuerySchemasResponse]>(
-        operations
+        operations,
       );
 
     /**
@@ -225,7 +225,7 @@ export class Session {
 
     this.serverInformationPromise = initializingPromise
       .then((responses) => responses[0])
-      .catch(() => ({} as ServerInformation));
+      .catch(() => ({}) as ServerInformation);
 
     this.schemasPromise = initializingPromise
       .then((responses) => responses[1])
@@ -363,7 +363,7 @@ export class Session {
   private decode(
     data: any,
     identityMap: Data = {},
-    decodeDatesAsIso: boolean = false
+    decodeDatesAsIso: boolean = false,
   ): any {
     if (Array.isArray(data)) {
       return this._decodeArray(data, identityMap, decodeDatesAsIso);
@@ -436,7 +436,7 @@ export class Session {
   private _decodePlainObject(
     object: Data,
     identityMap: Data,
-    decodeDatesAsIso: boolean
+    decodeDatesAsIso: boolean,
   ) {
     return Object.keys(object).reduce<Data>((previous, key) => {
       previous[key] = this.decode(object[key], identityMap, decodeDatesAsIso);
@@ -451,10 +451,10 @@ export class Session {
   private _decodeArray(
     collection: any[],
     identityMap: Data,
-    decodeDatesAsIso: boolean
+    decodeDatesAsIso: boolean,
   ): any[] {
     return collection.map((item) =>
-      this.decode(item, identityMap, decodeDatesAsIso)
+      this.decode(item, identityMap, decodeDatesAsIso),
     );
   }
 
@@ -465,7 +465,7 @@ export class Session {
   private _mergeEntity(
     entity: Data,
     identityMap: Data,
-    decodeDatesAsIso: boolean
+    decodeDatesAsIso: boolean,
   ) {
     const identifier = this.getIdentifyingKey(entity);
     if (!identifier) {
@@ -490,7 +490,7 @@ export class Session {
         mergedEntity[key] = this.decode(
           entity[key],
           identityMap,
-          decodeDatesAsIso
+          decodeDatesAsIso,
         );
       }
     }
@@ -515,7 +515,7 @@ export class Session {
             action: "query_server_information",
             values: this.serverInformationValues,
           },
-        ]
+        ],
       ).then((responses) => responses[0]);
     }
 
@@ -581,7 +581,7 @@ export class Session {
       signal,
       additionalHeaders = {},
       decodeDatesAsIso = false,
-    }: CallOptions = {}
+    }: CallOptions = {},
   ): Promise<IsTuple<T> extends true ? T : T[]> {
     if (this.initializing) {
       await this.initializing;
@@ -671,7 +671,7 @@ export class Session {
   ensure<T extends EntityData = EntityData>(
     entityType: string,
     data: T,
-    identifyingKeys: Array<keyof T> = []
+    identifyingKeys: Array<keyof T> = [],
   ): Promise<T & Entity> {
     let keys = identifyingKeys as string[];
 
@@ -701,7 +701,7 @@ export class Session {
       throw new Error(`Primary key could not be found for: ${entityType}`);
     }
     let expression = `select ${primaryKeys.join(
-      ", "
+      ", ",
     )} from ${entityType} where`;
     const criteria = keys.map((identifyingKey) => {
       let value = anyData[identifyingKey];
@@ -785,12 +785,12 @@ export class Session {
    */
   async query<T extends EntityData = EntityData>(
     expression: string,
-    options: QueryOptions = {}
+    options: QueryOptions = {},
   ) {
     logger.debug("Query", expression);
     const responses = await this.call<[QueryResponse<T>]>(
       [operation.query(expression)],
-      options
+      options,
     );
     return responses[0];
   }
@@ -820,7 +820,7 @@ export class Session {
       contextId,
       objectTypeIds,
     }: SearchOptions,
-    options: QueryOptions = {}
+    options: QueryOptions = {},
   ) {
     logger.debug("Search", {
       expression,
@@ -840,7 +840,7 @@ export class Session {
           objectTypeIds,
         }),
       ],
-      options
+      options,
     );
     return responses[0];
   }
@@ -859,13 +859,13 @@ export class Session {
   async create<T extends EntityData = EntityData>(
     entityType: string,
     data: T,
-    options: MutationOptions = {}
+    options: MutationOptions = {},
   ) {
     logger.debug("Create", entityType, data, options);
 
     const responses = await this.call<[CreateResponse<T & Entity>]>(
       [operation.create(entityType, data)],
-      options
+      options,
     );
     return responses[0];
   }
@@ -886,13 +886,13 @@ export class Session {
     type: string,
     keys: string[] | string,
     data: T,
-    options: MutationOptions = {}
+    options: MutationOptions = {},
   ) {
     logger.debug("Update", type, keys, data, options);
 
     const responses = await this.call<[UpdateResponse<T>]>(
       [operation.update(type, keys, data)],
-      options
+      options,
     );
     return responses[0];
   }
@@ -911,13 +911,13 @@ export class Session {
   async delete(
     type: EntityType,
     keys: string[] | string,
-    options: MutationOptions = {}
+    options: MutationOptions = {},
   ) {
     logger.debug("Delete", type, keys, options);
 
     const responses = await this.call<[DeleteResponse]>(
       [operation.delete(type, keys)],
-      options
+      options,
     );
 
     return responses[0];
@@ -943,7 +943,7 @@ export class Session {
     };
 
     return `${this.serverUrl}/component/get?${new URLSearchParams(
-      params
+      params,
     ).toString()}`;
   }
 
@@ -972,7 +972,7 @@ export class Session {
     };
 
     return `${this.serverUrl}/component/thumbnail?${new URLSearchParams(
-      params
+      params,
     ).toString()}`;
   }
 
@@ -990,7 +990,7 @@ export class Session {
    */
   async createComponent(
     file: Blob,
-    options: CreateComponentOptions = {}
+    options: CreateComponentOptions = {},
   ): Promise<
     readonly [CreateResponse, CreateResponse, GetUploadMetadataResponse]
   > {

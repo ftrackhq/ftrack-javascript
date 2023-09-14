@@ -35,7 +35,7 @@ export const ServerError = errorFactory("ServerError");
  * @memberof error
  */
 export const ServerPermissionDeniedError = errorFactory(
-  "ServerPermissionDeniedError"
+  "ServerPermissionDeniedError",
 );
 
 /**
@@ -51,7 +51,7 @@ export const ServerValidationError = errorFactory("ServerValidationError");
  * @memberof error
  */
 export const EventServerReplyTimeoutError = errorFactory(
-  "EventServerReplyTimeoutError"
+  "EventServerReplyTimeoutError",
 );
 
 /**
@@ -60,7 +60,7 @@ export const EventServerReplyTimeoutError = errorFactory(
  * @memberof error
  */
 export const EventServerConnectionTimeoutError = errorFactory(
-  "EventServerConnectionTimeoutError"
+  "EventServerConnectionTimeoutError",
 );
 
 /**

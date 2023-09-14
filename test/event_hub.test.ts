@@ -12,6 +12,7 @@ describe("EventHub", () => {
       emit: vi.fn(),
       socket: { connected: true },
     };
+    eventHub.isConnected = vi.fn(() => true);
   });
 
   afterEach(() => {
@@ -24,20 +25,20 @@ describe("EventHub", () => {
 
     const topicSubscriberId = eventHub.subscribe(
       "topic=ftrack.update",
-      topicSubscriberCallback
+      topicSubscriberCallback,
     );
     const wildcardSubscriberId = eventHub.subscribe(
       "topic=ftrack.*",
-      wildcardSubscriberCallback
+      wildcardSubscriberCallback,
     );
 
     expect(typeof topicSubscriberId).toBe("string");
     expect(eventHub.getSubscriberByIdentifier(topicSubscriberId).callback).toBe(
-      topicSubscriberCallback
+      topicSubscriberCallback,
     );
     expect(typeof wildcardSubscriberId).toBe("string");
     expect(
-      eventHub.getSubscriberByIdentifier(wildcardSubscriberId).callback
+      eventHub.getSubscriberByIdentifier(wildcardSubscriberId).callback,
     ).toBe(wildcardSubscriberCallback);
   });
 
@@ -48,14 +49,14 @@ describe("EventHub", () => {
     expect(() => eventHub.subscribe(undefined, callback)).toThrow();
     expect(() => eventHub.subscribe("*", callback)).toThrow();
     expect(() =>
-      eventHub.subscribe("anything-except-topic", callback)
+      eventHub.subscribe("anything-except-topic", callback),
     ).toThrow();
   });
 
   test("should not subscribe without a valid callback", () => {
     expect(() => eventHub.subscribe("topic=ftrack.update", null)).toThrow();
     expect(() =>
-      eventHub.subscribe("topic=ftrack.update", "not a function")
+      eventHub.subscribe("topic=ftrack.update", "not a function"),
     ).toThrow();
     expect(() => eventHub.subscribe("topic=ftrack.update", {})).toThrow();
   });
@@ -65,11 +66,11 @@ describe("EventHub", () => {
     const wildcardSubscriberCallback = vi.fn();
     const topicSubscriberId = eventHub.subscribe(
       "topic=ftrack.update",
-      topicSubscriberCallback
+      topicSubscriberCallback,
     );
     const wildcardSubscriberId = eventHub.subscribe(
       "topic=ftrack.*",
-      wildcardSubscriberCallback
+      wildcardSubscriberCallback,
     );
 
     const topicUnsubscribeSuccess = eventHub.unsubscribe(topicSubscriberId);
@@ -174,7 +175,7 @@ describe("EventHub", () => {
     expect(publishReplySpy).toHaveBeenCalledWith(
       expect.anything(),
       "someData",
-      expect.anything()
+      expect.anything(),
     );
     publishReplySpy.mockRestore();
   });
@@ -200,12 +201,12 @@ describe("EventHub", () => {
     expect(publishReplySpy).not.toHaveBeenCalledWith(
       expect.anything(),
       expect.any(Promise),
-      expect.anything()
+      expect.anything(),
     );
     expect(publishReplySpy).toHaveBeenCalledWith(
       expect.anything(),
       "someData",
-      expect.anything()
+      expect.anything(),
     );
     publishReplySpy.mockRestore();
   });
@@ -238,4 +239,32 @@ describe("EventHub", () => {
     };
     expect(EventData).toEqual(expectedEvent);
   });
+});
+
+test("EventHub constructor", async () => {
+  // Scenario 1
+  const eventHub1 = new EventHub("https://ftrack.test", "testUser", "testKey", {
+    applicationId: "custom.app.id",
+  });
+
+  // Check instance properties for scenario 1
+  expect(eventHub1._applicationId).toBe("custom.app.id");
+  expect(eventHub1._apiUser).toBe("testUser");
+  expect(eventHub1._apiKey).toBe("testKey");
+  expect(eventHub1._serverUrl).toBe("https://ftrack.test:443");
+  expect(eventHub1.logger).toBeDefined();
+
+  // Scenario 2
+  const eventHub2 = new EventHub(
+    "http://ftrack.test:8080",
+    "testUser",
+    "testKey",
+  );
+
+  // Check instance properties for scenario 2
+  expect(eventHub2._applicationId).toBe("ftrack.api.javascript");
+  expect(eventHub2._apiUser).toBe("testUser");
+  expect(eventHub2._apiKey).toBe("testKey");
+  expect(eventHub2._serverUrl).toBe("http://ftrack.test:8080");
+  expect(eventHub2.logger).toBeDefined();
 });

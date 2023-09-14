@@ -7,7 +7,12 @@ import getUploadMetadata from "./fixtures/get_upload_metadata.json";
 import completeMultipartUpload from "./fixtures/complete_multipart_upload.json";
 import exampleQuery from "./fixtures/query_select_name_from_task_limit_1.json";
 import { setupServer } from "msw/node";
-
+const InvalidCredentialsError = {
+  content:
+    'The supplied API key is not valid. API keys are created from Settings under the page API keys. The api key should be passed in the request header "ftrack-api-key".',
+  exception: "InvalidCredentialsError",
+  error_code: null,
+};
 function authenticate(req) {
   // allow returning invalid authentication by setting ftrack-api-key to "INVALID_API_KEY"
   // otherwise, return true
@@ -36,19 +41,10 @@ export function getExampleQuery() {
 export const handlers = [
   rest.post("http://ftrack.test/api", async (req, res, ctx) => {
     if (!authenticate(req)) {
-      return res(
-        ctx.json({
-          content:
-            'The supplied API key is not valid. API keys are created from Settings under the page API keys. The api key should be passed in the request header "ftrack-api-key".',
-          exception: "InvalidCredentialsError",
-          error_code: null,
-        })
-      );
+      return res(ctx.json(InvalidCredentialsError));
     }
     const body = await Promise.all(
-      (
-        await req.json()
-      ).map(
+      (await req.json()).map(
         async ({
           action,
           expression,
@@ -66,7 +62,7 @@ export const handlers = [
                 `${__dirname}/fixtures/create_${entityType.toLowerCase()}.json`,
                 {
                   encoding: "utf-8",
-                }
+                },
               );
               const response = JSON.parse(createFixture);
               return {
@@ -88,8 +84,8 @@ export const handlers = [
                   `${__dirname}/fixtures/update_${entityType.toLowerCase()}.json`,
                   {
                     encoding: "utf-8",
-                  }
-                )
+                  },
+                ),
               );
             case "query":
               // queries are fetched from test/fixtures where the file name matches the full expression
@@ -99,8 +95,8 @@ export const handlers = [
                     .toLowerCase()
                     .split(" ")
                     .join("_")}.json`,
-                  { encoding: "utf-8" }
-                )
+                  { encoding: "utf-8" },
+                ),
               );
             case "get_upload_metadata":
               return getUploadMetadata;
@@ -109,8 +105,8 @@ export const handlers = [
             default:
               throw new Error("Action not supported by test server.");
           }
-        }
-      )
+        },
+      ),
     );
     return res(ctx.json(body));
   }),
@@ -118,12 +114,29 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.set("Access-Control-Allow-Origin", "*"),
-      ctx.body("file")
+      ctx.body("file"),
     );
   }),
   rest.put("http://ftrack.test/file-url", async (req, res, ctx) => {
     return res(ctx.status(200), ctx.set("Access-Control-Allow-Origin", "*"));
   }),
+  // Get socket io session id
+  rest.get("https://ftrack.test/socket.io/1/", handleSocketIORequest),
+  rest.get("http://ftrack.test/socket.io/1/", handleSocketIORequest),
+  rest.get("https://ftrack.test/*", (req, res, ctx) => {
+    return res(ctx.status(200));
+  }),
+
+  rest.get("http://ftrack.test:8080/*", (req, res, ctx) => {
+    return res(ctx.status(200));
+  }),
 ];
+// Get socket io session id
+function handleSocketIORequest(req, res, ctx) {
+  if (!authenticate(req)) {
+    return ctx.json(InvalidCredentialsError);
+  }
+  return res(ctx.text("1234567890:")); // The returned session ID has a colon and then some other information at the end. This only has the colon, to check that the colon is removed.
+}
 
 export const server = setupServer(...handlers);

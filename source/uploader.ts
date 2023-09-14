@@ -143,7 +143,7 @@ export class Uploader {
     }
     if (this.xhr) {
       logger.warn(
-        "[session.createComponent] options.xhr is deprecated and not compatible with multi-part uploads, use options.signal for aborting uploads."
+        "[session.createComponent] options.xhr is deprecated and not compatible with multi-part uploads, use options.signal for aborting uploads.",
       );
       this.numParts = null;
     }
@@ -242,7 +242,7 @@ export class Uploader {
 
   /** Handle progress event for single-part upload */
   handleSinglePartProgress(
-    progressEvent: ProgressEvent<XMLHttpRequestEventTarget>
+    progressEvent: ProgressEvent<XMLHttpRequestEventTarget>,
   ) {
     let progress = 0;
 
@@ -303,13 +303,13 @@ export class Uploader {
   async uploadChunk(
     chunk: Blob,
     part: MultiPartUploadPart,
-    onUploadChunkStart: () => void
+    onUploadChunkStart: () => void,
   ): Promise<void> {
     try {
       const status = await this.uploadFileChunk(
         chunk,
         part,
-        onUploadChunkStart
+        onUploadChunkStart,
       );
       if (status !== 200) {
         throw new CreateComponentError(`Failed to upload file part: ${status}`);
@@ -354,13 +354,13 @@ export class Uploader {
   async uploadFileChunk(
     file: Blob,
     part: MultiPartUploadPart,
-    onUploadChunkStart: () => void
+    onUploadChunkStart: () => void,
   ): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       const throwXHRError = (
         error: Error,
         part: MultiPartUploadPart,
-        abortFn?: any
+        abortFn?: any,
       ) => {
         delete this.activeConnections[part.part_number - 1];
         reject(error);
@@ -371,8 +371,8 @@ export class Uploader {
         reject(
           new CreateComponentError(
             "Failed to upload, network is offline",
-            "UPLOAD_FAILED_OFFLINE"
-          )
+            "UPLOAD_FAILED_OFFLINE",
+          ),
         );
         return;
       }
@@ -384,7 +384,7 @@ export class Uploader {
 
       const progressListener = this.handleChunkProgress.bind(
         this,
-        part.part_number - 1
+        part.part_number - 1,
       );
 
       xhr.upload.addEventListener("progress", progressListener);
@@ -400,7 +400,7 @@ export class Uploader {
           const eTag = xhr.getResponseHeader("ETag");
           logger.debug(
             `Upload of part ${part.part_number} / ${this.numParts} complete`,
-            eTag
+            eTag,
           );
           if (eTag) {
             const uploadedPart = {
@@ -421,29 +421,29 @@ export class Uploader {
         throwXHRError(
           new CreateComponentError(
             "Failed to upload file part",
-            "UPLOAD_PART_FAILED"
+            "UPLOAD_PART_FAILED",
           ),
           part,
-          abortXHR
+          abortXHR,
         );
       };
       xhr.ontimeout = () => {
         throwXHRError(
           new CreateComponentError(
             "Failed to upload file part within timeout",
-            "UPLOAD_PART_TIMEOUT"
+            "UPLOAD_PART_TIMEOUT",
           ),
           part,
-          abortXHR
+          abortXHR,
         );
       };
       xhr.onabort = () => {
         throwXHRError(
           new CreateComponentError(
             "Upload aborted by client",
-            "UPLOAD_ABORTED"
+            "UPLOAD_ABORTED",
           ),
-          part
+          part,
         );
       };
       window.addEventListener("offline", abortXHR);
@@ -465,7 +465,7 @@ export class Uploader {
       this.xhr = this.xhr ?? new XMLHttpRequest();
       this.xhr.upload.addEventListener(
         "progress",
-        this.handleSinglePartProgress.bind(this)
+        this.handleSinglePartProgress.bind(this),
       );
       this.xhr.open("PUT", url, true);
       this.xhr.onabort = async () => {
@@ -474,20 +474,25 @@ export class Uploader {
           this.onAborted();
         }
         reject(
-          new CreateComponentError("Upload aborted by client", "UPLOAD_ABORTED")
+          new CreateComponentError(
+            "Upload aborted by client",
+            "UPLOAD_ABORTED",
+          ),
         );
       };
       this.xhr.onerror = async () => {
         reject(
-          new CreateComponentError(`Failed to upload file: ${this.xhr!.status}`)
+          new CreateComponentError(
+            `Failed to upload file: ${this.xhr!.status}`,
+          ),
         );
       };
       this.xhr.onload = () => {
         if (this.xhr!.status >= 400) {
           reject(
             new CreateComponentError(
-              `Failed to upload file: ${this.xhr!.status}`
-            )
+              `Failed to upload file: ${this.xhr!.status}`,
+            ),
           );
         }
         resolve(this.xhr!.response);
@@ -523,7 +528,7 @@ export class Uploader {
         component_id: this.componentId,
         resource_identifier: this.componentId,
         location_id: SERVER_LOCATION_ID,
-      })
+      }),
     );
 
     const response = await this.session.call<CreateResponse>(operations);
@@ -536,7 +541,7 @@ export class Uploader {
         new Event("ftrack.location.component-added", {
           component_id: this.componentId,
           location_id: SERVER_LOCATION_ID,
-        })
+        }),
       );
     }
 

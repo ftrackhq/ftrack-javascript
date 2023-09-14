@@ -49,9 +49,9 @@ function useMultiPartUpload() {
               },
             ],
           },
-        ])
+        ]),
       );
-    })
+    }),
   );
 }
 
@@ -70,7 +70,7 @@ beforeAll(() => {
     credentials.apiKey,
     {
       autoConnectEventHub: false,
-    }
+    },
   );
 
   const data = { foo: "bar" };
