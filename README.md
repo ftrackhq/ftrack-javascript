@@ -373,4 +373,4 @@ if (subscriber) {
 
 ### Further documentation
 
-We are currently overhauling our documentation. The old documentation is still available in the [doc/old](/doc/old) folder in the repository while we are adding new documentation files in the doc folder. If there's any part of the client that is confusing and that you would like us to expand the documentation for, please add a GitHub issue and we'll try to get to it as soon as possible.
+If there's any part of the client that you would like us to expand the documentation for, please add a GitHub issue and we'll try to get to it as soon as possible. Otherwise more information about the API and its concepts can be found at our [general API documentation](https://help.ftrack.com/en/collections/133732-developing-with-ftrack-studio). You may also find it useful to look at the documentation for the [Python client](https://github.com/ftrackhq/ftrack-python).
