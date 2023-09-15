@@ -240,7 +240,7 @@ The JavaScript API currently only support expressions on the format `topic=value
 #### Target expression
 
 Targeted events will invoke all subscribers of the topic, not just those
-matching the target expression-
+matching the target expression.
 
 #### Stopping events
 
