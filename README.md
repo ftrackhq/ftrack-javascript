@@ -1,8 +1,8 @@
 # ftrack Javascript API Client
 
-The Javascript API Client is a JavaScript Library to help developing integrations that communicate with the ftrack API and Event server.
+The ftrack Javascript API Client is a JavaScript Library to help developing integrations that communicate with the ftrack API and Event server.
 
-This documentation focuses on the client. More information about the API and its concepts can be found at our [general API documentation](https://help.ftrack.com/en/collections/133732-developing-with-ftrack-studio). You may also find it useful to look at the documentation for the [Python client](https://github.com/ftrackhq/ftrack-python).
+This documentation focuses on the client. More information about the API and its concepts can be found at our [general API documentation](https://help.ftrack-studio.backlight.co/hc/en-us/categories/13129800014999-Development-API). You may also find it useful to look at the documentation for the [Python client](https://github.com/ftrackhq/ftrack-python).
 
   * [Installation](#installation)
   * [Tutorial](#tutorial)
@@ -70,7 +70,8 @@ console.log(projects.map((project) => project.name));
 
 Each project returned will be a plain JavaScript object and contain the selected attributes.
 
-The session contains a few other methods besides `query()`, such as `create()`, `update()` and `delete()`. Next up, let’s take a look at combining the query call with an update operation. Since the method return promises, we can chain various asynchronous operations one after the other.
+The session contains a few other methods besides `query()`, such as `create()`, `update()` and `delete()`. 
+Next up, let’s take a look at combining the query call with an update operation.
 
 In the example below a specific project is retrieved, and then its status is set to hidden, hiding the project from the UI.
 
@@ -97,11 +98,7 @@ const file = new File([JSON.stringify(data)], "data.json");
 
 const response = await session.createComponent(file);
 const component = response[0].data;
-console.debug("Component", component);
-console.debug("ComponentLocation", response[1].data);
-
-console.debug("Component URL: " + session.getComponentUrl(component.id));
-console.debug("Component thumbnail URL: " + session.thumbnailUrl(component.id));
+console.log(component.id);
 ```
 
 ## Handling Events
@@ -121,13 +118,10 @@ session = new ftrack.Session(..., { autoConnectEventHub: true });
 session.eventHub.isConnected();
 ```
 
-### Error handling
-
-A lot of the methods involve promises that might not always be resolved for various reasons. The examples will not have any error handling to keep them short, but make sure you have proper error handling when using the `EventHub`.
 
 ### Subscribing to events
 
-To listen to events, you register a function against a subscription using Session.event_hub.subscribe. The subscription uses the expression syntax and will filter against each Event instance to determine if the registered function should receive that event. If the subscription matches, the registered function will be called with the Event instance as its sole argument. The Event instance is a mapping like structure and can be used like a normal dictionary.
+To listen to events, you register a function against a subscription using ’Session.eventHub.subscribe()’. The subscription uses the expression syntax and will filter against each Event instance to determine if the registered function should receive that event. If the subscription matches, the registered function will be called with the Event instance as its sole argument. The Event instance is a mapping like structure and can be used like a normal object.
 
 The following example subscribes a function to receive all ‘ftrack.update’ events and then print out the entities that were updated:
 
@@ -170,7 +164,7 @@ session.eventHub.subscribe(
 
 When handling an event it is sometimes useful to be able to send information back to the source of the event. For example, `ftrack.location.request-resolve` would expect a resolved path to be sent back.
 
-You can craft a custom reply event if you want, but an easier way is just to return the appropriate data from your handler. Any value different from *null* or *undefined* will be automatically sent as a reply:
+You can publish a custom reply event using `publishReply()`, but an easier way is to return the appropriate data from your handler. Any returned value except *null* or *undefined* will be automatically sent as a reply:
 ``` javascript
 function onEvent(event) {
     // Send following data in automatic reply
