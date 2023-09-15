@@ -4,6 +4,23 @@ The Javascript API Client is a JavaScript Library to help developing integration
 
 This documentation focuses on the client. More information about the API and its concepts can be found at our [general API documentation](https://help.ftrack.com/en/collections/133732-developing-with-ftrack-studio). You may also find it useful to look at the documentation for the [Python client](https://github.com/ftrackhq/ftrack-python).
 
+  * [Installation](#installation)
+  * [Tutorial](#tutorial)
+    + [Query projects](#query-projects)
+    + [Uploading files](#uploading-files)
+  * [Handling Events](#handling-events)
+    + [Connecting to event hub](#connecting-to-event-hub)
+    + [Error handling](#error-handling)
+    + [Subscribing to events](#subscribing-to-events)
+    + [Subscriber information](#subscriber-information)
+    + [Sending replies](#sending-replies)
+    + [Publishing events](#publishing-events)
+    + [Handling replies](#handling-replies)
+    + [Limitations](#limitations)
+    + [Methods](#methods)
+    + [Further documentation](#further-documentation)
+
+      
 ## Installation
 
 npm:
@@ -95,7 +112,7 @@ Events are generated in ftrack when things happen such as a task being updated o
 
 The `EventHub` for each Session is accessible via `session.eventHub`.
 
-## Connecting to event hub
+### Connecting to event hub
 
 To connect to the event hub, run `session.eventHub.connect()`. You can also automatically connect the event hub when it is instantiated by providing the option `autoConnectEventHub` when constructing the Session instance:
 
@@ -104,11 +121,11 @@ session = new ftrack.Session(..., { autoConnectEventHub: true });
 session.eventHub.isConnected();
 ```
 
-## Error handling
+### Error handling
 
 A lot of the methods involve promises that might not always be resolved for various reasons. The examples will not have any error handling to keep them short, but make sure you have proper error handling when using the `EventHub`.
 
-## Subscribing to events
+### Subscribing to events
 
 To listen to events, you register a function against a subscription using Session.event_hub.subscribe. The subscription uses the expression syntax and will filter against each Event instance to determine if the registered function should receive that event. If the subscription matches, the registered function will be called with the Event instance as its sole argument. The Event instance is a mapping like structure and can be used like a normal dictionary.
 
@@ -133,7 +150,7 @@ const session = new Session({ autoConnectEventHub: true });
 session.eventHub.subscribe('topic=ftrack.update', myCallback);
 ```
 
-## Subscriber information
+### Subscriber information
 
 When subscribing, you can also specify additional information about your subscriber. This contextual information can be useful when routing events, particularly when targeting events. By default, the event hub will set some default information, but it can be useful to enhance this. To do so, simply pass in *subscriber* as a object of data to the
 `subscribe()` method:
@@ -149,7 +166,7 @@ session.eventHub.subscribe(
 )
 ```
 
-## Sending replies
+### Sending replies
 
 When handling an event it is sometimes useful to be able to send information back to the source of the event. For example, `ftrack.location.request-resolve` would expect a resolved path to be sent back.
 
@@ -164,7 +181,7 @@ session.eventHub.subscribe('topic=test-reply', onEvent)
 ```
 
 
-## Publishing events
+### Publishing events
 
 So far we have looked at listening to events coming from ftrack. However, you are also free to publish your own events (or even publish relevant ftrack events).
 
@@ -182,7 +199,7 @@ session.eventHub.publish(event);
 
 The event hub will automatically add some information to your event before it gets published, including the source of the event. By default the event source is just the event hub, but you can customise this to provide more relevant information if you want. 
 
-## Handling replies
+### Handling replies
 
 When publishing an event, you can specify `onReply` as a function which will be invoked whenever a reply event is received:
 
@@ -217,28 +234,28 @@ var event = new ftrack.Event('my-company.some-topic', { message: 'Hello world!' 
 session.eventHub.publishAndWaitForReply(event, { timeout: 5 }).then(onReply, onError);
 ```
 
-## Limitations
+### Limitations
 
 The event hub in the JavaScript API has some minor differences and lacks some
 of the features available in the [python counterpart](https://ftrack-python-api.rtd.ftrack.com/en/latest/handling_events.html).
 
-### Subscription expressions
+#### Subscription expressions
 
 The JavaScript API currently only support expressions on the format `topic=value` including wildcard support `topic=ftrack.*`, and more complex expressions such as filtering based on event source or data are not supported.
 
-### Target expression
+#### Target expression
 
 Targeted events will invoke all subscribers of the topic, not just those
 matching the target expression-
 
-### Stopping events
+#### Stopping events
 
 Subscription callback priorities and the ability to stop events is not
 supported at this point.
 
-## Methods
+### Methods
 
-### `connect()`
+#### `connect()`
 
 Connects to the event server.
 
@@ -246,7 +263,7 @@ Connects to the event server.
 session.eventHub.connect();
 ```
 
-### `isConnected(): boolean`
+#### `isConnected(): boolean`
 
 Checks if the `EventHub` is connected to the event server.
 
@@ -254,7 +271,7 @@ Checks if the `EventHub` is connected to the event server.
 const isConnected = session.eventHub.isConnected(); // Returns true if connected, false otherwise
 ```
 
-### `publish(event: Event, options?: { onReply?: EventCallback, timeout?: number }): Promise<string>`
+#### `publish(event: Event, options?: { onReply?: EventCallback, timeout?: number }): Promise<string>`
 
 Publishes an event to the event server and returns a promise resolved with the event ID when the event is sent.
 
@@ -274,7 +291,7 @@ session.eventHub.publish(event, {
 })
 ```
 
-### `publishAndWaitForReply(event: Event, options: { timeout: number }): Promise<unknown>`
+#### `publishAndWaitForReply(event: Event, options: { timeout: number }): Promise<unknown>`
 
 Publishes an event and waits for a single reply event.
 
@@ -296,7 +313,7 @@ session.eventHub.publishAndWaitForReply(event, { timeout: 60 })
   })
 ```
 
-### `subscribe(subscription: string, callback: EventCallback, metadata?: SubscriberMetadata): string`
+#### `subscribe(subscription: string, callback: EventCallback, metadata?: SubscriberMetadata): string`
 
 Subscribes to events matching a specified subscription expression.
 
@@ -314,7 +331,7 @@ const subscriberId = session.eventHub.subscribe("topic=ftrack.action.launch", (e
 });
 ```
 
-### `unsubscribe(identifier: string): boolean`
+#### `unsubscribe(identifier: string): boolean`
 
 Unsubscribes from events based on a subscriber ID returned from the `subscribe` method.
 
@@ -334,7 +351,7 @@ if (unsubscribed) {
 }
 ```
 
-### `getSubscriberByIdentifier(identifier: string): Subscriber | null`
+#### `getSubscriberByIdentifier(identifier: string): Subscriber | null`
 
 Returns information about a subscriber based on its identifier.
 
