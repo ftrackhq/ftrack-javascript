@@ -1,6 +1,6 @@
-# ftrack Javascript API Client
+# ftrack JavaScript API Client
 
-The ftrack Javascript API Client is a JavaScript Library to help developing integrations that communicate with the ftrack API and Event server.
+The ftrack JavaScript API Client is a JavaScript Library to help developing integrations that communicate with the ftrack API and Event server.
 
 This documentation focuses on the client. More information about the API and its concepts can be found at our [general API documentation](https://help.ftrack-studio.backlight.co/hc/en-us/categories/13129800014999-Development-API). You may also find it useful to look at the documentation for the [Python client](https://github.com/ftrackhq/ftrack-python).
 
@@ -239,13 +239,11 @@ The JavaScript API currently only support expressions on the format `topic=value
 
 #### Target expression
 
-Targeted events will invoke all subscribers of the topic, not just those
-matching the target expression.
+Targeted events will invoke all subscribers of the topic, not just those matching the target expression.
 
 #### Stopping events
 
-Subscription callback priorities and the ability to stop events is not
-supported at this point.
+Subscription callback priorities and the ability to stop events is not supported at this point.
 
 ### Methods
 
