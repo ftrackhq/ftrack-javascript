@@ -250,7 +250,7 @@ export default class SimpleSocketIOClient {
     this.reconnecting = false;
     this.webSocket?.close();
     this.webSocket = undefined;
-    if (typeof window !== "undefined" && window.addEventListener) {
+    if (window?.addEventListener) {
       window.addEventListener("online", this.attemptReconnect.bind(this), {
         once: true,
       });
