@@ -250,9 +250,11 @@ export default class SimpleSocketIOClient {
     this.reconnecting = false;
     this.webSocket?.close();
     this.webSocket = undefined;
-    window.addEventListener("online", this.attemptReconnect.bind(this), {
-      once: true,
-    });
+    if (typeof window !== "undefined" && window.addEventListener) {
+      window.addEventListener("online", this.attemptReconnect.bind(this), {
+        once: true,
+      });
+    }
     this.reconnect();
   }
   /**
