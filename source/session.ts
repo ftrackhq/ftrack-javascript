@@ -628,7 +628,7 @@ export class Session {
         throw this.getErrorFromResponse(response);
       }
       try {
-        return this.decode(response, {}, decodeDatesAsIso);
+        return this.decode(response, {}, decodeDatesAsIso || this.decodeDatesAsIso);
       } catch (reason) {
         logger.warn("Server reported error in unexpected format. ", reason);
         throw this.getErrorFromResponse({
@@ -792,10 +792,7 @@ export class Session {
     logger.debug("Query", expression);
     const responses = await this.call<[QueryResponse<T>]>(
       [operation.query(expression)],
-      {
-        decodeDatesAsIso: this.decodeDatesAsIso,
-        ...(options || {})
-      },
+      options,
     );
     return responses[0];
   }
