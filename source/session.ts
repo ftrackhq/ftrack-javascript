@@ -582,13 +582,17 @@ export class Session {
       pushToken,
       signal,
       additionalHeaders = {},
-      decodeDatesAsIso = false,
+      decodeDatesAsIso = undefined,
     }: CallOptions = {},
   ): Promise<IsTuple<T> extends true ? T : T[]> {
     if (this.initializing) {
       await this.initializing;
     }
     const url = `${this.serverUrl}${this.apiEndpoint}`;
+
+    decodeDatesAsIso = decodeDatesAsIso === undefined ?
+      this.decodeDatesAsIso :
+      decodeDatesAsIso;
 
     try {
       // Delay call until session is initialized if initialization is in
@@ -628,7 +632,7 @@ export class Session {
         throw this.getErrorFromResponse(response);
       }
       try {
-        return this.decode(response, {}, decodeDatesAsIso !== undefined ? decodeDatesAsIso : this.decodeDatesAsIso);
+        return this.decode(response, {}, decodeDatesAsIso);
       } catch (reason) {
         logger.warn("Server reported error in unexpected format. ", reason);
         throw this.getErrorFromResponse({
