@@ -628,7 +628,7 @@ export class Session {
         throw this.getErrorFromResponse(response);
       }
       try {
-        return this.decode(response, {}, this.decodeDatesAsIso || decodeDatesAsIso);
+        return this.decode(response, {}, decodeDatesAsIso !== undefined ? decodeDatesAsIso : this.decodeDatesAsIso);
       } catch (reason) {
         logger.warn("Server reported error in unexpected format. ", reason);
         throw this.getErrorFromResponse({
