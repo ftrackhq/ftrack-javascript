@@ -12,6 +12,7 @@ export interface SessionOptions {
   apiEndpoint?: string;
   additionalHeaders?: Data;
   strictApi?: boolean;
+  decodeDatesAsIso?: boolean;
 }
 
 export interface CreateComponentOptions {
