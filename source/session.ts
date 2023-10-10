@@ -582,18 +582,13 @@ export class Session {
       pushToken,
       signal,
       additionalHeaders = {},
-      decodeDatesAsIso = undefined,
+      decodeDatesAsIso = this.decodeDatesAsIso,
     }: CallOptions = {},
   ): Promise<IsTuple<T> extends true ? T : T[]> {
     if (this.initializing) {
       await this.initializing;
     }
     const url = `${this.serverUrl}${this.apiEndpoint}`;
-
-    decodeDatesAsIso = decodeDatesAsIso === undefined ?
-      this.decodeDatesAsIso :
-      decodeDatesAsIso;
-
     try {
       // Delay call until session is initialized if initialization is in
       // progress.
