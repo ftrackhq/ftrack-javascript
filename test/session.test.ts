@@ -39,6 +39,7 @@ beforeAll(() => {
     credentials.apiKey,
     {
       autoConnectEventHub: false,
+      decodeDatesAsIso: false,
     },
   );
 });
@@ -133,6 +134,43 @@ describe("Session", () => {
       { decodeDatesAsIso: true },
     );
     expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
+  });
+  it("Should allow querying with datetimes decoded as ISO objects, when set on session initialization", async () => {
+    const decodeDatesAsIsoSession = new Session(
+      credentials.serverUrl,
+      credentials.apiUser,
+      credentials.apiKey,
+      {
+        decodeDatesAsIso: true,
+      },
+    );
+    const result = await decodeDatesAsIsoSession.query(
+      "select name, created_at from Task limit 1",
+    );
+    expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
+  });
+  it("Should allow overriding session decodeDatesAsIso when querying", async () => {
+    const decodeDatesAsIsoSession = new Session(
+      credentials.serverUrl,
+      credentials.apiUser,
+      credentials.apiKey,
+      {
+        decodeDatesAsIso: true,
+      },
+    );
+    const result = await decodeDatesAsIsoSession.query(
+      "select name, created_at from Task limit 1",
+      { decodeDatesAsIso: false },
+    );
+    expect(result.data[0].created_at).to.be.instanceOf(moment);
+    expect(result.data[0].created_at.toISOString()).toEqual(
+      "2022-10-10T10:12:09.000Z",
+    );
+    const result2 = await session.query(
+      "select name, created_at from Task limit 1",
+      { decodeDatesAsIso: true },
+    );
+    expect(result2.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
   });
 
   it("Should allow querying with datetimes decoded as ISO objects with timezone support disabled", async () => {
@@ -590,7 +628,6 @@ describe("Encoding entities", () => {
       12321,
     ]);
   });
-
   it("Should support encoding moment dates to local timezone if timezone support is disabled", () => {
     const now = moment();
     server.use(

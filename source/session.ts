@@ -61,6 +61,7 @@ export class Session {
   schemas?: Schema[];
   serverInformation?: QueryServerInformationResponse;
   serverVersion?: string;
+  private decodeDatesAsIso: boolean;
   private schemasPromise?: Promise<Schema[]>;
   private serverInformationPromise?: Promise<ServerInformation>;
   private serverInformationValues?: string[];
@@ -80,7 +81,7 @@ export class Session {
    * @param  {string} [options.apiEndpoint=/api] - API endpoint.
    * @param {object} [options.headers] - Additional headers to send with the request
    * @param {object} [options.strictApi] - Turn on strict API mode
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} [options.decodeDatesAsIso] - Decode dates as ISO strings instead of moment objects
    *
    * @constructs Session
    */
@@ -96,6 +97,7 @@ export class Session {
       apiEndpoint = "/api",
       additionalHeaders = {},
       strictApi = false,
+      decodeDatesAsIso = false,
     }: SessionOptions = {},
   ) {
     if (!serverUrl || !apiUser || !apiKey) {
@@ -189,6 +191,8 @@ export class Session {
       },
       { action: "query_schemas" },
     ];
+
+    this.decodeDatesAsIso = decodeDatesAsIso;
 
     /**
      * true if session is initialized
@@ -578,14 +582,13 @@ export class Session {
       pushToken,
       signal,
       additionalHeaders = {},
-      decodeDatesAsIso = false,
+      decodeDatesAsIso = this.decodeDatesAsIso,
     }: CallOptions = {},
   ): Promise<IsTuple<T> extends true ? T : T[]> {
     if (this.initializing) {
       await this.initializing;
     }
     const url = `${this.serverUrl}${this.apiEndpoint}`;
-
     try {
       // Delay call until session is initialized if initialization is in
       // progress.
