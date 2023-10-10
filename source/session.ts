@@ -97,7 +97,7 @@ export class Session {
       apiEndpoint = "/api",
       additionalHeaders = {},
       strictApi = false,
-      decodeDatesAsIso = false
+      decodeDatesAsIso = false,
     }: SessionOptions = {},
   ) {
     if (!serverUrl || !apiUser || !apiKey) {
