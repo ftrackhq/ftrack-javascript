@@ -313,10 +313,13 @@ export default class SimpleSocketIOClient {
     const dataString = eventData ? `:::${JSON.stringify(payload)}` : "";
     const packet = `${PACKET_TYPES.event}${dataString}`;
 
-    if (this.webSocket?.readyState === WebSocket.OPEN) {
+    if (this.isConnected()) {
       this.webSocket.send(packet);
     } else {
       this.packetQueue.push(packet);
+    }
+    if (this.webSocket && !this.socket.connected && !this.reconnecting) {
+      this.reconnect();
     }
   }
   /**
