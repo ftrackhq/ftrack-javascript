@@ -235,10 +235,10 @@ export default class SimpleSocketIOClient {
     }
     this.reconnecting = false;
     this.reconnectionAttempts = 0; // Reset reconnection attempts
-    this.handleEvent("connect", {});
-    this.flushPacketQueue();
     // Set connected property to true
     this.socket.connected = true;
+    this.handleEvent("connect", {});
+    this.flushPacketQueue();
   }
   /**
    * Handles WebSocket closing
