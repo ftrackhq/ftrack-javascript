@@ -55,6 +55,7 @@ export default class SimpleSocketIOClient {
   private packetQueue: string[] = [];
   private reconnectionAttempts: number = 0;
   private reconnecting: boolean = false;
+  private initializingPromise: Promise<void>;
 
   // Added socket object with connected, open reconnect and transport properties to match current API
   // The old socket-io client uses both a connected and open property that are interchangeable
@@ -129,7 +130,7 @@ export default class SimpleSocketIOClient {
     this.heartbeatTimeoutMs = heartbeatTimeoutMs;
     this.apiUser = apiUser;
     this.apiKey = apiKey;
-    this.initializeWebSocket();
+    this.initializingPromise = this.initializeWebSocket();
   }
   /**
    * Fetches the session ID from the ftrack server.
@@ -318,7 +319,7 @@ export default class SimpleSocketIOClient {
     } else {
       this.packetQueue.push(packet);
     }
-    if (this.webSocket && !this.socket.connected && !this.reconnecting) {
+    if (!this.socket.connected) {
       this.reconnect();
     }
   }
@@ -407,15 +408,16 @@ export default class SimpleSocketIOClient {
    * @private
    * @param randomizedDelay
    */
-  private attemptReconnect(): void {
+  private async attemptReconnect(): Promise<void> {
+    await this.initializingPromise;
     // Check if already connected or if active reconnection attempt ongoing.
     if (this.socket.connected || this.reconnecting) {
       return;
     }
     this.reconnecting = true;
     this.reconnectionAttempts++;
-    this.initializeWebSocket();
     this.reconnectTimeout = undefined;
+    this.initializingPromise = this.initializeWebSocket();
     this.reconnect();
   }
   /**
