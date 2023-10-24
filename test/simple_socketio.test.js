@@ -410,6 +410,30 @@ describe("Tests using SimpleSocketIOClient", () => {
       `${PACKET_TYPES.event}${expectedDataString}`,
     );
   });
+  test("emit triggers a reconnect if not connected", () => {
+    client.webSocket = createWebSocketMock();
+    client.webSocket.readyState = WebSocket.CLOSED;
+
+    const reconnectSpy = vi.spyOn(client, "reconnect");
+
+    const eventName = "testEvent";
+    const eventData = { foo: "bar" };
+
+    client.emit(eventName, eventData);
+
+    expect(reconnectSpy).toHaveBeenCalledTimes(1);
+
+    const expectedPayload = {
+      name: eventName,
+      args: [eventData],
+    };
+    const expectedDataString = `:::${JSON.stringify(expectedPayload)}`;
+    expect(client.packetQueue).toContainEqual(
+      `${PACKET_TYPES.event}${expectedDataString}`,
+    );
+
+    reconnectSpy.mockRestore();
+  });
   describe("Reconnection tests", () => {
     test("attemptReconnect method initialises websocket again", async () => {
       client.initializeWebSocket = vi.fn();

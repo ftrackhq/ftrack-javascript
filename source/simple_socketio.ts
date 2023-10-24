@@ -318,8 +318,6 @@ export default class SimpleSocketIOClient {
       this.webSocket.send(packet);
     } else {
       this.packetQueue.push(packet);
-    }
-    if (!this.socket.connected) {
       this.reconnect();
     }
   }
