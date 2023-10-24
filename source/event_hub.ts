@@ -189,7 +189,7 @@ export class EventHub {
    * @return {Boolean}
    */
   isConnected(): boolean {
-    return this._socketIo?.isConnected() || false;
+    return this._socketIo?.socket.connected || false;
   }
 
   /**

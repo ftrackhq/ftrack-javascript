@@ -55,6 +55,7 @@ export default class SimpleSocketIOClient {
   private packetQueue: string[] = [];
   private reconnectionAttempts: number = 0;
   private reconnecting: boolean = false;
+  initializing: Promise<void>;
 
   // Added socket object with connected, open reconnect and transport properties to match current API
   // The old socket-io client uses both a connected and open property that are interchangeable
@@ -129,7 +130,7 @@ export default class SimpleSocketIOClient {
     this.heartbeatTimeoutMs = heartbeatTimeoutMs;
     this.apiUser = apiUser;
     this.apiKey = apiKey;
-    this.initializeWebSocket();
+    this.initializing = this.initializeWebSocket();
   }
   /**
    * Fetches the session ID from the ftrack server.
@@ -235,10 +236,10 @@ export default class SimpleSocketIOClient {
     }
     this.reconnecting = false;
     this.reconnectionAttempts = 0; // Reset reconnection attempts
-    this.handleEvent("connect", {});
-    this.flushPacketQueue();
     // Set connected property to true
     this.socket.connected = true;
+    this.handleEvent("connect", {});
+    this.flushPacketQueue();
   }
   /**
    * Handles WebSocket closing
@@ -313,10 +314,11 @@ export default class SimpleSocketIOClient {
     const dataString = eventData ? `:::${JSON.stringify(payload)}` : "";
     const packet = `${PACKET_TYPES.event}${dataString}`;
 
-    if (this.webSocket?.readyState === WebSocket.OPEN) {
+    if (this.isConnected()) {
       this.webSocket.send(packet);
     } else {
       this.packetQueue.push(packet);
+      this.reconnect();
     }
   }
   /**
@@ -404,15 +406,16 @@ export default class SimpleSocketIOClient {
    * @private
    * @param randomizedDelay
    */
-  private attemptReconnect(): void {
+  private async attemptReconnect(): Promise<void> {
+    await this.initializing;
     // Check if already connected or if active reconnection attempt ongoing.
     if (this.socket.connected || this.reconnecting) {
       return;
     }
     this.reconnecting = true;
     this.reconnectionAttempts++;
-    this.initializeWebSocket();
     this.reconnectTimeout = undefined;
+    this.initializing = this.initializeWebSocket();
     this.reconnect();
   }
   /**
