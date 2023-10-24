@@ -55,7 +55,7 @@ export default class SimpleSocketIOClient {
   private packetQueue: string[] = [];
   private reconnectionAttempts: number = 0;
   private reconnecting: boolean = false;
-  private initializingPromise: Promise<void>;
+  initializingPromise: Promise<void>;
 
   // Added socket object with connected, open reconnect and transport properties to match current API
   // The old socket-io client uses both a connected and open property that are interchangeable
