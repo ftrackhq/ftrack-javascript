@@ -492,7 +492,7 @@ describe("Tests using SimpleSocketIOClient", () => {
         const expectedMaxDelay = expectedMinDelay * 1.5;
         client.reconnecting = false; // Since it never gets to the actual fail state triggered by
         client.reconnect();
-        await client.initializingPromise;
+        await client.initializing;
         vi.advanceTimersByTime(expectedMaxDelay + 1);
         expect(client.attemptReconnect).toHaveBeenCalledTimes(i + 1);
       }
