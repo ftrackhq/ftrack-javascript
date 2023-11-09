@@ -1,0 +1,23 @@
+// Example tsPEG grammar for the given Python pyparsing code
+
+// Define the recursive structure of expressions
+Expression := NotExpression | AndExpression | OrExpression | Condition
+Condition := field=Field operator=Operator value={QuotedValue | Value}
+NotExpression := 'not' _ expression=Expression
+AndExpression := left=Expression _ 'and' _ right=Expression
+OrExpression := left=Expression _ 'or' _ right=Expression
+
+// Define terminal patterns
+Field := '[a-zA-Z_][a-zA-Z0-9_.]*'
+EqualsOperator := '='
+NotEqualsOperator := '!='
+GreaterThanEqualOperator := '>='
+LesserThanEqualOperator := '<='
+GreaterThanOperator := '>'
+LesserThanOperator := '<'
+Operator := EqualsOperator | NotEqualsOperator | GreaterThanEqualOperator | LesserThanEqualOperator | GreaterThanOperator | LesserThanOperator
+Value := '[a-zA-Z0-9\-_,./*@+]+'
+QuotedValue := '"[^"]*"'
+
+// Define whitespace handling
+_ := '[ \t\n\r]*'  // tsPEG automatically handles whitespace, so we define it for clarity
