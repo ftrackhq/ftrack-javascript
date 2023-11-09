@@ -410,19 +410,43 @@ describe("Tests using SimpleSocketIOClient", () => {
       `${PACKET_TYPES.event}${expectedDataString}`,
     );
   });
+  test("emit triggers a reconnect if not connected", () => {
+    client.webSocket = createWebSocketMock();
+    client.webSocket.readyState = WebSocket.CLOSED;
+
+    const reconnectSpy = vi.spyOn(client, "reconnect");
+
+    const eventName = "testEvent";
+    const eventData = { foo: "bar" };
+
+    client.emit(eventName, eventData);
+
+    expect(reconnectSpy).toHaveBeenCalledTimes(1);
+
+    const expectedPayload = {
+      name: eventName,
+      args: [eventData],
+    };
+    const expectedDataString = `:::${JSON.stringify(expectedPayload)}`;
+    expect(client.packetQueue).toContainEqual(
+      `${PACKET_TYPES.event}${expectedDataString}`,
+    );
+
+    reconnectSpy.mockRestore();
+  });
   describe("Reconnection tests", () => {
-    test("attemptReconnect method initialises websocket again", () => {
+    test("attemptReconnect method initialises websocket again", async () => {
       client.initializeWebSocket = vi.fn();
 
-      client.attemptReconnect();
+      await client.attemptReconnect();
 
       expect(client.initializeWebSocket).toHaveBeenCalledTimes(1);
     });
 
-    test("attemptReconnect method increments attempts count", () => {
+    test("attemptReconnect method increments attempts count", async () => {
       const initialAttempts = client.reconnectionAttempts;
 
-      client.attemptReconnect();
+      await client.attemptReconnect();
 
       expect(client.reconnectionAttempts).toBe(initialAttempts + 1);
     });
@@ -456,7 +480,7 @@ describe("Tests using SimpleSocketIOClient", () => {
       // Reconnect should not be called yet
       expect(client.attemptReconnect).toHaveBeenCalledTimes(0);
     });
-    test("reconnect method exponentially increase delay for every attempt, stopping at the max value", () => {
+    test("reconnect method exponentially increase delay for every attempt, stopping at the max value", async () => {
       const originalRandom = Math.random;
       Math.random = vi.fn().mockReturnValue(1);
       vi.useFakeTimers();
@@ -468,6 +492,7 @@ describe("Tests using SimpleSocketIOClient", () => {
         const expectedMaxDelay = expectedMinDelay * 1.5;
         client.reconnecting = false; // Since it never gets to the actual fail state triggered by
         client.reconnect();
+        await client.initializing;
         vi.advanceTimersByTime(expectedMaxDelay + 1);
         expect(client.attemptReconnect).toHaveBeenCalledTimes(i + 1);
       }
