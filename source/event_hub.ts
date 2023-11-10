@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-import io from "./simple_socketio.js";
 import { Event } from "./event.js";
 import {
   EventServerConnectionTimeoutError,
@@ -10,7 +9,7 @@ import {
   NotUniqueError,
 } from "./error.js";
 import { Data } from "./types.js";
-
+import type io from "./simple_socketio.js";
 interface BaseActionData {
   selection: Array<{
     entityId: string;
@@ -178,7 +177,9 @@ export class EventHub {
   }
 
   /** Connect to the event server. */
-  connect(): void {
+  async connect(): Promise<void> {
+    const simple_socketio = await import("./simple_socketio.js");
+    const io = simple_socketio.default;
     this._socketIo = io.connect(this._serverUrl, this._apiUser, this._apiKey);
     this._socketIo.on("connect", this._onSocketConnected);
     this._socketIo.on("ftrack.event", this._handle);
