@@ -228,6 +228,5 @@ export interface QueryOptions {
 export interface CallOptions extends MutationOptions, QueryOptions {}
 
 export interface EntityTypeMap {
-  FileComponent: {};
 }
 export interface TypedContextSubtypeMap {}
