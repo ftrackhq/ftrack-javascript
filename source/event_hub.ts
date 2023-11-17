@@ -132,7 +132,7 @@ export class EventHub {
   private _unsentEvents: ConnectionCallback[];
   private _subscribers: Subscriber[];
   private _socketIo: io | null;
-
+  private _initialized: boolean = false;
   /**
    * Construct EventHub instance with API credentials.
    * @param  {String} serverUrl             Server URL
@@ -178,6 +178,7 @@ export class EventHub {
 
   /** Connect to the event server. */
   async connect(): Promise<void> {
+    this._initialized = true;
     const simple_socketio = await import("./simple_socketio.js");
     const io = simple_socketio.default;
     this._socketIo = io.connect(this._serverUrl, this._apiUser, this._apiKey);
@@ -258,7 +259,7 @@ export class EventHub {
       timeout?: number;
     } = {},
   ): Promise<string> {
-    if (!this._socketIo) {
+    if (!this._initialized) {
       throw new EventServerPublishError(
         "Unable to publish event, not connected to server.",
       );
@@ -357,11 +358,11 @@ export class EventHub {
       this.logger.debug("Event hub is not connected, event is delayed.");
       this._unsentEvents.push(callback);
 
-      if (this._socketIo) {
+      if (this._initialized) {
         // Force reconnect socket if not automatically reconnected. This
         // happens for example in Adobe After Effects when rendering a
         // sequence takes longer than ~30s and the JS thread is blocked.
-        this._socketIo.reconnect();
+        this._socketIo?.reconnect();
       }
     } else {
       callback();

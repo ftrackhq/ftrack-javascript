@@ -13,6 +13,7 @@ describe("EventHub", () => {
       socket: { connected: true },
     };
     eventHub.isConnected = vi.fn(() => true);
+    eventHub._initialized = true;
   });
 
   afterEach(() => {
