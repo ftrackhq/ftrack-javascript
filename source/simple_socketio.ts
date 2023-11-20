@@ -204,7 +204,8 @@ export default class SimpleSocketIOClient {
    * @private
    */
   private handleMessage(event: MessageEvent): void {
-    const [packetType, data] = event.data.split(/:::?/);
+    const packetType = event.data[0]; // Get the first character of the message, the packet type
+    const data = event.data.replace(/^\d+:::?/, ""); // Remove the packet type and the : that split message parts.
     if (packetType === PACKET_TYPES.event) {
       const parsedData = JSON.parse(data) as Payload;
       const { name, args } = parsedData;
