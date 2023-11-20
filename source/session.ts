@@ -618,7 +618,7 @@ export class Session {
             content: (reason["cause"] as string) || reason.message,
           });
         }
-        throw new Error("Unknown error");
+        throw new Error("Unknown error: " + JSON.stringify(reason));
       }
 
       const response = await fetchResponse.json();
