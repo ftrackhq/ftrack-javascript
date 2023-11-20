@@ -201,11 +201,17 @@ export default class SimpleSocketIOClient {
   }
   /**
    * Handles WebSocket messages
+   * The messages are a version of the socket.io message protocol
+   * from before v1. The messages are formatted with the first character
+   * being an number, the packet type (see PACKET_TYPES const for available types).
+   * It is followed by two or three colons depending on if the packet type has data
+   * or not. For example heartbeat, "2::", does not contain data, while message, "3:::Hello", does.
+   *
    * @private
    */
   private handleMessage(event: MessageEvent): void {
     const packetType = event.data[0]; // Get the first character of the message, the packet type
-    const data = event.data.replace(/^\d+:::?/, ""); // Remove the packet type and the : that split message parts.
+    const data = event.data.replace(/^\d:::?/, ""); // Remove the packet type and the : that split message parts.
     if (packetType === PACKET_TYPES.event) {
       const parsedData = JSON.parse(data) as Payload;
       const { name, args } = parsedData;

@@ -227,7 +227,7 @@ describe("Tests using SimpleSocketIOClient", () => {
 
     test("handleMessage correctly handles data with '::' in it", () => {
       const eventName = "testEvent";
-      const eventData = { foo: ":::bar" };
+      const eventData = { foo: "::bar" };
       const packetData = JSON.stringify({ name: eventName, args: [eventData] });
 
       vi.spyOn(client, "handleEvent");
