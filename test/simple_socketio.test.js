@@ -225,6 +225,18 @@ describe("Tests using SimpleSocketIOClient", () => {
       expect(client.handleEvent).toHaveBeenCalledWith(eventName, eventData);
     });
 
+    test("handleMessage correctly handles data with '::' in it", () => {
+      const eventName = "testEvent";
+      const eventData = { foo: "::bar" };
+      const packetData = JSON.stringify({ name: eventName, args: [eventData] });
+
+      vi.spyOn(client, "handleEvent");
+
+      client.handleMessage({ data: `${PACKET_TYPES.event}:::${packetData}` });
+
+      expect(client.handleEvent).toHaveBeenCalledWith(eventName, eventData);
+    });
+
     test("handleMessage correctly handles heartbeat packet type", () => {
       client.webSocket = createWebSocketMock();
 

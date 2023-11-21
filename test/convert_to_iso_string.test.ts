@@ -42,6 +42,30 @@ describe("convertToIsoString", () => {
   });
 
   it.each([
+    "2023-01-01T00:00:00",
+    "2023-01-01T00:00:00Z",
+    "2023-01-01T00:00:00z",
+    "2023-01-01T00:00:00.000Z",
+    "2023-01-01T00:00:00.000z",
+    "2023-01-01T00:00:00.000+00:00",
+    "2023-01-01T00:00:00.000+01:00",
+    "2023-01-01T00:00:00+01:00",
+    "2023-01-01T00:00:00.000-01:00",
+  ])("should allow for variations in ms and timezone: %s", (validDate) => {
+    const converted = convertToIsoString(validDate);
+    const dayjsConverted = dayjs(validDate).toISOString();
+    expect(converted).toEqual(dayjsConverted);
+  });
+
+  it.each(["2023", "2023-01", "2023-01-01", "2023-W01-01", "2023-01-01T00:00"])(
+    "should not match incomplete date-times",
+    (invalidDate) => {
+      const converted = convertToIsoString(invalidDate);
+      expect(converted).toEqual(null);
+    },
+  );
+
+  it.each([
     "hello world",
     "202f",
     "ffff",
