@@ -18,7 +18,8 @@ This documentation focuses on the client. More information about the API and its
   - [Handling replies](#handling-replies)
   - [Limitations](#limitations)
   - [Methods](#methods)
-  - [Further documentation](#further-documentation)
+- [Further documentation](#further-documentation)
+- [Limitations](#limitations)
 
 ## Installation
 
