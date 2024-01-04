@@ -224,27 +224,6 @@ session.eventHub
   .then(onReply, onError);
 ```
 
-### Limitations
-
-The event hub in the JavaScript API has some minor differences and lacks some
-of the features available in the [python counterpart](https://ftrack-python-api.rtd.ftrack.com/en/latest/handling_events.html).
-
-#### Setting custom attributes
-
-Currently, this can be done, but not in an elegant way. Tracked in https://github.com/ftrackhq/ftrack-javascript/issues/153.
-
-#### Subscription expressions
-
-The JavaScript API currently only support expressions on the format `topic=value` including wildcard support `topic=ftrack.*`, and more complex expressions such as filtering based on event source or data are not supported.
-
-#### Target expression
-
-Targeted events will invoke all subscribers of the topic, not just those matching the target expression. Tracked in https://github.com/ftrackhq/ftrack-javascript/issues/166.
-
-#### Stopping events
-
-Subscription callback priorities and the ability to stop events is not supported at this point.
-
 ### Methods
 
 #### `connect()`
@@ -367,6 +346,27 @@ if (subscriber) {
 }
 ```
 
-### Further documentation
+## Further documentation
 
 If there's any part of the client that you would like us to expand the documentation for, please add a GitHub issue and we'll try to get to it as soon as possible. Otherwise more information about the API and its concepts can be found at our [general API documentation](https://help.ftrack.com/en/collections/133732-developing-with-ftrack-studio). You may also find it useful to look at the documentation for the [Python client](https://github.com/ftrackhq/ftrack-python).
+
+## Limitations
+
+The event hub in the JavaScript API has some minor differences and lacks some
+of the features available in the [python counterpart](https://ftrack-python-api.rtd.ftrack.com/en/latest/handling_events.html).
+
+### Setting custom attributes
+
+Currently, this can be done, but not in an elegant way. Tracked in https://github.com/ftrackhq/ftrack-javascript/issues/153.
+
+### Subscription expressions
+
+The JavaScript API currently only support expressions on the format `topic=value` including wildcard support `topic=ftrack.*`, and more complex expressions such as filtering based on event source or data are not supported.
+
+### Target expression
+
+Targeted events will invoke all subscribers of the topic, not just those matching the target expression. Tracked in https://github.com/ftrackhq/ftrack-javascript/issues/166.
+
+### Stopping events
+
+Subscription callback priorities and the ability to stop events is not supported at this point.
