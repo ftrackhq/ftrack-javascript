@@ -14,7 +14,7 @@ import {
 } from "./types.js";
 import normalizeString from "./util/normalize_string.js";
 import { splitFileExtension } from "./util/split_file_extension.js";
-import type { Data } from "./types.js";
+import type { EntityType } from "./types.js";
 import { getChunkSize } from "./util/get_chunk_size.js";
 import { backOff } from "./util/back_off.js";
 
@@ -98,11 +98,11 @@ export class Uploader {
   /** Additional data for Component entity */
   private data: CreateComponentOptions["data"];
   /** @deprecated - Remove once Session.createComponent signature is updated. */
-  createComponentResponse: CreateResponse<Data> | null;
+  createComponentResponse: CreateResponse<EntityType> | null;
   /** @deprecated - Remove once Session.createComponent signature is updated. */
   uploadMetadata: GetUploadMetadataResponse | null;
   /** @deprecated - Remove once Session.createComponent signature is updated. */
-  createComponentLocationResponse: CreateResponse<Data> | null;
+  createComponentLocationResponse: CreateResponse<EntityType> | null;
 
   constructor(session: Session, file: Blob, options: UploaderOptions) {
     this.session = session;

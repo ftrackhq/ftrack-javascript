@@ -2,7 +2,7 @@
 
 import * as operation from "./operation.js";
 import { Session } from "./session.js";
-import { Data, QueryResponse } from "./types.js";
+import { QueryResponse } from "./types.js";
 /**
  * Project schema namespace
  * @namespace project_schema
@@ -71,7 +71,7 @@ export function getStatuses(
     ),
   );
 
-  response = session.call<QueryResponse<Data>>(operations);
+  response = session.call<QueryResponse>(operations);
   response = response.then((results) => {
     // Since the operations where performed in one batched call,
     // the result will be merged into a single entity.

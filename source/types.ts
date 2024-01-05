@@ -37,26 +37,26 @@ export interface SearchOptions {
   objectTypeIds?: string[];
 }
 
-export interface QueryResponse<T = Data> {
-  data: T[];
+export interface QueryResponse<K extends EntityType = EntityType> {
+  data: EntityData<K>[]; // Later this needs to take multiple different K and give the correct types
   action: "query";
   metadata: ResponseMetadata;
 }
 
-export interface CreateResponse<T = Data> {
-  data: T;
+export interface CreateResponse<K extends EntityType = EntityType> {
+  data: EntityData<K>;
   action: "create";
 }
-export interface UpdateResponse<T = Data> {
-  data: T;
+export interface UpdateResponse<K extends EntityType = EntityType> {
+  data: EntityData<K>;
   action: "update";
 }
 export interface DeleteResponse {
   data: true;
   action: "delete";
 }
-export interface SearchResponse<T = Data> {
-  data: T[];
+export interface SearchResponse<K extends EntityType = EntityType> {
+  data: EntityData<K>[];
   action: "search";
   metadata: ResponseMetadata;
 }
@@ -224,6 +224,7 @@ export interface QueryOptions {
 export interface CallOptions extends MutationOptions, QueryOptions {}
 
 type IsEmptyType<T> = keyof T extends never ? true : false;
+type ExcludeNumber<T> = T extends number ? never : T;
 
 export interface ExtendibleEntityTypeMap {}
 interface DefaultEntityTypeMap {
@@ -235,7 +236,7 @@ export type EntityTypeMap = IsEmptyType<ExtendibleEntityTypeMap> extends true
   ? DefaultEntityTypeMap
   : ExtendibleEntityTypeMap;
 
-export type EntityType = keyof EntityTypeMap;
+export type EntityType = ExcludeNumber<keyof EntityTypeMap>;
 export type EntityData<TEntityType extends EntityType = EntityType> =
   EntityTypeMap[TEntityType];
 

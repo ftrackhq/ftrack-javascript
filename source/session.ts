@@ -792,7 +792,7 @@ export class Session {
     options: QueryOptions = {},
   ) {
     logger.debug("Query", expression);
-    const responses = await this.call<[QueryResponse<EntityData<K>>]>(
+    const responses = await this.call<[QueryResponse<K>]>(
       [operation.query(expression)],
       options,
     );
@@ -834,7 +834,7 @@ export class Session {
       objectTypeIds,
     });
 
-    const responses = await this.call<[SearchResponse<EntityData<K>>]>(
+    const responses = await this.call<[SearchResponse<K>]>(
       [
         operation.search({
           expression,
@@ -867,7 +867,7 @@ export class Session {
   ) {
     logger.debug("Create", entityType, data, options);
 
-    const responses = await this.call<[CreateResponse<EntityData<K>>]>(
+    const responses = await this.call<[CreateResponse<K>]>(
       [operation.create(entityType, data)],
       options,
     );
@@ -894,7 +894,7 @@ export class Session {
   ) {
     logger.debug("Update", type, keys, data, options);
 
-    const responses = await this.call<[UpdateResponse<EntityData<K>>]>(
+    const responses = await this.call<[UpdateResponse<K>]>(
       [operation.update(type, keys, data)],
       options,
     );
