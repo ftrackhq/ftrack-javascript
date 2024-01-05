@@ -24,10 +24,6 @@ export interface CreateComponentOptions {
   onAborted?: () => unknown;
 }
 
-export interface Entity {
-  id: string;
-  __entity_type__: string;
-}
 interface ResponseMetadata {
   next: {
     offset: number | null;
@@ -35,7 +31,7 @@ interface ResponseMetadata {
 }
 export interface SearchOptions {
   expression: string;
-  entityType: keyof EntityTypeMap;
+  entityType: EntityType;
   terms?: string[];
   contextId?: string;
   objectTypeIds?: string[];
@@ -227,6 +223,20 @@ export interface QueryOptions {
 
 export interface CallOptions extends MutationOptions, QueryOptions {}
 
-export interface EntityTypeMap {
+type IsEmptyType<T> = keyof T extends never ? true : false;
+
+export interface ExtendibleEntityTypeMap {}
+interface DefaultEntityTypeMap {
+  [key: string]: {
+    [key: string]: any;
+  };
 }
+export type EntityTypeMap = IsEmptyType<ExtendibleEntityTypeMap> extends true
+  ? DefaultEntityTypeMap
+  : ExtendibleEntityTypeMap;
+
+export type EntityType = keyof EntityTypeMap;
+export type EntityData<TEntityType extends EntityType = EntityType> =
+  EntityTypeMap[TEntityType];
+
 export interface TypedContextSubtypeMap {}

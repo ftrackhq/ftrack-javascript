@@ -4,9 +4,11 @@
  * @namespace operation
  */
 
+import { EntityType } from "./types.js";
+
 export interface CreateOperation {
   action: "create";
-  entity_type: string;
+  entity_type: EntityType;
   entity_data: any;
 }
 
@@ -17,7 +19,7 @@ export interface QueryOperation {
 
 export interface SearchOperationOptions {
   expression?: string;
-  entityType?: string;
+  entityType?: EntityType;
   terms?: string[];
   contextId?: string;
   objectTypeIds?: string[];
@@ -26,7 +28,7 @@ export interface SearchOperationOptions {
 export interface SearchOperation {
   action: "search";
   expression?: string;
-  entity_type?: string;
+  entity_type?: EntityType;
   terms?: string[];
   context_id?: string;
   object_type_ids?: string[];
@@ -34,14 +36,14 @@ export interface SearchOperation {
 
 export interface UpdateOperation {
   action: "update";
-  entity_type: string;
+  entity_type: EntityType;
   entity_key: string[] | string;
   entity_data: any;
 }
 
 export interface DeleteOperation {
   action: "delete";
-  entity_type: string;
+  entity_type: EntityType;
   entity_key: string[] | string;
 }
 
@@ -81,7 +83,7 @@ export type Operation =
  * @param  {Object} data Entity data to use for creation
  * @return {Object}      API operation
  */
-export function create(type: string, data: any): CreateOperation {
+export function create(type: EntityType, data: any): CreateOperation {
   return {
     action: "create",
     entity_type: type,
@@ -137,7 +139,7 @@ export function search({
  * @return {Object}      API operation
  */
 export function update(
-  type: string,
+  type: EntityType,
   keys: string[] | string,
   data: any,
 ): UpdateOperation {
@@ -159,7 +161,7 @@ export function update(
  * @return {Object}      API operation
  */
 function deleteOperation(
-  type: string,
+  type: EntityType,
   keys: string[] | string,
 ): DeleteOperation {
   return {
