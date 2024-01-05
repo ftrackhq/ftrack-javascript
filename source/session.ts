@@ -670,11 +670,11 @@ export class Session {
    *   Return update or create promise.
    */
 
-  ensure<K extends EntityType = EntityType>(
-    entityType: K,
-    data: EntityData<K>,
-    identifyingKeys: Array<keyof EntityData<K>> = [],
-  ): Promise<EntityData<K>> {
+  ensure<TEntityType extends EntityType = EntityType>(
+    entityType: TEntityType,
+    data: EntityData<TEntityType>,
+    identifyingKeys: Array<keyof EntityData<TEntityType>> = [],
+  ): Promise<EntityData<TEntityType>> {
     let keys = identifyingKeys as string[];
 
     const anyData = data as any;
@@ -719,9 +719,9 @@ export class Session {
 
     expression = `${expression} ${criteria.join(" and ")}`;
 
-    return this.query<K>(expression).then((response) => {
+    return this.query<TEntityType>(expression).then((response) => {
       if (response.data.length === 0) {
-        return this.create<K>(entityType, anyData).then(
+        return this.create<TEntityType>(entityType, anyData).then(
           ({ data: responseData }) => Promise.resolve(responseData),
         );
       }
@@ -746,7 +746,7 @@ export class Session {
       });
 
       if (updated) {
-        return this.update<K>(
+        return this.update<TEntityType>(
           entityType,
           primaryKeys.map((key: string) => updateEntity[key]),
           Object.keys(anyData).reduce<any>((accumulator, key) => {
@@ -754,9 +754,9 @@ export class Session {
               accumulator[key] = anyData[key];
             }
             return accumulator;
-          }, {} as EntityData<K>),
+          }, {} as EntityData<TEntityType>),
         ).then(({ data: responseData }) =>
-          Promise.resolve(responseData as EntityData<K>),
+          Promise.resolve(responseData as EntityData<TEntityType>),
         );
       }
 
@@ -787,12 +787,12 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  async query<K extends EntityType>(
+  async query<TEntityType extends EntityType>(
     expression: string,
     options: QueryOptions = {},
   ) {
     logger.debug("Query", expression);
-    const responses = await this.call<[QueryResponse<EntityData<K>>]>(
+    const responses = await this.call<[QueryResponse<EntityData<TEntityType>>]>(
       [operation.query(expression)],
       options,
     );
@@ -816,7 +816,7 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
-  async search<K extends EntityType = EntityType>(
+  async search<TEntityType extends EntityType = EntityType>(
     {
       expression,
       entityType,
@@ -834,7 +834,9 @@ export class Session {
       objectTypeIds,
     });
 
-    const responses = await this.call<[SearchResponse<EntityData<K>>]>(
+    const responses = await this.call<
+      [SearchResponse<EntityData<TEntityType>>]
+    >(
       [
         operation.search({
           expression,
@@ -860,17 +862,16 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise which will be resolved with the response.
    */
-  async create<K extends EntityType = EntityType>(
-    entityType: K,
-    data: EntityData<K>,
+  async create<TEntityType extends EntityType = EntityType>(
+    entityType: TEntityType,
+    data: EntityData<TEntityType>,
     options: MutationOptions = {},
   ) {
     logger.debug("Create", entityType, data, options);
 
-    const responses = await this.call<[CreateResponse<EntityData<K>>]>(
-      [operation.create(entityType, data)],
-      options,
-    );
+    const responses = await this.call<
+      [CreateResponse<EntityData<TEntityType>>]
+    >([operation.create(entityType, data)], options);
     return responses[0];
   }
 
@@ -886,18 +887,17 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  async update<K extends EntityType = EntityType>(
-    type: K,
+  async update<TEntityType extends EntityType = EntityType>(
+    type: TEntityType,
     keys: string[] | string,
-    data: EntityData<K>,
+    data: EntityData<TEntityType>,
     options: MutationOptions = {},
   ) {
     logger.debug("Update", type, keys, data, options);
 
-    const responses = await this.call<[UpdateResponse<EntityData<K>>]>(
-      [operation.update(type, keys, data)],
-      options,
-    );
+    const responses = await this.call<
+      [UpdateResponse<EntityData<TEntityType>>]
+    >([operation.update(type, keys, data)], options);
     return responses[0];
   }
 
