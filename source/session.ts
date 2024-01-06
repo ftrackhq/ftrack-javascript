@@ -371,7 +371,7 @@ export class Session {
     if (Array.isArray(data)) {
       return this._decodeArray(data, identityMap, decodeDatesAsIso);
     }
-    if (typeof data === "object" && data?.constructor === Object) {
+    if (!!data && typeof data === "object") {
       if (data.__entity_type__) {
         return this._mergeEntity(data, identityMap, decodeDatesAsIso);
       }
