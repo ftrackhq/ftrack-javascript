@@ -13,6 +13,7 @@ export interface SessionOptions {
   additionalHeaders?: Data;
   strictApi?: boolean;
   decodeDatesAsIso?: boolean;
+  denormalizeResponse?: boolean;
 }
 
 export interface CreateComponentOptions {

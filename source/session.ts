@@ -61,6 +61,7 @@ export class Session {
   schemas?: Schema[];
   serverInformation?: QueryServerInformationResponse;
   serverVersion?: string;
+  private denormalizeResponse: boolean;
   private decodeDatesAsIso: boolean;
   private schemasPromise?: Promise<Schema[]>;
   private serverInformationPromise?: Promise<ServerInformation>;
@@ -82,6 +83,7 @@ export class Session {
    * @param {object} [options.headers] - Additional headers to send with the request
    * @param {object} [options.strictApi] - Turn on strict API mode
    * @param {object} [options.decodeDatesAsIso] - Decode dates as ISO strings instead of moment objects
+   * @param {object} [options.denormalizeResponse] - Disable normalization of response data
    *
    * @constructs Session
    */
@@ -98,6 +100,7 @@ export class Session {
       additionalHeaders = {},
       strictApi = false,
       decodeDatesAsIso = false,
+      denormalizeResponse = false,
     }: SessionOptions = {},
   ) {
     if (!serverUrl || !apiUser || !apiKey) {
@@ -156,6 +159,13 @@ export class Session {
       };
     }
 
+    if (denormalizeResponse) {
+      this.additionalHeaders = {
+        ...additionalHeaders,
+        "ftrack-api-options": "strict:1;denormalize:1",
+      };
+    }
+
     /**
      * session event hub
      * @memberof Session
@@ -193,6 +203,16 @@ export class Session {
     ];
 
     this.decodeDatesAsIso = decodeDatesAsIso;
+
+    /**
+     * By default the API server will return normalized responses, and we denormalize them in the client.
+     * This might cause cyclical references in the response data, making it non-JSON serializable.
+     * This option allows the user to disable normalization of the response data.
+     * @memberof Session
+     * @instance
+     * @type {Boolean}
+     */
+    this.denormalizeResponse = denormalizeResponse;
 
     /**
      * true if session is initialized
@@ -371,7 +391,7 @@ export class Session {
       return this._decodeArray(data, identityMap, decodeDatesAsIso);
     }
     if (!!data && typeof data === "object") {
-      if (data.__entity_type__) {
+      if (data.__entity_type__ && !this.denormalizeResponse) {
         return this._mergeEntity(data, identityMap, decodeDatesAsIso);
       }
       if (data.__type__ === "datetime" && decodeDatesAsIso) {
@@ -403,8 +423,6 @@ export class Session {
       if (!dateValue.endsWith("Z") && !dateValue.includes("+")) {
         dateValue += "Z";
       }
-      // Return date as moment object with UTC set to true.
-      return new Date(dateValue).toISOString();
     }
     // Server has no timezone support, return date in ISO format
     return new Date(dateValue).toISOString();
