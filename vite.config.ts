@@ -38,8 +38,5 @@ export default defineConfig({
     globals: true,
     globalSetup: "./vitest.globalsetup.js",
     setupFiles: ["./vitest.setup.js"],
-    deps: {
-      fallbackCJS: true,
-    },
   },
 } as VitestConfigExport);
