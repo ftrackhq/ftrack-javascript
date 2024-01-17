@@ -732,6 +732,55 @@ describe("Encoding entities", () => {
       expect(data[2].status.name).toEqual("Done");
     });
 
+    it("Should support denormalize feature toggle", () => {
+      const payload = [
+        {
+          id: 1,
+          __entity_type__: "Task",
+          name: "foo",
+          status: {
+            __entity_type__: "Status",
+            id: 2,
+            name: "In progress",
+          },
+        },
+        {
+          id: 2,
+          __entity_type__: "Task",
+          name: "foo",
+          status: {
+            __entity_type__: "Status",
+            id: 1,
+            name: "Done",
+          },
+        },
+        {
+          id: 3,
+          __entity_type__: "Task",
+          status: {
+            __entity_type__: "Status",
+            id: 1,
+          },
+        },
+      ];
+      // @ts-ignore - Otherwise internal method used for testing purposes
+      const normalizedData = session.decode(
+        payload,
+        {},
+        { denormalizeResponse: false },
+      );
+      // @ts-ignore - Otherwise internal method used for testing purposes
+      const denormalizedData = session.decode(
+        payload,
+        {},
+        { denormalizeResponse: true },
+      );
+      expect(payload).toEqual(denormalizedData);
+      expect(payload).not.toEqual(normalizedData);
+      expect(denormalizedData[1].status).not.toBe(denormalizedData[2].status);
+      expect(normalizedData[1].status).toBe(normalizedData[2].status);
+    });
+
     it("Should support merging 2-level nested data", async () => {
       await session.initializing;
 
