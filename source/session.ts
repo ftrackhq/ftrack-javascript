@@ -200,7 +200,7 @@ export class Session {
     /**
      * By default the API server will return normalized responses, and we denormalize them in the client.
      * This might cause cyclical references in the response data, making it non-JSON serializable.
-     * This option allows the user to disable normalization of the response data.
+     * This option allows the user to disable normalization of the response data to ensure serializability.
      * @memberof Session
      * @instance
      * @type {Boolean}
