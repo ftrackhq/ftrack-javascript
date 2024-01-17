@@ -159,13 +159,6 @@ export class Session {
       };
     }
 
-    if (denormalizeResponse) {
-      this.additionalHeaders = {
-        ...additionalHeaders,
-        "ftrack-api-options": "strict:1;denormalize:1",
-      };
-    }
-
     /**
      * session event hub
      * @memberof Session
@@ -634,7 +627,6 @@ export class Session {
     try {
       // Delay call until session is initialized if initialization is in
       // progress.
-
       let fetchResponse;
       try {
         fetchResponse = await fetch(url, {
@@ -647,6 +639,9 @@ export class Session {
             "ftrack-user": this.apiUser,
             "ftrack-Clienttoken": this.clientToken,
             "ftrack-pushtoken": pushToken,
+            "ftrack-api-options": denormalizeResponse
+              ? "strict:1;denormalize:1"
+              : undefined,
             ...this.additionalHeaders,
             ...additionalHeaders,
           } as HeadersInit,
