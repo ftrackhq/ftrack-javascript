@@ -424,13 +424,13 @@ export class Session {
     let dateValue = data.value;
     if (
       this.serverInformation &&
-      this.serverInformation.is_timezone_support_enabled
+      this.serverInformation.is_timezone_support_enabled &&
+      !dateValue.endsWith("Z") &&
+      !dateValue.includes("+")
     ) {
       // Server responds with timezone naive strings, add Z to indicate UTC.
       // If the string somehow already contains a timezone offset, do not add Z.
-      if (!dateValue.endsWith("Z") && !dateValue.includes("+")) {
-        dateValue += "Z";
-      }
+      dateValue += "Z";
     }
     // Server has no timezone support, return date in ISO format
     return new Date(dateValue).toISOString();
