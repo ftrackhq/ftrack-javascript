@@ -13,6 +13,7 @@ export interface SessionOptions {
   additionalHeaders?: Data;
   strictApi?: boolean;
   decodeDatesAsIso?: boolean;
+  ensureSerializableResponse?: boolean;
 }
 
 export interface CreateComponentOptions {
@@ -178,6 +179,7 @@ export interface MutationOptions {
   pushToken?: string;
   additionalHeaders?: Data;
   decodeDatesAsIso?: boolean;
+  ensureSerializableResponse?: boolean;
 }
 
 export type SimpleTypeSchemaProperty = {
@@ -223,6 +225,7 @@ export interface QueryOptions {
   signal?: AbortSignal;
   additionalHeaders?: Data;
   decodeDatesAsIso?: boolean;
+  ensureSerializableResponse?: boolean;
 }
 
 export interface CallOptions extends MutationOptions, QueryOptions {}
