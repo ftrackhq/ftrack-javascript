@@ -179,6 +179,7 @@ export interface MutationOptions {
   pushToken?: string;
   additionalHeaders?: Data;
   decodeDatesAsIso?: boolean;
+  denormalizeResponse?: boolean;
 }
 
 export type SimpleTypeSchemaProperty = {
@@ -224,6 +225,7 @@ export interface QueryOptions {
   signal?: AbortSignal;
   additionalHeaders?: Data;
   decodeDatesAsIso?: boolean;
+  denormalizeResponse?: boolean;
 }
 
 export interface CallOptions extends MutationOptions, QueryOptions {}

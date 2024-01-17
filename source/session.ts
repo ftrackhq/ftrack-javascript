@@ -385,21 +385,33 @@ export class Session {
   private decode(
     data: any,
     identityMap: Data = {},
-    decodeDatesAsIso: boolean = false,
+    {
+      decodeDatesAsIso = false,
+      denormalizeResponse = false,
+    }: { decodeDatesAsIso?: boolean; denormalizeResponse?: boolean } = {},
   ): any {
     if (Array.isArray(data)) {
-      return this._decodeArray(data, identityMap, decodeDatesAsIso);
+      return this._decodeArray(data, identityMap, {
+        decodeDatesAsIso,
+        denormalizeResponse,
+      });
     }
     if (!!data && typeof data === "object") {
-      if (data.__entity_type__ && !this.denormalizeResponse) {
-        return this._mergeEntity(data, identityMap, decodeDatesAsIso);
+      if (data.__entity_type__ && !denormalizeResponse) {
+        return this._mergeEntity(data, identityMap, {
+          decodeDatesAsIso,
+          denormalizeResponse,
+        });
       }
       if (data.__type__ === "datetime" && decodeDatesAsIso) {
         return this._decodeDateTimeAsIso(data);
       } else if (data.__type__ === "datetime") {
         return this._decodeDateTimeAsMoment(data);
       }
-      return this._decodePlainObject(data, identityMap, decodeDatesAsIso);
+      return this._decodePlainObject(data, identityMap, {
+        decodeDatesAsIso,
+        denormalizeResponse,
+      });
     }
     return data;
   }
@@ -456,10 +468,16 @@ export class Session {
   private _decodePlainObject(
     object: Data,
     identityMap: Data,
-    decodeDatesAsIso: boolean,
+    {
+      decodeDatesAsIso,
+      denormalizeResponse,
+    }: { decodeDatesAsIso?: boolean; denormalizeResponse?: boolean } = {},
   ) {
     return Object.keys(object).reduce<Data>((previous, key) => {
-      previous[key] = this.decode(object[key], identityMap, decodeDatesAsIso);
+      previous[key] = this.decode(object[key], identityMap, {
+        decodeDatesAsIso,
+        denormalizeResponse,
+      });
       return previous;
     }, {});
   }
@@ -471,10 +489,13 @@ export class Session {
   private _decodeArray(
     collection: any[],
     identityMap: Data,
-    decodeDatesAsIso: boolean,
+    {
+      decodeDatesAsIso = false,
+      denormalizeResponse = false,
+    }: { decodeDatesAsIso?: boolean; denormalizeResponse?: boolean } = {},
   ): any[] {
     return collection.map((item) =>
-      this.decode(item, identityMap, decodeDatesAsIso),
+      this.decode(item, identityMap, { decodeDatesAsIso, denormalizeResponse }),
     );
   }
 
@@ -485,7 +506,10 @@ export class Session {
   private _mergeEntity(
     entity: Data,
     identityMap: Data,
-    decodeDatesAsIso: boolean,
+    {
+      decodeDatesAsIso,
+      denormalizeResponse,
+    }: { decodeDatesAsIso?: boolean; denormalizeResponse?: boolean } = {},
   ) {
     const identifier = this.getIdentifyingKey(entity);
     if (!identifier) {
@@ -507,11 +531,10 @@ export class Session {
 
     for (const key in entity) {
       if (entity.hasOwnProperty(key)) {
-        mergedEntity[key] = this.decode(
-          entity[key],
-          identityMap,
+        mergedEntity[key] = this.decode(entity[key], identityMap, {
           decodeDatesAsIso,
-        );
+          denormalizeResponse,
+        });
       }
     }
     return mergedEntity;
@@ -601,6 +624,7 @@ export class Session {
       signal,
       additionalHeaders = {},
       decodeDatesAsIso = this.decodeDatesAsIso,
+      denormalizeResponse = this.denormalizeResponse,
     }: CallOptions = {},
   ): Promise<IsTuple<T> extends true ? T : T[]> {
     if (this.initializing) {
@@ -645,7 +669,11 @@ export class Session {
         throw this.getErrorFromResponse(response);
       }
       try {
-        return this.decode(response, {}, decodeDatesAsIso);
+        return this.decode(
+          response,
+          {},
+          { decodeDatesAsIso, denormalizeResponse },
+        );
       } catch (reason) {
         logger.warn("Server reported error in unexpected format. ", reason);
         throw this.getErrorFromResponse({
@@ -799,6 +827,7 @@ export class Session {
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.denormalizeResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
@@ -828,6 +857,7 @@ export class Session {
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.denormalizeResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
@@ -873,6 +903,7 @@ export class Session {
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.denormalizeResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with the response.
    */
   async create<T extends Data = Data>(
@@ -899,6 +930,7 @@ export class Session {
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.denormalizeResponse - Disable normalization of response data
    * @return {Promise} Promise resolved with the response.
    */
   async update<T extends Data = Data>(

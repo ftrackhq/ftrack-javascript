@@ -808,7 +808,7 @@ describe("Encoding entities", () => {
           },
         },
         {},
-        true,
+        { decodeDatesAsIso: true },
       );
       expect(output.foo).toEqual(now.toISOString());
     });
