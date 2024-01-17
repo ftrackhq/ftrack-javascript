@@ -61,7 +61,7 @@ export class Session {
   schemas?: Schema[];
   serverInformation?: QueryServerInformationResponse;
   serverVersion?: string;
-  private denormalizeResponse: boolean;
+  private ensureSerializableResponse: boolean;
   private decodeDatesAsIso: boolean;
   private schemasPromise?: Promise<Schema[]>;
   private serverInformationPromise?: Promise<ServerInformation>;
@@ -83,7 +83,7 @@ export class Session {
    * @param {object} [options.headers] - Additional headers to send with the request
    * @param {object} [options.strictApi] - Turn on strict API mode
    * @param {object} [options.decodeDatesAsIso] - Decode dates as ISO strings instead of moment objects
-   * @param {object} [options.denormalizeResponse] - Disable normalization of response data
+   * @param {object} [options.ensureSerializableResponse] - Disable normalization of response data
    *
    * @constructs Session
    */
@@ -100,7 +100,7 @@ export class Session {
       additionalHeaders = {},
       strictApi = false,
       decodeDatesAsIso = false,
-      denormalizeResponse = false,
+      ensureSerializableResponse = false,
     }: SessionOptions = {},
   ) {
     if (!serverUrl || !apiUser || !apiKey) {
@@ -205,7 +205,7 @@ export class Session {
      * @instance
      * @type {Boolean}
      */
-    this.denormalizeResponse = denormalizeResponse;
+    this.ensureSerializableResponse = ensureSerializableResponse;
 
     /**
      * true if session is initialized
@@ -380,20 +380,23 @@ export class Session {
     identityMap: Data = {},
     {
       decodeDatesAsIso = false,
-      denormalizeResponse = false,
-    }: { decodeDatesAsIso?: boolean; denormalizeResponse?: boolean } = {},
+      ensureSerializableResponse = false,
+    }: {
+      decodeDatesAsIso?: boolean;
+      ensureSerializableResponse?: boolean;
+    } = {},
   ): any {
     if (Array.isArray(data)) {
       return this._decodeArray(data, identityMap, {
         decodeDatesAsIso,
-        denormalizeResponse,
+        ensureSerializableResponse,
       });
     }
     if (!!data && typeof data === "object") {
-      if (data.__entity_type__ && !denormalizeResponse) {
+      if (data.__entity_type__ && !ensureSerializableResponse) {
         return this._mergeEntity(data, identityMap, {
           decodeDatesAsIso,
-          denormalizeResponse,
+          ensureSerializableResponse,
         });
       }
       if (data.__type__ === "datetime" && decodeDatesAsIso) {
@@ -403,7 +406,7 @@ export class Session {
       }
       return this._decodePlainObject(data, identityMap, {
         decodeDatesAsIso,
-        denormalizeResponse,
+        ensureSerializableResponse,
       });
     }
     return data;
@@ -463,13 +466,16 @@ export class Session {
     identityMap: Data,
     {
       decodeDatesAsIso,
-      denormalizeResponse,
-    }: { decodeDatesAsIso?: boolean; denormalizeResponse?: boolean } = {},
+      ensureSerializableResponse,
+    }: {
+      decodeDatesAsIso?: boolean;
+      ensureSerializableResponse?: boolean;
+    } = {},
   ) {
     return Object.keys(object).reduce<Data>((previous, key) => {
       previous[key] = this.decode(object[key], identityMap, {
         decodeDatesAsIso,
-        denormalizeResponse,
+        ensureSerializableResponse,
       });
       return previous;
     }, {});
@@ -484,11 +490,17 @@ export class Session {
     identityMap: Data,
     {
       decodeDatesAsIso = false,
-      denormalizeResponse = false,
-    }: { decodeDatesAsIso?: boolean; denormalizeResponse?: boolean } = {},
+      ensureSerializableResponse = false,
+    }: {
+      decodeDatesAsIso?: boolean;
+      ensureSerializableResponse?: boolean;
+    } = {},
   ): any[] {
     return collection.map((item) =>
-      this.decode(item, identityMap, { decodeDatesAsIso, denormalizeResponse }),
+      this.decode(item, identityMap, {
+        decodeDatesAsIso,
+        ensureSerializableResponse,
+      }),
     );
   }
 
@@ -501,8 +513,11 @@ export class Session {
     identityMap: Data,
     {
       decodeDatesAsIso,
-      denormalizeResponse,
-    }: { decodeDatesAsIso?: boolean; denormalizeResponse?: boolean } = {},
+      ensureSerializableResponse,
+    }: {
+      decodeDatesAsIso?: boolean;
+      ensureSerializableResponse?: boolean;
+    } = {},
   ) {
     const identifier = this.getIdentifyingKey(entity);
     if (!identifier) {
@@ -526,7 +541,7 @@ export class Session {
       if (entity.hasOwnProperty(key)) {
         mergedEntity[key] = this.decode(entity[key], identityMap, {
           decodeDatesAsIso,
-          denormalizeResponse,
+          ensureSerializableResponse,
         });
       }
     }
@@ -617,7 +632,7 @@ export class Session {
       signal,
       additionalHeaders = {},
       decodeDatesAsIso = this.decodeDatesAsIso,
-      denormalizeResponse = this.denormalizeResponse,
+      ensureSerializableResponse = this.ensureSerializableResponse,
     }: CallOptions = {},
   ): Promise<IsTuple<T> extends true ? T : T[]> {
     if (this.initializing) {
@@ -639,7 +654,7 @@ export class Session {
             "ftrack-user": this.apiUser,
             "ftrack-Clienttoken": this.clientToken,
             "ftrack-pushtoken": pushToken,
-            "ftrack-api-options": denormalizeResponse
+            "ftrack-api-options": ensureSerializableResponse
               ? "strict:1;denormalize:1"
               : undefined,
             ...this.additionalHeaders,
@@ -667,7 +682,7 @@ export class Session {
         return this.decode(
           response,
           {},
-          { decodeDatesAsIso, denormalizeResponse },
+          { decodeDatesAsIso, ensureSerializableResponse },
         );
       } catch (reason) {
         logger.warn("Server reported error in unexpected format. ", reason);
@@ -822,7 +837,7 @@ export class Session {
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
-   * @param {object} options.denormalizeResponse - Disable normalization of response data
+   * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
@@ -852,7 +867,7 @@ export class Session {
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
-   * @param {object} options.denormalizeResponse - Disable normalization of response data
+   * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
@@ -898,7 +913,7 @@ export class Session {
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
-   * @param {object} options.denormalizeResponse - Disable normalization of response data
+   * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with the response.
    */
   async create<T extends Data = Data>(
@@ -925,7 +940,7 @@ export class Session {
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
-   * @param {object} options.denormalizeResponse - Disable normalization of response data
+   * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise resolved with the response.
    */
   async update<T extends Data = Data>(
