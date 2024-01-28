@@ -12,12 +12,12 @@
   },
   "type": "module",
   "main": "./dist/ftrack-javascript-api.umd.cjs",
-  "module": "./dist/ftrack-javascript-api.es.js",
+  "module": "./dist/ftrack-javascript-api.es.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/ftrack-javascript-api.es.js",
+      "import": "./dist/ftrack-javascript-api.es.mjs",
       "require": "./dist/ftrack-javascript-api.umd.cjs"
     }
   },
