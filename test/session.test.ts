@@ -215,6 +215,68 @@ describe("Session", () => {
     return expect((await headers).get("X-Test-Header")).toEqual("test");
   });
 
+  it("Should support ensureSerializableResponse option", async () => {
+    const payload = [
+      {
+        id: 1,
+        __entity_type__: "Task",
+        name: "foo",
+        status: {
+          __entity_type__: "Status",
+          id: 2,
+          name: "In progress",
+        },
+      },
+      {
+        id: 2,
+        __entity_type__: "Task",
+        name: "foo",
+        status: {
+          __entity_type__: "Status",
+          id: 1,
+          name: "Done",
+        },
+      },
+      {
+        id: 3,
+        __entity_type__: "Task",
+        status: {
+          __entity_type__: "Status",
+          id: 1,
+          name: "Done",
+        },
+      },
+    ];
+    server.use(
+      rest.post("http://ftrack.test/api", (req, res, ctx) => {
+        return res.once(ctx.json([{ data: payload }]));
+      }),
+    );
+
+    const res1 = await session.query(
+      "select id, name, status.name from Task limit 3",
+      {
+        ensureSerializableResponse: false,
+      },
+    );
+    expect(res1.data[1].status).toBe(res1.data[2].status);
+
+    server.use(
+      rest.post("http://ftrack.test/api", (req, res, ctx) => {
+        return res.once(ctx.json([{ data: payload }]));
+      }),
+    );
+
+    const res2 = await session.query(
+      "select id, name, status.name from Task limit 3",
+      {
+        ensureSerializableResponse: true,
+      },
+    );
+    expect(res2.data[1].status).not.toBe(res2.data[2].status);
+    expect(res2.data[1].status).toEqual(res2.data[2].status);
+  });
+
   it("Should allow creating a User", () => {
     const promise = session.create("User", {
       username: getTestUsername(),
@@ -732,6 +794,55 @@ describe("Encoding entities", () => {
       expect(data[2].status.name).toEqual("Done");
     });
 
+    it("Should support ensureSerializableResponse toggle", () => {
+      const payload = [
+        {
+          id: 1,
+          __entity_type__: "Task",
+          name: "foo",
+          status: {
+            __entity_type__: "Status",
+            id: 2,
+            name: "In progress",
+          },
+        },
+        {
+          id: 2,
+          __entity_type__: "Task",
+          name: "foo",
+          status: {
+            __entity_type__: "Status",
+            id: 1,
+            name: "Done",
+          },
+        },
+        {
+          id: 3,
+          __entity_type__: "Task",
+          status: {
+            __entity_type__: "Status",
+            id: 1,
+          },
+        },
+      ];
+      // @ts-ignore - Otherwise internal method used for testing purposes
+      const normalizedData = session.decode(
+        payload,
+        {},
+        { ensureSerializableResponse: false },
+      );
+      // @ts-ignore - Otherwise internal method used for testing purposes
+      const denormalizedData = session.decode(
+        payload,
+        {},
+        { ensureSerializableResponse: true },
+      );
+      expect(payload).toEqual(denormalizedData);
+      expect(payload).not.toEqual(normalizedData);
+      expect(denormalizedData[1].status).not.toBe(denormalizedData[2].status);
+      expect(normalizedData[1].status).toBe(normalizedData[2].status);
+    });
+
     it("Should support merging 2-level nested data", async () => {
       await session.initializing;
 
@@ -808,7 +919,7 @@ describe("Encoding entities", () => {
           },
         },
         {},
-        true,
+        { decodeDatesAsIso: true },
       );
       expect(output.foo).toEqual(now.toISOString());
     });
