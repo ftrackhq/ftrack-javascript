@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2023 ftrack
-import { getChunkSize } from "../source/util/get_chunk_size";
+import { getChunkSize } from "../source/util/get_chunk_size.js";
 import { describe, expect, it } from "vitest";
 
 describe("getChunkSize", () => {

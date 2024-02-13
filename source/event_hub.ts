@@ -9,7 +9,7 @@ import {
   EventServerPublishError,
   NotUniqueError,
 } from "./error.js";
-import { Data } from "./types.js";
+import type { Data } from "./types.js";
 
 interface BaseActionData {
   selection: Array<{

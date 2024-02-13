@@ -1,13 +1,13 @@
 // :copyright: Copyright (c) 2023 ftrack
-import { Uploader } from "../source/uploader";
-import { Session } from "../source/session";
+import { Uploader } from "../source/uploader.js";
+import { Session } from "../source/session.js";
 import { beforeAll, describe, it, expect, vi, vitest } from "vitest";
-import { server } from "./server";
-import { rest } from "msw";
+import { server } from "./server.js";
+import { http, HttpResponse } from "msw";
 
 vi.mock("../source/util/back_off", () => {
   return {
-    backOff: async (request) => {
+    backOff: async (request: () => Promise<any>) => {
       return await request();
     },
   };
@@ -17,9 +17,10 @@ const MULTI_PART_TEST_FILE_SIZE = 20971520;
 
 function useMultiPartUpload() {
   server.use(
-    rest.post("http://ftrack.test/api", (req, res, ctx) => {
-      return res.once(
-        ctx.json([
+    http.post(
+      "http://ftrack.test/api",
+      () => {
+        return HttpResponse.json([
           {
             action: "create",
             data: {
@@ -49,9 +50,10 @@ function useMultiPartUpload() {
               },
             ],
           },
-        ]),
-      );
-    }),
+        ]);
+      },
+      { once: true },
+    ),
   );
 }
 
@@ -114,7 +116,7 @@ describe("Uploader", () => {
         fail(new Error("onComplete should not be called"));
       };
       const onAborted = vitest.fn();
-      const onError = (error) => {
+      const onError = (error: any) => {
         expect(onAborted).toHaveBeenCalledOnce();
         expect(error.errorCode).toEqual("UPLOAD_ABORTED");
         done();
@@ -138,7 +140,7 @@ describe("Uploader", () => {
         fail(new Error("onComplete should not be called"));
       };
       const onAborted = vitest.fn();
-      const onError = (error) => {
+      const onError = (error: any) => {
         expect(onAborted).toHaveBeenCalledOnce();
         expect(error.errorCode).toEqual("UPLOAD_ABORTED");
         done();
@@ -167,7 +169,7 @@ describe("Uploader", () => {
         fail(new Error("onComplete should not be called"));
       };
       const onAborted = vitest.fn();
-      const onError = (error) => {
+      const onError = (error: any) => {
         expect(onAborted).toHaveBeenCalledOnce();
         expect(error.errorCode).toEqual("UPLOAD_ABORTED");
         done();

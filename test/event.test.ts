@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2023 ftrack
 
-import { Event } from "../source/event";
+import { Event } from "../source/event.js";
 import { describe, expect, it } from "vitest";
 
 describe("Event class", () => {
@@ -26,6 +26,7 @@ describe("Event class", () => {
     );
     const data = event.getData();
     expect(data.target).toBe("sampleTarget");
+    // @ts-expect-error TODO: Type should be able to be defined with custom properties
     expect(data.customOption).toBe("customValue");
   });
 
@@ -56,6 +57,7 @@ describe("Event class", () => {
   describe("prepareSource Method", () => {
     it("should prepare and add source to event data", () => {
       const event = new Event("testTopic", { key: "value" });
+      // @ts-expect-error TODO: Type should be able to be defined with custom properties
       event.prepareSource({ newKey: "newValue" });
       const data = event.getData();
       expect(data.source).toEqual({ newKey: "newValue" });
@@ -67,6 +69,7 @@ describe("Event class", () => {
         { key: "value" },
         { source: { oldKey: "oldValue" } },
       );
+      // @ts-expect-error TODO: Type should be able to be defined with custom properties
       event.prepareSource({ oldKey: "newValue", newKey: "newValue" });
       const data = event.getData();
       expect(data.source).toEqual({
@@ -80,6 +83,7 @@ describe("Event class", () => {
         { key: "value" },
         { source: undefined },
       );
+      // @ts-expect-error TODO: Type should be able to be defined with custom properties
       event.prepareSource({ newKey: "newValue" });
       const data = event.getData();
       expect(data.source).toEqual({
@@ -88,6 +92,7 @@ describe("Event class", () => {
     });
     it("Prepare should handle source null", () => {
       const event = new Event("testTopic", { key: "value" }, { source: null });
+      // @ts-expect-error TODO: Type should be able to be defined with custom properties
       event.prepareSource({ newKey: "newValue" });
       const data = event.getData();
       expect(data.source).toEqual({

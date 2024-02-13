@@ -8,15 +8,16 @@ import {
   ServerPermissionDeniedError,
   ServerValidationError,
   ServerError,
-} from "../source/error";
-import { Session, expression } from "../source/session";
-import * as operation from "../source/operation";
+} from "../source/error.js";
+import { Session, expression } from "../source/session.js";
+import * as operation from "../source/operation.js";
 import querySchemas from "./fixtures/query_schemas.json";
 import queryServerInformation from "./fixtures/query_server_information.json";
 
-import { getExampleQuery, getInitialSessionQuery, server } from "./server";
-import { rest } from "msw";
-import { QueryResponse } from "../source/types";
+import { getExampleQuery, getInitialSessionQuery, server } from "./server.js";
+import { HttpResponse, type PathParams, http } from "msw";
+import type { QueryResponse } from "../source/types.js";
+import type { Data } from "../dist/types.js";
 
 const logger = loglevel.getLogger("test_session");
 logger.setLevel("debug");
@@ -73,10 +74,14 @@ describe("Session", () => {
   it("Should allow adding additional headers on Session", async () => {
     const headers = new Promise<Headers>((resolve) => {
       server.use(
-        rest.post("http://ftrack.test/api", (req, res, ctx) => {
-          resolve(req.headers as any);
-          return res.once(ctx.json(getInitialSessionQuery()));
-        }),
+        http.post(
+          "http://ftrack.test/api",
+          (info) => {
+            resolve(info.request.headers as any);
+            return HttpResponse.json(getInitialSessionQuery());
+          },
+          { once: true },
+        ),
       );
     });
 
@@ -98,10 +103,14 @@ describe("Session", () => {
   it("Should support strictApi option", async () => {
     const headers = new Promise<Headers>((resolve) => {
       server.use(
-        rest.post("http://ftrack.test/api", (req, res, ctx) => {
-          resolve(req.headers);
-          return res.once(ctx.json(getInitialSessionQuery()));
-        }),
+        http.post(
+          "http://ftrack.test/api",
+          (info) => {
+            resolve(info.request.headers);
+            return HttpResponse.json(getInitialSessionQuery());
+          },
+          { once: true },
+        ),
       );
     });
 
@@ -175,14 +184,16 @@ describe("Session", () => {
 
   it("Should allow querying with datetimes decoded as ISO objects with timezone support disabled", async () => {
     server.use(
-      rest.post("http://ftrack.test/api", (req, res, ctx) => {
-        return res.once(
-          ctx.json([
+      http.post(
+        "http://ftrack.test/api",
+        (info) => {
+          return HttpResponse.json([
             { ...queryServerInformation, is_timezone_support_enabled: false },
             querySchemas,
-          ]),
-        );
-      }),
+          ]);
+        },
+        { once: true },
+      ),
     );
     const timezoneDisabledSession = new Session(
       credentials.serverUrl,
@@ -202,10 +213,14 @@ describe("Session", () => {
   it("Should allow adding additional headers on calls", async () => {
     const headers = new Promise<Headers>((resolve) => {
       server.use(
-        rest.post("http://ftrack.test/api", (req, res, ctx) => {
-          resolve(req.headers as any);
-          return res.once(ctx.json(getExampleQuery()));
-        }),
+        http.post(
+          "http://ftrack.test/api",
+          (info) => {
+            resolve(info.request.headers as any);
+            return HttpResponse.json(getExampleQuery());
+          },
+          { once: true },
+        ),
       );
     });
 
@@ -213,68 +228,6 @@ describe("Session", () => {
       additionalHeaders: { "X-Test-Header": "test" },
     });
     return expect((await headers).get("X-Test-Header")).toEqual("test");
-  });
-
-  it("Should support ensureSerializableResponse option", async () => {
-    const payload = [
-      {
-        id: 1,
-        __entity_type__: "Task",
-        name: "foo",
-        status: {
-          __entity_type__: "Status",
-          id: 2,
-          name: "In progress",
-        },
-      },
-      {
-        id: 2,
-        __entity_type__: "Task",
-        name: "foo",
-        status: {
-          __entity_type__: "Status",
-          id: 1,
-          name: "Done",
-        },
-      },
-      {
-        id: 3,
-        __entity_type__: "Task",
-        status: {
-          __entity_type__: "Status",
-          id: 1,
-          name: "Done",
-        },
-      },
-    ];
-    server.use(
-      rest.post("http://ftrack.test/api", (req, res, ctx) => {
-        return res.once(ctx.json([{ data: payload }]));
-      }),
-    );
-
-    const res1 = await session.query(
-      "select id, name, status.name from Task limit 3",
-      {
-        ensureSerializableResponse: false,
-      },
-    );
-    expect(res1.data[1].status).toBe(res1.data[2].status);
-
-    server.use(
-      rest.post("http://ftrack.test/api", (req, res, ctx) => {
-        return res.once(ctx.json([{ data: payload }]));
-      }),
-    );
-
-    const res2 = await session.query(
-      "select id, name, status.name from Task limit 3",
-      {
-        ensureSerializableResponse: true,
-      },
-    );
-    expect(res2.data[1].status).not.toBe(res2.data[2].status);
-    expect(res2.data[1].status).toEqual(res2.data[2].status);
   });
 
   it("Should allow creating a User", () => {
@@ -361,7 +314,7 @@ describe("Session", () => {
     const versionId = response.data[0].id;
     const assetVersions = response.data[0].asset.versions;
     const versionNumber2 = assetVersions.find(
-      (item) => item.id === versionId,
+      (item: any) => item.id === versionId,
     ).version;
     expect(versionNumber).toEqual(versionNumber2);
   });
@@ -485,7 +438,7 @@ describe("Session", () => {
     const identifyingKeys = ["key", "parent_id", "parent_type"];
     const key = uuidV4();
 
-    let user;
+    let user: Data;
     const promise = session.initializing
       .then(() =>
         session.query(
@@ -516,11 +469,11 @@ describe("Session", () => {
     promise
       .then((data) => {
         try {
-          data.__entity_type__.should.equal("Metadata");
-          data.key.should.equal(key);
-          data.value.should.equal("bar");
-          data.parent_id.should.equal(user.id);
-          data.parent_type.should.equal("User");
+          expect(data.__entity_type__).toEqual("Metadata");
+          expect(data.key).toEqual(key);
+          expect(data.value).toEqual("bar");
+          expect(data.parent_id).toEqual(user.id);
+          expect(data.parent_type).toEqual("User");
         } catch (error) {
           done(error);
         }
@@ -557,8 +510,8 @@ describe("Session", () => {
     promise
       .then((data) => {
         try {
-          data.__entity_type__.should.equal("Project");
-          data.full_name.should.equal("bar");
+          expect(data.__entity_type__).toEqual("Project");
+          expect(data.full_name).toEqual("bar");
         } catch (error) {
           done(error);
         }
@@ -636,18 +589,20 @@ describe("Session", () => {
     const secret = "";
     const code = "";
     server.use(
-      rest.post("http://ftrack.test/api", async (req, res, ctx) => {
-        const payload = await req.json();
-        if (payload[0].action === "configure_totp") {
-          return res.once(
-            ctx.json({
+      http.post<PathParams, any[]>(
+        "http://ftrack.test/api",
+        async (info) => {
+          const payload = await info.request.json();
+          if (payload[0].action === "configure_totp") {
+            return HttpResponse.json({
               content: "Code must be provided to enable totp.",
               exception: "ValidationError",
               error_code: null,
-            }),
-          );
-        }
-      }),
+            });
+          }
+        },
+        { once: true },
+      ),
     );
 
     await expect(() =>
@@ -693,14 +648,16 @@ describe("Encoding entities", () => {
   it("Should support encoding moment dates to local timezone if timezone support is disabled", () => {
     const now = moment();
     server.use(
-      rest.post("http://ftrack.test/api", (req, res, ctx) => {
-        return res.once(
-          ctx.json([
+      http.post(
+        "http://ftrack.test/api",
+        (info) => {
+          return HttpResponse.json([
             { ...queryServerInformation, is_timezone_support_enabled: false },
             querySchemas,
-          ]),
-        );
-      }),
+          ]);
+        },
+        { once: true },
+      ),
     );
     const timezoneDisabledSession = new Session(
       credentials.serverUrl,
@@ -792,55 +749,6 @@ describe("Encoding entities", () => {
       expect(data[0].status.name).toEqual("In progress");
       expect(data[1].status.name).toEqual("Done");
       expect(data[2].status.name).toEqual("Done");
-    });
-
-    it("Should support ensureSerializableResponse toggle", () => {
-      const payload = [
-        {
-          id: 1,
-          __entity_type__: "Task",
-          name: "foo",
-          status: {
-            __entity_type__: "Status",
-            id: 2,
-            name: "In progress",
-          },
-        },
-        {
-          id: 2,
-          __entity_type__: "Task",
-          name: "foo",
-          status: {
-            __entity_type__: "Status",
-            id: 1,
-            name: "Done",
-          },
-        },
-        {
-          id: 3,
-          __entity_type__: "Task",
-          status: {
-            __entity_type__: "Status",
-            id: 1,
-          },
-        },
-      ];
-      // @ts-ignore - Otherwise internal method used for testing purposes
-      const normalizedData = session.decode(
-        payload,
-        {},
-        { ensureSerializableResponse: false },
-      );
-      // @ts-ignore - Otherwise internal method used for testing purposes
-      const denormalizedData = session.decode(
-        payload,
-        {},
-        { ensureSerializableResponse: true },
-      );
-      expect(payload).toEqual(denormalizedData);
-      expect(payload).not.toEqual(normalizedData);
-      expect(denormalizedData[1].status).not.toBe(denormalizedData[2].status);
-      expect(normalizedData[1].status).toBe(normalizedData[2].status);
     });
 
     it("Should support merging 2-level nested data", async () => {
