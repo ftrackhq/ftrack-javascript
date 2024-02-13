@@ -4,7 +4,7 @@
  * @namespace operation
  */
 
-import { EntityType } from "./types.js";
+import type { EntityType } from "./types.js";
 
 export interface CreateOperation {
   action: "create";

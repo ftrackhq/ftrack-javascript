@@ -235,9 +235,10 @@ interface DefaultEntityTypeMap {
     [key: string]: any;
   };
 }
-export type EntityTypeMap = IsEmptyType<ExtendibleEntityTypeMap> extends true
-  ? DefaultEntityTypeMap
-  : ExtendibleEntityTypeMap;
+export type EntityTypeMap =
+  IsEmptyType<ExtendibleEntityTypeMap> extends true
+    ? DefaultEntityTypeMap
+    : ExtendibleEntityTypeMap;
 
 export type EntityType = ExcludeNumber<keyof EntityTypeMap>;
 export type EntityData<TEntityType extends EntityType = EntityType> =
