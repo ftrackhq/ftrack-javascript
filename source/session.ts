@@ -844,7 +844,7 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  async query<TEntityType extends EntityType>(
+  async query<TEntityType extends EntityType = EntityType>(
     expression: string,
     options: QueryOptions = {},
   ) {

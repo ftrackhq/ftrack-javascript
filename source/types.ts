@@ -39,7 +39,7 @@ export interface SearchOptions {
 }
 
 export interface QueryResponse<K extends EntityType = EntityType> {
-  data: EntityData<K>[]; // Later this needs to take multiple different K and give the correct types
+  data: EntityData<K>[];
   action: "query";
   metadata: ResponseMetadata;
 }
@@ -242,5 +242,3 @@ export type EntityTypeMap = IsEmptyType<ExtendibleEntityTypeMap> extends true
 export type EntityType = ExcludeNumber<keyof EntityTypeMap>;
 export type EntityData<TEntityType extends EntityType = EntityType> =
   EntityTypeMap[TEntityType];
-
-export interface TypedContextSubtypeMap {}
