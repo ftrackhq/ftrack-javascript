@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2023 ftrack
 
-import { Schema } from "../types.js";
+import type { Schema } from "../types.js";
 
 export default function getSchemaMappingFromSchemas(schemas: Schema[]) {
   const schemaMapping = {} as Record<string, Schema>;

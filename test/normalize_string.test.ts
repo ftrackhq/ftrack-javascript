@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2019 ftrack
-import normalizeString from "../source/util/normalize_string";
+import normalizeString from "../source/util/normalize_string.js";
 import { describe, it, expect } from "vitest";
 
 describe("Normalize string", () => {

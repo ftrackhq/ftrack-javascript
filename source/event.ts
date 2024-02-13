@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { v4 as uuidV4 } from "uuid";
-import { EventSource } from "./event_hub.js";
+import type { EventSource } from "./event_hub.js";
 /**
  * ftrack API Event class.
  */

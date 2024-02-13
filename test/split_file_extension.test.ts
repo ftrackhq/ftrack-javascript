@@ -1,4 +1,4 @@
-import { splitFileExtension } from "../source/util/split_file_extension";
+import { splitFileExtension } from "../source/util/split_file_extension.js";
 import { describe, it, expect } from "vitest";
 
 describe("splitFileExtension", () => {

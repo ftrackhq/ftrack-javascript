@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2022 ftrack
 
-import { convertToIsoString } from "../source/util/convert_to_iso_string";
+import { convertToIsoString } from "../source/util/convert_to_iso_string.js";
 import moment from "moment";
 import dayjs from "dayjs";
 import { describe, it, expect } from "vitest";

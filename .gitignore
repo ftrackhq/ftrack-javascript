@@ -50,6 +50,7 @@ build/
 dist/
 package.tgz
 .eggs/
+tsconfig.tsbuildinfo
 
 # Yarn
 .pnp.*
@@ -60,3 +61,4 @@ package.tgz
 !.yarn/sdks
 !.yarn/versions
 .DS_Store
+
