@@ -6,7 +6,7 @@ import { SERVER_LOCATION_ID } from "./constant.js";
 import { CreateComponentError } from "./error.js";
 import { Session } from "./session.js";
 import { v4 as uuidV4 } from "uuid";
-import {
+import type {
   CreateComponentOptions,
   CreateResponse,
   GetUploadMetadataResponse,

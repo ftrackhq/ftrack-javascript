@@ -2,7 +2,7 @@
 
 import * as operation from "./operation.js";
 import { Session } from "./session.js";
-import { QueryResponse } from "./types.js";
+import type { Data, QueryResponse } from "./types.js";
 /**
  * Project schema namespace
  * @namespace project_schema

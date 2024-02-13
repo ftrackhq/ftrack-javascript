@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2022 ftrack
-import { rest } from "msw";
+import { HttpResponse, type PathParams, http, HttpHandler } from "msw";
 import fs from "fs/promises";
 import querySchemas from "./fixtures/query_schemas.json";
 import queryServerInformation from "./fixtures/query_server_information.json";
@@ -13,21 +13,23 @@ const InvalidCredentialsError = {
   exception: "InvalidCredentialsError",
   error_code: null,
 };
-function authenticate(req) {
+
+function authenticate(info: Parameters<Parameters<typeof http.post>[1]>[0]) {
   // allow returning invalid authentication by setting ftrack-api-key to "INVALID_API_KEY"
   // otherwise, return true
-  if (req.headers.get("ftrack-api-key") === "INVALID_API_KEY") {
+  if (info.request.headers.get("ftrack-api-key") === "INVALID_API_KEY") {
     return false;
   }
   return true;
 }
-function pick(object, keys) {
+
+function pick<T>(object: T, keys: (keyof T)[]) {
   return keys.reduce((obj, key) => {
     if (object && object.hasOwnProperty(key)) {
       obj[key] = object[key];
     }
     return obj;
-  }, {});
+  }, {} as T);
 }
 
 export function getInitialSessionQuery() {
@@ -38,13 +40,21 @@ export function getExampleQuery() {
   return [exampleQuery];
 }
 
-export const handlers = [
-  rest.post("http://ftrack.test/api", async (req, res, ctx) => {
-    if (!authenticate(req)) {
-      return res(ctx.json(InvalidCredentialsError));
+// Get socket io session id
+const handleSocketIORequest: Parameters<typeof http.get>[1] = (info) => {
+  if (!authenticate(info)) {
+    return HttpResponse.json(InvalidCredentialsError);
+  }
+  return HttpResponse.text("1234567890:"); // The returned session ID has a colon and then some other information at the end. This only has the colon, to check that the colon is removed.
+};
+
+export const handlers: HttpHandler[] = [
+  http.post<PathParams, any[]>("http://ftrack.test/api", async (info) => {
+    if (!authenticate(info)) {
+      return HttpResponse.json(InvalidCredentialsError);
     }
     const body = await Promise.all(
-      (await req.json()).map(
+      (await info.request.json()).map(
         async ({
           action,
           expression,
@@ -108,35 +118,32 @@ export const handlers = [
         },
       ),
     );
-    return res(ctx.json(body));
+    return HttpResponse.json(body);
   }),
-  rest.options("http://ftrack.test/file-url", async (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.set("Access-Control-Allow-Origin", "*"),
-      ctx.body("file"),
-    );
+  http.options("http://ftrack.test/file-url", async () => {
+    return new Response("file", {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
   }),
-  rest.put("http://ftrack.test/file-url", async (req, res, ctx) => {
-    return res(ctx.status(200), ctx.set("Access-Control-Allow-Origin", "*"));
+  http.put("http://ftrack.test/file-url", async (info) => {
+    return new Response(null, {
+      status: 200,
+      headers: { "Access-Control-Allow-Origin": "*" },
+    });
   }),
   // Get socket io session id
-  rest.get("https://ftrack.test/socket.io/1/", handleSocketIORequest),
-  rest.get("http://ftrack.test/socket.io/1/", handleSocketIORequest),
-  rest.get("https://ftrack.test/*", (req, res, ctx) => {
-    return res(ctx.status(200));
+  http.get("https://ftrack.test/socket.io/1/", handleSocketIORequest),
+  http.get("http://ftrack.test/socket.io/1/", handleSocketIORequest),
+  http.get("https://ftrack.test/*", (info) => {
+    return new Response(null, { status: 200 });
   }),
 
-  rest.get("http://ftrack.test:8080/*", (req, res, ctx) => {
-    return res(ctx.status(200));
+  http.get("http://ftrack.test:8080/*", (info) => {
+    return new Response(null, { status: 200 });
   }),
 ];
-// Get socket io session id
-function handleSocketIORequest(req, res, ctx) {
-  if (!authenticate(req)) {
-    return ctx.json(InvalidCredentialsError);
-  }
-  return res(ctx.text("1234567890:")); // The returned session ID has a colon and then some other information at the end. This only has the colon, to check that the colon is removed.
-}
 
 export const server = setupServer(...handlers);

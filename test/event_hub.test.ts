@@ -1,9 +1,9 @@
-import { EventHub } from "../source/event_hub";
-import { Event } from "../source/event";
+import { EventHub } from "../source/event_hub.js";
+import { Event } from "../source/event.js";
 import { vi, describe, expect, beforeEach, afterEach, test } from "vitest";
 
 describe("EventHub", () => {
-  let eventHub;
+  let eventHub: any;
 
   beforeEach(() => {
     eventHub = new EventHub("", "", "");
@@ -245,7 +245,7 @@ test("EventHub constructor", async () => {
   // Scenario 1
   const eventHub1 = new EventHub("https://ftrack.test", "testUser", "testKey", {
     applicationId: "custom.app.id",
-  });
+  }) as any;
 
   // Check instance properties for scenario 1
   expect(eventHub1._applicationId).toBe("custom.app.id");
@@ -259,7 +259,7 @@ test("EventHub constructor", async () => {
     "http://ftrack.test:8080",
     "testUser",
     "testKey",
-  );
+  ) as any;
 
   // Check instance properties for scenario 2
   expect(eventHub2._applicationId).toBe("ftrack.api.javascript");

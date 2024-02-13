@@ -1,4 +1,4 @@
-import { Moment } from "moment";
+import type { Moment } from "moment";
 import type dayjs from "dayjs";
 
 /**

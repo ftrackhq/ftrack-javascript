@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2023 ftrack
-import { backOff } from "../source/util/back_off";
+import { backOff } from "../source/util/back_off.js";
 import { describe, it, expect } from "vitest";
 
 describe("backOff", () => {

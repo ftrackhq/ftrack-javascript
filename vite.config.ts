@@ -1,5 +1,5 @@
-import { defineConfig, UserConfig } from "vite";
-import { InlineConfig } from "vitest";
+import { defineConfig, type UserConfig } from "vite";
+import type { InlineConfig } from "vitest";
 import path from "path";
 import dts from "vite-plugin-dts";
 
@@ -32,7 +32,9 @@ export default defineConfig({
       },
     },
   },
-  plugins: [dts()],
+  plugins: [
+    dts({ rollupTypes: false, entryRoot: "source", include: "source" }),
+  ],
   test: {
     environment: "jsdom",
     globals: true,
