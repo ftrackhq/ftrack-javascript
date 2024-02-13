@@ -38,26 +38,26 @@ export interface SearchOptions {
   objectTypeIds?: string[];
 }
 
-export interface QueryResponse<K extends EntityType = EntityType> {
-  data: EntityData<K>[];
+export interface QueryResponse<TEntityType extends EntityType = EntityType> {
+  data: EntityData<TEntityType>[];
   action: "query";
   metadata: ResponseMetadata;
 }
 
-export interface CreateResponse<K extends EntityType = EntityType> {
-  data: EntityData<K>;
+export interface CreateResponse<TEntityType extends EntityType = EntityType> {
+  data: EntityData<TEntityType>;
   action: "create";
 }
-export interface UpdateResponse<K extends EntityType = EntityType> {
-  data: EntityData<K>;
+export interface UpdateResponse<TEntityType extends EntityType = EntityType> {
+  data: EntityData<TEntityType>;
   action: "update";
 }
 export interface DeleteResponse {
   data: true;
   action: "delete";
 }
-export interface SearchResponse<K extends EntityType = EntityType> {
-  data: EntityData<K>[];
+export interface SearchResponse<TEntityType extends EntityType = EntityType> {
+  data: EntityData<TEntityType>[];
   action: "search";
   metadata: ResponseMetadata;
 }
