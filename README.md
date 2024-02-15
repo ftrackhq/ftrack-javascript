@@ -5,6 +5,7 @@ The ftrack JavaScript API Client is a JavaScript Library to help developing inte
 This documentation focuses on the client. More information about the API and its concepts can be found at our [general API documentation](https://help.ftrack-studio.backlight.co/hc/en-us/categories/13129800014999-Development-API). You may also find it useful to look at the documentation for the [Python client](https://github.com/ftrackhq/ftrack-python).
 
 - [Installation](#installation)
+  - [TypeScript](#typescript)
 - [Tutorial](#tutorial)
   - [Query projects](#query-projects)
   - [Uploading files](#uploading-files)
@@ -33,6 +34,10 @@ yarn:
 ```bash
 yarn add @ftrack/api
 ```
+
+### TypeScript
+
+To enable TypeScript support for entities it is recommended to use the [`@ftrack/ts-schema-generator`](https://github.com/ftrackhq/ftrack-ts-schema-generator) package. It allows for generation of TypeScript definitions tailored to your specific ftrack instance. By incorporating these generated schema files into your project, you can enhance the type definitions to improve type safety.
 
 ## Tutorial
 
