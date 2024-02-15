@@ -290,7 +290,9 @@ describe("Session", () => {
   });
 
   it("Should decode batched query operations", async () => {
-    const responses = await session.call<QueryResponse>([
+    const responses = await session.call<
+      QueryResponse<{ status: { state: { short: string } } }>
+    >([
       operation.query(
         "select status.state.short from Task where status.state.short is NOT_STARTED limit 1",
       ),

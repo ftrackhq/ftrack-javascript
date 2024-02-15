@@ -30,46 +30,34 @@ interface ResponseMetadata {
     offset: number | null;
   };
 }
-export interface SearchOptions<TEntityTypeMap = DefaultEntityTypeMap> {
+export interface SearchOptions<TEntityType> {
   expression: string;
-  entityType: EntityType<TEntityTypeMap>;
+  entityType: TEntityType;
   terms?: string[];
   contextId?: string;
   objectTypeIds?: string[];
 }
 
-export interface QueryResponse<
-  TEntityTypeMap = DefaultEntityTypeMap,
-  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
-> {
-  data: EntityData<TEntityType>[];
+export interface QueryResponse<TEntityData> {
+  data: TEntityData[];
   action: "query";
   metadata: ResponseMetadata;
 }
 
-export interface CreateResponse<
-  TEntityTypeMap = DefaultEntityTypeMap,
-  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
-> {
-  data: EntityData<TEntityType>;
+export interface CreateResponse<TEntityData> {
+  data: TEntityData;
   action: "create";
 }
-export interface UpdateResponse<
-  TEntityTypeMap = DefaultEntityTypeMap,
-  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
-> {
-  data: EntityData<TEntityType>;
+export interface UpdateResponse<TEntityData> {
+  data: TEntityData;
   action: "update";
 }
 export interface DeleteResponse {
   data: true;
   action: "delete";
 }
-export interface SearchResponse<
-  TEntityTypeMap = DefaultEntityTypeMap,
-  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
-> {
-  data: EntityData<TEntityType>[];
+export interface SearchResponse<TEntityData> {
+  data: TEntityData[];
   action: "search";
   metadata: ResponseMetadata;
 }
@@ -77,7 +65,7 @@ export interface ResetRemoteResponse {
   action: "reset_remote";
   data: Data;
 }
-export type QuerySchemasResponse = Schema[];
+export type QuerySchemasResponse<TEntityTypeMap> = Schema<TEntityTypeMap>[];
 
 export type QueryServerInformationResponse = ServerInformation;
 export interface ServerInformation {
@@ -157,14 +145,18 @@ export interface PermissionsResponse {
   data: Data;
 }
 
-export type ActionResponse =
-  | QueryResponse
-  | CreateResponse
-  | UpdateResponse
+export type ActionResponse<
+  TEntityTypeMap,
+  TEntityType extends keyof TEntityTypeMap = keyof TEntityTypeMap,
+  TEntityData = TEntityTypeMap[TEntityType],
+> =
+  | QueryResponse<TEntityData>
+  | CreateResponse<TEntityData>
+  | UpdateResponse<TEntityData>
   | DeleteResponse
-  | SearchResponse
+  | SearchResponse<TEntityData>
   | ResetRemoteResponse
-  | QuerySchemasResponse
+  | QuerySchemasResponse<TEntityTypeMap>
   | QueryServerInformationResponse
   | GetWidgetUrlResponse
   | DelayedJobResponse
@@ -209,20 +201,23 @@ export type TypedSchemaProperty =
 export type RefSchemaProperty = {
   ["$ref"]: string;
 };
-export type SchemaProperties = {
-  [key: string]: TypedSchemaProperty | RefSchemaProperty;
+export type SchemaProperties<TEntityData> = {
+  [key in keyof TEntityData]: TypedSchemaProperty | RefSchemaProperty;
 };
 export type SchemaMixin = {
   $ref: string;
 };
-export interface Schema {
-  properties: SchemaProperties;
+export interface Schema<
+  TEntityTypeMap,
+  TEntityType extends keyof TEntityTypeMap = keyof TEntityTypeMap,
+> {
+  properties: SchemaProperties<TEntityTypeMap[TEntityType]>;
   default_projections: string[];
   primary_key: string[];
   required: string[];
   immutable: string[];
   type?: string;
-  id: string;
+  id: TEntityType;
   computed?: string[];
   system_projections?: string[];
   alias_for?: string | Data;
@@ -238,23 +233,9 @@ export interface QueryOptions {
 
 export interface CallOptions extends MutationOptions, QueryOptions {}
 
-type ExcludeNumberAndSymbol<T> = T extends number
-  ? never
-  : T extends symbol
-    ? never
-    : T;
-
 export interface ExtendibleEntityTypeMap {}
 export interface DefaultEntityTypeMap {
   [key: string]: {
     [key: string]: any;
   };
 }
-
-export type EntityType<TEntityTypeMap> = ExcludeNumberAndSymbol<
-  keyof TEntityTypeMap
->;
-export type EntityData<
-  TEntityTypeMap,
-  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
-> = TEntityTypeMap[TEntityType];

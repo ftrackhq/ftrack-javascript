@@ -49,11 +49,11 @@ declare global {
  * 3. Completion - Multi-part uploads are completed, the component is
  *    registered in the server location and an event is published.
  */
-export class Uploader {
+export class Uploader<TEntityTypeMap extends Record<string, any>> {
   /** Component id */
   componentId: string;
   /** Session instance */
-  private session: Session;
+  private session: Session<TEntityTypeMap>;
   /** File to upload */
   private file: Blob;
   /** Called on upload progress with percentage */
@@ -97,13 +97,21 @@ export class Uploader {
   /** Additional data for Component entity */
   private data: CreateComponentOptions["data"];
   /** @deprecated - Remove once Session.createComponent signature is updated. */
-  createComponentResponse: CreateResponse<"Component"> | null;
+  createComponentResponse: CreateResponse<
+    TEntityTypeMap["FileComponent"]
+  > | null;
   /** @deprecated - Remove once Session.createComponent signature is updated. */
   uploadMetadata: GetUploadMetadataResponse | null;
   /** @deprecated - Remove once Session.createComponent signature is updated. */
-  createComponentLocationResponse: CreateResponse<"ComponentLocation"> | null;
+  createComponentLocationResponse: CreateResponse<
+    TEntityTypeMap["ComponentLocation"]
+  > | null;
 
-  constructor(session: Session, file: Blob, options: UploaderOptions) {
+  constructor(
+    session: Session<TEntityTypeMap>,
+    file: Blob,
+    options: UploaderOptions,
+  ) {
     this.session = session;
     this.file = file;
     const componentName = options.name ?? (file as File).name;
@@ -195,7 +203,10 @@ export class Uploader {
       size: this.fileSize,
     };
     const response = await this.session.call<
-      [CreateResponse, GetUploadMetadataResponse]
+      [
+        CreateResponse<TEntityTypeMap["FileComponent"]>,
+        GetUploadMetadataResponse,
+      ]
     >([
       operation.create("FileComponent", component),
       {
@@ -530,7 +541,10 @@ export class Uploader {
       }),
     );
 
-    const response = await this.session.call<CreateResponse>(operations);
+    const response =
+      await this.session.call<
+        CreateResponse<TEntityTypeMap["ComponentLocation"]>
+      >(operations);
     this.createComponentLocationResponse = response[response.length - 1];
 
     // Emit event so that clients can perform additional work on uploaded
