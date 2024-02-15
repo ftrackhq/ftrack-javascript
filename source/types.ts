@@ -30,25 +30,34 @@ interface ResponseMetadata {
     offset: number | null;
   };
 }
-export interface SearchOptions {
+export interface SearchOptions<TEntityTypeMap = DefaultEntityTypeMap> {
   expression: string;
-  entityType: EntityType;
+  entityType: EntityType<TEntityTypeMap>;
   terms?: string[];
   contextId?: string;
   objectTypeIds?: string[];
 }
 
-export interface QueryResponse<TEntityType extends EntityType = EntityType> {
+export interface QueryResponse<
+  TEntityTypeMap = DefaultEntityTypeMap,
+  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
+> {
   data: EntityData<TEntityType>[];
   action: "query";
   metadata: ResponseMetadata;
 }
 
-export interface CreateResponse<TEntityType extends EntityType = EntityType> {
+export interface CreateResponse<
+  TEntityTypeMap = DefaultEntityTypeMap,
+  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
+> {
   data: EntityData<TEntityType>;
   action: "create";
 }
-export interface UpdateResponse<TEntityType extends EntityType = EntityType> {
+export interface UpdateResponse<
+  TEntityTypeMap = DefaultEntityTypeMap,
+  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
+> {
   data: EntityData<TEntityType>;
   action: "update";
 }
@@ -56,7 +65,10 @@ export interface DeleteResponse {
   data: true;
   action: "delete";
 }
-export interface SearchResponse<TEntityType extends EntityType = EntityType> {
+export interface SearchResponse<
+  TEntityTypeMap = DefaultEntityTypeMap,
+  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
+> {
   data: EntityData<TEntityType>[];
   action: "search";
   metadata: ResponseMetadata;
@@ -226,20 +238,23 @@ export interface QueryOptions {
 
 export interface CallOptions extends MutationOptions, QueryOptions {}
 
-type IsEmptyType<T> = keyof T extends never ? true : false;
-type ExcludeNumber<T> = T extends number ? never : T;
+type ExcludeNumberAndSymbol<T> = T extends number
+  ? never
+  : T extends symbol
+    ? never
+    : T;
 
 export interface ExtendibleEntityTypeMap {}
-interface DefaultEntityTypeMap {
+export interface DefaultEntityTypeMap {
   [key: string]: {
     [key: string]: any;
   };
 }
-export type EntityTypeMap =
-  IsEmptyType<ExtendibleEntityTypeMap> extends true
-    ? DefaultEntityTypeMap
-    : ExtendibleEntityTypeMap;
 
-export type EntityType = ExcludeNumber<keyof EntityTypeMap>;
-export type EntityData<TEntityType extends EntityType = EntityType> =
-  EntityTypeMap[TEntityType];
+export type EntityType<TEntityTypeMap> = ExcludeNumberAndSymbol<
+  keyof TEntityTypeMap
+>;
+export type EntityData<
+  TEntityTypeMap,
+  TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
+> = TEntityTypeMap[TEntityType];

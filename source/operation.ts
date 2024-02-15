@@ -4,11 +4,11 @@
  * @namespace operation
  */
 
-import type { EntityType } from "./types.js";
+import type { DefaultEntityTypeMap, EntityType } from "./types.js";
 
-export interface CreateOperation {
+export interface CreateOperation<TEntityTypeMap = DefaultEntityTypeMap> {
   action: "create";
-  entity_type: EntityType;
+  entity_type: EntityType<TEntityTypeMap>;
   entity_data: any;
 }
 
@@ -17,33 +17,33 @@ export interface QueryOperation {
   expression: string;
 }
 
-export interface SearchOperationOptions {
+export interface SearchOperationOptions<TEntityTypeMap = DefaultEntityTypeMap> {
   expression?: string;
-  entityType?: EntityType;
+  entityType?: EntityType<TEntityTypeMap>;
   terms?: string[];
   contextId?: string;
   objectTypeIds?: string[];
 }
 
-export interface SearchOperation {
+export interface SearchOperation<TEntityTypeMap = DefaultEntityTypeMap> {
   action: "search";
   expression?: string;
-  entity_type?: EntityType;
+  entity_type?: EntityType<TEntityTypeMap>;
   terms?: string[];
   context_id?: string;
   object_type_ids?: string[];
 }
 
-export interface UpdateOperation {
+export interface UpdateOperation<TEntityTypeMap = DefaultEntityTypeMap> {
   action: "update";
-  entity_type: EntityType;
+  entity_type: EntityType<TEntityTypeMap>;
   entity_key: string[] | string;
   entity_data: any;
 }
 
-export interface DeleteOperation {
+export interface DeleteOperation<TEntityTypeMap = DefaultEntityTypeMap> {
   action: "delete";
-  entity_type: EntityType;
+  entity_type: EntityType<TEntityTypeMap>;
   entity_key: string[] | string;
 }
 
@@ -63,12 +63,12 @@ export interface GetUploadMetadataOperation {
   component_id: string;
 }
 
-export type Operation =
-  | CreateOperation
+export type Operation<TEntityTypeMap = DefaultEntityTypeMap> =
+  | CreateOperation<TEntityTypeMap>
   | QueryOperation
-  | SearchOperation
-  | UpdateOperation
-  | DeleteOperation
+  | SearchOperation<TEntityTypeMap>
+  | UpdateOperation<TEntityTypeMap>
+  | DeleteOperation<TEntityTypeMap>
   | QueryServerInformationOperation
   | QuerySchemasOperation
   | GetUploadMetadataOperation

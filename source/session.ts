@@ -18,6 +18,7 @@ import type {
   CreateComponentOptions,
   CreateResponse,
   Data,
+  DefaultEntityTypeMap,
   DeleteResponse,
   EntityData,
   EntityType,
@@ -49,7 +50,9 @@ const ENCODE_DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
  * @class  Session
  *
  */
-export class Session {
+export class Session<
+  TEntityTypeMap extends Record<string, any> = DefaultEntityTypeMap,
+> {
   apiUser: string;
   apiKey: string;
   serverUrl: string;
@@ -253,7 +256,9 @@ export class Session {
    *
    * @return {Array|null} List of primary key attributes.
    */
-  getPrimaryKeyAttributes(entityType: EntityType): string[] | null {
+  getPrimaryKeyAttributes(
+    entityType: EntityType<TEntityTypeMap>,
+  ): string[] | null {
     // Todo: make this async in next major
     if (!this.schemas) {
       logger.warn("Schemas not available.");
@@ -726,7 +731,9 @@ export class Session {
    *   Return update or create promise.
    */
 
-  ensure<TEntityType extends EntityType = EntityType>(
+  ensure<
+    TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
+  >(
     entityType: TEntityType,
     data: EntityData<TEntityType>,
     identifyingKeys: Array<keyof EntityData<TEntityType>> = [],
@@ -844,10 +851,9 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  async query<TEntityType extends EntityType = EntityType>(
-    expression: string,
-    options: QueryOptions = {},
-  ) {
+  async query<
+    TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
+  >(expression: string, options: QueryOptions = {}) {
     logger.debug("Query", expression);
     const responses = await this.call<[QueryResponse<TEntityType>]>(
       [operation.query(expression)],
@@ -874,7 +880,9 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
-  async search<TEntityType extends EntityType = EntityType>(
+  async search<
+    TEntityType extends EntityType<TEntityTypeMap> = EntityType<TEntityTypeMap>,
+  >(
     {
       expression,
       entityType,
