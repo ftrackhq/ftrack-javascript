@@ -207,7 +207,7 @@ export type SchemaProperties = {
 export type SchemaMixin = {
   $ref: string;
 };
-type EntityEvent = { entity_event: boolean };
+type SchemaMetadata = { entity_event: boolean };
 export interface Schema {
   properties: SchemaProperties;
   default_projections: string[];
@@ -220,7 +220,7 @@ export interface Schema {
   system_projections?: string[];
   alias_for?: string | Data;
   $mixin?: SchemaMixin;
-  metadata?: EntityEvent;
+  metadata?: SchemaMetadata;
 }
 export interface QueryOptions {
   abortController?: AbortController;
