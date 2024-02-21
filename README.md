@@ -34,6 +34,23 @@ yarn:
 yarn add @ftrack/api
 ```
 
+## TypeScript: Generated Schema Types
+
+You can generate schema types for your own workspace with [@ftrack/ts-schema-generator](https://github.com/ftrackhq/ftrack-ts-schema-generator).
+
+Once generated, you can integrate them with @ftrack/api by passing them as a type variable:
+
+```ts
+import SchemaTypes from "./__generated__/schema.ts"
+import { Session } from @ftrack/api
+
+const session = new Session<SchemaTypes>(...);
+
+// user will now be of type User
+// and provide all available properties for its entity type.
+const user = await session.query<"User">("...");
+```
+
 ## Tutorial
 
 The API uses sessions to manage communication with an ftrack server. Create a session that connects to your ftrack server (changing the passed values as appropriate):

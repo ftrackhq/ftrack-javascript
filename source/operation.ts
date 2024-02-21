@@ -4,9 +4,9 @@
  * @namespace operation
  */
 
-export interface CreateOperation {
+export interface CreateOperation<TEntityType> {
   action: "create";
-  entity_type: string;
+  entity_type: TEntityType;
   entity_data: any;
 }
 
@@ -15,33 +15,33 @@ export interface QueryOperation {
   expression: string;
 }
 
-export interface SearchOperationOptions {
+export interface SearchOperationOptions<TEntityType> {
   expression?: string;
-  entityType?: string;
+  entityType?: TEntityType;
   terms?: string[];
   contextId?: string;
   objectTypeIds?: string[];
 }
 
-export interface SearchOperation {
+export interface SearchOperation<TEntityType> {
   action: "search";
   expression?: string;
-  entity_type?: string;
+  entity_type?: TEntityType;
   terms?: string[];
   context_id?: string;
   object_type_ids?: string[];
 }
 
-export interface UpdateOperation {
+export interface UpdateOperation<TEntityType> {
   action: "update";
-  entity_type: string;
+  entity_type: TEntityType;
   entity_key: string[] | string;
   entity_data: any;
 }
 
-export interface DeleteOperation {
+export interface DeleteOperation<TEntityType> {
   action: "delete";
-  entity_type: string;
+  entity_type: TEntityType;
   entity_key: string[] | string;
 }
 
@@ -61,12 +61,12 @@ export interface GetUploadMetadataOperation {
   component_id: string;
 }
 
-export type Operation =
-  | CreateOperation
+export type Operation<TEntityType> =
+  | CreateOperation<TEntityType>
   | QueryOperation
-  | SearchOperation
-  | UpdateOperation
-  | DeleteOperation
+  | SearchOperation<TEntityType>
+  | UpdateOperation<TEntityType>
+  | DeleteOperation<TEntityType>
   | QueryServerInformationOperation
   | QuerySchemasOperation
   | GetUploadMetadataOperation
@@ -81,7 +81,10 @@ export type Operation =
  * @param  {Object} data Entity data to use for creation
  * @return {Object}      API operation
  */
-export function create(type: string, data: any): CreateOperation {
+export function create<TEntityType>(
+  type: TEntityType,
+  data: any,
+): CreateOperation<TEntityType> {
   return {
     action: "create",
     entity_type: type,
@@ -109,13 +112,13 @@ export function query(expression: string): QueryOperation {
  * @param  {string} expression API query expression
  * @return {Object}            API operation
  */
-export function search({
+export function search<TEntityType>({
   expression,
   entityType,
   terms,
   contextId,
   objectTypeIds,
-}: SearchOperationOptions): SearchOperation {
+}: SearchOperationOptions<TEntityType>): SearchOperation<TEntityType> {
   return {
     action: "search",
     expression,
@@ -136,11 +139,11 @@ export function search({
  * @param  {Object} data values to update
  * @return {Object}      API operation
  */
-export function update(
-  type: string,
+export function update<TEntityType>(
+  type: TEntityType,
   keys: string[] | string,
   data: any,
-): UpdateOperation {
+): UpdateOperation<TEntityType> {
   return {
     action: "update",
     entity_type: type,
@@ -158,10 +161,10 @@ export function update(
  * @param  {Array} keys Identifying keys, typically [<entity id>]
  * @return {Object}      API operation
  */
-function deleteOperation(
-  type: string,
+function deleteOperation<TEntityType>(
+  type: TEntityType,
   keys: string[] | string,
-): DeleteOperation {
+): DeleteOperation<TEntityType> {
   return {
     action: "delete",
     entity_type: type,

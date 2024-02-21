@@ -18,8 +18,8 @@ import type {
   CreateComponentOptions,
   CreateResponse,
   Data,
+  DefaultEntityTypeMap,
   DeleteResponse,
-  Entity,
   GetUploadMetadataResponse,
   IsTuple,
   MutationOptions,
@@ -48,7 +48,9 @@ const ENCODE_DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
  * @class  Session
  *
  */
-export class Session {
+export class Session<
+  TEntityTypeMap extends Record<string, any> = DefaultEntityTypeMap,
+> {
   apiUser: string;
   apiKey: string;
   serverUrl: string;
@@ -56,17 +58,19 @@ export class Session {
   eventHub: EventHub;
   clientToken: string | null;
   initialized: boolean;
-  initializing: Promise<Session>;
+  initializing: Promise<Session<TEntityTypeMap>>;
   additionalHeaders: Data;
-  schemas?: Schema[];
+  schemas?: Schema<TEntityTypeMap>[];
   serverInformation?: QueryServerInformationResponse;
   serverVersion?: string;
   private ensureSerializableResponse: boolean;
   private decodeDatesAsIso: boolean;
-  private schemasPromise?: Promise<Schema[]>;
+  private schemasPromise?: Promise<Schema<TEntityTypeMap>[]>;
   private serverInformationPromise?: Promise<ServerInformation>;
   private serverInformationValues?: string[];
-  private schemaMapping?: Record<string, Schema>;
+  private schemaMapping?: {
+    [TEntityType in keyof TEntityTypeMap]: Schema<TEntityTypeMap, TEntityType>;
+  };
 
   /**
    * Construct Session instance with API credentials.
@@ -187,7 +191,10 @@ export class Session {
     }
 
     // TODO: remove these operations from session initialization in next major
-    const operations: operation.Operation[] = [
+    const operations: [
+      operation.QueryServerInformationOperation,
+      operation.QuerySchemasOperation,
+    ] = [
       {
         action: "query_server_information",
         values: serverInformationValues,
@@ -216,9 +223,9 @@ export class Session {
     this.initialized = false;
 
     const initializingPromise =
-      this.call<[QueryServerInformationResponse, QuerySchemasResponse]>(
-        operations,
-      );
+      this.call<
+        [QueryServerInformationResponse, QuerySchemasResponse<TEntityTypeMap>]
+      >(operations);
 
     /**
      * Resolved once session is initialized.
@@ -244,7 +251,7 @@ export class Session {
 
     this.schemasPromise = initializingPromise
       .then((responses) => responses[1])
-      .catch(() => [] as Schema[]);
+      .catch(() => [] as Schema<TEntityTypeMap, keyof TEntityTypeMap>[]);
   }
 
   /**
@@ -252,7 +259,7 @@ export class Session {
    *
    * @return {Array|null} List of primary key attributes.
    */
-  getPrimaryKeyAttributes(entityType: string): string[] | null {
+  getPrimaryKeyAttributes(entityType: keyof TEntityTypeMap): string[] | null {
     // Todo: make this async in next major
     if (!this.schemas) {
       logger.warn("Schemas not available.");
@@ -549,7 +556,7 @@ export class Session {
   }
 
   /** Return encoded *operations*. */
-  encodeOperations(operations: operation.Operation[]) {
+  encodeOperations(operations: operation.Operation<keyof TEntityTypeMap>[]) {
     return JSON.stringify(this.encode(operations));
   }
 
@@ -587,12 +594,14 @@ export class Session {
    * This is cached after the first call, and assumes that the schemas will not change during the session.
    * @returns Promise with the API schemas for the session.
    */
-  async getSchemas(): Promise<Schema[]> {
+  async getSchemas(): Promise<Schema<TEntityTypeMap[keyof TEntityTypeMap]>[]> {
     if (!this.schemasPromise) {
-      this.schemasPromise = this.call<QuerySchemasResponse>([
+      this.schemasPromise = this.call<QuerySchemasResponse<TEntityTypeMap>>([
         { action: "query_schemas" },
       ]).then((responses) => {
-        this.schemaMapping = getSchemaMappingFromSchemas(responses[0]);
+        this.schemaMapping = getSchemaMappingFromSchemas<
+          TEntityTypeMap[keyof TEntityTypeMap]
+        >(responses[0]);
         return responses[0];
       });
     }
@@ -624,8 +633,8 @@ export class Session {
    * @param {string} options.decodeDatesAsIso - Return dates as ISO strings instead of moment objects
    *
    */
-  async call<T = ActionResponse>(
-    operations: operation.Operation[],
+  async call<T = ActionResponse<keyof TEntityTypeMap>>(
+    operations: operation.Operation<keyof TEntityTypeMap>[],
     {
       abortController,
       pushToken,
@@ -725,41 +734,45 @@ export class Session {
    *   Return update or create promise.
    */
 
-  ensure<T extends Data = Data>(
-    entityType: string,
-    data: T,
-    identifyingKeys: Array<keyof T> = [],
-  ): Promise<T & Entity> {
+  ensure<TEntityType extends keyof TEntityTypeMap>(
+    entityType: TEntityType,
+    data: TEntityTypeMap[TEntityType],
+    identifyingKeys: Array<keyof TEntityTypeMap[TEntityType]> = [],
+  ): Promise<TEntityTypeMap[TEntityType]> {
     let keys = identifyingKeys as string[];
+
+    const anyData = data as any;
 
     logger.info(
       "Ensuring entity with data using identifying keys: ",
       entityType,
-      data,
+      anyData,
       keys,
     );
 
     if (!keys.length) {
-      keys = Object.keys(data);
+      keys = Object.keys(anyData);
     }
 
     if (!keys.length) {
       throw new Error(
         "Could not determine any identifying data to check against " +
-          `when ensuring ${entityType} with data ${data}. ` +
+          `when ensuring ${String(entityType)} with data ${anyData}. ` +
           `Identifying keys: ${identifyingKeys}`,
       );
     }
 
     const primaryKeys = this.getPrimaryKeyAttributes(entityType);
     if (primaryKeys === null || primaryKeys.length === 0) {
-      throw new Error(`Primary key could not be found for: ${entityType}`);
+      throw new Error(
+        `Primary key could not be found for: ${String(entityType)}`,
+      );
     }
     let expression = `select ${primaryKeys.join(
       ", ",
-    )} from ${entityType} where`;
+    )} from ${String(entityType)} where`;
     const criteria = keys.map((identifyingKey) => {
-      let value = data[identifyingKey];
+      let value = anyData[identifyingKey];
 
       if (value != null && typeof value.valueOf() === "string") {
         value = `"${value}"`;
@@ -772,48 +785,51 @@ export class Session {
 
     expression = `${expression} ${criteria.join(" and ")}`;
 
-    return this.query<T & Entity>(expression).then((response) => {
+    return this.query<TEntityType>(expression).then((response) => {
       if (response.data.length === 0) {
-        return this.create<T>(entityType, data).then(({ data: responseData }) =>
-          Promise.resolve(responseData),
+        return this.create<TEntityType>(entityType, anyData).then(
+          ({ data: responseData }) => Promise.resolve(responseData),
         );
       }
 
       if (response.data.length !== 1) {
         throw new Error(
           "Expected single or no item to be found but got multiple " +
-            `when ensuring ${entityType} with data ${data}. ` +
+            `when ensuring ${String(entityType)} with data ${anyData}. ` +
             `Identifying keys: ${identifyingKeys}`,
         );
       }
 
-      const updateEntity = response.data[0];
+      const updateEntity = response.data[0] as any;
 
       // Update entity if required.
       let updated = false;
-      Object.keys(data).forEach((key: keyof (T & Entity)) => {
-        if (data[key] !== updateEntity[key]) {
-          updateEntity[key] = data[key];
+      Object.keys(anyData).forEach((key) => {
+        if (anyData[key] !== updateEntity[key]) {
+          updateEntity[key] = anyData[key];
           updated = true;
         }
       });
 
       if (updated) {
-        return this.update<T>(
+        return this.update<TEntityType>(
           entityType,
           primaryKeys.map((key: string) => updateEntity[key]),
-          Object.keys(data).reduce<T>((accumulator, key: keyof T) => {
-            if (primaryKeys.indexOf(key.toString()) === -1) {
-              accumulator[key] = data[key];
-            }
-            return accumulator;
-          }, {} as T),
+          Object.keys(anyData).reduce<any>(
+            (accumulator, key) => {
+              if (primaryKeys.indexOf(key.toString()) === -1) {
+                accumulator[key] = anyData[key];
+              }
+              return accumulator;
+            },
+            {} as TEntityTypeMap[TEntityType],
+          ),
         ).then(({ data: responseData }) =>
-          Promise.resolve(responseData as T & Entity),
+          Promise.resolve(responseData as TEntityTypeMap[TEntityType]),
         );
       }
 
-      return Promise.resolve(response.data[0]);
+      return Promise.resolve(response.data[0]) as any;
     });
   }
 
@@ -822,7 +838,9 @@ export class Session {
    * @param  {string} schemaId Id of schema model, e.g. `AssetVersion`.
    * @return {Object|null} Schema definition
    */
-  getSchema(schemaId: string): Schema | null {
+  getSchema<TEntityType extends keyof TEntityTypeMap>(
+    schemaId: TEntityType,
+  ): Schema<TEntityTypeMap, TEntityType> | null {
     // TODO: make this async in next major
     const schema = this.schemaMapping?.[schemaId];
     return schema ?? null;
@@ -841,15 +859,14 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
    */
-  async query<T extends Data = Data>(
+  async query<TEntityType extends keyof TEntityTypeMap>(
     expression: string,
     options: QueryOptions = {},
   ) {
     logger.debug("Query", expression);
-    const responses = await this.call<[QueryResponse<T>]>(
-      [operation.query(expression)],
-      options,
-    );
+    const responses = await this.call<
+      [QueryResponse<TEntityTypeMap[TEntityType]>]
+    >([operation.query(expression)], options);
     return responses[0];
   }
 
@@ -871,14 +888,14 @@ export class Session {
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
    */
-  async search<T extends Data = Data>(
+  async search<TEntityType extends keyof TEntityTypeMap>(
     {
       expression,
       entityType,
       terms = [],
       contextId,
       objectTypeIds,
-    }: SearchOptions,
+    }: SearchOptions<TEntityType>,
     options: QueryOptions = {},
   ) {
     logger.debug("Search", {
@@ -889,7 +906,7 @@ export class Session {
       objectTypeIds,
     });
 
-    const responses = await this.call<[SearchResponse<T>]>(
+    const responses = await this.call<[SearchResponse<TEntityType>]>(
       [
         operation.search({
           expression,
@@ -916,17 +933,16 @@ export class Session {
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with the response.
    */
-  async create<T extends Data = Data>(
-    entityType: string,
-    data: T,
+  async create<TEntityType extends keyof TEntityTypeMap>(
+    entityType: TEntityType,
+    data: Partial<TEntityTypeMap[TEntityType]>,
     options: MutationOptions = {},
   ) {
     logger.debug("Create", entityType, data, options);
 
-    const responses = await this.call<[CreateResponse<T & Entity>]>(
-      [operation.create(entityType, data)],
-      options,
-    );
+    const responses = await this.call<
+      [CreateResponse<TEntityTypeMap[TEntityType]>]
+    >([operation.create(entityType, data)], options);
     return responses[0];
   }
 
@@ -943,18 +959,17 @@ export class Session {
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise resolved with the response.
    */
-  async update<T extends Data = Data>(
-    type: string,
+  async update<TEntityType extends keyof TEntityTypeMap>(
+    type: TEntityType,
     keys: string[] | string,
-    data: T,
+    data: Partial<TEntityTypeMap[TEntityType]>,
     options: MutationOptions = {},
   ) {
     logger.debug("Update", type, keys, data, options);
 
-    const responses = await this.call<[UpdateResponse<T>]>(
-      [operation.update(type, keys, data)],
-      options,
-    );
+    const responses = await this.call<
+      [UpdateResponse<TEntityTypeMap[TEntityType]>]
+    >([operation.update(type, keys, data)], options);
     return responses[0];
   }
 
@@ -969,8 +984,8 @@ export class Session {
    * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
    * @return {Promise} Promise resolved with the response.
    */
-  async delete(
-    type: string,
+  async delete<TEntityType extends keyof TEntityTypeMap>(
+    type: TEntityType,
     keys: string[] | string,
     options: MutationOptions = {},
   ) {
@@ -1053,10 +1068,14 @@ export class Session {
     file: Blob,
     options: CreateComponentOptions = {},
   ): Promise<
-    readonly [CreateResponse, CreateResponse, GetUploadMetadataResponse]
+    readonly [
+      CreateResponse<TEntityTypeMap["FileComponent"]>,
+      CreateResponse<TEntityTypeMap["ComponentLocation"]>,
+      GetUploadMetadataResponse,
+    ]
   > {
     return new Promise((resolve, reject) => {
-      const uploader = new Uploader(this, file, {
+      const uploader = new Uploader<TEntityTypeMap>(this, file, {
         ...options,
         onError(error) {
           reject(error);

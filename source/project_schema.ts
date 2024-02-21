@@ -2,7 +2,7 @@
 
 import * as operation from "./operation.js";
 import { Session } from "./session.js";
-import type { Data, QueryResponse } from "./types.js";
+import type { QueryResponse } from "./types.js";
 /**
  * Project schema namespace
  * @namespace project_schema
@@ -18,8 +18,8 @@ import type { Data, QueryResponse } from "./types.js";
  *
  * @memberof project_schema
  */
-export function getStatuses(
-  session: Session,
+export function getStatuses<TEntityTypeMap extends Record<string, any>>(
+  session: Session<TEntityTypeMap>,
   projectSchemaId: string,
   entityType: string,
   typeId: string | null = null,
@@ -71,7 +71,8 @@ export function getStatuses(
     ),
   );
 
-  response = session.call<QueryResponse<Data>>(operations);
+  response =
+    session.call<QueryResponse<TEntityTypeMap["ProjectSchema"]>>(operations);
   response = response.then((results) => {
     // Since the operations where performed in one batched call,
     // the result will be merged into a single entity.
