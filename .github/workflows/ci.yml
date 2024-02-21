@@ -33,5 +33,5 @@ jobs:
             yarn-cache-folder-
 
       - run: yarn install --immutable
-      - run: yarn build
       - run: yarn test
+      - run: yarn build
