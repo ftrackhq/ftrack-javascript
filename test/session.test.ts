@@ -16,8 +16,7 @@ import queryServerInformation from "./fixtures/query_server_information.json";
 
 import { getExampleQuery, getInitialSessionQuery, server } from "./server.js";
 import { HttpResponse, type PathParams, http } from "msw";
-import type { QueryResponse } from "../source/types.js";
-import type { Data } from "../dist/types.js";
+import type { QueryResponse, Data } from "../source/types.js";
 
 const logger = loglevel.getLogger("test_session");
 logger.setLevel("debug");
