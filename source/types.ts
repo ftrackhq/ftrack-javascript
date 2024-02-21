@@ -207,6 +207,7 @@ export type SchemaProperties<TEntityData> = {
 export type SchemaMixin = {
   $ref: string;
 };
+export type SchemaMetadata = { entity_event: boolean };
 export interface Schema<
   TEntityTypeMap,
   TEntityType extends keyof TEntityTypeMap = keyof TEntityTypeMap,
@@ -222,6 +223,7 @@ export interface Schema<
   system_projections?: string[];
   alias_for?: string | Data;
   $mixin?: SchemaMixin;
+  metadata?: SchemaMetadata;
 }
 export interface QueryOptions {
   abortController?: AbortController;
