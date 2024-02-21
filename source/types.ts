@@ -207,7 +207,7 @@ export type SchemaProperties = {
 export type SchemaMixin = {
   $ref: string;
 };
-type SchemaMetadata = { entity_event: boolean };
+export type SchemaMetadata = { entity_event: boolean };
 export interface Schema {
   properties: SchemaProperties;
   default_projections: string[];
