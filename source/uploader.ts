@@ -177,7 +177,14 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
   /** Initiate upload. Promise is resolved once preflight is complete and upload started. */
   async start() {
     logger.debug("Upload starting", this.componentId);
-    await this.uploadPreflight();
+    try {
+      await this.uploadPreflight();
+    } catch (error) {
+      if (this.onError) {
+        this.onError(error);
+      }
+      return;
+    }
     if (!this.uploadMetadata) {
       throw new Error("Failed to get upload metadata");
     }
