@@ -181,7 +181,7 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
       await this.uploadPreflight();
     } catch (error) {
       if (this.onError) {
-        this.onError(error);
+        this.onError(error as Error);
       }
       return;
     }
