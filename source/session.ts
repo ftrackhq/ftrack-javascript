@@ -663,9 +663,11 @@ export class Session<
             "ftrack-user": this.apiUser,
             "ftrack-Clienttoken": this.clientToken,
             "ftrack-pushtoken": pushToken,
-            ...(ensureSerializableResponse && {
-              "ftrack-api-options": "strict:1;denormalize:1",
-            }),
+            ...(ensureSerializableResponse
+              ? {
+                  "ftrack-api-options": "strict:1;denormalize:1",
+                }
+              : {}),
             ...this.additionalHeaders,
             ...additionalHeaders,
           } as HeadersInit,
