@@ -229,6 +229,31 @@ describe("Session", () => {
     return expect((await headers).get("X-Test-Header")).toEqual("test");
   });
 
+  it("Should allow api option header based on ensureSerializableResponse", async () => {
+    const headers = new Promise<Headers>((resolve) => {
+      server.use(
+        http.post(
+          "http://ftrack.test/api",
+          (info) => {
+            resolve(info.request.headers as any);
+            return HttpResponse.json(getInitialSessionQuery());
+          },
+          { once: true },
+        ),
+      );
+    });
+
+    new Session(
+      credentials.serverUrl,
+      credentials.apiUser,
+      credentials.apiKey,
+      {
+        ensureSerializableResponse: false,
+      },
+    );
+    return expect((await headers).get("ftrack-api-options")).toBeFalsy();
+  });
+
   it("Should allow creating a User", () => {
     const promise = session.create("User", {
       username: getTestUsername(),
