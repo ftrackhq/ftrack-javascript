@@ -1092,7 +1092,7 @@ export class Session<
         },
       });
 
-      uploader.start();
+      uploader.start().catch(reject);
     });
   }
 }
