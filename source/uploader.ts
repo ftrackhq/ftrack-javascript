@@ -183,7 +183,7 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
       if (this.onError) {
         this.onError(error as Error);
       }
-      return;
+      throw error;
     }
     if (!this.uploadMetadata) {
       throw new Error("Failed to get upload metadata");
