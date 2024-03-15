@@ -4,7 +4,9 @@
  * @namespace operation
  */
 
-export interface CreateOperation<TEntityType> {
+import type { DefaultEntityTypeMap } from "./types.js";
+
+export interface CreateOperation<TEntityType = keyof DefaultEntityTypeMap> {
   action: "create";
   entity_type: TEntityType;
   entity_data: any;
@@ -15,7 +17,9 @@ export interface QueryOperation {
   expression: string;
 }
 
-export interface SearchOperationOptions<TEntityType> {
+export interface SearchOperationOptions<
+  TEntityType = keyof DefaultEntityTypeMap,
+> {
   expression?: string;
   entityType?: TEntityType;
   terms?: string[];
@@ -23,7 +27,7 @@ export interface SearchOperationOptions<TEntityType> {
   objectTypeIds?: string[];
 }
 
-export interface SearchOperation<TEntityType> {
+export interface SearchOperation<TEntityType = keyof DefaultEntityTypeMap> {
   action: "search";
   expression?: string;
   entity_type?: TEntityType;
@@ -32,14 +36,14 @@ export interface SearchOperation<TEntityType> {
   object_type_ids?: string[];
 }
 
-export interface UpdateOperation<TEntityType> {
+export interface UpdateOperation<TEntityType = keyof DefaultEntityTypeMap> {
   action: "update";
   entity_type: TEntityType;
   entity_key: string[] | string;
   entity_data: any;
 }
 
-export interface DeleteOperation<TEntityType> {
+export interface DeleteOperation<TEntityType = keyof DefaultEntityTypeMap> {
   action: "delete";
   entity_type: TEntityType;
   entity_key: string[] | string;
@@ -61,7 +65,7 @@ export interface GetUploadMetadataOperation {
   component_id: string;
 }
 
-export type Operation<TEntityType> =
+export type Operation<TEntityType = keyof DefaultEntityTypeMap> =
   | CreateOperation<TEntityType>
   | QueryOperation
   | SearchOperation<TEntityType>
@@ -81,7 +85,7 @@ export type Operation<TEntityType> =
  * @param  {Object} data Entity data to use for creation
  * @return {Object}      API operation
  */
-export function create<TEntityType>(
+export function create<TEntityType = keyof DefaultEntityTypeMap>(
   type: TEntityType,
   data: any,
 ): CreateOperation<TEntityType> {
@@ -112,7 +116,7 @@ export function query(expression: string): QueryOperation {
  * @param  {string} expression API query expression
  * @return {Object}            API operation
  */
-export function search<TEntityType>({
+export function search<TEntityType = keyof DefaultEntityTypeMap>({
   expression,
   entityType,
   terms,
@@ -139,7 +143,7 @@ export function search<TEntityType>({
  * @param  {Object} data values to update
  * @return {Object}      API operation
  */
-export function update<TEntityType>(
+export function update<TEntityType = keyof DefaultEntityTypeMap>(
   type: TEntityType,
   keys: string[] | string,
   data: any,
@@ -161,7 +165,7 @@ export function update<TEntityType>(
  * @param  {Array} keys Identifying keys, typically [<entity id>]
  * @return {Object}      API operation
  */
-function deleteOperation<TEntityType>(
+function deleteOperation<TEntityType = keyof DefaultEntityTypeMap>(
   type: TEntityType,
   keys: string[] | string,
 ): DeleteOperation<TEntityType> {

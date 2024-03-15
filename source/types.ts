@@ -30,7 +30,7 @@ interface ResponseMetadata {
     offset: number | null;
   };
 }
-export interface SearchOptions<TEntityType> {
+export interface SearchOptions<TEntityType = keyof DefaultEntityTypeMap> {
   expression: string;
   entityType: TEntityType;
   terms?: string[];
@@ -38,17 +38,23 @@ export interface SearchOptions<TEntityType> {
   objectTypeIds?: string[];
 }
 
-export interface QueryResponse<TEntityData> {
+export interface QueryResponse<
+  TEntityData = DefaultEntityTypeMap[keyof DefaultEntityTypeMap],
+> {
   data: TEntityData[];
   action: "query";
   metadata: ResponseMetadata;
 }
 
-export interface CreateResponse<TEntityData> {
+export interface CreateResponse<
+  TEntityData = DefaultEntityTypeMap[keyof DefaultEntityTypeMap],
+> {
   data: TEntityData;
   action: "create";
 }
-export interface UpdateResponse<TEntityData> {
+export interface UpdateResponse<
+  TEntityData = DefaultEntityTypeMap[keyof DefaultEntityTypeMap],
+> {
   data: TEntityData;
   action: "update";
 }
@@ -56,7 +62,9 @@ export interface DeleteResponse {
   data: true;
   action: "delete";
 }
-export interface SearchResponse<TEntityData> {
+export interface SearchResponse<
+  TEntityData = DefaultEntityTypeMap[keyof DefaultEntityTypeMap],
+> {
   data: TEntityData[];
   action: "search";
   metadata: ResponseMetadata;
@@ -65,7 +73,8 @@ export interface ResetRemoteResponse {
   action: "reset_remote";
   data: Data;
 }
-export type QuerySchemasResponse<TEntityTypeMap> = Schema<TEntityTypeMap>[];
+export type QuerySchemasResponse<TEntityTypeMap = DefaultEntityTypeMap> =
+  Schema<TEntityTypeMap>[];
 
 export type QueryServerInformationResponse = ServerInformation;
 export interface ServerInformation {
@@ -146,7 +155,7 @@ export interface PermissionsResponse {
 }
 
 export type ActionResponse<
-  TEntityTypeMap,
+  TEntityTypeMap = DefaultEntityTypeMap,
   TEntityType extends keyof TEntityTypeMap = keyof TEntityTypeMap,
   TEntityData = TEntityTypeMap[TEntityType],
 > =
@@ -201,7 +210,9 @@ export type TypedSchemaProperty =
 export type RefSchemaProperty = {
   ["$ref"]: string;
 };
-export type SchemaProperties<TEntityData> = {
+export type SchemaProperties<
+  TEntityData = DefaultEntityTypeMap[keyof DefaultEntityTypeMap],
+> = {
   [key in keyof TEntityData]: TypedSchemaProperty | RefSchemaProperty;
 };
 export type SchemaMixin = {
@@ -209,7 +220,7 @@ export type SchemaMixin = {
 };
 export type SchemaMetadata = { entity_event: boolean };
 export interface Schema<
-  TEntityTypeMap,
+  TEntityTypeMap = DefaultEntityTypeMap,
   TEntityType extends keyof TEntityTypeMap = keyof TEntityTypeMap,
 > {
   properties: SchemaProperties<TEntityTypeMap[TEntityType]>;
