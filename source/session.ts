@@ -594,7 +594,7 @@ export class Session<
    * This is cached after the first call, and assumes that the schemas will not change during the session.
    * @returns Promise with the API schemas for the session.
    */
-  async getSchemas(): Promise<Schema<TEntityTypeMap[keyof TEntityTypeMap]>[]> {
+  async getSchemas(): Promise<Schema<TEntityTypeMap>[]> {
     if (!this.schemasPromise) {
       this.schemasPromise = this.call<QuerySchemasResponse<TEntityTypeMap>>([
         { action: "query_schemas" },
