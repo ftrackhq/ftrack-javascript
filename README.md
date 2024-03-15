@@ -41,10 +41,10 @@ You can generate schema types for your own workspace with [@ftrack/ts-schema-gen
 Once generated, you can integrate them with @ftrack/api by passing them as a type variable:
 
 ```ts
-import SchemaTypes from "./__generated__/schema.ts";
+import { EntityTypeMap } from "./__generated__/schema.ts";
 import { Session } from "@ftrack/api";
 
-const session = new Session<SchemaTypes>(...);
+const session = new Session<EntityTypeMap>(...);
 
 // user will now be of type User
 // and provide all available properties for its entity type.
