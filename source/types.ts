@@ -1,5 +1,3 @@
-import type { DefaultEntityTypeMap } from "./types.js";
-
 export type Data = { [key: string]: any };
 export type IsTuple<T> = T extends [any, ...any] ? true : false;
 export interface EventHubOptions {
