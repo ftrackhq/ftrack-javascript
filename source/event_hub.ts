@@ -317,7 +317,7 @@ export class EventHub {
    */
   publishAndWaitForReply(
     event: Event,
-    { timeout = 30 }: { timeout: number },
+    { timeout = 30 }: { timeout?: number } = {},
   ): Promise<unknown> {
     const eventId = event.getData().id;
     const response = new Promise((resolve, reject) => {
