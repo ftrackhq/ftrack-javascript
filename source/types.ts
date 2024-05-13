@@ -219,6 +219,8 @@ export type SchemaMixin = {
   $ref: string;
 };
 export type SchemaMetadata = { entity_event: boolean };
+
+export type SchemaDeprecated = { $ref: string; message: string };
 export interface Schema<
   TEntityTypeMap = DefaultEntityTypeMap,
   TEntityType extends keyof TEntityTypeMap = keyof TEntityTypeMap,
@@ -235,6 +237,7 @@ export interface Schema<
   alias_for?: string | Data;
   $mixin?: SchemaMixin;
   metadata?: SchemaMetadata;
+  deprecated?: SchemaDeprecated;
 }
 export interface QueryOptions {
   abortController?: AbortController;
