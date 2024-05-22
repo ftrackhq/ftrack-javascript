@@ -4,13 +4,15 @@ import { vi, describe, expect, beforeEach, afterEach, test } from "vitest";
 
 describe("EventHub", () => {
   let eventHub: any;
-
+  let disconnectCalled = false;
   beforeEach(() => {
     eventHub = new EventHub("", "", "");
+    disconnectCalled = false;
     eventHub._socketIo = {
       on: vi.fn(),
       emit: vi.fn(),
       socket: { connected: true },
+      disconnect: vi.fn(() => (disconnectCalled = true)),
     };
     eventHub.isConnected = vi.fn(() => true);
   });
@@ -238,6 +240,11 @@ describe("EventHub", () => {
       inReplyToEvent: "anotherTestId",
     };
     expect(EventData).toEqual(expectedEvent);
+  });
+
+  test("Disconnecting should disconnect the socket", () => {
+    eventHub.disconnect();
+    expect(disconnectCalled).toBe(true);
   });
 });
 
