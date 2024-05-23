@@ -407,7 +407,6 @@ export class EventHub {
       }
       return true;
     });
-
     return hasFoundSubscriberToRemove;
   }
 
@@ -611,5 +610,15 @@ export class EventHub {
       source: source,
     });
     return this.publish(replyEvent);
+  }
+
+  /**
+   * Disconnect from event server.
+   */
+  disconnect() {
+    if (this._socketIo) {
+      this._socketIo.disconnect();
+      this._socketIo = null;
+    }
   }
 }
