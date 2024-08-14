@@ -643,7 +643,7 @@ export class Session<
       decodeDatesAsIso = this.decodeDatesAsIso,
       ensureSerializableResponse = this.ensureSerializableResponse,
     }: CallOptions = {},
-  ): Promise<IsTuple<T> extends true ? Optional<T> : Optional<T>[]> {
+  ): Promise<IsTuple<T> extends true ? Partial<T> : Partial<T>[]> {
     if (this.initializing) {
       await this.initializing;
     }
@@ -740,7 +740,7 @@ export class Session<
     entityType: TEntityType,
     data: TEntityTypeMap[TEntityType],
     identifyingKeys: Array<keyof TEntityTypeMap[TEntityType]> = [],
-  ): Promise<Optional<TEntityTypeMap[TEntityType]>> {
+  ): Promise<Partial<TEntityTypeMap[TEntityType]>> {
     let keys = identifyingKeys as string[];
 
     const anyData = data as any;
