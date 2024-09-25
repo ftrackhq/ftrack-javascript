@@ -81,7 +81,12 @@ export interface ServerInformation {
   custom_widget?: Data;
   default_colors?: string[];
   is_nested_subqueries_enabled?: boolean;
-  license?: string[];
+  license?: {
+    feature_id: string;
+    quantity: number;
+    renewal_date: string;
+    date: string;
+  }[];
   preferred_language?: string;
   week_startday?: number;
   workday_length?: number;
