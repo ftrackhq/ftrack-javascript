@@ -25,7 +25,7 @@ export interface CreateComponentOptions {
   onAborted?: () => unknown;
 }
 
-interface ResponseMetadata {
+export interface ResponseMetadata {
   next: {
     offset: number | null;
   };
