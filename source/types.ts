@@ -103,6 +103,10 @@ export interface ServerInformation {
     is_global_access_key?: boolean;
     restricted_user?: boolean;
     username?: string;
+    first_name?: string;
+    last_name?: string;
+    thumbnail_id?: string;
+    thumbnail_url?: string;
   };
   product?: Data;
   version: string;
