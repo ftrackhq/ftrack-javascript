@@ -32,7 +32,7 @@ function getTestUsername() {
   return `testName-${uuidV4()}`; // Use the same test user name format as the E2E tests. Simplifies cleanup if running the tests against a real server.
 }
 
-beforeAll(() => {
+beforeAll(async () => {
   session = new Session(
     credentials.serverUrl,
     credentials.apiUser,
@@ -42,6 +42,7 @@ beforeAll(() => {
       decodeDatesAsIso: false,
     },
   );
+  await session.initializing;
 });
 
 describe("Session", () => {
@@ -95,6 +96,7 @@ describe("Session", () => {
         },
       },
     );
+    await session.initializing;
 
     return expect((await headers).get("X-Test-Header")).toEqual("test");
   });
@@ -152,6 +154,7 @@ describe("Session", () => {
         decodeDatesAsIso: true,
       },
     );
+    await decodeDatesAsIsoSession.initializing;
     const result = await decodeDatesAsIsoSession.query(
       "select name, created_at from Task limit 1",
     );
@@ -166,6 +169,7 @@ describe("Session", () => {
         decodeDatesAsIso: true,
       },
     );
+    await decodeDatesAsIsoSession.initializing;
     const result = await decodeDatesAsIsoSession.query(
       "select name, created_at from Task limit 1",
       { decodeDatesAsIso: false },
@@ -202,6 +206,7 @@ describe("Session", () => {
         autoConnectEventHub: false,
       },
     );
+    await timezoneDisabledSession.initializing;
     const result = await timezoneDisabledSession.query(
       "select name, created_at from Task limit 1",
       { decodeDatesAsIso: true },
@@ -243,7 +248,7 @@ describe("Session", () => {
       );
     });
 
-    new Session(
+    const newSession = new Session(
       credentials.serverUrl,
       credentials.apiUser,
       credentials.apiKey,
@@ -251,6 +256,7 @@ describe("Session", () => {
         ensureSerializableResponse: false,
       },
     );
+    await newSession.initializing;
     return expect((await headers).get("ftrack-api-options")).toBeFalsy();
   });
 
@@ -671,7 +677,7 @@ describe("Encoding entities", () => {
       12321,
     ]);
   });
-  it("Should support encoding moment dates to local timezone if timezone support is disabled", () => {
+  it("Should support encoding moment dates to local timezone if timezone support is disabled", async () => {
     const now = moment();
     server.use(
       http.post(
@@ -693,6 +699,7 @@ describe("Encoding entities", () => {
         autoConnectEventHub: false,
       },
     );
+    await timezoneDisabledSession.initializing;
 
     //@ts-ignore - Otherwise internal method used for testing purposes
     const output = timezoneDisabledSession.encode([

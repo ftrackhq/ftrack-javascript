@@ -65,7 +65,7 @@ const credentials = {
 let session: Session = null!;
 let file: File = null!;
 
-beforeAll(() => {
+beforeAll(async () => {
   session = new Session(
     credentials.serverUrl,
     credentials.apiUser,
@@ -74,6 +74,7 @@ beforeAll(() => {
       autoConnectEventHub: false,
     },
   );
+  await session.initializing;
 
   const data = { foo: "bar" };
   file = new File([JSON.stringify(data)], "data.json", {
