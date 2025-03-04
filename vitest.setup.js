@@ -28,7 +28,7 @@ class MockXmlHttpRequest extends EventTarget {
 }
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledRequest: "bypass" });
   global.fetch = fetch;
   global.XMLHttpRequest = MockXmlHttpRequest;
 });

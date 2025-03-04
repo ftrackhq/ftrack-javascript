@@ -41,7 +41,7 @@
     "vite": "^6.2.0",
     "vite-plugin-dts": "^4.5.3",
     "vitest": "^3.0.7",
-    "ws": "^8.16.0"
+    "ws": "^8.18.1"
   },
   "repository": {
     "type": "git",

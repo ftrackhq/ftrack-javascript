@@ -35,7 +35,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     SimpleSocketIOClient.instances.clear();
   });
   describe("Connect method and singleton behaviour", () => {
-    test.only("should return a new instance for unique serverUrl, apiUser, and apiKey combinations", () => {
+    test("should return a new instance for unique serverUrl, apiUser, and apiKey combinations", () => {
       const instance1 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
@@ -57,7 +57,7 @@ describe("Tests using SimpleSocketIOClient", () => {
       expect(instance2).not.toBe(instance3);
     });
 
-    test("should return the same instance for the same serverUrl, apiUser, and apiKey combinations", () => {
+    test("should return the same instance for the same serverUrl, apiUser, and apiKey combinations", async () => {
       const instance1 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
@@ -68,6 +68,9 @@ describe("Tests using SimpleSocketIOClient", () => {
         credentials.apiUser,
         credentials.apiKey,
       );
+
+      await instance1.initializing;
+      await instance2.initializing;
 
       expect(instance1).toBe(instance2);
     });
