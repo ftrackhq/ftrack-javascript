@@ -322,17 +322,9 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
     part: MultiPartUploadPart,
     onUploadChunkStart: () => void,
   ): Promise<void> {
-    try {
-      const status = await this.uploadFileChunk(
-        chunk,
-        part,
-        onUploadChunkStart,
-      );
-      if (status !== 200) {
-        throw new CreateComponentError(`Failed to upload file part: ${status}`);
-      }
-    } catch (error) {
-      throw error;
+    const status = await this.uploadFileChunk(chunk, part, onUploadChunkStart);
+    if (status !== 200) {
+      throw new CreateComponentError(`Failed to upload file part: ${status}`);
     }
   }
 
@@ -516,7 +508,10 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
       };
 
       for (const key in headers) {
-        if (headers.hasOwnProperty(key) && key !== "Content-Length") {
+        if (
+          Object.prototype.hasOwnProperty.call(headers, key) &&
+          key !== "Content-Length"
+        ) {
           this.xhr.setRequestHeader(key, headers[key]);
         }
       }

@@ -84,16 +84,22 @@ beforeAll(async () => {
 
 describe("Uploader", () => {
   it("Should support uploading files", () =>
-    new Promise((done) => {
-      const uploader = new Uploader(session, file, { onComplete: done });
+    new Promise<void>((resolve) => {
+      const onComplete = vitest.fn();
+      const uploader = new Uploader(session, file, { onComplete });
       uploader.start();
+      onComplete.mockImplementation(() => {
+        expect(onComplete).toHaveBeenCalledOnce();
+        resolve();
+      });
     }));
 
+  // eslint-disable-next-line vitest/expect-expect
   it("Should support uploading multi-part files", () =>
     new Promise((done) => {
       useMultiPartUpload();
       const uploader = new Uploader(session, file, {
-        //@ts-ignore
+        //@ts-expect-error - filesize is not defined
         fileSize: MULTI_PART_TEST_FILE_SIZE,
         onComplete: done,
       });

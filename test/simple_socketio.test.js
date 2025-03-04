@@ -135,6 +135,7 @@ describe("Tests using SimpleSocketIOClient", () => {
         "INVALID_API_KEY",
       );
       connected = client.isConnected();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       connected = false;
     }

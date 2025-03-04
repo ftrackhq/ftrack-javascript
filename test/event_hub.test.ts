@@ -123,7 +123,7 @@ describe("EventHub", () => {
     expect(callback).not.toHaveBeenCalled();
   });
 
-  test("should handle events with unexpected topics", () => {
+  test("should handle events with more unexpected topics", () => {
     const callback = vi.fn();
     eventHub.subscribe("topic=*", callback);
     const testEvent = { topic: null, data: {} };

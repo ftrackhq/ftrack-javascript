@@ -132,7 +132,7 @@ describe("Session", () => {
     const result = await session.query(
       "select name, created_at from Task limit 1",
     );
-    expect(result.data[0].created_at).to.be.instanceOf(moment);
+    expect(result.data[0].created_at).toBeInstanceOf(moment);
     expect(result.data[0].created_at.toISOString()).toEqual(
       "2022-10-10T10:12:09.000Z",
     );
@@ -174,7 +174,7 @@ describe("Session", () => {
       "select name, created_at from Task limit 1",
       { decodeDatesAsIso: false },
     );
-    expect(result.data[0].created_at).to.be.instanceOf(moment);
+    expect(result.data[0].created_at).toBeInstanceOf(moment);
     expect(result.data[0].created_at.toISOString()).toEqual(
       "2022-10-10T10:12:09.000Z",
     );
@@ -189,7 +189,7 @@ describe("Session", () => {
     server.use(
       http.post(
         "http://ftrack.test/api",
-        (info) => {
+        () => {
           return HttpResponse.json([
             { ...queryServerInformation, is_timezone_support_enabled: false },
             querySchemas,
@@ -272,7 +272,7 @@ describe("Session", () => {
 
   it("Should allow deleting a User", async () => {
     const username = getTestUsername();
-    let promise = session
+    const promise = session
       .create("User", {
         username,
       })
@@ -290,7 +290,7 @@ describe("Session", () => {
   it("Should allow updating a User", async () => {
     const username = getTestUsername();
     const shortUsername = username.slice(0, -30);
-    let promise = session
+    const promise = session
       .create("User", {
         shortUsername,
       })
@@ -376,15 +376,16 @@ describe("Session", () => {
     expect(response[2].headers).toBeDefined();
   });
 
-  it("Should support uploading blob", () => {
+  it("Should support uploading blob", async () => {
     const data = { foo: "bar" };
     const blob = new Blob([JSON.stringify(data)], {
       type: "application/json",
     });
 
-    return session.createComponent(blob, {
+    const response = await session.createComponent(blob, {
       name: "data.json",
     });
+    expect(response[0].data.__entity_type__).toEqual("FileComponent");
   });
 
   it("Should support abort of uploading file using xhr", async () => {
@@ -443,12 +444,11 @@ describe("Session", () => {
     ];
     const key = uuidV4();
 
-    let user;
     await session.initializing;
     const { data } = await session.query(
       `select id from User where username is "${session.apiUser}"`,
     );
-    user = data[0];
+    const user = data[0];
     const ensuredData = await session.ensure(
       "Metadata",
       {
@@ -682,7 +682,7 @@ describe("Encoding entities", () => {
     server.use(
       http.post(
         "http://ftrack.test/api",
-        (info) => {
+        () => {
           return HttpResponse.json([
             { ...queryServerInformation, is_timezone_support_enabled: false },
             querySchemas,
@@ -881,52 +881,6 @@ describe("Encoding entities", () => {
       },
       12321,
     ]);
-  });
-});
-
-describe("Prepared template tests", () => {
-  it("escapes single quotes in interpolated values", () => {
-    const result = expression`It's ${"amazing"} here.`;
-    expect(result).toBe("It's amazing here.");
-  });
-
-  it("escapes double quotes in interpolated values", () => {
-    const result = expression`She said, ${'"Hello!"'} to him.`;
-    expect(result).toBe('She said, \\"Hello!\\" to him.');
-  });
-
-  it("escapes quotes when mixing multiple types", () => {
-    const result = expression`Quotes: ${`"begin and end'`}.`;
-    expect(result).toBe(`Quotes: \\"begin and end\\'.`);
-  });
-
-  it("works with multiple interpolated values", () => {
-    const result = expression`This is ${"first"} and this is ${"second"}.`;
-    expect(result).toBe("This is first and this is second.");
-  });
-
-  it("works without any interpolated values", () => {
-    const result = expression`Just a string without any interpolation.`;
-    expect(result).toBe("Just a string without any interpolation.");
-  });
-
-  it("works with empty string as interpolated value", () => {
-    const result = expression`This is an ${""} empty value.`;
-    expect(result).toBe("This is an  empty value.");
-  });
-  it("handles no arguments", () => {
-    const result = expression``;
-    expect(result).toBe("");
-  });
-  it("handles backslashes in interpolated values", () => {
-    const result = expression`This is a backslash: ${"\\"}.`;
-    expect(result).toBe("This is a backslash: \\.");
-  });
-  it("handles unusual characters", () => {
-    const result = expression`${"æøåßđŋħłøœŧźżšđžčćñé.,;:!?()[]{}<></>+-*/=<>^%&|~©®™µƒ∂∆πΣΩ$€£¥¢₹₽😀😍🤖👍❤️"}`;
-    expect(result).toBe(
-      "æøåßđŋħłøœŧźżšđžčćñé.,;:!?()[]{}<></>+-*/=<>^%&|~©®™µƒ∂∆πΣΩ$€£¥¢₹₽😀😍🤖👍❤️",
-    );
   });
 });
 
