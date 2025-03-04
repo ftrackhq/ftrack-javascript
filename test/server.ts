@@ -1,11 +1,11 @@
 // :copyright: Copyright (c) 2022 ftrack
 import { HttpResponse, type PathParams, http, HttpHandler } from "msw";
 import fs from "fs/promises";
-import querySchemas from "./fixtures/query_schemas.json";
-import queryServerInformation from "./fixtures/query_server_information.json";
-import getUploadMetadata from "./fixtures/get_upload_metadata.json";
-import completeMultipartUpload from "./fixtures/complete_multipart_upload.json";
-import exampleQuery from "./fixtures/query_select_name_from_task_limit_1.json";
+import querySchemas from "./fixtures/query_schemas.json" with { type: "json" };
+import queryServerInformation from "./fixtures/query_server_information.json" with { type: "json" };
+import getUploadMetadata from "./fixtures/get_upload_metadata.json" with { type: "json" };
+import completeMultipartUpload from "./fixtures/complete_multipart_upload.json" with { type: "json" };
+import exampleQuery from "./fixtures/query_select_name_from_task_limit_1.json" with { type: "json" };
 import { setupServer } from "msw/node";
 const InvalidCredentialsError = {
   content:

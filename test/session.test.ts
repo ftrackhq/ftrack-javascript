@@ -11,8 +11,8 @@ import {
 } from "../source/error.js";
 import { Session, expression } from "../source/session.js";
 import * as operation from "../source/operation.js";
-import querySchemas from "./fixtures/query_schemas.json";
-import queryServerInformation from "./fixtures/query_server_information.json";
+import querySchemas from "./fixtures/query_schemas.json" with { type: "json" };
+import queryServerInformation from "./fixtures/query_server_information.json" with { type: "json" };
 
 import { getExampleQuery, getInitialSessionQuery, server } from "./server.js";
 import { HttpResponse, type PathParams, http } from "msw";
