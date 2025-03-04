@@ -1,5 +1,5 @@
 import { fetch } from "cross-fetch";
-import { server } from "./test/server";
+import { server } from "./test/server.js";
 
 // Very simple mock of XmlHttpRequest with only the parts we use
 class MockXmlHttpRequest extends EventTarget {

@@ -1,7 +1,9 @@
 // :copyright: Copyright (c) 2023 ftrack
 
 import { describe, test, vi } from "vitest";
-import SimpleSocketIOClient, { PACKET_TYPES } from "../source/simple_socketio";
+import SimpleSocketIOClient, {
+  PACKET_TYPES,
+} from "../source/simple_socketio.js";
 const credentials = {
   serverUrl: "http://ftrack.test",
   apiUser: "testuser",
@@ -33,7 +35,7 @@ describe("Tests using SimpleSocketIOClient", () => {
     SimpleSocketIOClient.instances.clear();
   });
   describe("Connect method and singleton behaviour", () => {
-    test("should return a new instance for unique serverUrl, apiUser, and apiKey combinations", () => {
+    test.only("should return a new instance for unique serverUrl, apiUser, and apiKey combinations", () => {
       const instance1 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,

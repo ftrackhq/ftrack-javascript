@@ -9,13 +9,15 @@
     "isolatedModules": true,
     "lib": ["DOM", "ESNext"],
     "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "noEmit": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true
   },
   "exclude": ["node_modules"]
 }

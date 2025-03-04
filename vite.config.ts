@@ -1,11 +1,6 @@
-import { defineConfig, type UserConfig } from "vite";
-import type { InlineConfig } from "vitest";
 import path from "path";
 import dts from "vite-plugin-dts";
-
-interface VitestConfigExport extends UserConfig {
-  test: InlineConfig;
-}
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   build: {
@@ -41,4 +36,4 @@ export default defineConfig({
     globalSetup: "./vitest.globalsetup.js",
     setupFiles: ["./vitest.setup.js"],
   },
-} as VitestConfigExport);
+});
