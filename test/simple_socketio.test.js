@@ -1,7 +1,9 @@
 // :copyright: Copyright (c) 2023 ftrack
 
 import { describe, test, vi } from "vitest";
-import SimpleSocketIOClient, { PACKET_TYPES } from "../source/simple_socketio";
+import SimpleSocketIOClient, {
+  PACKET_TYPES,
+} from "../source/simple_socketio.js";
 const credentials = {
   serverUrl: "http://ftrack.test",
   apiUser: "testuser",
@@ -55,7 +57,7 @@ describe("Tests using SimpleSocketIOClient", () => {
       expect(instance2).not.toBe(instance3);
     });
 
-    test("should return the same instance for the same serverUrl, apiUser, and apiKey combinations", () => {
+    test("should return the same instance for the same serverUrl, apiUser, and apiKey combinations", async () => {
       const instance1 = SimpleSocketIOClient.connect(
         credentials.serverUrl,
         credentials.apiUser,
@@ -66,6 +68,9 @@ describe("Tests using SimpleSocketIOClient", () => {
         credentials.apiUser,
         credentials.apiKey,
       );
+
+      await instance1.initializing;
+      await instance2.initializing;
 
       expect(instance1).toBe(instance2);
     });
@@ -130,6 +135,7 @@ describe("Tests using SimpleSocketIOClient", () => {
         "INVALID_API_KEY",
       );
       connected = client.isConnected();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       connected = false;
     }

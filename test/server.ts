@@ -1,11 +1,11 @@
 // :copyright: Copyright (c) 2022 ftrack
 import { HttpResponse, type PathParams, http, HttpHandler } from "msw";
 import fs from "fs/promises";
-import querySchemas from "./fixtures/query_schemas.json";
-import queryServerInformation from "./fixtures/query_server_information.json";
-import getUploadMetadata from "./fixtures/get_upload_metadata.json";
-import completeMultipartUpload from "./fixtures/complete_multipart_upload.json";
-import exampleQuery from "./fixtures/query_select_name_from_task_limit_1.json";
+import querySchemas from "./fixtures/query_schemas.json" with { type: "json" };
+import queryServerInformation from "./fixtures/query_server_information.json" with { type: "json" };
+import getUploadMetadata from "./fixtures/get_upload_metadata.json" with { type: "json" };
+import completeMultipartUpload from "./fixtures/complete_multipart_upload.json" with { type: "json" };
+import exampleQuery from "./fixtures/query_select_name_from_task_limit_1.json" with { type: "json" };
 import { setupServer } from "msw/node";
 const InvalidCredentialsError = {
   content:
@@ -25,7 +25,7 @@ function authenticate(info: Parameters<Parameters<typeof http.post>[1]>[0]) {
 
 function pick<T>(object: T, keys: (keyof T)[]) {
   return keys.reduce((obj, key) => {
-    if (object && object.hasOwnProperty(key)) {
+    if (object && Object.hasOwn(object, key)) {
       obj[key] = object[key];
     }
     return obj;
@@ -66,7 +66,7 @@ export const handlers: HttpHandler[] = [
               return queryServerInformation;
             case "query_schemas":
               return querySchemas;
-            case "create":
+            case "create": {
               // create are fetched from test/fixtures where the file name matches the full expression
               const createFixture = await fs.readFile(
                 `${__dirname}/fixtures/create_${entityType.toLowerCase()}.json`,
@@ -82,6 +82,7 @@ export const handlers: HttpHandler[] = [
                   ...pick(entityData, ["id"]),
                 },
               };
+            }
             case "delete":
               return {
                 action: "delete",
@@ -128,7 +129,7 @@ export const handlers: HttpHandler[] = [
       },
     });
   }),
-  http.put("http://ftrack.test/file-url", async (info) => {
+  http.put("http://ftrack.test/file-url", async () => {
     return new Response(null, {
       status: 200,
       headers: { "Access-Control-Allow-Origin": "*" },
@@ -137,11 +138,11 @@ export const handlers: HttpHandler[] = [
   // Get socket io session id
   http.get("https://ftrack.test/socket.io/1/", handleSocketIORequest),
   http.get("http://ftrack.test/socket.io/1/", handleSocketIORequest),
-  http.get("https://ftrack.test/*", (info) => {
+  http.get("https://ftrack.test/*", () => {
     return new Response(null, { status: 200 });
   }),
 
-  http.get("http://ftrack.test:8080/*", (info) => {
+  http.get("http://ftrack.test:8080/*", () => {
     return new Response(null, { status: 200 });
   }),
 ];

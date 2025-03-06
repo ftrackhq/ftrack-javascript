@@ -306,7 +306,7 @@ export class Session<
     if (data && data.constructor === Object) {
       const out: Data = {};
       for (const key in data) {
-        if (data.hasOwnProperty(key)) {
+        if (Object.hasOwn(data, key)) {
           out[key] = this.encode(data[key]);
         }
       }
@@ -545,7 +545,7 @@ export class Session<
     const mergedEntity = identityMap[identifier];
 
     for (const key in entity) {
-      if (entity.hasOwnProperty(key)) {
+      if (Object.hasOwn(entity, key)) {
         mergedEntity[key] = this.decode(entity[key], identityMap, {
           decodeDatesAsIso,
           ensureSerializableResponse,
