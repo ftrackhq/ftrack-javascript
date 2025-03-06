@@ -176,7 +176,6 @@ export default class SimpleSocketIOClient {
       // Set transport.websocket property as a public alias of the websocket
       this.socket.transport.websocket = this.webSocket;
       this.addInitialEventListeners(this.webSocket);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       this.reconnecting = false;
     }
