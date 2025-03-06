@@ -36,7 +36,6 @@ export function convertToIsoString(
     // wrap it new Date() to convert it to UTC based ISO string in case it is in another timezone
     try {
       return new Date(data as any).toISOString();
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       return null;
     }

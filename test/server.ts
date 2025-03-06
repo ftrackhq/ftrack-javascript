@@ -25,7 +25,7 @@ function authenticate(info: Parameters<Parameters<typeof http.post>[1]>[0]) {
 
 function pick<T>(object: T, keys: (keyof T)[]) {
   return keys.reduce((obj, key) => {
-    if (object && Object.prototype.hasOwnProperty.call(object, key)) {
+    if (object && Object.hasOwn(object, key)) {
       obj[key] = object[key];
     }
     return obj;

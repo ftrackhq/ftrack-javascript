@@ -508,10 +508,7 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
       };
 
       for (const key in headers) {
-        if (
-          Object.prototype.hasOwnProperty.call(headers, key) &&
-          key !== "Content-Length"
-        ) {
+        if (Object.hasOwn(headers, key) && key !== "Content-Length") {
           this.xhr.setRequestHeader(key, headers[key]);
         }
       }
