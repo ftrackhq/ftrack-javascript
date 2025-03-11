@@ -1,5 +1,4 @@
 // :copyright: Copyright (c) 2023 ftrack
-import WebSocket from "isomorphic-ws";
 import { Event } from "./event.js";
 export const PACKET_TYPES = {
   disconnect: "0",
@@ -42,7 +41,7 @@ interface Payload {
  */
 export default class SimpleSocketIOClient {
   private static instances: Map<string, SimpleSocketIOClient> = new Map();
-  private webSocket: WebSocket;
+  private webSocket: WebSocket | undefined;
   private handlers: EventHandlers = {};
   private reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
   private heartbeatTimeout: ReturnType<typeof setInterval> | undefined;
@@ -172,7 +171,13 @@ export default class SimpleSocketIOClient {
         this.reconnecting = false;
       }
       const urlWithQueryAndSession = `${this.webSocketUrl}/socket.io/1/websocket/${sessionId}?${this.query}`;
-      this.webSocket = new WebSocket(urlWithQueryAndSession);
+      const WebSocketImpl =
+        typeof WebSocket === "undefined"
+          ? // Fallback on ws package if WebSocket is not available
+            ((await import("ws")).default as typeof WebSocket)
+          : WebSocket;
+
+      this.webSocket = new WebSocketImpl(urlWithQueryAndSession);
       // Set transport.websocket property as a public alias of the websocket
       this.socket.transport.websocket = this.webSocket;
       this.addInitialEventListeners(this.webSocket);
@@ -195,7 +200,7 @@ export default class SimpleSocketIOClient {
    * Handles WebSocket errors
    * @private
    */
-  private handleError(event: Event): void {
+  private handleError(event: WebSocketEventMap["error"]): void {
     this.handleClose();
     console.error("WebSocket error:", event);
   }
@@ -322,7 +327,7 @@ export default class SimpleSocketIOClient {
     const packet = `${PACKET_TYPES.event}${dataString}`;
 
     if (this.isConnected()) {
-      this.webSocket.send(packet);
+      this.webSocket?.send(packet);
     } else {
       this.packetQueue.push(packet);
       this.reconnect();
@@ -436,9 +441,9 @@ export default class SimpleSocketIOClient {
     this.packetQueue = [];
 
     if (this.webSocket) {
-      this.webSocket.onclose = undefined;
-      this.webSocket.onerror = undefined;
-      this.webSocket?.close();
+      this.webSocket.onclose = null;
+      this.webSocket.onerror = null;
+      this.webSocket.close();
       this.webSocket = undefined;
     }
     if (this.reconnectTimeout) {

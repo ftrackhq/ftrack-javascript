@@ -1,5 +1,12 @@
 // :copyright: Copyright (c) 2022 ftrack
-import { HttpResponse, type PathParams, http, HttpHandler } from "msw";
+import {
+  HttpResponse,
+  type PathParams,
+  http,
+  HttpHandler,
+  ws,
+  WebSocketHandler,
+} from "msw";
 import fs from "fs/promises";
 import querySchemas from "./fixtures/query_schemas.json" with { type: "json" };
 import queryServerInformation from "./fixtures/query_server_information.json" with { type: "json" };
@@ -47,8 +54,10 @@ const handleSocketIORequest: Parameters<typeof http.get>[1] = (info) => {
   }
   return HttpResponse.text("1234567890:"); // The returned session ID has a colon and then some other information at the end. This only has the colon, to check that the colon is removed.
 };
+const eventServer = ws.link("ws://ftrack.test/*");
+const secureEventServer = ws.link("wss://ftrack.test/*");
 
-export const handlers: HttpHandler[] = [
+export const handlers: (HttpHandler | WebSocketHandler)[] = [
   http.post<PathParams, any[]>("http://ftrack.test/api", async (info) => {
     if (!authenticate(info)) {
       return HttpResponse.json(InvalidCredentialsError);
@@ -144,6 +153,14 @@ export const handlers: HttpHandler[] = [
 
   http.get("http://ftrack.test:8080/*", () => {
     return new Response(null, { status: 200 });
+  }),
+  eventServer.addEventListener("connection", ({ client }) => {
+    // Just catch the connection event and close it immediately
+    client.close();
+  }),
+  secureEventServer.addEventListener("connection", ({ client }) => {
+    // Just catch the connection event and close it immediately
+    client.close();
   }),
 ];
 

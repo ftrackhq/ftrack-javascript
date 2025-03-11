@@ -394,12 +394,12 @@ __metadata:
   dependencies:
     "@types/node": "npm:^22.13.9"
     "@types/uuid": "npm:^10.0.0"
+    "@types/ws": "npm:^8.18.0"
     "@vitest/eslint-plugin": "npm:^1.1.36"
     dayjs: "npm:^1.11.13"
     eslint: "npm:^9.21.0"
     globals: "npm:^16.0.0"
     husky: "npm:^9.1.7"
-    isomorphic-ws: "npm:^5.0.0"
     jsdom: "npm:^26.0.0"
     lint-staged: "npm:^15.4.3"
     loglevel: "npm:^1.9.2"
@@ -900,12 +900,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.13.9":
-  version: 22.13.9
-  resolution: "@types/node@npm:22.13.9"
+"@types/node@npm:*, @types/node@npm:^22.13.9":
+  version: 22.13.10
+  resolution: "@types/node@npm:22.13.10"
   dependencies:
     undici-types: "npm:~6.20.0"
-  checksum: 10/23560df3ee99c907179c688754486b969a72144f2e2bdefe974d320dddc5ca8f93365842966ecbd5c5bba34e919fc1a5a6627712beb8e7f71d71347dcf414a35
+  checksum: 10/57dc6a5e0110ca9edea8d7047082e649fa7fa813f79e4a901653b9174141c622f4336435648baced5b38d9f39843f404fa2d8d7a10981610da26066bc8caab48
   languageName: node
   linkType: hard
 
@@ -927,6 +927,15 @@ __metadata:
   version: 10.0.0
   resolution: "@types/uuid@npm:10.0.0"
   checksum: 10/e3958f8b0fe551c86c14431f5940c3470127293280830684154b91dc7eb3514aeb79fe3216968833cf79d4d1c67f580f054b5be2cd562bebf4f728913e73e944
+  languageName: node
+  linkType: hard
+
+"@types/ws@npm:^8.18.0":
+  version: 8.18.0
+  resolution: "@types/ws@npm:8.18.0"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/2a3bbf27690532627bfde8a215c0cf3a56680f339f972785b30d0b4665528275b9270c0a0839244610b0a3f2da4218c6dd741ceba1d173fde5c5091f2034b823
   languageName: node
   linkType: hard
 
@@ -2836,15 +2845,6 @@ __metadata:
   version: 2.0.0
   resolution: "isexe@npm:2.0.0"
   checksum: 10/7c9f715c03aff08f35e98b1fadae1b9267b38f0615d501824f9743f3aab99ef10e303ce7db3f186763a0b70a19de5791ebfc854ff884d5a8c4d92211f642ec92
-  languageName: node
-  linkType: hard
-
-"isomorphic-ws@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "isomorphic-ws@npm:5.0.0"
-  peerDependencies:
-    ws: "*"
-  checksum: 10/e20eb2aee09ba96247465fda40c6d22c1153394c0144fa34fe6609f341af4c8c564f60ea3ba762335a7a9c306809349f9b863c8beedf2beea09b299834ad5398
   languageName: node
   linkType: hard
 
