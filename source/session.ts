@@ -106,7 +106,7 @@ export class Session<
       apiEndpoint = "/api",
       additionalHeaders = {},
       strictApi = false,
-      decodeDatesAsIso = false,
+      decodeDatesAsIso = true,
       ensureSerializableResponse = false,
     }: SessionOptions = {},
   ) {
@@ -389,7 +389,7 @@ export class Session<
     data: any,
     identityMap: Data = {},
     {
-      decodeDatesAsIso = false,
+      decodeDatesAsIso = true,
       ensureSerializableResponse = false,
     }: {
       decodeDatesAsIso?: boolean;
@@ -411,8 +411,6 @@ export class Session<
       }
       if (data.__type__ === "datetime" && decodeDatesAsIso) {
         return this._decodeDateTimeAsIso(data);
-      } else if (data.__type__ === "datetime") {
-        return this._decodeDateTimeAsDayJs(data);
       }
       return this._decodePlainObject(data, identityMap, {
         decodeDatesAsIso,
@@ -447,27 +445,6 @@ export class Session<
   }
 
   /**
-   * Decode datetime *data* into dayjs objects.
-   *
-   * Translate objects with __type__ equal to 'datetime' into dayjs
-   * datetime objects. If time zone support is enabled on the server the date
-   * will be assumed to be UTC and the dayjs will be in utc.
-   * @private
-   */
-  private _decodeDateTimeAsDayJs(data: any) {
-    if (
-      this.serverInformation &&
-      this.serverInformation.is_timezone_support_enabled
-    ) {
-      // Return date as dayjs object with UTC set to true.
-      return dayjs.utc(data.value);
-    }
-
-    // Return date as local dayjs object.
-    return dayjs(data.value);
-  }
-
-  /**
    * Return new object where all values have been decoded.
    * @private
    */
@@ -499,7 +476,7 @@ export class Session<
     collection: any[],
     identityMap: Data,
     {
-      decodeDatesAsIso = false,
+      decodeDatesAsIso = true,
       ensureSerializableResponse = false,
     }: {
       decodeDatesAsIso?: boolean;

@@ -131,16 +131,6 @@ describe("Session", () => {
     return expect((await headers).get("ftrack-strict-api")).toEqual("true");
   });
 
-  it("Should allow querying with datetimes decoded as dayjs objects (default)", async () => {
-    const result = await session.query(
-      "select name, created_at from Task limit 1",
-    );
-    expect(result.data[0].created_at).toBeInstanceOf(dayjs);
-    expect(result.data[0].created_at.toISOString()).toEqual(
-      "2022-10-10T10:12:09.000Z",
-    );
-  });
-
   it("Should allow querying with datetimes decoded as ISO objects", async () => {
     const result = await session.query(
       "select name, created_at from Task limit 1",
@@ -162,30 +152,6 @@ describe("Session", () => {
       "select name, created_at from Task limit 1",
     );
     expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
-  });
-  it("Should allow overriding session decodeDatesAsIso when querying", async () => {
-    const decodeDatesAsIsoSession = new Session(
-      credentials.serverUrl,
-      credentials.apiUser,
-      credentials.apiKey,
-      {
-        decodeDatesAsIso: true,
-      },
-    );
-    await decodeDatesAsIsoSession.initializing;
-    const result = await decodeDatesAsIsoSession.query(
-      "select name, created_at from Task limit 1",
-      { decodeDatesAsIso: false },
-    );
-    expect(result.data[0].created_at).toBeInstanceOf(dayjs);
-    expect(result.data[0].created_at.toISOString()).toEqual(
-      "2022-10-10T10:12:09.000Z",
-    );
-    const result2 = await session.query(
-      "select name, created_at from Task limit 1",
-      { decodeDatesAsIso: true },
-    );
-    expect(result2.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
   });
 
   it("Should allow querying with datetimes decoded as ISO objects with timezone support disabled", async () => {
@@ -835,20 +801,6 @@ describe("Encoding entities", () => {
       expect(data[0].status.state.short).toEqual("DONE");
       expect(data[1].status.state.short).toEqual("NOT_STARTED");
       expect(data[2].status.state.short).toEqual("DONE");
-    });
-
-    it("Should support decoding datetime as dayjs (default)", () => {
-      const now = dayjs();
-
-      //@ts-ignore - Otherwise internal method used for testing purposes
-      const output = session.decode({
-        foo: {
-          __type__: "datetime",
-          value: now.toISOString(),
-        },
-      });
-      expect(output.foo).toBeInstanceOf(dayjs);
-      expect(output.foo.toISOString()).toEqual(now.toISOString());
     });
 
     it("Should support decoding datetime as ISO string", () => {
