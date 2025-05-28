@@ -1,5 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
-import moment from "moment";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
 import loglevel from "loglevel";
 import { v4 as uuidV4 } from "uuid";
 
@@ -38,6 +39,8 @@ import type {
 import { convertToIsoString } from "./util/convert_to_iso_string.js";
 import { Uploader } from "./uploader.js";
 import getSchemaMappingFromSchemas from "./util/get_schema_mapping.js";
+
+dayjs.extend(utc);
 
 const logger = loglevel.getLogger("ftrack_api");
 
@@ -86,7 +89,7 @@ export class Session<
    * @param  {string} [options.apiEndpoint=/api] - API endpoint.
    * @param {object} [options.headers] - Additional headers to send with the request
    * @param {object} [options.strictApi] - Turn on strict API mode
-   * @param {object} [options.decodeDatesAsIso] - Decode dates as ISO strings instead of moment objects
+   * @param {object} [options.decodeDatesAsIso] - Decode dates as ISO strings instead of dayjs objects
    * @param {object} [options.ensureSerializableResponse] - Disable normalization of response data
    *
    * @constructs Session
@@ -292,7 +295,7 @@ export class Session<
   /**
    * Return encoded *data* as JSON string.
    *
-   * This will translate date, moment, and dayjs  objects into ISO8601 string representation in UTC.
+   * This will translate date and dayjs objects into ISO8601 string representation in UTC.
    *
    * @private
    * @param  {*} data  The data to encode.
@@ -320,7 +323,7 @@ export class Session<
         this.serverInformation &&
         this.serverInformation.is_timezone_support_enabled
       ) {
-        // Ensure that the moment object is in UTC and format
+        // Ensure that the dayjs object is in UTC and format
         // to timezone naive string.
         return {
           __type__: "datetime",
@@ -328,11 +331,11 @@ export class Session<
         };
       }
 
-      // Ensure that the moment object is in local time zone and format
+      // Ensure that the dayjs object is in local time zone and format
       // to timezone naive string.
       return {
         __type__: "datetime",
-        value: moment(date).local().format(ENCODE_DATETIME_FORMAT),
+        value: dayjs.utc(date).local().format(ENCODE_DATETIME_FORMAT),
       };
     }
 
@@ -375,7 +378,7 @@ export class Session<
    * de-duplicated in the back end and point them to a single object in
    * *identityMap*.
    *
-   * datetime objects will be converted to timezone-aware moment objects.
+   * datetime objects will be converted to timezone-aware dayjs objects.
    *
    * @private
    * @param  {*} data  The data to decode.
@@ -409,7 +412,7 @@ export class Session<
       if (data.__type__ === "datetime" && decodeDatesAsIso) {
         return this._decodeDateTimeAsIso(data);
       } else if (data.__type__ === "datetime") {
-        return this._decodeDateTimeAsMoment(data);
+        return this._decodeDateTimeAsDayJs(data);
       }
       return this._decodePlainObject(data, identityMap, {
         decodeDatesAsIso,
@@ -422,9 +425,9 @@ export class Session<
   /**
    * Decode datetime *data* into ISO 8601 strings.
    *
-   * Translate objects with __type__ equal to 'datetime' into moment
+   * Translate objects with __type__ equal to 'datetime' into dayjs
    * datetime objects. If time zone support is enabled on the server the date
-   * will be assumed to be UTC and the moment will be in utc.
+   * will be assumed to be UTC and the dayjs will be in utc.
    * @private
    */
   private _decodeDateTimeAsIso(data: any) {
@@ -444,24 +447,24 @@ export class Session<
   }
 
   /**
-   * Decode datetime *data* into moment objects.
+   * Decode datetime *data* into dayjs objects.
    *
-   * Translate objects with __type__ equal to 'datetime' into moment
+   * Translate objects with __type__ equal to 'datetime' into dayjs
    * datetime objects. If time zone support is enabled on the server the date
-   * will be assumed to be UTC and the moment will be in utc.
+   * will be assumed to be UTC and the dayjs will be in utc.
    * @private
    */
-  private _decodeDateTimeAsMoment(data: any) {
+  private _decodeDateTimeAsDayJs(data: any) {
     if (
       this.serverInformation &&
       this.serverInformation.is_timezone_support_enabled
     ) {
-      // Return date as moment object with UTC set to true.
-      return moment.utc(data.value);
+      // Return date as dayjs object with UTC set to true.
+      return dayjs.utc(data.value);
     }
 
-    // Return date as local moment object.
-    return moment(data.value);
+    // Return date as local dayjs object.
+    return dayjs(data.value);
   }
 
   /**
@@ -630,7 +633,7 @@ export class Session<
    * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {string} options.decodeDatesAsIso - Return dates as ISO strings instead of moment objects
+   * @param {string} options.decodeDatesAsIso - Return dates as ISO strings instead of dayjs objects
    *
    */
   async call<T = ActionResponse<keyof TEntityTypeMap>>(
@@ -856,7 +859,7 @@ export class Session<
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
@@ -885,7 +888,7 @@ export class Session<
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
@@ -931,7 +934,7 @@ export class Session<
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with the response.
    */
@@ -957,7 +960,7 @@ export class Session<
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise resolved with the response.
    */
@@ -983,7 +986,7 @@ export class Session<
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of moment objects
+   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @return {Promise} Promise resolved with the response.
    */
   async delete<TEntityType extends keyof TEntityTypeMap>(

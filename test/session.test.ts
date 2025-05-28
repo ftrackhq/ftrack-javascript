@@ -3,7 +3,8 @@ import { beforeAll, describe, it, expect } from "vitest";
 
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-import moment from "moment";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
 import {
   ServerPermissionDeniedError,
   ServerValidationError,
@@ -17,6 +18,8 @@ import queryServerInformation from "./fixtures/query_server_information.json" wi
 import { getExampleQuery, getInitialSessionQuery, server } from "./server.js";
 import { HttpResponse, type PathParams, http } from "msw";
 import type { QueryResponse, Data } from "../source/types.js";
+
+dayjs.extend(utc);
 
 const logger = loglevel.getLogger("test_session");
 logger.setLevel("debug");
@@ -128,11 +131,11 @@ describe("Session", () => {
     return expect((await headers).get("ftrack-strict-api")).toEqual("true");
   });
 
-  it("Should allow querying with datetimes decoded as moment objects (default)", async () => {
+  it("Should allow querying with datetimes decoded as dayjs objects (default)", async () => {
     const result = await session.query(
       "select name, created_at from Task limit 1",
     );
-    expect(result.data[0].created_at).toBeInstanceOf(moment);
+    expect(result.data[0].created_at).toBeInstanceOf(dayjs);
     expect(result.data[0].created_at.toISOString()).toEqual(
       "2022-10-10T10:12:09.000Z",
     );
@@ -174,7 +177,7 @@ describe("Session", () => {
       "select name, created_at from Task limit 1",
       { decodeDatesAsIso: false },
     );
-    expect(result.data[0].created_at).toBeInstanceOf(moment);
+    expect(result.data[0].created_at).toBeInstanceOf(dayjs);
     expect(result.data[0].created_at.toISOString()).toEqual(
       "2022-10-10T10:12:09.000Z",
     );
@@ -513,8 +516,8 @@ describe("Session", () => {
       .then(done);
   });
 
-  it.skip("Should support ensure with update moment object as criteria", async (done: any) => {
-    const now = moment();
+  it.skip("Should support ensure with update dayjs object as criteria", async (done: any) => {
+    const now = dayjs();
 
     const name = uuidV4();
 
@@ -660,8 +663,8 @@ describe("Session", () => {
 });
 
 describe("Encoding entities", () => {
-  it("Should support encoding moment dates", () => {
-    const now = moment();
+  it("Should support encoding dayjs dates", () => {
+    const now = dayjs();
 
     //@ts-ignore - Otherwise internal method used for testing purposes
     const output = session.encode([{ foo: now, bar: "baz" }, 12321]);
@@ -677,8 +680,8 @@ describe("Encoding entities", () => {
       12321,
     ]);
   });
-  it("Should support encoding moment dates to local timezone if timezone support is disabled", async () => {
-    const now = moment();
+  it("Should support encoding dayjs dates to local timezone if timezone support is disabled", async () => {
+    const now = dayjs();
     server.use(
       http.post(
         "http://ftrack.test/api",
@@ -834,8 +837,8 @@ describe("Encoding entities", () => {
       expect(data[2].status.state.short).toEqual("DONE");
     });
 
-    it("Should support decoding datetime as moment (default)", () => {
-      const now = moment();
+    it("Should support decoding datetime as dayjs (default)", () => {
+      const now = dayjs();
 
       //@ts-ignore - Otherwise internal method used for testing purposes
       const output = session.decode({
@@ -844,7 +847,7 @@ describe("Encoding entities", () => {
           value: now.toISOString(),
         },
       });
-      expect(output.foo).toBeInstanceOf(moment);
+      expect(output.foo).toBeInstanceOf(dayjs);
       expect(output.foo.toISOString()).toEqual(now.toISOString());
     });
 
