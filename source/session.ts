@@ -67,7 +67,6 @@ export class Session<
   serverInformation?: QueryServerInformationResponse;
   serverVersion?: string;
   private ensureSerializableResponse: boolean;
-  private decodeDatesAsIso: boolean;
   private schemasPromise?: Promise<Schema<TEntityTypeMap>[]>;
   private serverInformationPromise?: Promise<ServerInformation>;
   private serverInformationValues?: string[];
@@ -89,7 +88,6 @@ export class Session<
    * @param  {string} [options.apiEndpoint=/api] - API endpoint.
    * @param {object} [options.headers] - Additional headers to send with the request
    * @param {object} [options.strictApi] - Turn on strict API mode
-   * @param {object} [options.decodeDatesAsIso] - Decode dates as ISO strings instead of dayjs objects
    * @param {object} [options.ensureSerializableResponse] - Disable normalization of response data
    *
    * @constructs Session
@@ -106,7 +104,6 @@ export class Session<
       apiEndpoint = "/api",
       additionalHeaders = {},
       strictApi = false,
-      decodeDatesAsIso = true,
       ensureSerializableResponse = false,
     }: SessionOptions = {},
   ) {
@@ -204,8 +201,6 @@ export class Session<
       },
       { action: "query_schemas" },
     ];
-
-    this.decodeDatesAsIso = decodeDatesAsIso;
 
     /**
      * By default the API server will return normalized responses, and we denormalize them in the client.
@@ -389,31 +384,26 @@ export class Session<
     data: any,
     identityMap: Data = {},
     {
-      decodeDatesAsIso = true,
       ensureSerializableResponse = false,
     }: {
-      decodeDatesAsIso?: boolean;
       ensureSerializableResponse?: boolean;
     } = {},
   ): any {
     if (Array.isArray(data)) {
       return this._decodeArray(data, identityMap, {
-        decodeDatesAsIso,
         ensureSerializableResponse,
       });
     }
     if (!!data && typeof data === "object") {
       if (data.__entity_type__ && !ensureSerializableResponse) {
         return this._mergeEntity(data, identityMap, {
-          decodeDatesAsIso,
           ensureSerializableResponse,
         });
       }
-      if (data.__type__ === "datetime" && decodeDatesAsIso) {
+      if (data.__type__ === "datetime") {
         return this._decodeDateTimeAsIso(data);
       }
       return this._decodePlainObject(data, identityMap, {
-        decodeDatesAsIso,
         ensureSerializableResponse,
       });
     }
@@ -452,16 +442,13 @@ export class Session<
     object: Data,
     identityMap: Data,
     {
-      decodeDatesAsIso,
       ensureSerializableResponse,
     }: {
-      decodeDatesAsIso?: boolean;
       ensureSerializableResponse?: boolean;
     } = {},
   ) {
     return Object.keys(object).reduce<Data>((previous, key) => {
       previous[key] = this.decode(object[key], identityMap, {
-        decodeDatesAsIso,
         ensureSerializableResponse,
       });
       return previous;
@@ -476,16 +463,13 @@ export class Session<
     collection: any[],
     identityMap: Data,
     {
-      decodeDatesAsIso = true,
       ensureSerializableResponse = false,
     }: {
-      decodeDatesAsIso?: boolean;
       ensureSerializableResponse?: boolean;
     } = {},
   ): any[] {
     return collection.map((item) =>
       this.decode(item, identityMap, {
-        decodeDatesAsIso,
         ensureSerializableResponse,
       }),
     );
@@ -499,10 +483,8 @@ export class Session<
     entity: Data,
     identityMap: Data,
     {
-      decodeDatesAsIso,
       ensureSerializableResponse,
     }: {
-      decodeDatesAsIso?: boolean;
       ensureSerializableResponse?: boolean;
     } = {},
   ) {
@@ -527,7 +509,6 @@ export class Session<
     for (const key in entity) {
       if (Object.hasOwn(entity, key)) {
         mergedEntity[key] = this.decode(entity[key], identityMap, {
-          decodeDatesAsIso,
           ensureSerializableResponse,
         });
       }
@@ -610,7 +591,6 @@ export class Session<
    * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {string} options.decodeDatesAsIso - Return dates as ISO strings instead of dayjs objects
    *
    */
   async call<T = ActionResponse<keyof TEntityTypeMap>>(
@@ -620,7 +600,6 @@ export class Session<
       pushToken,
       signal,
       additionalHeaders = {},
-      decodeDatesAsIso = this.decodeDatesAsIso,
       ensureSerializableResponse = this.ensureSerializableResponse,
     }: CallOptions = {},
   ): Promise<IsTuple<T> extends true ? T : T[]> {
@@ -670,11 +649,7 @@ export class Session<
         throw this.getErrorFromResponse(response);
       }
       try {
-        return this.decode(
-          response,
-          {},
-          { decodeDatesAsIso, ensureSerializableResponse },
-        );
+        return this.decode(response, {}, { ensureSerializableResponse });
       } catch (reason) {
         logger.warn("Server reported error in unexpected format. ", reason);
         throw this.getErrorFromResponse({
@@ -836,7 +811,6 @@ export class Session<
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with an object
    * containing action, data and metadata
@@ -865,7 +839,6 @@ export class Session<
    * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with an object
    * containing data and metadata
@@ -911,7 +884,6 @@ export class Session<
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise which will be resolved with the response.
    */
@@ -937,7 +909,6 @@ export class Session<
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    * @return {Promise} Promise resolved with the response.
    */
@@ -963,7 +934,6 @@ export class Session<
    * @param {Object} options
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
-   * @param {object} options.decodeDatesAsIso - Decode dates as ISO strings instead of dayjs objects
    * @return {Promise} Promise resolved with the response.
    */
   async delete<TEntityType extends keyof TEntityTypeMap>(

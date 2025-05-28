@@ -42,7 +42,6 @@ beforeAll(async () => {
     credentials.apiKey,
     {
       autoConnectEventHub: false,
-      decodeDatesAsIso: false,
     },
   );
   await session.initializing;
@@ -134,7 +133,6 @@ describe("Session", () => {
   it("Should allow querying with datetimes decoded as ISO objects", async () => {
     const result = await session.query(
       "select name, created_at from Task limit 1",
-      { decodeDatesAsIso: true },
     );
     expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
   });
@@ -143,9 +141,6 @@ describe("Session", () => {
       credentials.serverUrl,
       credentials.apiUser,
       credentials.apiKey,
-      {
-        decodeDatesAsIso: true,
-      },
     );
     await decodeDatesAsIsoSession.initializing;
     const result = await decodeDatesAsIsoSession.query(
@@ -178,7 +173,6 @@ describe("Session", () => {
     await timezoneDisabledSession.initializing;
     const result = await timezoneDisabledSession.query(
       "select name, created_at from Task limit 1",
-      { decodeDatesAsIso: true },
     );
     expect(result.data[0].created_at).toEqual("2022-10-10T08:12:09.000Z");
   });
@@ -607,9 +601,7 @@ describe("Session", () => {
     );
 
     await expect(() =>
-      session.call([{ action: "configure_totp", secret, code }], {
-        decodeDatesAsIso: true,
-      }),
+      session.call([{ action: "configure_totp", secret, code }]),
     ).rejects.toThrowError("Code must be provided to enable totp.");
   });
 
@@ -815,7 +807,6 @@ describe("Encoding entities", () => {
           },
         },
         {},
-        { decodeDatesAsIso: true },
       );
       expect(output.foo).toEqual(now.toISOString());
     });
