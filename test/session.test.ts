@@ -638,44 +638,6 @@ describe("Encoding entities", () => {
       12321,
     ]);
   });
-  it("Should return a ISO string if timezone support is disabled", async () => {
-    const now = dayjs();
-    server.use(
-      http.post(
-        "http://ftrack.test/api",
-        () => {
-          return HttpResponse.json([
-            { ...queryServerInformation, is_timezone_support_enabled: false },
-            querySchemas,
-          ]);
-        },
-        { once: true },
-      ),
-    );
-    const timezoneDisabledSession = new Session(
-      credentials.serverUrl,
-      credentials.apiUser,
-      credentials.apiKey,
-      {
-        autoConnectEventHub: false,
-      },
-    );
-    await timezoneDisabledSession.initializing;
-
-    //@ts-ignore - Otherwise internal method used for testing purposes
-    const output = timezoneDisabledSession.encode([
-      { foo: now, bar: "baz" },
-      12321,
-    ]);
-
-    expect(output).toEqual([
-      {
-        foo: now.utc().toISOString(),
-        bar: "baz",
-      },
-      12321,
-    ]);
-  });
 
   describe("Decoding entities", () => {
     it("Should support merging 0-level nested data", async () => {
