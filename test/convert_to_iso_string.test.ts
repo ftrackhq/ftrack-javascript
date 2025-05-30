@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2022 ftrack
 
 import { convertToIsoString } from "../source/util/convert_to_iso_string.js";
-import moment from "moment";
 import dayjs from "dayjs";
 import { describe, it, expect } from "vitest";
 
@@ -24,13 +23,6 @@ describe("convertToIsoString", () => {
     const tzDate = "2023-01-01T01:00:00+01:00";
     const isoDate = "2023-01-01T00:00:00.000Z";
     const converted = convertToIsoString(tzDate);
-    expect(converted).toEqual(isoDate);
-  });
-
-  it("should convert moment objects to ISO strings in UTC", () => {
-    const tzDate = "2023-01-01T01:00:00+01:00";
-    const isoDate = "2023-01-01T00:00:00.000Z";
-    const converted = convertToIsoString(moment(tzDate));
     expect(converted).toEqual(isoDate);
   });
 
