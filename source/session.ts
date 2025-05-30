@@ -179,15 +179,6 @@ export class Session<
       this.clientToken = `ftrack-javascript-api--${uuidV4()}`;
     }
 
-    // Always include is_timezone_support_enabled as required by API.
-    // TODO: Remove this in next major.
-    if (
-      serverInformationValues &&
-      !serverInformationValues.includes("is_timezone_support_enabled")
-    ) {
-      serverInformationValues.push("is_timezone_support_enabled");
-    }
-
     // TODO: remove these operations from session initialization in next major
     const operations: [
       operation.QueryServerInformationOperation,
@@ -312,18 +303,10 @@ export class Session<
 
     const date = convertToIsoString(data);
     if (date) {
-      if (
-        this.serverInformation &&
-        this.serverInformation.is_timezone_support_enabled
-      ) {
-        // Ensure that the dayjs object is in UTC and format
-        // to timezone naive string.
-        return {
-          __type__: "datetime",
-          value: date,
-        };
-      }
-      return date;
+      return {
+        __type__: "datetime",
+        value: date,
+      };
     }
 
     return data;
@@ -412,12 +395,7 @@ export class Session<
    */
   private _decodeDateTimeAsIso(data: any) {
     let dateValue = data.value;
-    if (
-      this.serverInformation &&
-      this.serverInformation.is_timezone_support_enabled &&
-      !dateValue.endsWith("Z") &&
-      !dateValue.includes("+")
-    ) {
+    if (!dateValue.endsWith("Z") && !dateValue.includes("+")) {
       // Server responds with timezone naive strings, add Z to indicate UTC.
       // If the string somehow already contains a timezone offset, do not add Z.
       dateValue += "Z";

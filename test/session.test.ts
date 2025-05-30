@@ -149,34 +149,6 @@ describe("Session", () => {
     expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
   });
 
-  it("Should allow querying with datetimes decoded as ISO objects with timezone support disabled", async () => {
-    server.use(
-      http.post(
-        "http://ftrack.test/api",
-        () => {
-          return HttpResponse.json([
-            { ...queryServerInformation, is_timezone_support_enabled: false },
-            querySchemas,
-          ]);
-        },
-        { once: true },
-      ),
-    );
-    const timezoneDisabledSession = new Session(
-      credentials.serverUrl,
-      credentials.apiUser,
-      credentials.apiKey,
-      {
-        autoConnectEventHub: false,
-      },
-    );
-    await timezoneDisabledSession.initializing;
-    const result = await timezoneDisabledSession.query(
-      "select name, created_at from Task limit 1",
-    );
-    expect(result.data[0].created_at).toEqual("2022-10-10T08:12:09.000Z");
-  });
-
   it("Should allow adding additional headers on calls", async () => {
     const headers = new Promise<Headers>((resolve) => {
       server.use(
