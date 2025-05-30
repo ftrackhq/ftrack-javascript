@@ -638,7 +638,7 @@ describe("Encoding entities", () => {
       12321,
     ]);
   });
-  it("Should support encoding dayjs dates to local timezone if timezone support is disabled", async () => {
+  it("Should return a ISO string if timezone support is disabled", async () => {
     const now = dayjs();
     server.use(
       http.post(
@@ -670,10 +670,7 @@ describe("Encoding entities", () => {
 
     expect(output).toEqual([
       {
-        foo: {
-          __type__: "datetime",
-          value: now.local().format("YYYY-MM-DDTHH:mm:ss"),
-        },
+        foo: now.utc().toISOString(),
         bar: "baz",
       },
       12321,

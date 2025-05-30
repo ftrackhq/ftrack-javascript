@@ -44,8 +44,6 @@ dayjs.extend(utc);
 
 const logger = loglevel.getLogger("ftrack_api");
 
-const ENCODE_DATETIME_FORMAT = "YYYY-MM-DDTHH:mm:ss";
-
 /**
  * ftrack API session
  * @class  Session
@@ -325,13 +323,7 @@ export class Session<
           value: date,
         };
       }
-
-      // Ensure that the dayjs object is in local time zone and format
-      // to timezone naive string.
-      return {
-        __type__: "datetime",
-        value: dayjs.utc(date).local().format(ENCODE_DATETIME_FORMAT),
-      };
+      return date;
     }
 
     return data;
