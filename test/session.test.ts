@@ -4,7 +4,6 @@ import { beforeAll, describe, it, expect } from "vitest";
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc.js";
 import {
   ServerPermissionDeniedError,
   ServerValidationError,
@@ -18,8 +17,6 @@ import queryServerInformation from "./fixtures/query_server_information.json" wi
 import { getExampleQuery, getInitialSessionQuery, server } from "./server.js";
 import { HttpResponse, type PathParams, http } from "msw";
 import type { QueryResponse, Data } from "../source/types.js";
-
-dayjs.extend(utc);
 
 const logger = loglevel.getLogger("test_session");
 logger.setLevel("debug");

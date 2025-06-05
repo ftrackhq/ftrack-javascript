@@ -1,6 +1,4 @@
 // :copyright: Copyright (c) 2016 ftrack
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc.js";
 import loglevel from "loglevel";
 import { v4 as uuidV4 } from "uuid";
 
@@ -39,8 +37,6 @@ import type {
 import { convertToIsoString } from "./util/convert_to_iso_string.js";
 import { Uploader } from "./uploader.js";
 import getSchemaMappingFromSchemas from "./util/get_schema_mapping.js";
-
-dayjs.extend(utc);
 
 const logger = loglevel.getLogger("ftrack_api");
 
