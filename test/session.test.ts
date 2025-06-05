@@ -3,7 +3,7 @@ import { beforeAll, describe, it, expect } from "vitest";
 
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
-import moment from "moment";
+import dayjs from "dayjs";
 import {
   ServerPermissionDeniedError,
   ServerValidationError,
@@ -39,7 +39,6 @@ beforeAll(async () => {
     credentials.apiKey,
     {
       autoConnectEventHub: false,
-      decodeDatesAsIso: false,
     },
   );
   await session.initializing;
@@ -128,20 +127,9 @@ describe("Session", () => {
     return expect((await headers).get("ftrack-strict-api")).toEqual("true");
   });
 
-  it("Should allow querying with datetimes decoded as moment objects (default)", async () => {
-    const result = await session.query(
-      "select name, created_at from Task limit 1",
-    );
-    expect(result.data[0].created_at).toBeInstanceOf(moment);
-    expect(result.data[0].created_at.toISOString()).toEqual(
-      "2022-10-10T10:12:09.000Z",
-    );
-  });
-
   it("Should allow querying with datetimes decoded as ISO objects", async () => {
     const result = await session.query(
       "select name, created_at from Task limit 1",
-      { decodeDatesAsIso: true },
     );
     expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
   });
@@ -150,68 +138,12 @@ describe("Session", () => {
       credentials.serverUrl,
       credentials.apiUser,
       credentials.apiKey,
-      {
-        decodeDatesAsIso: true,
-      },
     );
     await decodeDatesAsIsoSession.initializing;
     const result = await decodeDatesAsIsoSession.query(
       "select name, created_at from Task limit 1",
     );
     expect(result.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
-  });
-  it("Should allow overriding session decodeDatesAsIso when querying", async () => {
-    const decodeDatesAsIsoSession = new Session(
-      credentials.serverUrl,
-      credentials.apiUser,
-      credentials.apiKey,
-      {
-        decodeDatesAsIso: true,
-      },
-    );
-    await decodeDatesAsIsoSession.initializing;
-    const result = await decodeDatesAsIsoSession.query(
-      "select name, created_at from Task limit 1",
-      { decodeDatesAsIso: false },
-    );
-    expect(result.data[0].created_at).toBeInstanceOf(moment);
-    expect(result.data[0].created_at.toISOString()).toEqual(
-      "2022-10-10T10:12:09.000Z",
-    );
-    const result2 = await session.query(
-      "select name, created_at from Task limit 1",
-      { decodeDatesAsIso: true },
-    );
-    expect(result2.data[0].created_at).toEqual("2022-10-10T10:12:09.000Z");
-  });
-
-  it("Should allow querying with datetimes decoded as ISO objects with timezone support disabled", async () => {
-    server.use(
-      http.post(
-        "http://ftrack.test/api",
-        () => {
-          return HttpResponse.json([
-            { ...queryServerInformation, is_timezone_support_enabled: false },
-            querySchemas,
-          ]);
-        },
-        { once: true },
-      ),
-    );
-    const timezoneDisabledSession = new Session(
-      credentials.serverUrl,
-      credentials.apiUser,
-      credentials.apiKey,
-      {
-        autoConnectEventHub: false,
-      },
-    );
-    await timezoneDisabledSession.initializing;
-    const result = await timezoneDisabledSession.query(
-      "select name, created_at from Task limit 1",
-      { decodeDatesAsIso: true },
-    );
-    expect(result.data[0].created_at).toEqual("2022-10-10T08:12:09.000Z");
   });
 
   it("Should allow adding additional headers on calls", async () => {
@@ -513,8 +445,8 @@ describe("Session", () => {
       .then(done);
   });
 
-  it.skip("Should support ensure with update moment object as criteria", async (done: any) => {
-    const now = moment();
+  it.skip("Should support ensure with update dayjs object as criteria", async (done: any) => {
+    const now = dayjs();
 
     const name = uuidV4();
 
@@ -638,9 +570,7 @@ describe("Session", () => {
     );
 
     await expect(() =>
-      session.call([{ action: "configure_totp", secret, code }], {
-        decodeDatesAsIso: true,
-      }),
+      session.call([{ action: "configure_totp", secret, code }]),
     ).rejects.toThrowError("Code must be provided to enable totp.");
   });
 
@@ -660,8 +590,8 @@ describe("Session", () => {
 });
 
 describe("Encoding entities", () => {
-  it("Should support encoding moment dates", () => {
-    const now = moment();
+  it("Should support encoding dayjs dates", () => {
+    const now = dayjs();
 
     //@ts-ignore - Otherwise internal method used for testing purposes
     const output = session.encode([{ foo: now, bar: "baz" }, 12321]);
@@ -671,47 +601,6 @@ describe("Encoding entities", () => {
         foo: {
           __type__: "datetime",
           value: now.toISOString(),
-        },
-        bar: "baz",
-      },
-      12321,
-    ]);
-  });
-  it("Should support encoding moment dates to local timezone if timezone support is disabled", async () => {
-    const now = moment();
-    server.use(
-      http.post(
-        "http://ftrack.test/api",
-        () => {
-          return HttpResponse.json([
-            { ...queryServerInformation, is_timezone_support_enabled: false },
-            querySchemas,
-          ]);
-        },
-        { once: true },
-      ),
-    );
-    const timezoneDisabledSession = new Session(
-      credentials.serverUrl,
-      credentials.apiUser,
-      credentials.apiKey,
-      {
-        autoConnectEventHub: false,
-      },
-    );
-    await timezoneDisabledSession.initializing;
-
-    //@ts-ignore - Otherwise internal method used for testing purposes
-    const output = timezoneDisabledSession.encode([
-      { foo: now, bar: "baz" },
-      12321,
-    ]);
-
-    expect(output).toEqual([
-      {
-        foo: {
-          __type__: "datetime",
-          value: now.local().format("YYYY-MM-DDTHH:mm:ss"),
         },
         bar: "baz",
       },
@@ -834,20 +723,6 @@ describe("Encoding entities", () => {
       expect(data[2].status.state.short).toEqual("DONE");
     });
 
-    it("Should support decoding datetime as moment (default)", () => {
-      const now = moment();
-
-      //@ts-ignore - Otherwise internal method used for testing purposes
-      const output = session.decode({
-        foo: {
-          __type__: "datetime",
-          value: now.toISOString(),
-        },
-      });
-      expect(output.foo).toBeInstanceOf(moment);
-      expect(output.foo.toISOString()).toEqual(now.toISOString());
-    });
-
     it("Should support decoding datetime as ISO string", () => {
       const now = new Date();
 
@@ -860,7 +735,6 @@ describe("Encoding entities", () => {
           },
         },
         {},
-        { decodeDatesAsIso: true },
       );
       expect(output.foo).toEqual(now.toISOString());
     });
