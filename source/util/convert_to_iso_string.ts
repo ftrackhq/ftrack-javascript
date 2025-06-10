@@ -1,4 +1,3 @@
-import type { Moment } from "moment";
 import type dayjs from "dayjs";
 
 /**
@@ -18,17 +17,17 @@ function isIsoDate(str: string) {
 
 /**
  * Converts a string or date object to ISO 6801 compatible string.
- * Supports converting regular date objects, or any object that has toISOString() method such as moment or dayjs.
+ * Supports converting regular date objects, or any object that has toISOString() method such as dayjs.
  *
  * @param data - string or date object
  * @returns ISO 6801 compatible string, or null if invalid date
  */
 export function convertToIsoString(
-  data: string | Date | Moment | ReturnType<typeof dayjs>,
+  data: string | Date | ReturnType<typeof dayjs>,
 ) {
   if (
     data &&
-    // if this is a date object of type moment or dayjs, or regular date object (all of them has toISOString)
+    // if this is a date object of type dayjs, or regular date object (all of them has toISOString)
     ((typeof data !== "string" && typeof data.toISOString === "function") ||
       // if it's a ISO string already
       (typeof data == "string" && isIsoDate(data)))
