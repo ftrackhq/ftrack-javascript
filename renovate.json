@@ -1,13 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
-  "enabledManagers": [
-    "npm"
-  ],
+  "extends": ["config:recommended"],
+  "enabledManagers": ["npm"],
   "rangeStrategy": "update-lockfile",
-  "schedule": [
-    "every month"
-  ]
+  "schedule": ["every month"]
 }
