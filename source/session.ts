@@ -553,7 +553,6 @@ export class Session<
    * @typeParam T - Either an array of response types to get return type `Tuple<T[0], ..., T[n]>`, or a single response type to get return type T[]. Default is ActionResponse.
    * @param {Array} operations - API operations.
    * @param {Object} options
-   * @param {AbortController} options.abortController - Abort controller, deprecated in favor of options.signal
    * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
    * @param {object} options.headers - Additional headers to send with the request
@@ -562,7 +561,6 @@ export class Session<
   async call<T = ActionResponse<keyof TEntityTypeMap>>(
     operations: operation.Operation<keyof TEntityTypeMap>[],
     {
-      abortController,
       pushToken,
       signal,
       additionalHeaders = {},
@@ -597,7 +595,7 @@ export class Session<
             ...additionalHeaders,
           } as HeadersInit,
           body: this.encodeOperations(operations),
-          signal: abortController ? abortController.signal : signal,
+          signal,
         });
       } catch (reason) {
         if (reason instanceof Error) {
@@ -774,7 +772,6 @@ export class Session<
    *
    * @param {string} expression - API query expression.
    * @param {object} options
-   * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
@@ -802,7 +799,6 @@ export class Session<
    * @param {String}   [options.contextId]    Context id to limit the search result to
    * @param {String[]} [options.objectTypeIds] Object type ids to limit the search result to
    * @param {object} additionalOptions
-   * @param {object} options.abortController - Deprecated in favour of options.signal
    * @param {object} options.signal - Abort signal user for aborting requests prematurely
    * @param {object} options.headers - Additional headers to send with the request
    * @param {object} options.ensureSerializableResponse - Disable normalization of response data
