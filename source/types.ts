@@ -20,7 +20,6 @@ export interface CreateComponentOptions {
   name?: string;
   data?: Data;
   onProgress?: (progress: number) => unknown;
-  xhr?: XMLHttpRequest;
   signal?: AbortSignal;
   onAborted?: () => unknown;
 }

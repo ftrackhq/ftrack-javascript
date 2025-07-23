@@ -977,7 +977,6 @@ export class Session<
    * @param {?object} [options = {}] - Options
    * @param {?string} options.name - Component name. Defaults get from file object.
    * @param {?number} options.data - Component data. Defaults to {}.
-   * @param {XMLHttpRequest} options.xhr - Custom XHR object, deprecated in favor of options.signal.
    * @param {AbortSignal} options.signal - Abort signal
    * @return {Promise} Promise resolved with the response when creating
    * Component and ComponentLocation.
