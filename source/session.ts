@@ -80,7 +80,7 @@ export class Session<
    * @param  {Object}  [options.eventHubOptions={}] - Options to configure event hub with.
    * @param  {string} [options.clientToken] - Client token for update events.
    * @param  {string} [options.apiEndpoint=/api] - API endpoint.
-   * @param {object} [options.headers] - Additional headers to send with the request
+   * @param {object} [options.additionalHeaders] - Additional headers to send with the request
    * @param {object} [options.strictApi] - Turn on strict API mode
    * @param {object} [options.ensureSerializableResponse] - Disable normalization of response data
    *
@@ -555,7 +555,8 @@ export class Session<
    * @param {Object} options
    * @param {AbortSignal} options.signal - Abort signal
    * @param {string} options.pushToken - push token to associate with the request
-   * @param {object} options.headers - Additional headers to send with the request
+   * @param {object} options.additionalHeaders - Additional headers to send with the request
+   * @param {object} options.ensureSerializableResponse - Disable normalization of response data
    *
    */
   async call<T = ActionResponse<keyof TEntityTypeMap>>(
