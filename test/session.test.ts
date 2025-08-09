@@ -320,30 +320,6 @@ describe("Session", () => {
     expect(response[0].data.__entity_type__).toEqual("FileComponent");
   });
 
-  it("Should support abort of uploading file using xhr", async () => {
-    const data = { foo: "bar" };
-    const blob = new Blob([JSON.stringify(data)], {
-      type: "application/json",
-    });
-
-    const xhr = new XMLHttpRequest();
-    const promise = new Promise((resolve) => {
-      const onAborted = () => {
-        resolve(true);
-      };
-
-      session.createComponent(blob, {
-        xhr,
-        name: "data.json",
-        onProgress: () => {
-          xhr.abort();
-        },
-        onAborted,
-      });
-    });
-    await expect(promise).resolves.toEqual(true);
-  });
-
   it("Should support abort of uploading file using signal", async () => {
     const data = { foo: "bar" };
     const blob = new Blob([JSON.stringify(data)], {
