@@ -249,7 +249,6 @@ export interface Schema<
   deprecated?: SchemaDeprecated;
 }
 export interface QueryOptions {
-  abortController?: AbortController;
   signal?: AbortSignal;
   additionalHeaders?: Data;
   decodeDatesAsIso?: boolean;
