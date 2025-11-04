@@ -64,7 +64,7 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
   private onError: UploaderOptions["onError"];
   /** Called on upload completion */
   private onComplete: UploaderOptions["onComplete"];
-  /** XHR for single-part upload. @deprecated */
+  /** XHR for single-part upload. */
   private xhr?: XMLHttpRequest;
   /** File type / extension */
   private fileType: string;
@@ -126,7 +126,6 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
     const fileNameParts = splitFileExtension(normalizedFileName);
 
     this.data = options.data || {};
-    this.xhr = options.xhr;
     this.onProgress = options.onProgress;
     this.onAborted = options.onAborted;
     this.onError = options.onError;
@@ -146,12 +145,6 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
       getChunkSize(this.fileSize);
     this.numParts = Math.ceil(this.fileSize / this.chunkSize);
     if (this.numParts <= 2) {
-      this.numParts = null;
-    }
-    if (this.xhr) {
-      logger.warn(
-        "[session.createComponent] options.xhr is deprecated and not compatible with multi-part uploads, use options.signal for aborting uploads.",
-      );
       this.numParts = null;
     }
     this.activeConnections = {};
