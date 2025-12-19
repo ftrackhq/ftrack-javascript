@@ -738,6 +738,75 @@ describe("Encoding entities", () => {
       );
       expect(output.foo).toEqual(now.toISOString());
     });
+
+    it("Should support decoding date as date-only string", () => {
+      //@ts-ignore - Otherwise internal method used for testing purposes
+      const output = session.decode(
+        {
+          foo: {
+            __type__: "date",
+            value: "2025-12-01",
+          },
+        },
+        {},
+      );
+      expect(output.foo).toEqual("2025-12-01");
+    });
+
+    it("Should handle date type in nested objects", () => {
+      //@ts-ignore - Otherwise internal method used for testing purposes
+      const output = session.decode(
+        {
+          task: {
+            name: "Test Task",
+            start_date: {
+              __type__: "date",
+              value: "2025-12-01",
+            },
+            end_date: {
+              __type__: "date",
+              value: "2025-12-31",
+            },
+          },
+        },
+        {},
+      );
+      expect(output.task.start_date).toEqual("2025-12-01");
+      expect(output.task.end_date).toEqual("2025-12-31");
+    });
+
+    it("Should handle arrays of date types", () => {
+      //@ts-ignore - Otherwise internal method used for testing purposes
+      const output = session.decode(
+        [
+          {
+            __type__: "date",
+            value: "2025-12-01",
+          },
+          {
+            __type__: "date",
+            value: "2025-12-15",
+          },
+        ],
+        {},
+      );
+      expect(output).toEqual(["2025-12-01", "2025-12-15"]);
+    });
+
+    it("Should throw error for invalid date format", () => {
+      expect(() => {
+        //@ts-ignore - Otherwise internal method used for testing purposes
+        session.decode(
+          {
+            foo: {
+              __type__: "date",
+              value: "2025-12-01T00:00:00Z",
+            },
+          },
+          {},
+        );
+      }).toThrow("Invalid date format: expected YYYY-MM-DD");
+    });
   });
 
   it("Should support encoding Date object dates", () => {

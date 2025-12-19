@@ -34,7 +34,10 @@ import type {
   SessionOptions,
   UpdateResponse,
 } from "./types.js";
-import { convertToIsoString } from "./util/convert_to_iso_string.js";
+import {
+  convertToIsoString,
+  isDateOnly,
+} from "./util/convert_to_iso_string.js";
 import { Uploader } from "./uploader.js";
 import getSchemaMappingFromSchemas from "./util/get_schema_mapping.js";
 
@@ -374,6 +377,9 @@ export class Session<
       if (data.__type__ === "datetime") {
         return this._decodeDateTimeAsIso(data);
       }
+      if (data.__type__ === "date") {
+        return this._decodeDateAsString(data);
+      }
       return this._decodePlainObject(data, identityMap, {
         ensureSerializableResponse,
       });
@@ -398,6 +404,24 @@ export class Session<
     }
     // Server has no timezone support, return date in ISO format
     return new Date(dateValue).toISOString();
+  }
+
+  /**
+   * Decode date *data* into date-only strings (YYYY-MM-DD).
+   *
+   * Translate objects with __type__ equal to 'date' into date-only strings
+   * without time information. Validates the format is YYYY-MM-DD.
+   * @private
+   */
+  private _decodeDateAsString(data: any) {
+    const dateValue = data.value;
+    // Validate that the server sends date-only format (YYYY-MM-DD)
+    if (!isDateOnly(dateValue)) {
+      throw new Error(
+        `Invalid date format: expected YYYY-MM-DD, got ${dateValue}`,
+      );
+    }
+    return dateValue;
   }
 
   /**
