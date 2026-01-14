@@ -1,6 +1,9 @@
 // :copyright: Copyright (c) 2022 ftrack
 
-import { convertToIsoString } from "../source/util/convert_to_iso_string.js";
+import {
+  convertToIsoString,
+  isDateOnly,
+} from "../source/util/convert_to_iso_string.js";
 import dayjs from "dayjs";
 import { describe, it, expect } from "vitest";
 
@@ -74,5 +77,23 @@ describe("convertToIsoString", () => {
   ])("should return null for invalid ISO string: %s", (invalidDate) => {
     const converted = convertToIsoString(invalidDate as any); //casted to test for invalid type
     expect(converted).toEqual(null);
+  });
+});
+
+describe("isDateOnly", () => {
+  it("should validate correct date-only format", () => {
+    expect(isDateOnly("2025-12-01")).toBe(true);
+    expect(isDateOnly("2023-01-15")).toBe(true);
+    expect(isDateOnly("1999-12-31")).toBe(true);
+  });
+
+  it("should reject invalid date-only formats", () => {
+    expect(isDateOnly("2025-12-01T00:00:00Z")).toBe(false);
+    expect(isDateOnly("2025-12-01T00:00:00")).toBe(false);
+    expect(isDateOnly("not-a-date")).toBe(false);
+    expect(isDateOnly("2025-12")).toBe(false);
+    expect(isDateOnly("2025")).toBe(false);
+    expect(isDateOnly("12-01-2025")).toBe(false);
+    expect(isDateOnly("")).toBe(false);
   });
 });
