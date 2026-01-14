@@ -16,6 +16,17 @@ function isIsoDate(str: string) {
 }
 
 /**
+ * Checks if string is in date-only format (YYYY-MM-DD).
+ * Used for __date__ type that doesn't include time information.
+ *
+ * Matches:
+ *   - YYYY-MM-DD
+ */
+export function isDateOnly(str: string) {
+  return /^\d{4}-\d\d-\d\d$/i.test(str);
+}
+
+/**
  * Converts a string or date object to ISO 6801 compatible string.
  * Supports converting regular date objects, or any object that has toISOString() method such as dayjs.
  *
