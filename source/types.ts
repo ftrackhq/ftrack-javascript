@@ -106,6 +106,7 @@ export interface ServerInformation {
     last_name?: string;
     thumbnail_id?: string;
     thumbnail_url?: string;
+    permissions?: string[];
   };
   product?: Data;
   version: string;
