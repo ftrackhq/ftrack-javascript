@@ -647,13 +647,14 @@ export class Session<
         });
       }
     } catch (reason) {
-      logger.warn("Failed to perform request. ", reason);
       if (reason instanceof Error && reason.name === "AbortError") {
+        logger.debug("Request was aborted. ", reason);
         throw this.getErrorFromResponse({
           exception: "AbortError",
           content: reason.message,
         });
       }
+      logger.warn("Failed to perform request. ", reason);
       throw reason;
     }
   }
