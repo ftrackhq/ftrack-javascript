@@ -45,7 +45,7 @@
     "typescript-eslint": "^8.53.0",
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
-    "vitest": "^4.0.17",
+    "vitest": "^4.1.0",
     "ws": "^8.19.0"
   },
   "repository": {
