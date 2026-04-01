@@ -28,12 +28,13 @@
     "node": ">=20.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.0",
     "@types/node": "^24.10.8",
     "@types/uuid": "^11.0.0",
     "@types/ws": "^8.18.1",
     "@vitest/eslint-plugin": "^1.6.6",
     "dayjs": "^1.11.19",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.0",
     "globals": "^17.0.0",
     "husky": "^9.1.7",
     "jsdom": "^29.0.0",
@@ -42,7 +43,7 @@
     "pinst": "^3.0.0",
     "prettier": "^3.7.4",
     "typescript": "^6.0.0",
-    "typescript-eslint": "^8.53.0",
+    "typescript-eslint": "^8.57.2",
     "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.0.17",
