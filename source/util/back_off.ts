@@ -17,7 +17,6 @@ export async function backOff<T>(
 ) {
   let attemptNumber = 0;
   let delayMs = 500;
-  let delayFuzzMs = 0;
 
   while (attemptNumber <= maxAttempts) {
     try {
@@ -29,7 +28,7 @@ export async function backOff<T>(
         throw error;
       }
       delayMs = Math.min(maxDelayMs, delayMs * 2);
-      delayFuzzMs = Math.floor(Math.random() * fuzzMs);
+      const delayFuzzMs = Math.floor(Math.random() * fuzzMs);
 
       logger.warn(
         `Failed to execute function, retrying in ${Math.floor(
