@@ -339,7 +339,7 @@ export class Uploader<TEntityTypeMap extends Record<string, any>> {
 
       const inProgress = Object.keys(this.progressCache)
         .map(Number)
-        .reduce((memo, id) => (memo += this.progressCache[id]), 0);
+        .reduce((memo, id) => memo + this.progressCache[id], 0);
 
       const sent = Math.min(this.uploadedSize + inProgress, this.fileSize);
 
