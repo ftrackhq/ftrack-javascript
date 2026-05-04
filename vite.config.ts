@@ -26,9 +26,7 @@ export default defineConfig({
       },
     },
   },
-  plugins: [
-    dts({ rollupTypes: false, entryRoot: "source", include: "source" }),
-  ],
+  plugins: [dts({ entryRoot: "source", include: "source" })],
   test: {
     environment: "jsdom",
     globals: true,
