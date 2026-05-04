@@ -3,5 +3,12 @@
   "extends": ["config:recommended"],
   "enabledManagers": ["npm", "github-actions"],
   "rangeStrategy": "update-lockfile",
-  "schedule": ["every month"]
+  "schedule": ["every month"],
+  "packageRules": [
+    {
+      "matchManagers": ["npm", "github-actions"],
+      "groupName": "all dependency updates",
+      "separateMajorMinor": true
+    }
+  ]
 }
