@@ -255,7 +255,6 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^10.0.0"
     "@types/node": "npm:^24.10.8"
-    "@types/uuid": "npm:^11.0.0"
     "@types/ws": "npm:^8.18.1"
     "@vitest/eslint-plugin": "npm:^1.6.6"
     dayjs: "npm:^1.11.19"
@@ -270,7 +269,6 @@ __metadata:
     prettier: "npm:^3.7.4"
     typescript: "npm:^6.0.0"
     typescript-eslint: "npm:^8.57.2"
-    uuid: "npm:^14.0.0"
     vite: "npm:^8.0.0"
     vite-plugin-dts: "npm:^4.5.4"
     vitest: "npm:^4.1.0"
@@ -789,15 +787,6 @@ __metadata:
   version: 2.0.6
   resolution: "@types/statuses@npm:2.0.6"
   checksum: 10/dadfbb4f32a16d3106a8e2a957dab17b1ae99fc4788e1fd96aeaf82355e3b2b069d5ea0f5fb887efa830def033828955a5bbdfd35454ba2088822537aed9e5db
-  languageName: node
-  linkType: hard
-
-"@types/uuid@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@types/uuid@npm:11.0.0"
-  dependencies:
-    uuid: "npm:*"
-  checksum: 10/9f94bd34e5d220c53cc58ea9f48a0061d3bc343e29bc33a17edc705f5e21fedda21553318151f2bc227c2b2b03727bbb536da2b82a61f84d2e1ca38abc5e5c3f
   languageName: node
   linkType: hard
 
@@ -4007,24 +3996,6 @@ __metadata:
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
   checksum: 10/474acf1146cb2701fe3b074892217553dfcf9a031280919ba1b8d651a068c9b15d863b7303cb15bd00a862b498e6cf4ad7b4a08fb134edd5a6f7641681cb54a2
-  languageName: node
-  linkType: hard
-
-"uuid@npm:*":
-  version: 13.0.0
-  resolution: "uuid@npm:13.0.0"
-  bin:
-    uuid: dist-node/bin/uuid
-  checksum: 10/2742b24d1e00257e60612572e4d28679423469998cafbaf1fe9f1482e3edf9c40754b31bfdb3d08d71b29239f227a304588f75210b3b48f2609f0673f1feccef
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^14.0.0":
-  version: 14.0.0
-  resolution: "uuid@npm:14.0.0"
-  bin:
-    uuid: dist-node/bin/uuid
-  checksum: 10/8ee9b98f9650e25555515f7a28d3c3ae9364e72f7bb19b9e08b681bc135338beba5509b2830f6ae1cfaba4d45401da0d16d4d109b977097bc3d6ba0c5583341b
   languageName: node
   linkType: hard
 
