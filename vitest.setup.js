@@ -28,7 +28,11 @@ class MockXmlHttpRequest extends EventTarget {
 
 beforeAll(() => {
   server.listen({ onUnhandledRequest: "error" });
-  global.XMLHttpRequest = MockXmlHttpRequest;
+  Object.defineProperty(global, "XMLHttpRequest", {
+    value: MockXmlHttpRequest,
+    writable: true,
+    configurable: true,
+  });
 });
 
 afterAll(() => {
