@@ -182,6 +182,14 @@ export class EventHub {
     this._socketIo = io.connect(this._serverUrl, this._apiUser, this._apiKey);
     this._socketIo.on("connect", this._onSocketConnected);
     this._socketIo.on("ftrack.event", this._handle);
+    // SimpleSocketIOClient.connect is a singleton keyed on credentials, so
+    // a second EventHub built with the same credentials reuses an
+    // already-open socket. In that case the "connect" event has already
+    // fired and the listener above will never run on its own — run the
+    // handler now so this hub registers its reply subscription.
+    if (this._socketIo.socket.connected) {
+      this._onSocketConnected();
+    }
   }
 
   /**
