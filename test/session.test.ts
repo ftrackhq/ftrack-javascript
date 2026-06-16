@@ -1,5 +1,5 @@
 // :copyright: Copyright (c) 2022 ftrack
-import { beforeAll, describe, it, expect } from "vitest";
+import { beforeAll, describe, it, expect, vi } from "vitest";
 
 import { v4 as uuidV4 } from "uuid";
 import loglevel from "loglevel";
@@ -8,6 +8,7 @@ import {
   ServerPermissionDeniedError,
   ServerValidationError,
   ServerError,
+  AbortError,
 } from "../source/error.js";
 import { Session, expression } from "../source/session.js";
 import * as operation from "../source/operation.js";
@@ -548,6 +549,24 @@ describe("Session", () => {
     await expect(() =>
       session.call([{ action: "configure_totp", secret, code }]),
     ).rejects.toThrowError("Code must be provided to enable totp.");
+  });
+
+  it("Throws AbortError, without logging a failed request, when aborted", async () => {
+    const apiLogger = loglevel.getLogger("ftrack_api");
+    const warnSpy = vi.spyOn(apiLogger, "warn");
+
+    const controller = new AbortController();
+    controller.abort();
+
+    await expect(() =>
+      session.call([operation.query("select id from Task")], {
+        signal: controller.signal,
+      }),
+    ).rejects.toThrow(AbortError);
+
+    // An aborted request is an expected cancellation, not a failure.
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
   });
 
   it("Should support getting schemas with session.getSchemas()", async () => {

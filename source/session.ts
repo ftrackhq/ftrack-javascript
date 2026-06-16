@@ -624,6 +624,13 @@ export class Session<
         });
       } catch (reason) {
         if (reason instanceof Error) {
+          // A request cancelled via AbortSignal rejects fetch with an
+          // AbortError. Let it propagate unchanged so the outer handler treats
+          // it as an expected cancellation (debug) rather than wrapping it in a
+          // NetworkError and logging a failed request.
+          if (reason.name === "AbortError") {
+            throw reason;
+          }
           throw this.getErrorFromResponse({
             exception: "NetworkError",
             content: (reason["cause"] as string) || reason.message,
