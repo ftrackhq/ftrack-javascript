@@ -1,9 +1,0 @@
-lib/
-coverage/
-build/
-dist/
-.eggs/
-.yarn/
-renovate.json
-socket.io-websocket-only.js
-doc/resource

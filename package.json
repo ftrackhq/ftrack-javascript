@@ -1,15 +1,24 @@
 {
   "name": "@ftrack/api",
   "description": "JavaScript API for ftrack.",
-  "scripts": {
-    "lint": "tsc && eslint . && prettier -c .",
-    "test": "vitest --run test && yarn lint",
-    "build": "vite build",
-    "prepack": "yarn build && pinst --disable",
-    "prepublish": "yarn test",
-    "postinstall": "husky install",
-    "postpack": "pinst --enable"
+  "keywords": [
+    "api",
+    "ftrack",
+    "library"
+  ],
+  "homepage": "http://ftrack.com",
+  "bugs": {
+    "url": "https://github.com/ftrackhq/ftrack-javascript/issues"
   },
+  "license": "Apache-2.0",
+  "author": "ftrack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ftrackhq/ftrack-javascript"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/ftrack-javascript-api.umd.cjs",
   "module": "./dist/ftrack-javascript-api.es.js",
@@ -21,52 +30,36 @@
       "require": "./dist/ftrack-javascript-api.umd.cjs"
     }
   },
-  "files": [
-    "dist"
-  ],
-  "engines": {
-    "node": ">=20.0.0"
+  "scripts": {
+    "lint": "tsc && oxlint && oxfmt --check",
+    "test": "vitest --run test && yarn lint",
+    "build": "vite build",
+    "prepack": "yarn build && pinst --disable",
+    "prepublish": "yarn test",
+    "postinstall": "husky install",
+    "postpack": "pinst --enable"
+  },
+  "dependencies": {
+    "loglevel": "^1.9.2",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.0",
     "@types/node": "^24.10.8",
     "@types/uuid": "^11.0.0",
     "@types/ws": "^8.18.1",
-    "@vitest/eslint-plugin": "^1.6.6",
     "dayjs": "^1.11.19",
-    "eslint": "^10.0.0",
-    "globals": "^17.0.0",
     "husky": "^9.1.7",
     "jsdom": "^29.0.0",
     "lint-staged": "^16.2.7",
     "msw": "^2.12.7",
+    "oxfmt": "^0.56.0",
+    "oxlint": "^1.71.0",
     "pinst": "^3.0.0",
-    "prettier": "^3.7.4",
     "typescript": "^6.0.0",
-    "typescript-eslint": "^8.57.2",
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.1.0",
     "ws": "^8.19.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ftrackhq/ftrack-javascript"
-  },
-  "keywords": [
-    "ftrack",
-    "api",
-    "library"
-  ],
-  "author": "ftrack",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/ftrackhq/ftrack-javascript/issues"
-  },
-  "homepage": "http://ftrack.com",
-  "dependencies": {
-    "loglevel": "^1.9.2",
-    "uuid": "^14.0.0"
   },
   "peerDependencies": {
     "ws": "^8.13.0"
@@ -77,8 +70,11 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts}": "eslint --cache --fix --max-warnings=0",
-    "*.{js,ts,css,md,json,jsx,scss,yml}": "prettier --write"
+    "*.{js,ts}": "oxlint --fix",
+    "*.{js,ts,css,md,json,jsx,scss,yml}": "oxfmt"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "packageManager": "yarn@4.13.0"
 }

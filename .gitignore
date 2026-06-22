@@ -6,7 +6,6 @@ pip-log.txt
 .tox
 
 # Caches
-.eslintcache
 Thumbs.db
 
 # Development
