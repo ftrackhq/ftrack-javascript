@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "vitest"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "no-unused-vars": [
+      "error",
+      { "caughtErrors": "none", "ignoreRestSiblings": true }
+    ],
+    "vitest/valid-expect": "off",
+    "vitest/no-disabled-tests": "off",
+    "vitest/require-to-throw-message": "off",
+    "vitest/require-mock-type-parameters": "off"
+  }
+}
