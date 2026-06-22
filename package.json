@@ -5,10 +5,9 @@
     "lint": "tsc && eslint . && prettier -c .",
     "test": "vitest --run test && yarn lint",
     "build": "vite build",
-    "prepack": "yarn build && pinst --disable",
+    "prepack": "yarn build",
     "prepublish": "yarn test",
-    "postinstall": "husky install",
-    "postpack": "pinst --enable"
+    "prepare": "husky"
   },
   "type": "module",
   "main": "./dist/ftrack-javascript-api.umd.cjs",
@@ -30,7 +29,6 @@
   "devDependencies": {
     "@eslint/js": "^10.0.0",
     "@types/node": "^24.10.8",
-    "@types/uuid": "^11.0.0",
     "@types/ws": "^8.18.1",
     "@vitest/eslint-plugin": "^1.6.6",
     "dayjs": "^1.11.19",
@@ -40,7 +38,6 @@
     "jsdom": "^29.0.0",
     "lint-staged": "^16.2.7",
     "msw": "^2.12.7",
-    "pinst": "^3.0.0",
     "prettier": "^3.7.4",
     "typescript": "^6.0.0",
     "typescript-eslint": "^8.57.2",
