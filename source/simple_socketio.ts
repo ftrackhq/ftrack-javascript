@@ -171,13 +171,7 @@ export default class SimpleSocketIOClient {
         this.reconnecting = false;
       }
       const urlWithQueryAndSession = `${this.webSocketUrl}/socket.io/1/websocket/${sessionId}?${this.query}`;
-      const WebSocketImpl =
-        typeof WebSocket === "undefined"
-          ? // Fallback on ws package if WebSocket is not available
-            ((await import("ws")).default as typeof WebSocket)
-          : WebSocket;
-
-      this.webSocket = new WebSocketImpl(urlWithQueryAndSession);
+      this.webSocket = new WebSocket(urlWithQueryAndSession);
       // Set transport.websocket property as a public alias of the websocket
       this.socket.transport.websocket = this.webSocket;
       this.addInitialEventListeners(this.webSocket);
