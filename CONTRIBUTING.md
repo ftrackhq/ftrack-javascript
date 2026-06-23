@@ -6,8 +6,8 @@ Please clone this repository, and follow these instructions to make sure you are
 
 Using node version as reflected in `.nvmrc`, run:
 
-- yarn install
-- yarn test
+- pnpm install
+- pnpm test
 
 If the tests passes, you should be good to go. Please submit a PR with your changes and we will look at them as soon as possible.
 

@@ -28,10 +28,10 @@ npm:
 npm install @ftrack/api
 ```
 
-yarn:
+pnpm:
 
 ```bash
-yarn add @ftrack/api
+pnpm add @ftrack/api
 ```
 
 ## TypeScript: Generated Schema Types

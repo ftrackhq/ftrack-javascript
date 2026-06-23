@@ -3,7 +3,7 @@ coverage/
 build/
 dist/
 .eggs/
-.yarn/
+pnpm-lock.yaml
 renovate.json
 socket.io-websocket-only.js
 doc/resource

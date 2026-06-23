@@ -3,10 +3,10 @@
   "description": "JavaScript API for ftrack.",
   "scripts": {
     "lint": "tsc && eslint . && prettier -c .",
-    "test": "vitest --run test && yarn lint",
+    "test": "vitest --run test && pnpm lint",
     "build": "vite build",
-    "prepack": "yarn build && pinst --disable",
-    "prepublish": "yarn test",
+    "prepack": "pnpm build && pinst --disable",
+    "prepublish": "pnpm test",
     "postinstall": "husky install",
     "postpack": "pinst --enable"
   },
@@ -80,5 +80,5 @@
     "*.{js,ts}": "eslint --cache --fix --max-warnings=0",
     "*.{js,ts,css,md,json,jsx,scss,yml}": "prettier --write"
   },
-  "packageManager": "yarn@4.13.0"
+  "packageManager": "pnpm@11.8.0"
 }
